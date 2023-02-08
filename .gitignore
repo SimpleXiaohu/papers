@@ -302,3 +302,7 @@ TSWLatexianTemp*
 
 # test files
 test/
+
+# other
+.vscode/
+.DS_Store
