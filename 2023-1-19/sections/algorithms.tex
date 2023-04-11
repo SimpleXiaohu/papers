@@ -1,0 +1,225 @@
+\documentclass{standalone}
+\begin{document}
+
+Based on the decision procedure defined in the paper \cite{atva2020}, we propose an efficient algorithm to solve ESL formula $\varphi\wedge \psi$ where $\varphi$ is the conjunction of literals and $\psi$ is the conjunction of linear literals without length operation. For each string variable $x$, we first compute pre-images of all linear literal $i=|x|$. Then we generate CEFAs of all regular expressions $\regex$ in all regular literals $x\in \regex$ and intersect these CEFAs and pre-images to get the final automaton $\aut_x$ for $x$. At present, there is a final CEFA for each string variable $x$. The linear arithmetic constraint $\psi$ restricts the accepting word of final CEFAs. Thus the satisfiability problem is the emptiness checking problem of final CEFAs under $\psi$. If it is empty, the string constraints are unsatisfiable. Otherwise, the string constraints are satisfiable.
+The emptiness checking problem of CEFAs under linear integer arithmetic is theoretically pspace-complete\cite{atva2020}. To solve it efficiently for a practical example, we develop heuristic ways such as under-approximation (Section \ref{subsec:under-approx}) and symbolic-aware simplification (Section \ref{subsec:simplify}).
+\subsection{High-level algorithm}
+\begin{algorithm}[h]
+  \caption{High-level algorithm}
+  \label{alg:high}
+  \begin{algorithmic}[1]
+    \Require Conjunction of literals $\varphi$ and conjunction of linear literals $\psi$
+    \Ensure \emph{sat} or \emph{unsat}
+    \Statex
+    \State $finalAuts \leftarrow \emptyset$
+    \ForAll{string variables $x$ occurring in $\varphi$}
+    \State $\aut_{len} \leftarrow$ intersection of all pre-images of $i=|x|$ in $\varphi$
+    \State $\aut_{regex} \leftarrow$ intersection of all CEFAs of $x \in \regex$ in $\varphi$
+    \State $\aut_x \leftarrow$ intersection of $\aut_{len}$ and $\aut_{regex}$
+    \State $\aut_{nfa} \leftarrow$ NFA form of $\aut_x$
+    \If{$\aut_{nfa}$ is empty}
+    \State \textbf{return} \emph{unsat}
+    \EndIf
+    \State $finalAuts \leftarrow finalAuts \cup \{\aut_x\}$
+    \EndFor
+    \If{$\algfun{isEmpty}(finalAuts, \psi)$ }
+    \State \textbf{return} \emph{unsat}
+    \Else
+    \State \textbf{return} \emph{sat}
+    \EndIf
+  \end{algorithmic}
+\end{algorithm}
+The pseudocode presented in Algorithm \ref{alg:high} outlines the framework of our solving process. We construct the automata of all length operations occurring in the ESL conjunction $\varphi$ at line 3 and the automata of all regular memberships at line 4. In the following steps, we call an automaton to be \emph{final} if we will not operate it anymore. The set $finalAuts$ contains all final automata for all string variables and is initially empty at line 1. The intersection of $\aut_{len}$ and $\aut_{regex}$ at line 5 ensures the final automaton of $x$ reserves both length and regular information. At line 6, we compute an NFA form to throw unsat rapidly. An NFA form of CEFA is obtained by removing update functions and accepting conditions while maintaining graph structure. More exactly, given a CEFA $\aut = (Q,\Sigma, \delta, q_I, F, R, \theta)$, the NFA form of $\aut$ is $(Q, \Sigma, \delta', q_I, F)$ where $\delta'$ is composed of transition $q\xrightarrow[]{a} q'$ for $q\xrightarrow[\myvec{v}]{a} q'\in \delta$. It is obvious that the NFA form is an over-approximation of the CEFA, so that unsat is directly thrown if we find the NFA form is already empty at line 7. Sometimes the over-approximation is useful. For example, to solve the string constraint $x\in \Sigma_{/a}\{1,300\}\wedge x\in \Sigma^*a\Sigma^* $ which CVC5 has failed on, the NFA form is empty because there is no path to accepting states. \newline
+After obtaining all final CEFAs of all string variables and their NFA forms are not empty, we check whether the final CEFAs are empty under the linear integer arithmetic $\psi$ at line 12. If they are empty under $\psi$, we return $unsat$. Otherwise, we return $sat$.
+
+\subsection{Emptiness Checking} \label{subsec:emptiness}
+As mentioned, the emptiness checking problem of CEFAs under linear integer arithmetic $P$ is theoretically Pspace-complete. In our previous research  \cite{atva2020}, we rewrote CEFAs to an infinite system and used a model-checking tool \emph{nuXmv}\cite{nuxmv} to solve it. However, it needs to be more effective. So we put forward a new framework that brings in under-approximation and symbolic-aware simplification heuristics.\newline
+As shown in Algorithm \ref{alg:emptiness}, we simplify the input CEFAs at line 1 because they may have many transitions and registers. The purpose of the simplification is to deal with duplication. After simplification, we try to find a solution by under-approximation at line 3 and line 4. An off-the-shelf SMT solver gives the result of $\varphi_{under}\wedge P$. If we find a solution, we return $false$ at line 5 because it implies that the CEFAs under linear integer arithmetic $P$ are not empty. Otherwise, we compute the Parikh images of the simplified CEFAs and check if the Parikh images are satisfiable in conjunction with $P$ at line 12. The Parikh image checking is complete so that satisfiability implies non-emptiness directly. \newline
+The under-approximation program is executed many times until the $MaxBound$ is reached. $MaxBound$ is an empirical bound set to $15$ in our experiment because it brings exponential growth of searching space. The details of simplification are shown in Algorithm \ref{alg:simplify} and under-approximation are shown in Algorithm \ref{alg:underApprox}.\newline
+\begin{algorithm}[h]
+  \caption{ $\algfun{isEmpty}(auts, P)$}
+  \label{alg:emptiness}
+  \begin{algorithmic}[1]
+    \Require the CEFAs $auts$ and the linear integer arithmetic $P$
+    \Ensure $true$ or $false$
+    \Statex
+    \State $simpliAuts \leftarrow \algfun{simplify}(auts)$
+    \For{$bound \gets 1, MaxBound$ }
+    \State $\varphi_{under}\gets \algfun{underApprox}(simpliAuts, bound)$
+    \If{$\varphi_{under}\wedge P$ is sat}
+    \State \textbf{return} $false$
+    \EndIf
+    \EndFor
+    \State $\varphi \gets \algfun{parikhImage}(simpliAuts)$
+    \If{$\varphi\wedge P$ is unsat}
+    \State \textbf{return} $true$
+    \Else
+    \State \textbf{return} $false$
+    \EndIf
+  \end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Symbolic-Aware Simplification} \label{subsec:simplify}
+The purpose of simplification is to remove duplicated transitions and registers. In the emptiness checking Algorithm \ref{alg:emptiness}, the vectors on the transitions are meritorious, while the letters are not. So we see the alphabet of the CEFA as unary (i.e., the alphabet is $\{a\}$) and see the vectors in the CEFA as letters in the NFA. The vector $\myvec{0}_n$ is seen as $\epsilon$. Precisely, given an CEFA $\aut = (Q, \Sigma, \delta, q_I, F, R, \theta)$, we obtain a symbolic form  $\aut_{sym} = (Q, \Sigma', \delta', q_I, F, R, \theta)$ where
+\begin{itemize}
+  \item $\Sigma' = \{a\}$,
+  \item the transition set $\delta'$ is composed of transition $q\xrightarrow[\myvec{v}]{a}q'$ if there is a transition $q\xrightarrow[\myvec{v}]{b} q'$ in $\delta$ for $b\in \Sigma$ .
+\end{itemize}
+We directly apply algorithms of epsilon-closure, determination, and simplification in \cite{aut_hopcraft}. We see $q\xrightarrow[\myvec{0}_n]{a}q'$ as epsilon transition and compute the epsilon-closure based on it. We see $q\xrightarrow[\myvec{v}]{a}q'$ as a transition with label $(a, \myvec{v})$ and determine the automaton based on the label. Two accepting states are equivalent if they have the same accepting conditions, and two states are equivalent if they reach equivalent states for each label. We simplify the automaton by merging equivalent states.
+The process above comprises line 3 and line 4 of Algorithm \ref{alg:simplify}. From line 5 to line 13, we check whether some registers are duplicated. (i.e., the values of these registers are always the same). If two registers $r_i$ and $r_j$ are duplicated at line 6, we remove one at line 7 and the corresponding update of vectors at line 9 to ensure the vectors are consistent with the new registers. After deleting the duplicated registers, we add constraint $r_i = r_j$ to store the value of the deleted register at line 11.
+\begin{algorithm}[h]
+  \caption{$\algfun{simplify}(auts)$}
+  \label{alg:simplify}
+  \begin{algorithmic}[1]
+    \Require A set of CEFAs
+    \Ensure The simplified CEFAs
+    \Statex
+    \For{$\aut \in auts$}
+    \State Suppose that $\aut = (Q, \Sigma, \delta, q_I, F,
+      R, \theta)$ and $R=(r_1,\cdots, r_n)$
+    \State $\algfun{determinizeByVec}(\aut)$
+    \State $\algfun{minimizeByVec}(\aut)$
+    \ForAll{$(i, j)$ where $1\leq i \leq j \leq n$}
+    \If {$\myvec{v}[i] = \myvec{v}[j]$ for every vector $\myvec{v}\in \aut$ }
+    \State $R=(\cdots r_{j-1}r_{j+1}\cdots)$ \Comment remove $r_j$ from the register vector $R$
+    \ForAll{$\myvec{v'}\in \aut$}
+    \State $\myvec{v'}=(\cdots\myvec{v'}[j-1]\myvec{v'}[j+1]\cdots)$ \Comment remove $\myvec{v'}[j]$ from each vector $\myvec{v'}$
+    \EndFor
+    \State $\theta = \theta\wedge r_i = r_j$
+    \EndIf
+    \EndFor
+    \EndFor
+    \State \textbf{return} $auts$
+  \end{algorithmic}
+\end{algorithm}
+\begin{example}
+  Considering the CEFA recognizing $(a|b)\{1,100\}$ illustrated in Fig.\ref{subfig:simp_origin_cefa}. We first obtain a symbolic CEFA by using unary alphabet (Fig.\ref{subfig:simp_symbolic_cefa}) and then minimize it based on the symbolic label "$a/(1)$"(Fig.\ref{subfig:simp_final}).
+  \begin{figure}[h]
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=1cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=$1\leq r \leq 100$, accepting/.style=accepting by arrow,
+        ]
+
+        \node[state,initial]            (q_0)                      {};
+        \node         (q_tmp) [right=of q_0]       {};
+        \node[state, accepting]         (q_1) [above=of q_tmp]       {};
+        \node[state, accepting]         (q_2) [below=of q_tmp]       {};
+        \path[->] (q_0) edge   node    [right] {$a/(1)$} (q_1)
+        (q_0) edge   node    [right] {$b/(1)$} (q_2)
+        (q_1) edge[bend right]   node    [left] {$\epsilon/(1)$} (q_0)
+        (q_2) edge[bend left]   node    [left] {$\epsilon/(1)$} (q_0);
+      \end{tikzpicture}
+      \caption{The CEFA recognizing $(a|b)\{1,100\}$}
+      \label{subfig:simp_origin_cefa}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=1cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=$1\leq r \leq 100$, accepting/.style=accepting by arrow,
+        ]
+
+        \node[state,initial]            (q_0)                      {};
+        \node         (q_tmp) [right=of q_0]       {};
+        \node[state, accepting]         (q_1) [above=of q_tmp]       {};
+        \node[state, accepting]         (q_2) [below=of q_tmp]       {};
+        \path[->] (q_0) edge   node    [right] {$\myemph{a/(1)}$} (q_1)
+        (q_0) edge   node    [right] {$\myemph{a/(1)}$} (q_2)
+        (q_1) edge[bend right]   node    [left] {$\myemph{a/(1)}$} (q_0)
+        (q_2) edge[bend left]   node    [left] {$\myemph{a/(1)}$} (q_0);
+      \end{tikzpicture}
+      \caption{The symbolic CEFA}
+      \label{subfig:simp_symbolic_cefa}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=1cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=$1\leq r \leq 100$, accepting/.style=accepting by arrow,
+        ]
+
+        \node[state,initial]            (q_0)                      {};
+        \node[state, accepting]         (q_1) [right=of q_0]       {};
+        \path[->] (q_0) edge   node    [above] {$\myemph{a/(1)}$} (q_1)
+        (q_1) edge[loop below] node {$\myemph{a/(1)}$} (q_1);
+      \end{tikzpicture}
+      \caption{Simplify the CEFA based on symbolic label}
+      \label{subfig:simp_final}
+    \end{subfigure}
+    \caption{Symbolic simplification can remove duplicated transitions and states.}
+    \label{fig:simplification_example}
+  \end{figure}
+
+\end{example}
+\begin{example}
+  Considering the string constraints $i=|x|\wedge j=|x|$. We compute the pre-images of $i=|x|$, $j=|x|$ and intersect these pre-images to get the final CEFA represented in Fig.\ref{subfig:duplicate}. However, the register $r_1$ and $r_2$ in the final CEFA are duplicated since their update functions are the same. We can simplify the CEFA by removing the duplicated register $r_2$ and corresponding update functions, as shown in Fig.\ref{subfig:remove_duplicate}. To maintain the value of $r_2$, we add a constraint $r_2=r_1$ to restrict the value of $r_2$ to be the same as $r_1$.
+  \begin{figure}[h]
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=1cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=${i=r_1\wedge j=r_2 }$, accepting/.style=accepting by arrow,
+        ]
+        \node at (-0.5,0.5) {$R=(r_1, \myemph{r_2})$};
+        \node[state,initial,accepting]            (q_0)       {};
+
+        \path[->] (q_0) edge [loop below] node{$\Sigma$/(1,\myemph{1})} ();
+      \end{tikzpicture}
+      \caption{An automaton with duplicated registers}
+      \label{subfig:duplicate}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=1cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=${i=r_1\wedge j=r_2\wedge \myemph{r_1 = r_2} }$, accepting/.style=accepting by arrow,
+        ]
+
+        \node at (-0.5,0.5) {$R=(r_1)$};
+        \node[state,initial,accepting]            (q_0)       {};
+
+        \path[->] (q_0) edge [loop below] node{$\Sigma$/(1)} ();
+      \end{tikzpicture}
+      \caption{Remove the duplicated registers and corresponding update functions}
+      \label{subfig:remove_duplicate}
+    \end{subfigure}
+    \caption{Symbolic simplification can remove duplicated transitions and states.}
+    \label{fig:duplicate}
+  \end{figure}
+
+\end{example}
+
+\subsubsection{Under-Approximation} \label{subsec:under-approx}
+An under-approximation procedure solves the satisfiable instances of the emptiness checking problem. Inspired by Bounded Model Checking \cite{bmc_1}\cite{bmc_2}\cite{bmc_3}, we explore the states of CEFA in typological order. We use string length as the bound and probe the CEFA from low to high bound. This section discusses the situation in which the string length bound is fixed. The main idea is to enumerate all possible runs ending in accepting states with lengths less than the fixed bound. Although the number of possible runs is an exponential growth of the bound, we usually solve practical satisfiable instances within 1s. As shown in the Algorithm \ref{alg:underApprox}, for each CEFA, we enumerate all runs whose length is less than the bound and compute the value of registers by the sum of vectors on the run at line 4. If the run is ended with an accepting state, then we compute the updates of registers by the sum of vectors on the run at line 6. Together with the accepting condition of the accepting state, we add the updates of registers to the under-approximation formula at line 7.
+\begin{algorithm}[h]
+  \caption{$\algfun{underApprox}(auts, bound)$}
+  \label{alg:underApprox}
+  \begin{algorithmic}[1]
+    \Require The CEFAs $auts$ and string length $bound$
+    \Ensure The linear integer arithmetic $\varphi_{under}$ representing under-approximation of the register values of $auts$
+    \Statex
+    \State $\varphi_{under} \gets false$
+    \For{$\aut \in auts$}
+    \State Suppose $\aut = (Q, \Sigma, \delta, q_I, F, (r_1, \cdots, r_m), \theta)$
+    \ForAll{run $q_0q_1\cdots q_{n}$ whose length is less than $bound$}
+    \If{$q_{n}\in F$}
+    \State Let $\myvec{V}\leftarrow$ the sum of the vectors on the run
+    \State $\varphi_{under} \gets \varphi_{under} \vee(\theta(q_n)\bigwedge\limits_{i\in[1,m]} r_i = \myvec{V}[i])$
+    \EndIf
+    \EndFor
+    \EndFor
+    \State \textbf{return} $\varphi_{under}$
+  \end{algorithmic}
+\end{algorithm}
+\begin{example}
+  Consider the automaton in Fig. \ref{subfig:aut_x} again. The solution of the Parikh image of it leads to a complete but inefficient result since the quantifier-free linear integer arithmetic formulas are solved in exponential time \cite{parikh_compute}. Under-approximation can accelerate the solving process. When we set the bound to 2, the under-approximation program will enumerate all runs whose length is 2. One of them is $q_I\xrightarrow[(1,1)]{a} q_1\xrightarrow[(0,1)]{b} q_f$. The corresponding registers' values are $r_1 = 1+0 = 1, r_2 = 1+1 = 2$. Checking for $r_1= 1\wedge r_2=2\wedge r_2=i\wedge 1\leq r_1\leq100$ is a lightweight process because the values of $r_1$ and $r_2$ are fixed.
+\end{example}
+
+\end{document}

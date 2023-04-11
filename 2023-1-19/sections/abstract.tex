@@ -1,0 +1,16 @@
+\documentclass{standalone}
+\begin{document}
+Regular expression with repetition frequently appears in the real world, such as $(ab)\{1, 100\}$. However, state-of-art string
+solvers can not efficiently solve string constraints with repetition bounds,
+especially when the repetition bounds are large. This paper focuses on
+string logic containing regular membership predicate with repetition
+and linear integer constraints on string length. Repetition is captured
+by cost-enriched finite automaton(CEFA), whose transitions have symbolic updates of integers limited by linear arithmetic. We propose a new systematic algorithm based on CEFA, and heuristic ways
+like under-approximation and symbolic-aware simplification are used to
+accelerate. We implement a powerful string solver OstrichCEA and
+evaluate it on instances from the real world and other typical benchmarks.
+The experiment result shows superiority.
+
+
+\keywords{String Constraints, Automaton Theory, Regex Expression, Bounded Repetition, Linear Length Constraints}
+\end{document}

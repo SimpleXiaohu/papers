@@ -1,0 +1,174 @@
+\documentclass{standalone}
+\begin{document}
+
+In this section, we recall the definition of CEFA and Parikh image.
+
+\subsection{Cost-Enriched Finite Automaton} \label{subsec:cefa}
+The definition of CEFA in this paper is lightly different from the definition in \cite{atva2020}. In \cite{atva2020}, the cost function is defined as a function $\eta: \Sigma \rightarrow \mathbb{N}$. In this paper, we define the cost function as an integer vector whose elements are the incremental value of registers. Furthermore, we add a new linear integer arithmetic constraint $\theta$ to each final state of the CEFA, which restricts the value of registers. Two types of definitions have the same expressive ability on the $SAT_{CL}$ problem.
+\begin{definition}[Cost-Enriched Finite Automaton]
+  A cost-enriched finite automaton $\aut$ is a 7-tuple $(Q, \Sigma, \delta, q_I, F, R, \theta)$ where
+  \begin{itemize}
+    \item $Q,\Sigma,q_I,F$ is defined as NFA,
+    \item $R = (r_1\cdots r_n)$ is a vector of mutually distinct cost registers,
+    \item $\delta$ is a transition set whose elements are tuples $(q, c, q', \myvec{v})$ where $q, q'$ are states of $Q$, $c$ is a letter in alphabet $\Sigma\cup\{\epsilon\}$ and $\myvec{v}$ is the cost update function for registers, which is an integer vector whose $i$-th element is the incremental value of register $r_i$.  $(q, a, q', \myvec{v})$ is written as $q\xrightarrow[\myvec{v}]{a} q'$ for readability.
+    \item $\theta: F\rightarrow \varphi$ is a linear integer arithmetic constraint function on final states. $\theta$ is called \emph{accepting condition}.
+  \end{itemize}
+  The value of each register $r_i$ in $R$ is written as $\mathcal{V}(r_i)$ and is initiated to 0 at the initial state. A \emph{run} of $\aut$ on string $a_1\cdots a_m$ is a transition sequence $q_I\xrightarrow[\myvec{v_1}]{a_1}q_1\cdots q_{m-1}\xrightarrow[\myvec{v_m}]{a_m}q_m$  and $\mathcal{V}(r_i) = \displaystyle\sum_{j=1}^m \myvec{v_j}[i], i\in [1,n]$ is the value of $r_i$ after the run. $\theta[R/\mathcal{V}(R)](q_m)$ is obtained from $\theta(q_m)$ by replacing each register $r_i$ to its value $\mathcal{V}(r_i)$. The run is \emph{accepting} if $q_m\in F$ and $\theta[R/\mathcal{V}(R)](q_m)$ is satisfiable. $\top$ is the valid formula that is always satisfiable. A string $w$ is accepted by $\aut$ if it has an accepting run of $\aut$. The language of $\aut$ is the set of strings accepted by $\aut$, denoted by $\lan(\aut)$.
+
+\end{definition}
+\begin{example} \label{eg:1}
+  Fig.\ref{fig:repetition} illustrates the CEFA recognizing $(ab)\{1,100\}$. The register vector is $(r_1)$, and the linear arithmetic constraint on $q_2$ is $1\leq r_1\leq 100$. Intuitively, the transition $q_0 \xrightarrow[(1)]{a} q_1$ accept the char $a$ and increase 1 on the value of $r_1$. The transition $q_1 \xrightarrow[(0)]{b} q_2$ accepts the char $b$ and does not change the value. The transition $q_2 \xrightarrow[(0)]{\epsilon} q_2$ is a nondeterministic choice back to initial state $q_0$. Because of the linear arithmetic constraint $1\leq r_1\leq 100$, the value of $r_1$ in the accepting run must be $[1,100]$. $\mathcal{V}(r_1)$ equal to the occurrence number of the transition $q_0 \xrightarrow[(1)]{a} q_1$, so that the accepted string is $ab\cdots ab$ in which $a$ appears at least once and at most 100 times. That is, the language of the automaton is $(ab)\{1,100\}$.
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+      shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+      initial text=, every state/.style={minimum size = 0.001cm,
+          accepting text=$1\leq r_1\leq 100$, accepting/.style=accepting by arrow}
+      ]
+      \node[state,initial]            (q_0)                      {$q_0$};
+      \node[state]                    (q_1) [right=of q_0]       {$q_1$};
+      \node[state,accepting]          (q_2) [right=of q_1]       {$q_2$};
+
+      \path[->] (q_0) edge              node      [above]           {$a$/(1)} (q_1)
+      (q_1) edge              node      [above]           {$b$/(0)} (q_2)
+      (q_2) edge [bend left]  node      [below]           {$\epsilon$/(0)} (q_0);
+    \end{tikzpicture}
+    \caption{An automaton recognizing the language of $(ab)\{1,100\}$}
+    \label{fig:repetition}
+  \end{figure}
+\end{example}
+\begin{example}[The pre-image of length operation]\label{eg:pre_len} The length operation can be captured by a CEFA base on our previous work \cite{atva2020}. Fig.\ref{fig:len} shows a pre-image of linear literal $i=|x|$. It is easy to see that the pre-image accepts string words with length $i$.
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+      shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+      initial text=, every state/.style={minimum size = 0.001cm},
+      accepting text=${r_1=1}$, accepting/.style=accepting by arrow
+      ]
+
+      \node[state,initial,accepting]            (q_0)       {$q$};
+
+      \path[->] (q_0) edge [loop below] node{$\Sigma$/(1)} ();
+    \end{tikzpicture}
+    \caption{The pre-image of $i = |x|$}
+    \label{fig:len}
+  \end{figure}
+\end{example}
+
+% Parikh's theorem \cite{parikh_theorem}\cite{parikh_anthony}\cite{parikh_compute} states that the Parikh image of a context-free language is semilinear so that it can be written as Presburger formula. Following the version for context-free grammar \cite{parikh_compute} and the version for regular expression \cite{parikh_for_nfa}, we define the Parikh image of language of an CEFA $\aut = (Q, \Sigma, \delta, q_I, F, R, \theta)$  as follows:
+% \begin{table}[h]
+%   \begin{tabular}{l l r}
+%     $\psi(\aut)\equiv$& $\bigwedge\limits_{q\in Q}(\text{$f_q$ if $q\in F$ otherwise 0}) + \sum\limits_{(q,a,q',\myvec{v})\in\delta} t_{q,a,q',\myvec{v}} = $ & \\
+%     & \quad \ \ (1 if $q = q_I$ otherwise 0) + $\sum\limits_{(q',a,q,\myvec{v})\in\delta} t_{q',a,q, \myvec{v}} $ & \\ 
+%     & $\bigwedge\limits_{(q,a,q',\myvec{v})\in\delta} t_{q,a,q',\myvec{v}}\geq 0$ & (consistent formula)\\
+%     & & \\
+%     & $\bigwedge\limits_{(q,a,q',\myvec{v})\in\delta} t_{q,a,q',\myvec{v}}>0\rightarrow z_{q'} > 0$ & \\
+%     & $\bigwedge\limits_{q\in F} z_q > 0\rightarrow f_q = 1$ & \\ 
+%     & $\bigwedge\limits_{q\in Q} z_q > 0\rightarrow \bigvee\limits_{(q,a,q',\myvec{v})\in\delta} z_q = z_{q'} + 1\wedge t_{q,a,q',\myvec{v}}\geq 0 \wedge z_{q'} > 0$& (connected formula)\\
+%     & & \\
+%     &$\bigwedge\limits_{r_i\in R} r_i = \sum\limits_{(q,a,q',\myvec{v})\in \delta} t_{q,a,q',\myvec{v}}*\myvec{v}[i]$ & (register value formula)\\
+%     & & \\
+%     &$\bigwedge\limits_{q\in F} f_q > 0 \rightarrow \theta(q)$ & (accepting condition) 
+%   \end{tabular}
+% \end{table}
+% $z_q$ is the distance of state $q$ from $q_f\in F$ in a spanning tree. $t_{q,a,q',\myvec{v}}$ represents the using times of transition $(q,a,q',\myvec{v})$ in the accepting run. $f_q$ stands for whether an accepting state $q\in F$ is the final state of a run. The Parikh image of $\aut$ is a Presburger formula $\psi(\aut)$, which is consistent and connected. The register value formula ensures the register values are correctly updated regarding the accepting run. 
+% \begin{example} \label{exapmle:parikh}
+%   Suppose that we have a CEFA $\aut$ shown in Fig. \ref{subfig:aut_x}. Using $t_1, t_2, t_3$ to record the times of transitions in the accepting run of $\aut$, the Parikh image $\psi(\aut)$ is the quantifier-free Presburger formula $\psi_{cons}\wedge \psi_{conn} \wedge \psi_{val} \wedge \psi_{aut}$ where:
+%   \begin{itemize}
+%     \item $\psi_{cons} \equiv 1 = t_1 \wedge t_1 + t_3 = t_2 \wedge t_2 = t_3 + 1 \bigwedge\limits_{i\in[1,3]} t_i\geq 0$ is the consistent formula.
+%     \item $\psi_{conn} \equiv \top $ is the connectivity formula because all transitions in $\aut$ are connected.
+%     \item $\psi_{val} \equiv r_1=t_1 + t_3\wedge r_2 = t_1+t_2+t_3$ is the formula deciding the value of $r_1$ and $r_2$ after a run.
+%     \item $\psi_{aut} \equiv r_2 = i\wedge 1 \leq r_1 \leq 100$ is the accepting condition of $\aut$.
+%   \end{itemize}
+%   $\psi(\aut)$ can be simplified to $t_3\geq 0 \wedge t_1=1\wedge r_1 = t_3 + 1\wedge r_2 = 2*t_3+2\wedge r_2=i\wedge 1\leq r_1\leq 100$. A possible solution is $t_1 =1, t_3 = 0, r_1=1, r_2=2$ and the corresponding accepted string $ab$. It is obvious that $r_1$ is the repeat times of $ab$ and $r_2$ is the length of $ab$.
+% \end{example}
+\subsection{Encode Bounded Repetition to CEFA} \label{subsec:regex2cefa}
+In this section, we define the construction of CEFA from the regular expression with bounded repetition. We must syntactically rewrite bounded repetition $\regex\{m,n\}$ if it is the sub-regex of complement (e.g., $(\regex\{m,n\})^C$), closure(e.g., $(\regex\{m,n\})^*$), and bounded repetition(e.g., $(\regex\{m,n\})\{m', n'\}$), we unwind it to $\regex^m\mid\cdots\mid\regex^n$. After this syntactic rewriting, we call the resulting regex $\regex'$ \emph{non-nested}.
+The non-nested regex $\regex'$ possibly contains operations such as intersection, union, concatenation, complement, closure, and bounded repetition. To construct the CEFA of $\regex'$, we first create CEFA for each sub-regex and then combine them. Similar to the construction of NFA from regex\cite{aut_hopcraft}, our construction is inductive on the size of $\regex'$. The base case is for a single character, an empty string, and an empty language. The inductive step is for the concatenation, union, and intersection of two automata and one automaton's repetition, closure, and complement. We only discuss the inductive step for bounded repetition because the other operations are trivial. \newline
+For a non-nested regular expression $R\{m,n\}$, suppose we have an CEFA $\aut = (Q,\Sigma,\delta,q_I,F,\emptyset,\top)$ recognizing $R$, the CEFA recognizing $R\{m,n\}$ is defined as $\aut_{m,n} = (Q, \Sigma, \delta',q_ I, F, r, \theta')$ where:
+\begin{itemize}
+  \item $r$ is a new register,
+  \item $\delta'$ is composed by transitions $q\xrightarrow[(0)]{a} q'$ for all transitions $q\xrightarrow[()]{a} q' \in \delta$, and transitions $q_f\xrightarrow[(1)]{\epsilon} q_I$  for each $q_f\in F$,
+  \item For each accepting states $q\in F$, $\theta'(q)$ is the linear arithmetic $m\leq r\leq n$ if $q_I\not\in F$. Otherwise, $\theta'(q)$ is the linear arithmetic $r\leq n$.
+\end{itemize}
+In the construction illustrated in Fig.\ref{fig:construct_repetition}, a new register $r$ is added to store the repetition times. The transition $q\xrightarrow[(1)]{\epsilon} q_I$ is set to update the repetition times for each $q\in F$. The accepting condition $\theta'$ is used to restrict the repetition times of the accepting word. Because arbitrary repetition times of an empty string are still empty, the value of $r$ only needs to be less or equal to $n$ when the initial state is accepted.
+\begin{figure}[h]
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \begin{tikzpicture}[
+      shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+      initial text=, every state/.style={minimum size = 0.001cm},
+      accepting text=$\varphi$, accepting/.style=accepting by arrow,
+      ]
+
+      \node[state,initial]            (q_0)                      {};
+      \node[state, accepting]         (q_1) [right=of q_0]       {};
+      \node [fit=(q_0) (q_1)] {$\cdots$};
+    \end{tikzpicture}
+    \caption{The CEFA recognizing $\regex$}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.49\textwidth}
+    \centering
+    \begin{tikzpicture}[
+      shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+      initial text=, every state/.style={minimum size = 0.001cm},
+      accepting text=$\varphi\wedge$\myemph{$(m\leq) r\leq n$}, accepting/.style=accepting by arrow,
+      ]
+
+      \node[state,initial]            (q_0)                      {};
+      \node[state, accepting]         (q_1) [right=of q_0]       {};
+      \path[->] (q_1) edge[bend right]   node    [above] {\myemph{$\mathbf{\epsilon/(1)}$}} (q_0);
+      \node [fit=(q_0) (q_1)] {$\cdots$};
+    \end{tikzpicture}
+    \caption{The CEFA recognizing $\regex\{m,n\}$}
+  \end{subfigure}
+  \caption{The construction of bounded repetition}
+  \label{fig:construct_repetition}
+\end{figure}
+\begin{example}
+  To construct the CEFA recognizing $(ab)\{1,100\}$, we first construct the CEFA recognizing $ab$ as shown in Fig.\ref{subfig:rep_aut_ab}. Then we add a new register $r_1$ and a transition $q_2\xrightarrow[(1)]{\epsilon} q_0$ to update the repetition times. The accepting condition $\theta'$ map accepting state to $1\leq r_1\leq 100$ because the initial state is unacceptable. The CEFA recognizing $(ab)\{1,100\}$ is shown in Fig.\ref{subfig:rep_aut_ab1_100}.
+  \begin{figure}[h]
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=$\top$, accepting/.style=accepting by arrow,
+        accepting where=above
+        ]
+
+        \node[state,initial]            (q_0)                      {};
+        \node[state]                    (q_1) [right=of q_0]       {};
+        \node[state, accepting]         (q_2) [right=of q_1]       {};
+
+        \path[->] (q_0) edge              node      [above]           {$a$/()} (q_1)
+        (q_1) edge              node      [above]           {$b$/()} (q_2);
+      \end{tikzpicture}
+      \caption{The CEFA recognizing $ab$}
+      \label{subfig:rep_aut_ab}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=\myemph{1}$\leq r_1\leq$\myemph{100}, accepting/.style=accepting by arrow,
+        accepting where=above
+        ]
+
+        \node[state,initial]            (q_0)                      {};
+        \node[state]                    (q_1) [right=of q_0]       {};
+        \node[state,accepting]          (q_2) [right=of q_1]       {};
+
+        \path[->] (q_0) edge              node      [above]           {$a$/(\myemph{0})} (q_1)
+        (q_1) edge              node      [above]           {$b$/(\myemph{0})} (q_2)
+        (q_2) edge [bend left]  node      [below]           {$\epsilon$/(\myemph{1})} (q_0);
+      \end{tikzpicture}
+      \caption{The CEFA recognizing $(ab)\{\myemph{1},\myemph{100}\}$}
+      \label{subfig:rep_aut_ab1_100}
+    \end{subfigure}
+    \caption{The example of bounded repetition}
+  \end{figure}
+\end{example}
+
+\end{document}

@@ -1,0 +1,36 @@
+\documentclass[11pt]{standalone}
+\begin{document}
+
+String constraint solving is a subfield of computer science that deals with analyzing and manipulating strings, which are sequences of characters. String constraints solving aim to automatically infer properties of string variables, such as their length, content, and structure, to reason about the behavior of software systems that manipulate strings. It is crucial in security-critical applications, where strings represent sensitive data such as passwords, user input, and network addresses. String constraints solving combines techniques from formal methods, automata theory, and constraint solving and has many applications in areas such as software testing\cite{software_testing_1}\cite{software_testing_2}, program analysis\cite{prog_analysis_1}\cite{prog_analysis_2}\cite{prog_analysis_3}, and malware detection\cite{malware_detection_1}\cite{malware_detection_2}\cite{malware_detection_3_kudzu}. In this context, efficient algorithms and tools for solving string constraints are crucial to improve the security and reliability of modern software systems.\newline
+Regular expressions are widely used in programming languages. About 30–40 \%
+Java, JavaScript, and Python software use regex matching\cite{redos_fse2019}. Bounded repetition is widely used in regex matching\cite{regex_repeat} and is dangerous because Regular expression Denial of Service (ReDoS) may derive from it\cite{redos_lenka}. We have analyzed regular expressions sourced from the Internet\cite{regexlib}\cite{stackoverflow}, among which about 10\% include bounded repetition. Operations like \verb|length| that take string inputs and return an integer frequently appear in real-world JavaScript applications (78\% of string operations in 18 applications\cite{malware_detection_3_kudzu}). These statistics show that a resultful string solver reasoning about regular membership predicate with bounded repetition and \verb|length| operation is required. However, when the string constraints contain bounded repetition and lower bound on string variables, the state-of-art string solvers (\cite{z3seq}\cite{z3str3}\cite{z3str4}\cite{z3str3re}\cite{cvc5}\cite{ostrich}\cite{z3trau}\cite{trau}) lose efficiency. For example, CVC5\cite{cvc5} (which is the winner of QF\_Strings track in SMT-COMP 2022\cite{smt-comp}) failed to solve string constraints (\ref{eq:cvc5_timeout}) with timeout 60s.
+\begin{equation} \label{eq:cvc5_timeout}
+  x\in \Sigma_{/a}\{1,300\}\wedge x\in \Sigma^*a\Sigma^*
+\end{equation}
+$\Sigma_{/a}\{1,300\}$ repeats a letter excluding $a$ from one time to 300 times. $\Sigma^*a\Sigma^*$ accepts a string containing $a$. It is easy to see that the string constraints are unsat. Nevertheless, CVC5 is hard to find a solution for it can not answer unsat until attempting all strings with lengths less than or equal to 300. The number of the searched string is exponential. Z3str3RE\cite{z3str3re} can not solve string constraints (\ref{eq:z3str3re_timeout}) because its length abstraction is over-approximation.
+\begin{equation}\label{eq:z3str3re_timeout}
+  x\in \Sigma_{/a}\{13,13\}\wedge |x| > 13
+\end{equation}
+On account of the large automaton corresponding to the regular expression, Ostrich(+)\cite{ostrich}\cite{atva2020} crashes on string constraints (\ref{eq:ostrich_timeout}) where $\Sigma_{[0-9A-Za-z]}$ is a digital letter or an English letter.
+\begin{equation}\label{eq:ostrich_timeout}
+  x\in \Sigma_{[0-9A-Za-z]}\{0, 63\}\wedge |x| > 0
+\end{equation}
+To address these issues, we formalize bounded repetition using cost-enriched finite automaton (CEFA)\cite{atva2020} with linear arithmetical constraints. It limits the max(min) run times of some transitions on the accepting run of the automaton, which completely captures the semantics of bounded repetition. The satisfiability problem of string constraints with bounded repetition is reduced to the emptiness problem of cost-enriched finite automata under linear arithmetical constraints (abbreviated as $SAT_{CL}$ problem), which is decidable and can be solved by our previous work \cite{atva2020}. However, the previous work could perform better practically, especially when regular expressions are complex. In this paper, we propose two heuristical methods to improve performance. The first one is under-approximation, which is inspired by Bounded Model Checking \cite{bmc_1}\cite{bmc_2}\cite{bmc_3}. The second one is the symbolic-aware simplification, which is motivated by the observation that the emptiness problem is only related to the symbolic update functions. We implement a powerful string solver OstrichCEA and evaluate it on instances from the real world and other typical benchmarks. The experiment result shows superiority.
+
+\subsubsection{Related Work}
+To handle the problems in software verification reasoning about strings and integers, string theories with regular membership predicate and linear length constraints are raised. String solvers such as Z3Str3\cite{z3str3}, Z3Seq\cite{z3seq}, Z3Str3RE\cite{z3str3re}, CVC4\cite{cvc4}, CVC5\cite{cvc5}, (Z3-)Trau\cite{trau}\cite{z3trau}, Ostrich(+)\cite{ostrich}\cite{atva2020}, Sloth\cite{sloth}, S3\cite{s3}, and ABC\cite{abc} are developed on these theories. Although string theory is easily
+undecidable\cite{undecidable_1}\cite{undecidable_2}, the satisfiability problems for string constraints of regular expressions, linear integer arithmetic, and the string length is decidable\cite{theory_z3str3re}. There are mainly two strategies for solving string constraints: (1) DPLL(T)-based\cite{dpll_t} string solvers\cite{z3str3}\cite{cvc5} apply heuristic derivation rules to unwind the regular expression gradually and identify several classes of simplification techniques for efficiency. (2) Automata-based string solvers\cite{trau}\cite{z3trau}\cite{ostrich}\cite{atva2020}\cite{z3str3re} construct a finite automaton to model the regular expression and use the emptiness problem of the automaton (under linear integer arithmetic) to decide the satisfiability of string constraints. 
+
+
+\subsubsection{Our Contributions}
+Our main contributions are as follows:
+\begin{enumerate}
+  \item  Encode regular expression with bounded repetition into CEFA with linear arithmetical constraints.
+  \item  Devise heuristic methods like under-approximation and symbolic-aware simplification to solve the $SAT_{CL}$ problem.
+  \item  Generate significant instances with bounded repetition from real-world regular expressions.
+  \item  Implement our decision procedure on solver OstrichCEA and compare it with state-of-art string solvers. The result shows the superiority of our encoding and heuristics.
+\end{enumerate}
+
+The rest of the paper is structured as follows: Section \ref{sec:pre} introduces the preliminaries. Section \ref{sec:overview} outlines the overall algorithm. Section \ref{sec:regex2acfa} illustrates how to construct an automaton from a regular expression. Section \ref{sec:algorithm} shows how to solve a string constraint with repetition. Section \ref{sec:implementation} presents the experimental results. Section \ref{sec:conclu} concludes the paper and discusses future work.
+
+\end{document}

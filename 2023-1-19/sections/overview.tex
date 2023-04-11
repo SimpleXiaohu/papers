@@ -1,0 +1,125 @@
+
+The main idea is to use CEFAs (see Subsection \ref{subsec:cefa}) to simulate the semantics of length operations and regular memberships with bounded repetitions. As mentioned, the ESL formula contains regular literals and linear literals. The regular literal $x\in \regex$ directly results in one CEFA recognizing it (see Subsection \ref{subsec:regex2cefa}). The linear literals $\alpha_1 \leq \alpha_2$ with no length operation remain unchanged. For each linear literal $\alpha_1 \leq \alpha_2$ with length operation $|x|$, we generate a fresh variable $i$ to replace all occurrences of $|x|$ and propagate new formula $i=|x|$. Then we generate the pre-image $\aut_{i}$ whose accepting words are strings with length $i$ (see Example \ref{eg:pre_len}). After the process above, the satisfiability problem of string constraints becomes a $SAT_{CL}$ problem, which has a decision procedure to check (see Subsection \ref{subsec:emptiness}). Example \ref{example:overview} illustrate it. \newline
+
+\begin{example} \label{example:overview}
+  \begin{align*}
+    \varphi\equiv x\in (ab)\{1,100\}\wedge y\in ab\wedge |x| > |y|
+  \end{align*}
+  ESL conjunction $\varphi$ is made up of regular literals $x\in (ab)\{1,100\}$ and $y\in ab$, linear literals $|x| > |y|$. The linear literal is translated to $i = |x|\wedge j = |y| \wedge i > j$. Our algorithm solves the formula in four steps. First, we construct CEFAs for regular memberships $x\in (ab)\{1,100\}$ and $y\in ab$ (Fig.\ref{subfig:aut_ab1-100} and Fig.\ref{subfig:aut_ab}). Second, we compute the pre-images of length operations $i=|x|$ and $j=|y|$ (Fig.\ref{subfig:preimage_x} and Fig.\ref{subfig:preimage_y}). Then we intersect pre-images to automata corresponding to the regular memberships for each string variable (Fig.\ref{subfig:aut_x} and Fig.\ref{subfig:aut_y}). We translate the satisfiability problem of $\varphi$ to the emptiness checking problem of automata (Fig.\ref{subfig:preimage_x} and Fig.\ref{subfig:preimage_y}) under linear arithmetic constants $i > y$, which could be solved by the decision procedure illustrated in section \ref{sec:algorithm}.
+
+  \begin{figure}[h]
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=$1\leq r_1\leq 100$, accepting/.style=accepting by arrow,
+        accepting where=above
+        ]
+
+        \node[state,initial]            (q_0)                      {};
+        \node[state]                    (q_1) [right=of q_0]       {};
+        \node[state,accepting]          (q_2) [right=of q_1]       {};
+
+        \path[->] (q_0) edge              node      [above]           {$a$/(1)} (q_1)
+        (q_1) edge              node      [above]           {$b$/(0)} (q_2)
+        (q_2) edge [bend left]  node      [below]           {$a$/(1)} (q_1);
+      \end{tikzpicture}
+      \caption{The CEFA recognizing $(ab)\{1,100\}$}
+      \label{subfig:aut_ab1-100}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=$\top$, accepting/.style=accepting by arrow,
+        accepting where=above
+        ]
+
+        \node[state,initial]            (q_0)                      {};
+        \node[state]                    (q_1) [right=of q_0]       {};
+        \node[state, accepting]         (q_2) [right=of q_1]       {};
+
+        \path[->] (q_0) edge              node      [above]           {$a$/()} (q_1)
+        (q_1) edge              node      [above]           {$b$/()} (q_2);
+      \end{tikzpicture}
+      \caption{The CEFA recognizing $ab$}
+      \label{subfig:aut_ab}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=${r_2 = i}$, accepting/.style=accepting by arrow,
+        ]
+
+        \node[state,initial,accepting]            (q_0)       {};
+
+        \path[->] (q_0) edge [loop below] node{$\Sigma$/(1)} ();
+      \end{tikzpicture}
+      \caption{The pre-image of $i = |x|$}
+      \label{subfig:preimage_x}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=${r_3 = j}$, accepting/.style=accepting by arrow,
+        ]
+
+        \node[state,initial,accepting]            (q_0)       {};
+
+        \path[->] (q_0) edge [loop below] node{$\Sigma$/(1)} (1);
+      \end{tikzpicture}
+      \caption{The pre-image of $j = |y|$}
+      \label{subfig:preimage_y}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=${r_2 = i\wedge 1\leq r_1 \leq 100}$, accepting/.style=accepting by arrow,
+        accepting where=above
+        ]
+
+        \node[state,initial]            (q_0)                      {};
+        \node[state]                    (q_1) [right=of q_0]       {};
+        \node[state,accepting]          (q_2) [right=of q_1]       {};
+
+        \path[->] (q_0) edge node [above]  {$a$/(1,1)} (q_1)
+        (q_1) edge           node [above]  {$b$/(0,1)} (q_2)
+        (q_2) edge [bend left]  node      [below]           {$a$/(1,1)} (q_1);
+      \end{tikzpicture}
+      \caption{The final automaton of $x$}
+      \label{subfig:aut_x}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.001cm},
+        accepting text=${r_3=j}$, accepting/.style=accepting by arrow,
+        accepting where=above
+        ]
+
+        \node[state,initial]            (q_0)                      {};
+        \node[state]                    (q_1) [right=of q_0]       {};
+        \node[state, accepting]         (q_2) [right=of q_1]       {};
+
+        \path[->] (q_0) edge    node      [above]           {$a$/(1)} (q_1)
+        (q_1) edge              node      [above]           {$b$/(1)} (q_2);
+      \end{tikzpicture}
+      \caption{The final automaton of $y$}
+      \label{subfig:aut_y}
+    \end{subfigure}
+    \caption{All automata used in the example \ref{example:overview}}
+  \end{figure}
+
+
+\end{example}
+
+% \pagebreak

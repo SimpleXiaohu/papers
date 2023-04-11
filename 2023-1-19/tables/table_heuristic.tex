@@ -1,0 +1,34 @@
+\documentclass[11pt]{standalone}
+\usepackage{color}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.16}
+\begin{document}
+\resizebox{.95\textwidth}{!}{\begin{tabular}{|c |c |c |c |c |}
+  \hline
+  &OstrichCEA&Under Approximation off&Simplification off&All off\\ 
+    \hline\hline 
+  sat &\textbf{23271}&22649&22609&21799\\ 
+   \hline
+  unsat &\textbf{25824}&25835&25730&25745\\ 
+   \hline
+  \hline 
+   unknown &3&\textbf{2}&3&3\\ 
+   \hline
+  timeout &\textbf{281}&893&1037&1832\\ 
+   \hline
+  soundness error &\textbf{0}&\textbf{0}&\textbf{0}&\textbf{0}\\ 
+   \hline
+  program crashes &\textbf{0}&\textbf{0}&\textbf{0}&\textbf{0}\\ 
+   \hline
+  \hline 
+   Total correct &\textbf{49095}&48484&48338&47542\\ 
+   \hline
+  Time (ms) &\textbf{160594317}&184660630&252806731&285102326\\ 
+   \hline
+  Time w/o timeouts (ms) &143734317&\textbf{131080630}&190586731&175182326\\ 
+   \hline
+  \end{tabular}}
+
+\end{document}
