@@ -1,5 +1,6 @@
-\documentclass{standalone}
-\begin{document}
+%!TEX root = ../main.tex
+%\documentclass{standalone}
+%\begin{document}
 This section presents the empirical evaluation of OstrichCEA, which is our implementation of the decision procedure introduced in Section \ref{sec:algorithm}. Our objective is to validate the effectiveness of the proposed techniques by evaluating our tool's correctness and efficiency compared to other solvers. Furthermore, we assess the efficacy of our heuristics by testing different configurations of the tool. We have implemented our encoding for bounded repetition with two heuristic algorithms on Ostrich+ \cite{atva2020}. The pre-image computation for concatenation, \verb|indexOf|, \verb|substring|, \verb|replaceAll|, \verb|reverse| and finite transducer remain unchanged. OstrichCEA is written in Scala and based on the SMT solver Princess\cite{princess}.
 \subsection{Benchmarks}
 We conducted a comparison on four sets of benchmarks based on regex with bounded repetition, consisting of a total of 49,379 instances. We analyze all 19 developed benchmarks listed in \cite{zaligvinder_2021} and find that only \textbf{AutomatArk} benchmarks have regular membership with bounded repetition. In total, almost 18\% of the instances we evaluated were sourced from published industrial benchmarks or other solver developers. All the other instances contain regular expressions from the real world. Each set of the benchmark is evenly divided into "large" and "small": the "large" set contains instances with large repetition upper bounds (the sum of upper bounds is greater than 50), and "small" contains the other instances. Less than 10\% of the benchmarks are in a "large" set. More details about the benchmarks are shown below.
@@ -90,4 +91,4 @@ In order to demonstrate the efficacy of the individual heuristics outlined in Se
   \label{tab:results_heuristics}
 \end{table}
 
-\end{document}
+%\end{document}

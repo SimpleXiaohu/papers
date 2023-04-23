@@ -1,5 +1,6 @@
-\documentclass{standalone}
-\begin{document}
+%!TEX root = ../main.tex
+%\documentclass{standalone}
+%\begin{document}
 
 Based on the decision procedure defined in the paper \cite{atva2020}, we propose an efficient algorithm to solve ESL formula $\varphi\wedge \psi$ where $\varphi$ is the conjunction of literals and $\psi$ is the conjunction of linear literals without length operation. For each string variable $x$, we first compute pre-images of all linear literal $i=|x|$. Then we generate CEFAs of all regular expressions $\regex$ in all regular literals $x\in \regex$ and intersect these CEFAs and pre-images to get the final automaton $\aut_x$ for $x$. At present, there is a final CEFA for each string variable $x$. The linear arithmetic constraint $\psi$ restricts the accepting word of final CEFAs. Thus the satisfiability problem is the emptiness checking problem of final CEFAs under $\psi$. If it is empty, the string constraints are unsatisfiable. Otherwise, the string constraints are satisfiable.
 The emptiness checking problem of CEFAs under linear integer arithmetic is theoretically pspace-complete\cite{atva2020}. To solve it efficiently for a practical example, we develop heuristic ways such as under-approximation (Section \ref{subsec:under-approx}) and symbolic-aware simplification (Section \ref{subsec:simplify}).
@@ -222,4 +223,4 @@ An under-approximation procedure solves the satisfiable instances of the emptine
   Consider the automaton in Fig. \ref{subfig:aut_x} again. The solution of the Parikh image of it leads to a complete but inefficient result since the quantifier-free linear integer arithmetic formulas are solved in exponential time \cite{parikh_compute}. Under-approximation can accelerate the solving process. When we set the bound to 2, the under-approximation program will enumerate all runs whose length is 2. One of them is $q_I\xrightarrow[(1,1)]{a} q_1\xrightarrow[(0,1)]{b} q_f$. The corresponding registers' values are $r_1 = 1+0 = 1, r_2 = 1+1 = 2$. Checking for $r_1= 1\wedge r_2=2\wedge r_2=i\wedge 1\leq r_1\leq100$ is a lightweight process because the values of $r_1$ and $r_2$ are fixed.
 \end{example}
 
-\end{document}
+%\end{document}
