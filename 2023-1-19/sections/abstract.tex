@@ -3,7 +3,7 @@
 
 Regular expressions (abbreviated as regex) and string-length function are widely used in string-manipulating programs. 
 %Solving string constraints involving regular membership and string-length function has been widely investigated. 
-Counting is a frequently used feature of regular expressions that count the number of occurrences of sub-patterns. The state-of-the-art string solvers e.g. CVC4/5, Z3str3(RE), and Z3seq are incapable of solving string constraints with regex-counting and string-length efficiently, especially when the counting bound is large. In this work, we propose an automata-theoretic approach for solving such class of string constraints efficiently. 
+Counting is a frequently used feature of regular expressions that count the number of sub-pattern occurrences. The state-of-the-art string solvers e.g. CVC4/5, Z3str3(RE), and Z3seq are incapable of solving string constraints with regex-counting and string-length efficiently, especially when the counting bound is large. In this work, we propose an automata-theoretic approach for solving such class of string constraints efficiently. 
 %
 The main idea is to model the counting operators symbolically by registers, instead of unfolding them explicitly, thus alleviating the state explosion problem resulted from the unfolding.  
 %
@@ -12,7 +12,7 @@ Moreover, we model the string lengths by registers as well. As a result, solving
 %we extract linear integer arithmetic formulas from automata, which encode the constraints on the values of registers, and utilize the off-the-shelf SMT solvers to solve the linear integer arithmetic constraints. 
 %
 To improve the performance further, on the one hand, we propose techniques to reduce automata sizes, thus reducing the sizes of linear arithmetic formulas computed from automata as well, and on the other hand, we utilize under approximations to search for solutions.   
-% we propose state reduction techniques and under approximation to improve the performance further. 
+% we propose state reduction techniques and under-approximation to improve the performance further. 
 We implement the algorithms and do extensive experiments to validate this approach. The experimental results show better performance of this approach compared against the state-of-the-art string solvers.
 
 
