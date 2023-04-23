@@ -1,16 +1,31 @@
 \documentclass{standalone}
 \begin{document}
-Regular expression with repetition frequently appears in the real world, such as $(ab)\{1, 100\}$. However, state-of-art string
-solvers can not efficiently solve string constraints with repetition bounds,
-especially when the repetition bounds are large. This paper focuses on
-string logic containing regular membership predicate with repetition
-and linear integer constraints on string length. Repetition is captured
-by cost-enriched finite automaton(CEFA), whose transitions have symbolic updates of integers limited by linear arithmetic. We propose a new systematic algorithm based on CEFA, and heuristic ways
-like under-approximation and symbolic-aware simplification are used to
-accelerate. We implement a powerful string solver OstrichCEA and
-evaluate it on instances from the real world and other typical benchmarks.
-The experiment result shows superiority.
 
+Regular expressions (abbreviated as regex) and string-length function are widely used in string-manipulating programs. 
+%Solving string constraints involving regular membership and string-length function has been widely investigated. 
+Counting is a frequently used feature of regular expressions that count the number of occurrences of sub-patterns. The state-of-the-art string solvers e.g. CVC4/5, Z3str3(RE), and Z3seq are incapable of solving string constraints with regex-counting and string-length efficiently, especially when the counting bound is large. In this work, we propose an automata-theoretic approach for solving such class of string constraints efficiently. 
+%
+The main idea is to model the counting operators symbolically by registers, instead of unfolding them explicitly, thus alleviating the state explosion problem resulted from the unfolding.  
+%
+Moreover, we model the string lengths by registers as well. As a result, solving string constraints with regex-counting and string-length is reduced to the satisfiability of linear integer arithmetic, since linear integer arithmetic formulas can be computed from automata to represent their Parikh images. 
+%
+%we extract linear integer arithmetic formulas from automata, which encode the constraints on the values of registers, and utilize the off-the-shelf SMT solvers to solve the linear integer arithmetic constraints. 
+%
+Furthermore, to improve the performance further, on the one hand, we propose techniques to reduce automata sizes, thus reducing the sizes of linear arithmetic formulas computed from automata as well, and on the other hand, we utilize under approximations to search for solutions.   
+% we propose state reduction techniques and under approximation to improve the performance further. 
+We implement the algorithms and do extensive experiments to validate this approach. The experimental results show better performance of this approach compared against the state-of-the-art string solvers.
+
+
+%Regular expression with repetition frequently appears in the real world, such as $(ab)\{1, 100\}$. However, state-of-art string
+%solvers can not efficiently solve string constraints with repetition bounds,
+%especially when the repetition bounds are large. This paper focuses on
+%string logic containing regular membership predicate with repetition
+%and linear integer constraints on string length. Repetition is captured
+%by cost-enriched finite automaton(CEFA), whose transitions have symbolic updates of integers limited by linear arithmetic. We propose a new systematic algorithm based on CEFA, and heuristic ways
+%like under-approximation and symbolic-aware simplification are used to
+%accelerate. We implement a powerful string solver OstrichCEA and
+%evaluate it on instances from the real world and other typical benchmarks.
+%The experiment result shows superiority.
 
 \keywords{String Constraints, Automaton Theory, Regex Expression, Bounded Repetition, Linear Length Constraints}
 \end{document}
