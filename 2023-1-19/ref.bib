@@ -93,12 +93,14 @@ publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
 url = {https://doi.org/10.1145/3338906.3342509},
 doi = {10.1145/3338906.3342509},
+abstract = {Regular expressions (regexes) are a powerful string manipulation tool. Unfortunately, in programming languages like Python, Java, and JavaScript, they are unnecessarily dangerous, implemented with worst-case exponential matching behavior. This high time complexity exposes software services to regular expression denial of service (ReDoS) attacks. We propose a data-driven redesign of regex engines, to reflect how regexes are used and what they typically look like. We report that about 95% of regexes in popular programming languages can be evaluated in linear time. The regex engine is a fundamental component of a programming language, and any changes risk introducing compatibility problems. We believe a full redesign is therefore impractical, and so we describe how the vast majority of regex matches can be made linear-time with minor, not major, changes to existing algorithms. Our prototype shows that on a kernel of the regex language, we can trade space for time to make regex matches safe},
+booktitle = {Proceedings of the 2019 27th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering},
 pages = {1256–1258},
 numpages = {3},
-keywords = {empirical software engineering, REDOS, Regular expressions, catastrophic backtracking},
+keywords = {REDOS, catastrophic backtracking, Regular expressions, empirical software engineering},
 location = {Tallinn, Estonia},
 series = {ESEC/FSE 2019}
-},
+}
 
 @inproceedings{symbolic_pldi2021,
 author = {Stanford, Caleb and Veanes, Margus and Bj\o{}rner, Nikolaj},
@@ -537,7 +539,7 @@ numpages = {30},
 keywords = {regular expression matching, determinization, counting-set automata, counting automata, bounded repetition, ReDos, Antimirov's derivatives}
 }
 
-@online{smt_lib,
+@misc{smt_lib,
   author = "Cesare, Tinelli
 and Clark, Barrett
 and Pascal, Fontaine",
@@ -696,7 +698,7 @@ series = {CCS '14}
   pages={513-528},
   doi={10.1109/SP.2010.38}}
 
-@online{smt-comp,
+@misc{smt-comp,
   author = "Haniel Barbosa
   and François Bobot 
   and Jochen Hoenicke",
@@ -726,7 +728,7 @@ abstract="Widespread use of string solvers in formal analysis of string-heavy pr
 isbn="978-3-030-85088-3"
 }
 
-@online{automatark,
+@misc{automatark,
   author = "Loris D'Antoni",
   title = {Automatark automata benchmark (2018).},
   year = 2018,
