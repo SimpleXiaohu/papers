@@ -1,0 +1,94 @@
+\documentclass[runningheads]{llncs}
+
+\usepackage{standalone}
+\usepackage{import}
+\usepackage{subcaption}
+\usepackage{pgfplots}
+\usepackage{color}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.16}
+\usetikzlibrary {arrows.meta, automata, positioning, fit}
+\usepackage{url}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage[]{float}
+% set algorithmicx
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}  % Use Input in the format of Algorithm  
+\renewcommand{\algorithmicensure}{\textbf{Output:}} % Use Output in the format of Algorithm 
+
+
+\newcommand*{\red}[1]{\textcolor{red}{#1}}
+
+\newcommand*{\myvec}[1]{\vec{#1}}
+\newcommand*{\regex}{\mathcal{R}}
+\newcommand*{\strsort}{\verb|Str|}
+\newcommand*{\intsort}{\verb|Int|}
+\newcommand*{\lan}{\mathcal{L}}
+\newcommand*{\highlight}[1]{\textbf{\textit{#1}}}
+\newcommand*{\aut}{\mathcal{A}}
+\newcommand*{\algfun}[1]{\texttt{#1}}
+\newcommand*{\strlen}[1]{\texttt{len}(#1)}
+\newcommand*{\myemph}[1]{\textcolor{red}{#1}}
+\newcommand*{\mult}[1]{$\times$}
+%%
+%% end of the preamble, start of the body of the document source.
+\begin{document}
+%%
+%% The "title" command has an optional parameter,
+%% allowing the author to define a "short title" to be used in page headers.
+\title{String Constraints with Regex-Counting and String-Length Solved Efficiently}
+
+%%
+\author{Denghang Hu\inst{1} \and
+  Zhilin Wu\inst{1}}
+%\authorrunning{Denghang Hu \and Zhilin Wu}
+% \authornote{Both authors contributed equally to this research.}
+
+\institute{State Key Laboratory of Computer Science,
+  Institute of Software, Chinese Academy of Sciences, China\\
+  \email{\{hudh,wuzl\}@ios.ac.cn}}
+
+\maketitle
+
+%% The abstract is a summary of the work to be presented in the
+%% article.
+\begin{abstract}
+\subimport{sections/}{abstract.tex}
+\end{abstract}
+
+
+\section{Introduction} \label{sec:intro}
+\input{sections/introduction.tex}
+
+\section{Preliminaries} \label{sec:pre}
+\input{sections/preliminaries.tex}
+
+\section{Overview} \label{sec:overview}
+\input{sections/overview.tex}
+
+\section{Automaton Model} \label{sec:automaton}
+\input{sections/automaton_model.tex}
+
+\section{Solve ESL Formula with Large Repetition Bound} \label{sec:algorithm}
+\input{sections/algorithms.tex}
+
+\section{Implementation and Experimental Results} \label{sec:implementation}
+\input{sections/implementation.tex}
+
+\section{Conclusion and Future Work} \label{sec:conclu}
+\input{sections/conclusion.tex}
+
+%%
+%% The next two lines define the bibliography style to be used, and
+%% the bibliography file.
+\bibliographystyle{splncs04}
+\bibliography{ref}
+
+\end{document}
+
+%%
+%% End of file `sample-sigconf.tex'.
