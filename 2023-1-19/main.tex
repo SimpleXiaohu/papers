@@ -24,7 +24,7 @@
 \newcommand*{\red}[1]{\textcolor{red}{#1}}
 
 \newcommand*{\myvec}[1]{\vec{#1}}
-\newcommand*{\regex}{\mathcal{R}}
+\newcommand*{\regex}{e}
 \newcommand*{\strsort}{\verb|Str|}
 \newcommand*{\intsort}{\verb|Int|}
 \newcommand*{\lan}{\mathcal{L}}
@@ -35,12 +35,17 @@
 \newcommand*{\myemph}[1]{\textcolor{red}{#1}}
 \newcommand*{\mult}[1]{$\times$}
 %%
+
+%%%%% comments commands
+\newcommand{\zhilin}[1]{\color{orange}\textbf{ZL:} #1 \textbf{:LZ}\color{black}}
+\newcommand{\denghang}[1]{{\color{teal}\textbf{DH:} #1 \textbf{:HD}\color{black}}}
+
 %% end of the preamble, start of the body of the document source.
 \begin{document}
 %%
 %% The "title" command has an optional parameter,
 %% allowing the author to define a "short title" to be used in page headers.
-\title{String Constraints with Regex-Counting and String-Length Solved Efficiently}
+\title{String Constraints with Regex-Counting and String-Length Solved More Efficiently}
 
 %%
 \author{Denghang Hu\inst{1} \and
@@ -60,6 +65,7 @@
 \subimport{sections/}{abstract.tex}
 \end{abstract}
 
+\zhilin{18 pages, excluding references}
 
 \section{Introduction} \label{sec:intro}
 \input{sections/introduction.tex}
