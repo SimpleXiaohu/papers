@@ -1,126 +1,144 @@
 %!TEX root = ../main.tex
 
-The main idea is to use CEFAs (see Subsection \ref{subsec:cefa}) to simulate the semantics of length operations and regular memberships with bounded repetitions. As mentioned, the ESL formula contains regular literals and linear literals. The regular literal $x\in \regex$ directly results in one CEFA recognizing it (see Subsection \ref{subsec:regex2cefa}). The linear literals $\alpha_1 \leq \alpha_2$ with no length operation remain unchanged. For each linear literal $\alpha_1 \leq \alpha_2$ with length operation $|x|$, we generate a fresh variable $i$ to replace all occurrences of $|x|$ and propagate new formula $i=|x|$. Then we generate the pre-image $\aut_{i}$ whose accepting words are strings with length $i$ (see Example \ref{eg:pre_len}). After the process above, the satisfiability problem of string constraints becomes a $SAT_{CL}$ problem, which has a decision procedure to check (see Subsection \ref{subsec:emptiness}). Example \ref{example:overview} illustrate it. \newline
+Recalling the string constraint listed in Section \ref{sec:intro}, DPLL(T)- and automata- based string solvers can not solve it. For DPLL(T)-based string solvers, the unsatisfiability is hard to discover since it is highly related to the length and the counting, which independent derivation rules for regex and length can not conclude. For automata-based string solvers, the counting operators result in the big-size automaton, whose length abstraction is too complex to solve. To address these issues, we use automaton to encode the semantics of the counting operator, but in a smarter way by storing counting information to registers rather than unwinding it directly. The automaton model we used is called cost-enriched finite automaton(abbreviated as regex). It is carefully discussed in Section \ref{subsec:cefa}, so we briefly introduce it in this section. A CEFA can be seen as an extension of an NFA by appending symbolic updates of integers on each transition, linear integer arithmetic to constrain the integer values on each accepting state, and registers to store integer values. The main idea is based on the observation that the occurrences of exact transitions can trace the counting times, and the length can be seen as the sum of occurrences of all transitions in the accepting run. For example, the counting times in $(\Sigma \setminus a)^{\{5, 40\}}$ can be traced by the occurrences of transitions in sub-regex $\Sigma \setminus a$. To detail, we use one register to store counting, and symbolically add 1 when running one of the transitions in $\Sigma \setminus a$, tracing the counting times. Similarly, we use another register to store the length and symbolically add 1 to it when running any transition. The automaton model of string constraints \ref{eq:motivation_str_constraints} is illustrated in Figure \ref{fig:overview}. Register $r_1$ stores the counting times of the sub-regex $\Sigma \setminus a$, register $r_2$ stores the counting times of the sub-regex $\Sigma \setminus b$, register $r_3$ stores the counting times of the sub-regex $\Sigma \setminus c$, and register $r_4$ stores the length of the string. The label $\Sigma \setminus a:(1,0,0,1)$ means that when running the transition, the counting times of $\Sigma \setminus a$ (i.e., the value of $r_1$) plus 1, and the length (i.e., the value of $r_4$) plus 1. The accepting state $q_3$ is accepting by the linear integer arithmetic $5\leq r_1\leq 40\wedge 5\leq r_2\leq 40\wedge 0\leq r_3\leq 40\wedge 80 < r_4$. $5\leq r_1\leq 40$ ensure the counting times of $\Sigma \setminus a$ is in the range $[5, 40]$, $5\leq r_2\leq 40$ ensure the counting times of $\Sigma \setminus b$ is in the range $[5, 40]$, $0\leq r_3\leq 40$ ensure the counting times of $\Sigma \setminus c$ is in the range $[0, 40]$, and $80 < r_4$ ensure the length of the string is greater than 80. The satisfiability of the CEFA can then be reduced to the satisfiability of linear integer arithmetic, which other off-the-shelf SMT solvers solve. \newline
+However, even when we use CEFA to encode counting in the string constraints, the linear integer arithmetic reduced from the CEFA still needs to be simplified to solve. The reason is that the linear integer arithmetic is solved in exponential time of the number of variables, which is linear to the sum of transitions number and states number in the CEFA. To address this issue, we use symbolic-aware simplification to reduce the number of transitions and states in the CEFA. Simply illustrating our idea, consider a simple NFA rather than a CEFA. We assume the NFA consisted of three states $q_1, q_2, q_3$, where $q_1$ is the initial state, $q_2$ and $q_3$ are the accepting states. Assume we have three transitions from $q_1$ to $q_2$ with different characters, and three transitions from $q_1$ to $q_3$. Actually, we only need to attempt some of the six transitions to get the reachable result. We run any of the transitions, and the reachability is known. So this NFA can be simplified to two states $q_1', q_2'$ where $q_1'$ is the initial state, $q_2'$ is the accepting state, and one transition from $q_1'$ to $q_2'$ with abbreviated character. The size of NFA is sharply reduced. The simplification can be done by treating the character on each transition as the same character, then applying the minimization algorithm to the NFA. CEFA can be simplified similarly, except we need to consider the counting information, i.e., symbolic updates, on each transition. For example, $a:(1)$ and $b:(1)$ are treated as the same label but $a:(1)$ and $b:(0)$ are not. Then we can apply the minimization algorithm as NFA. Recalling the CEFA (Fig. \ref{fig:overview:orgin}) handling the string constraints \ref{eq:motivation_str_constraints}, its transitions number between $q_1$ and $q_2$ are decided by the size of alphabet $\Sigma$. We apply symbolic-aware simplification on it, then a much smaller CEFA (Fig. \ref{fig:overview:simplified}) is obtained, whose alphabet is unary so that the number of the transition between $q_1$ and $q_2$ decreases to $1$. The state number does not decrease because these three states are not mutually equivalent. \newline
+Sometimes the string constraints are satisfiable, and the strings in the solution have a short length. Such a solution may be quickly explored by derivation rules in DPLL(T)-based string solvers but slowly explored by our approach. To improve efficiency on satisfiable string constraints, we propose a light-way heuristic that tries to find a solution in the under-approximation of the string constraints. The main idea is to explore paths within an exact length and manually compute the registers' values, rather than reduce CEFA to heavy linear integer arithmetic. For example, consider the string constraints $x \in (\Sigma \setminus a)^{\{5, 40\}} (\Sigma \setminus b)^{\{5, 40\}} (\Sigma \setminus c)^{\{0, 40\}} \wedge x \in \Sigma^* c$, we can explore paths within length 10 and get a satisfiable solution $cccccccccc$. 
+\begin{equation}\label{eq:motivation_str_constraints}
+  x \in (\Sigma \setminus a)^{\{5, 40\}} (\Sigma \setminus b)^{\{5, 40\}} (\Sigma \setminus c)^{\{0, 40\}} \wedge x \in \Sigma^* c \wedge |x| > 80
+\end{equation}
+\begin{figure}[ht]
+  \centering
+  \import{figures}{overview_example.tex}
+  \caption{The CEFA handling the difficult string constraints}
+  \label{fig:overview:orgin}
+\end{figure}
+\begin{figure}[ht]
+  \centering
+  \import{figures}{overview_example_simplified.tex}
+  \caption{The simplified CEFA handling the difficult string constraints}
+  \label{fig:overview:simplified}
+\end{figure}
 
-\begin{example} \label{example:overview}
-  \begin{align*}
-    \varphi\equiv x\in (ab)\{1,100\}\wedge y\in ab\wedge |x| > |y|
-  \end{align*}
-  ESL conjunction $\varphi$ is made up of regular literals $x\in (ab)\{1,100\}$ and $y\in ab$, linear literals $|x| > |y|$. The linear literal is translated to $i = |x|\wedge j = |y| \wedge i > j$. Our algorithm solves the formula in four steps. First, we construct CEFAs for regular memberships $x\in (ab)\{1,100\}$ and $y\in ab$ (Fig.\ref{subfig:aut_ab1-100} and Fig.\ref{subfig:aut_ab}). Second, we compute the pre-images of length operations $i=|x|$ and $j=|y|$ (Fig.\ref{subfig:preimage_x} and Fig.\ref{subfig:preimage_y}). Then we intersect pre-images to automata corresponding to the regular memberships for each string variable (Fig.\ref{subfig:aut_x} and Fig.\ref{subfig:aut_y}). We translate the satisfiability problem of $\varphi$ to the emptiness checking problem of automata (Fig.\ref{subfig:preimage_x} and Fig.\ref{subfig:preimage_y}) under linear arithmetic constants $i > y$, which could be solved by the decision procedure illustrated in section \ref{sec:algorithm}.
+% The main idea is to use CEFAs (see Subsection \ref{subsec:cefa}) to simulate the semantics of length operations and regular memberships with bounded repetitions. As mentioned, the ESL formula contains regular literals and linear literals. The regular literal $x\in \regex$ directly results in one CEFA recognizing it (see Subsection \ref{subsec:regex2cefa}). The linear literals $\alpha_1 \leq \alpha_2$ with no length operation remain unchanged. For each linear literal $\alpha_1 \leq \alpha_2$ with length operation $|x|$, we generate a fresh variable $i$ to replace all occurrences of $|x|$ and propagate new formula $i=|x|$. Then we generate the pre-image $\aut_{i}$ whose accepting words are strings with length $i$ (see Example \ref{eg:pre_len}). After the process above, the satisfiability problem of string constraints becomes an $SAT_{CL}$ problem, which has a decision procedure to check (see Subsection \ref{subsec:emptiness}). Example \ref{example:overview} illustrate it. \newline
+% \begin{example} \label{example:overview}
+%   \begin{align*}
+%     \varphi\equiv x\in (ab)\{1,100\}\wedge y\in ab\wedge |x| > |y|
+%   \end{align*}
+%   ESL conjunction $\varphi$ is made up of regular literals $x\in (ab)\{1,100\}$ and $y\in ab$, linear literals $|x| > |y|$. The linear literal is translated to $i = |x|\wedge j = |y| \wedge i > j$. Our algorithm solves the formula in four steps. First, we construct CEFAs for regular memberships $x\in (ab)\{1,100\}$ and $y\in ab$ (Fig.\ref{subfig:aut_ab1-100} and Fig.\ref{subfig:aut_ab}). Second, we compute the pre-images of length operations $i=|x|$ and $j=|y|$ (Fig.\ref{subfig:preimage_x} and Fig.\ref{subfig:preimage_y}). Then we intersect pre-images to automata corresponding to the regular memberships for each string variable (Fig.\ref{subfig:aut_x} and Fig.\ref{subfig:aut_y}). We translate the satisfiability problem of $\varphi$ to the emptiness checking problem of automata (Fig.\ref{subfig:preimage_x} and Fig.\ref{subfig:preimage_y}) under linear arithmetic constants $i > y$, which could be solved by the decision procedure illustrated in section \ref{sec:algorithm}.
 
-  \begin{figure}[h]
-    \begin{subfigure}[b]{0.49\textwidth}
-      \centering
-      \begin{tikzpicture}[
-        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-        initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=$1\leq r_1\leq 100$, accepting/.style=accepting by arrow,
-        accepting where=above
-        ]
+  % \begin{figure}[h]
+  %   \begin{subfigure}[b]{0.49\textwidth}
+  %     \centering
+  %     \begin{tikzpicture}[
+  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+  %       initial text=, every state/.style={minimum size = 0.001cm},
+  %       accepting text=$1\leq r_1\leq 100$, accepting/.style=accepting by arrow,
+  %       accepting where=above
+  %       ]
 
-        \node[state,initial]            (q_0)                      {};
-        \node[state]                    (q_1) [right=of q_0]       {};
-        \node[state,accepting]          (q_2) [right=of q_1]       {};
+  %       \node[state,initial]            (q_0)                      {};
+  %       \node[state]                    (q_1) [right=of q_0]       {};
+  %       \node[state,accepting]          (q_2) [right=of q_1]       {};
 
-        \path[->] (q_0) edge              node      [above]           {$a$/(1)} (q_1)
-        (q_1) edge              node      [above]           {$b$/(0)} (q_2)
-        (q_2) edge [bend left]  node      [below]           {$a$/(1)} (q_1);
-      \end{tikzpicture}
-      \caption{The CEFA recognizing $(ab)\{1,100\}$}
-      \label{subfig:aut_ab1-100}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.49\textwidth}
-      \centering
-      \begin{tikzpicture}[
-        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-        initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=$\top$, accepting/.style=accepting by arrow,
-        accepting where=above
-        ]
+  %       \path[->] (q_0) edge              node      [above]           {$a$/(1)} (q_1)
+  %       (q_1) edge              node      [above]           {$b$/(0)} (q_2)
+  %       (q_2) edge [bend left]  node      [below]           {$a$/(1)} (q_1);
+  %     \end{tikzpicture}
+  %     \caption{The CEFA recognizing $(ab)\{1,100\}$}
+  %     \label{subfig:aut_ab1-100}
+  %   \end{subfigure}
+  %   \begin{subfigure}[b]{0.49\textwidth}
+  %     \centering
+  %     \begin{tikzpicture}[
+  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+  %       initial text=, every state/.style={minimum size = 0.001cm},
+  %       accepting text=$\top$, accepting/.style=accepting by arrow,
+  %       accepting where=above
+  %       ]
 
-        \node[state,initial]            (q_0)                      {};
-        \node[state]                    (q_1) [right=of q_0]       {};
-        \node[state, accepting]         (q_2) [right=of q_1]       {};
+  %       \node[state,initial]            (q_0)                      {};
+  %       \node[state]                    (q_1) [right=of q_0]       {};
+  %       \node[state, accepting]         (q_2) [right=of q_1]       {};
 
-        \path[->] (q_0) edge              node      [above]           {$a$/()} (q_1)
-        (q_1) edge              node      [above]           {$b$/()} (q_2);
-      \end{tikzpicture}
-      \caption{The CEFA recognizing $ab$}
-      \label{subfig:aut_ab}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.49\textwidth}
-      \centering
-      \begin{tikzpicture}[
-        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-        initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=${r_2 = i}$, accepting/.style=accepting by arrow,
-        ]
+  %       \path[->] (q_0) edge              node      [above]           {$a$/()} (q_1)
+  %       (q_1) edge              node      [above]           {$b$/()} (q_2);
+  %     \end{tikzpicture}
+  %     \caption{The CEFA recognizing $ab$}
+  %     \label{subfig:aut_ab}
+  %   \end{subfigure}
+  %   \begin{subfigure}[b]{0.49\textwidth}
+  %     \centering
+  %     \begin{tikzpicture}[
+  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+  %       initial text=, every state/.style={minimum size = 0.001cm},
+  %       accepting text=${r_2 = i}$, accepting/.style=accepting by arrow,
+  %       ]
 
-        \node[state,initial,accepting]            (q_0)       {};
+  %       \node[state,initial,accepting]            (q_0)       {};
 
-        \path[->] (q_0) edge [loop below] node{$\Sigma$/(1)} ();
-      \end{tikzpicture}
-      \caption{The pre-image of $i = |x|$}
-      \label{subfig:preimage_x}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.49\textwidth}
-      \centering
-      \begin{tikzpicture}[
-        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-        initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=${r_3 = j}$, accepting/.style=accepting by arrow,
-        ]
+  %       \path[->] (q_0) edge [loop below] node{$\Sigma$/(1)} ();
+  %     \end{tikzpicture}
+  %     \caption{The pre-image of $i = |x|$}
+  %     \label{subfig:preimage_x}
+  %   \end{subfigure}
+  %   \begin{subfigure}[b]{0.49\textwidth}
+  %     \centering
+  %     \begin{tikzpicture}[
+  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+  %       initial text=, every state/.style={minimum size = 0.001cm},
+  %       accepting text=${r_3 = j}$, accepting/.style=accepting by arrow,
+  %       ]
 
-        \node[state,initial,accepting]            (q_0)       {};
+  %       \node[state,initial,accepting]            (q_0)       {};
 
-        \path[->] (q_0) edge [loop below] node{$\Sigma$/(1)} (1);
-      \end{tikzpicture}
-      \caption{The pre-image of $j = |y|$}
-      \label{subfig:preimage_y}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.49\textwidth}
-      \centering
-      \begin{tikzpicture}[
-        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-        initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=${r_2 = i\wedge 1\leq r_1 \leq 100}$, accepting/.style=accepting by arrow,
-        accepting where=above
-        ]
+  %       \path[->] (q_0) edge [loop below] node{$\Sigma$/(1)} (1);
+  %     \end{tikzpicture}
+  %     \caption{The pre-image of $j = |y|$}
+  %     \label{subfig:preimage_y}
+  %   \end{subfigure}
+  %   \begin{subfigure}[b]{0.49\textwidth}
+  %     \centering
+  %     \begin{tikzpicture}[
+  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+  %       initial text=, every state/.style={minimum size = 0.001cm},
+  %       accepting text=${r_2 = i\wedge 1\leq r_1 \leq 100}$, accepting/.style=accepting by arrow,
+  %       accepting where=above
+  %       ]
 
-        \node[state,initial]            (q_0)                      {};
-        \node[state]                    (q_1) [right=of q_0]       {};
-        \node[state,accepting]          (q_2) [right=of q_1]       {};
+  %       \node[state,initial]            (q_0)                      {};
+  %       \node[state]                    (q_1) [right=of q_0]       {};
+  %       \node[state,accepting]          (q_2) [right=of q_1]       {};
 
-        \path[->] (q_0) edge node [above]  {$a$/(1,1)} (q_1)
-        (q_1) edge           node [above]  {$b$/(0,1)} (q_2)
-        (q_2) edge [bend left]  node      [below]           {$a$/(1,1)} (q_1);
-      \end{tikzpicture}
-      \caption{The final automaton of $x$}
-      \label{subfig:aut_x}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.49\textwidth}
-      \centering
-      \begin{tikzpicture}[
-        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-        initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=${r_3=j}$, accepting/.style=accepting by arrow,
-        accepting where=above
-        ]
+  %       \path[->] (q_0) edge node [above]  {$a$/(1,1)} (q_1)
+  %       (q_1) edge           node [above]  {$b$/(0,1)} (q_2)
+  %       (q_2) edge [bend left]  node      [below]           {$a$/(1,1)} (q_1);
+  %     \end{tikzpicture}
+  %     \caption{The final automaton of $x$}
+  %     \label{subfig:aut_x}
+  %   \end{subfigure}
+  %   \begin{subfigure}[b]{0.49\textwidth}
+  %     \centering
+  %     \begin{tikzpicture}[
+  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+  %       initial text=, every state/.style={minimum size = 0.001cm},
+  %       accepting text=${r_3=j}$, accepting/.style=accepting by arrow,
+  %       accepting where=above
+  %       ]
 
-        \node[state,initial]            (q_0)                      {};
-        \node[state]                    (q_1) [right=of q_0]       {};
-        \node[state, accepting]         (q_2) [right=of q_1]       {};
+  %       \node[state,initial]            (q_0)                      {};
+  %       \node[state]                    (q_1) [right=of q_0]       {};
+  %       \node[state, accepting]         (q_2) [right=of q_1]       {};
 
-        \path[->] (q_0) edge    node      [above]           {$a$/(1)} (q_1)
-        (q_1) edge              node      [above]           {$b$/(1)} (q_2);
-      \end{tikzpicture}
-      \caption{The final automaton of $y$}
-      \label{subfig:aut_y}
-    \end{subfigure}
-    \caption{All automata used in the example \ref{example:overview}}
-  \end{figure}
+  %       \path[->] (q_0) edge    node      [above]           {$a$/(1)} (q_1)
+  %       (q_1) edge              node      [above]           {$b$/(1)} (q_2);
+  %     \end{tikzpicture}
+  %     \caption{The final automaton of $y$}
+  %     \label{subfig:aut_y}
+  %   \end{subfigure}
+  %   \caption{All automata used in the example \ref{example:overview}}
+  % \end{figure}
 
 
-\end{example}
+% \end{example}
 
 % \pagebreak
