@@ -4,7 +4,7 @@
 
 In this section, we recall the definition of CEFA and Parikh image.
 
-\subsection{Cost-Enriched Finite Automaton} \label{subsec:cefa}
+%\subsection{Cost-Enriched Finite Automaton} \label{subsec:cefa}
 The definition of CEFA in this paper is lightly different from the definition in \cite{atva2020}. In \cite{atva2020}, the cost function is defined as a function $\eta: \Sigma \rightarrow \mathbb{N}$. In this paper, we define the cost function as an integer vector whose elements are the incremental value of registers. Furthermore, we add a new linear integer arithmetic constraint $\theta$ to each final state of the CEFA, which restricts the value of registers. Two types of definitions have the same expressive ability on the $SAT_{CL}$ problem.
 \begin{definition}[Cost-Enriched Finite Automaton]
   A cost-enriched finite automaton $\aut$ is a 7-tuple $(Q, \Sigma, \delta, q_I, F, R, \theta)$ where
@@ -83,93 +83,4 @@ The definition of CEFA in this paper is lightly different from the definition in
 %   \end{itemize}
 %   $\psi(\aut)$ can be simplified to $t_3\geq 0 \wedge t_1=1\wedge r_1 = t_3 + 1\wedge r_2 = 2*t_3+2\wedge r_2=i\wedge 1\leq r_1\leq 100$. A possible solution is $t_1 =1, t_3 = 0, r_1=1, r_2=2$ and the corresponding accepted string $ab$. It is obvious that $r_1$ is the repeat times of $ab$ and $r_2$ is the length of $ab$.
 % \end{example}
-\subsection{Encode Bounded Repetition to CEFA} \label{subsec:regex2cefa}
-In this section, we define the construction of CEFA from the regular expression with bounded repetition. We must syntactically rewrite bounded repetition $\regex\{m,n\}$ if it is the sub-regex of complement (e.g., $(\regex\{m,n\})^C$), closure(e.g., $(\regex\{m,n\})^*$), and bounded repetition(e.g., $(\regex\{m,n\})\{m', n'\}$), we unwind it to $\regex^m\mid\cdots\mid\regex^n$. After this syntactic rewriting, we call the resulting regex $\regex'$ \emph{non-nested}.
-The non-nested regex $\regex'$ possibly contains operations such as intersection, union, concatenation, complement, closure, and bounded repetition. To construct the CEFA of $\regex'$, we first create CEFA for each sub-regex and then combine them. Similar to the construction of NFA from regex\cite{aut_hopcraft}, our construction is inductive on the size of $\regex'$. The base case is for a single character, an empty string, and an empty language. The inductive step is for the concatenation, union, and intersection of two automata and one automaton's repetition, closure, and complement. We only discuss the inductive step for bounded repetition because the other operations are trivial. \newline
-For a non-nested regular expression $R\{m,n\}$, suppose we have an CEFA $\aut = (Q,\Sigma,\delta,q_I,F,\emptyset,\top)$ recognizing $R$, the CEFA recognizing $R\{m,n\}$ is defined as $\aut_{m,n} = (Q, \Sigma, \delta',q_ I, F, r, \theta')$ where:
-\begin{itemize}
-  \item $r$ is a new register,
-  \item $\delta'$ is composed by transitions $q\xrightarrow[(0)]{a} q'$ for all transitions $q\xrightarrow[()]{a} q' \in \delta$, and transitions $q_f\xrightarrow[(1)]{\epsilon} q_I$  for each $q_f\in F$,
-  \item For each accepting states $q\in F$, $\theta'(q)$ is the linear arithmetic $m\leq r\leq n$ if $q_I\not\in F$. Otherwise, $\theta'(q)$ is the linear arithmetic $r\leq n$.
-\end{itemize}
-In the construction illustrated in Fig.\ref{fig:construct_repetition}, a new register $r$ is added to store the repetition times. The transition $q\xrightarrow[(1)]{\epsilon} q_I$ is set to update the repetition times for each $q\in F$. The accepting condition $\theta'$ is used to restrict the repetition times of the accepting word. Because arbitrary repetition times of an empty string are still empty, the value of $r$ only needs to be less or equal to $n$ when the initial state is accepted.
-\begin{figure}[h]
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \begin{tikzpicture}[
-      shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-      initial text=, every state/.style={minimum size = 0.001cm},
-      accepting text=$\varphi$, accepting/.style=accepting by arrow,
-      ]
-
-      \node[state,initial]            (q_0)                      {};
-      \node[state, accepting]         (q_1) [right=of q_0]       {};
-      \node [fit=(q_0) (q_1)] {$\cdots$};
-    \end{tikzpicture}
-    \caption{The CEFA recognizing $\regex$}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \begin{tikzpicture}[
-      shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-      initial text=, every state/.style={minimum size = 0.001cm},
-      accepting text=$\varphi\wedge$\myemph{$(m\leq) r\leq n$}, accepting/.style=accepting by arrow,
-      ]
-
-      \node[state,initial]            (q_0)                      {};
-      \node[state, accepting]         (q_1) [right=of q_0]       {};
-      \path[->] (q_1) edge[bend right]   node    [above] {\myemph{$\mathbf{\epsilon/(1)}$}} (q_0);
-      \node [fit=(q_0) (q_1)] {$\cdots$};
-    \end{tikzpicture}
-    \caption{The CEFA recognizing $\regex\{m,n\}$}
-  \end{subfigure}
-  \caption{The construction of bounded repetition}
-  \label{fig:construct_repetition}
-\end{figure}
-\begin{example}
-  To construct the CEFA recognizing $(ab)\{1,100\}$, we first construct the CEFA recognizing $ab$ as shown in Fig.\ref{subfig:rep_aut_ab}. Then we add a new register $r_1$ and a transition $q_2\xrightarrow[(1)]{\epsilon} q_0$ to update the repetition times. The accepting condition $\theta'$ map accepting state to $1\leq r_1\leq 100$ because the initial state is unacceptable. The CEFA recognizing $(ab)\{1,100\}$ is shown in Fig.\ref{subfig:rep_aut_ab1_100}.
-  \begin{figure}[h]
-    \begin{subfigure}[b]{0.49\textwidth}
-      \centering
-      \begin{tikzpicture}[
-        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-        initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=$\top$, accepting/.style=accepting by arrow,
-        accepting where=above
-        ]
-
-        \node[state,initial]            (q_0)                      {};
-        \node[state]                    (q_1) [right=of q_0]       {};
-        \node[state, accepting]         (q_2) [right=of q_1]       {};
-
-        \path[->] (q_0) edge              node      [above]           {$a$/()} (q_1)
-        (q_1) edge              node      [above]           {$b$/()} (q_2);
-      \end{tikzpicture}
-      \caption{The CEFA recognizing $ab$}
-      \label{subfig:rep_aut_ab}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.49\textwidth}
-      \centering
-      \begin{tikzpicture}[
-        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-        initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=\myemph{1}$\leq r_1\leq$\myemph{100}, accepting/.style=accepting by arrow,
-        accepting where=above
-        ]
-
-        \node[state,initial]            (q_0)                      {};
-        \node[state]                    (q_1) [right=of q_0]       {};
-        \node[state,accepting]          (q_2) [right=of q_1]       {};
-
-        \path[->] (q_0) edge              node      [above]           {$a$/(\myemph{0})} (q_1)
-        (q_1) edge              node      [above]           {$b$/(\myemph{0})} (q_2)
-        (q_2) edge [bend left]  node      [below]           {$\epsilon$/(\myemph{1})} (q_0);
-      \end{tikzpicture}
-      \caption{The CEFA recognizing $(ab)\{\myemph{1},\myemph{100}\}$}
-      \label{subfig:rep_aut_ab1_100}
-    \end{subfigure}
-    \caption{The example of bounded repetition}
-  \end{figure}
-\end{example}
-
 %\end{document}
