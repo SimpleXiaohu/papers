@@ -1,0 +1,19 @@
+
+  \begin{tikzpicture}[
+    shorten >=1pt,node distance=3cm,on grid,>={Stealth[round]},
+    initial text=, every state/.style={minimum size = 0.001cm},
+    accepting text=$\scriptstyle5\leq r_1\leq 40\wedge 5\leq r_2\leq 40\wedge 0\leq r_3\leq 40\wedge 80 < r_4$, accepting/.style=accepting by arrow,
+    accepting where=above
+    ]
+
+    \node[state,initial]            (q_0)                      {$q_0$};
+    \node[state]                    (q_1) [right=of q_0]       {$q_1$};
+    \node[state, accepting]                    (q_2) [right=of q_1]       {$q_2$};
+
+    \path[->] (q_0) edge node [above] {$\scriptstyle a:(1,0,0,1)$} (q_1)
+              (q_0) edge [loop below] node  {$\scriptstyle a:(1,0,0,1)$} (q_0)
+              (q_1) edge node [above] {$\scriptstyle a:(0,1,0,1)$} (q_2)
+              (q_1) edge [loop below] node  {$\scriptstyle a:(0,1,0,1)$} (q_1)
+              (q_2) edge [loop below] node  {$\scriptstyle a:(0,0,1,1)$} (q_2);
+  \end{tikzpicture}
+  
