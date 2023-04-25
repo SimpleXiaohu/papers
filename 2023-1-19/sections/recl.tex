@@ -2,19 +2,28 @@
 %\documentclass{standalone}
 %\begin{document}
 
-\subsubsection{Syntax}
-This paper proposes a quantifier-free first-order logic called \textit{Extended String Logic (ESL)}, whose syntax is presented in Table \ref{tab:syntax}. $\varphi$ is a quantifier-free formula that can be a regular membership $x\in\regex$, a quantifier-free Presburger formula $\alpha_1 \leq \alpha_2$, a negation of a formula, or a disjunction of two formulas. $\alpha$ is an integer term which can be an integer constant $m$, integer variable $i$, the length of the string term $|s|$, the minus of an integer term, and the plus of two integer terms. The regular expression $\regex$ is built on empty string $\epsilon$, constant letter $a\in \Sigma$. The supported regex operations involve concatenation $\cdot$, disjunction $+$, intersection $\times$, closure $*$, complement $C$, and bounded repetition $\{m, n\}$. We use $term(\varphi)$ to denote the set of terms and $strvar(\varphi)$ to denote the string variables occurring in $\varphi$. The \emph{literals} of $\varphi$ are $x\in \regex$ and $\alpha_1 \leq \alpha_2$. $x\in \regex$ is called \emph{regular literals} and $\alpha_1 \leq \alpha_2$ is called \emph{linear literals}.
+%\subsubsection{Syntax}
+In the sequel, we define string constraints with regex-counting and string-length function (abbreviated as RECL). The syntax of RECL is defined by the rules in Table~\ref{tab:syntax}. 
+A RECL formula $\varphi$ is a conjunction of atomic formulas of the form $x \in \regex$, $x \not \in \regex$, or $t_1\ \op\ t_2$, where $x$ is a string variable, $\regex$ is a regular expression,  
+$t_1$ and $t_2$ are integer terms, and $\op \in \{=, \neq, \le, \ge, <, >\}$. Atomic formulas of the form $x \in \regex$ or $x \not \in \regex$ are called \emph{regular membership} constraints and atomic formulas of the form $t_1\ \op\ t_2$ are called \emph{length} constraints. 
+%
+A regular expression $\regex$ is built from $\emptyset$, the empty string $\epsilon$, and characters $a$ by using concatenation  $\cdot$, alternation $+$, Kleene star $^*$, intersection $\cap$, complement $\bar{\mbox{ }}$, difference $\setminus$, counting $^{\{m,n\}}$ or $^{\{m,\infty\}}$. 
+% 
+%is a quantifier-free formula that can be a regular membership $x\in\regex$, a quantifier-free Presburger formula $\alpha_1 \leq \alpha_2$, a negation of a formula, or a disjunction of two formulas. $\alpha$ is an integer term which can be an integer constant $m$, integer variable $i$, the length of the string term $|s|$, the minus of an integer term, and the plus of two integer terms. The regular expression $\regex$ is built on empty string $\epsilon$, constant letter $a\in \Sigma$. The supported regex operations involve concatenation $\cdot$, disjunction $+$, intersection $\times$, closure $*$, complement $C$, and bounded repetition $\{m, n\}$. We use $term(\varphi)$ to denote the set of terms and $strvar(\varphi)$ to denote the string variables occurring in $\varphi$. The \emph{literals} of $\varphi$ are $x\in \regex$ and $\alpha_1 \leq \alpha_2$. $x\in \regex$ is called \emph{regular literals} and $\alpha_1 \leq \alpha_2$ is called \emph{linear literals}.
 \begin{table}[h]
   \centering
   \begin{tabular}{l r}
-    $\varphi$ ::= $x\in \regex \mid \alpha_1\leq\alpha_2 \mid \neg\varphi\mid \varphi\vee\varphi$                                             & formulae            \\
-    $\regex$ ::= $\epsilon \mid a \mid \regex\cdot\regex \mid \regex+\regex \mid \regex^* \mid \regex \cap \regex \mid \regex^C \mid \regex \setminus \regex \mid \regex^{\{m,n\}}$ & regular expressions \\
-    $\alpha$ ::= $m \mid i \mid  |s|\mid -\alpha\mid \alpha_1+\alpha_2$                                                                       & integer terms
+    $\varphi$ ::= $x\in \regex \mid x \not \in \regex \mid t_1\  \op\ t_2 \mid  \varphi \wedge \varphi $                                             & formulas            \\
+    $\regex$ ::= $\emptyset \mid \epsilon \mid a \mid \regex\cdot \regex \mid \regex+\regex \mid \regex^* \mid \regex \cap \regex \mid \overline{\regex} \mid \regex \setminus \regex \mid \regex^{\{m,n\}} \mid \regex^{\{m,\infty\}}$ & regular expressions \\
+    $t$ ::= $n \mid i \mid  |x| \mid t - t \mid t + t$                                                                       & integer terms
   \end{tabular}
-  \caption{Syntax}\label{tab:syntax}
+  \caption{Syntax of RECL }\label{tab:syntax}
 \end{table}
 % Semantic 
-\subsubsection{Semantic}
+
+\zhilin{stopped here}
+
+%\subsubsection{Semantic}
 We assume that $S$ is the set of string variables over $\Sigma^*$, and $I$ is the set of integer variables. $\eta: S\times\Sigma\rightarrow\Sigma^*$ is the interpretation on string where $\eta(c)=c$ for every letter $c\in \Sigma$. $\pi: I\rightarrow\mathbb{Z}$ is the interpretation of Presburger arithmetic. Then the semantics is given by a satisfaction relation: $\eta, \pi\models \varphi$ defined in Table \ref{tab:semantics}. We say a formula $\varphi$ is \emph{satisfiable} if a solution $(\eta, \pi)$ exists such as $\eta, \pi\models \varphi$. A formula $\varphi$ is \emph{unsatisfiable} if no solution exists.
 \begin{table}[h]
   \centering
