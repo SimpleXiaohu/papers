@@ -16,7 +16,7 @@ This paper proposes a quantifier-free first-order logic called \textit{Extended 
   \centering
   \begin{tabular}{l r}
     $\varphi$ ::= $x\in \regex \mid \alpha_1\leq\alpha_2 \mid \neg\varphi\mid \varphi\vee\varphi$                                             & formulae            \\
-    $\regex$ ::= $\epsilon\mid a\mid \regex\cdot\regex\mid \regex+\regex\mid \regex\times \regex\mid \regex^*\mid\regex^C \mid \regex\{m,n\}$ & regular expressions \\
+    $\regex$ ::= $\epsilon \mid a \mid \regex\cdot\regex \mid \regex+\regex \mid \regex^* \mid \regex \cap \regex \mid \regex^C \mid \regex \setminus \regex \mid \regex^{\{m,n\}}$ & regular expressions \\
     $\alpha$ ::= $m \mid i \mid  |s|\mid -\alpha\mid \alpha_1+\alpha_2$                                                                       & integer terms
   \end{tabular}
   \caption{Syntax}\label{tab:syntax}
