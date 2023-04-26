@@ -15,7 +15,9 @@ We let $u[i]$ denote $a_i$ and $u[i,j]$ for the substring %of $u$ starting from 
 $a_i\cdots a_j$. 
 %\tl{check later for consistency}\zhilin{the indices start from 0, to be consistent with the semantics of substring and indexof}\zhilin{i do use it in section 4}
 %
-Let $u, v$ be two strings. We use $u \cdot v$ to denote the \emph{concatenation} of $u$ and $v$.
+Let $u, v$ be two strings. We use $u \cdot v$ to denote the \emph{concatenation} of $u$ and $v$. A language $L$ over $\Sigma$ is a subset of strings.  
+A concatenation of two languages $L_1$ and $L_2$ is defined as $\{u \cdot v \mid u \in L_1, v \in L_2\}$.
+For a language $L$ and $n \in \Nat$, we define $L^n$ inductively as follows: $L^0= \{\varepsilon\}$, $L^{n+1} = L \cdot L^n$ for every $n \in \Nat$.
 %, that is, the string $w$ such that $|w|= |u| + |v|$ and for each $i \in [0, |u|-1]$, $w[i]= u[i]$, and for each $i \in [0,|v|-1]$, $w[|u|+i]=v[i]$. 
 
 \paragraph*{Finite state automata.} 
