@@ -2,19 +2,53 @@
 %\documentclass{standalone}
 %\begin{document}
 
-\subsubsection{Syntax}
-This paper proposes a quantifier-free first-order logic called \textit{Extended String Logic (ESL)}, whose syntax is presented in Table \ref{tab:syntax}. $\varphi$ is a quantifier-free formula that can be a regular membership $x\in\regex$, a quantifier-free Presburger formula $\alpha_1 \leq \alpha_2$, a negation of a formula, or a disjunction of two formulas. $\alpha$ is an integer term which can be an integer constant $m$, integer variable $i$, the length of the string term $|s|$, the minus of an integer term, and the plus of two integer terms. The regular expression $\regex$ is built on empty string $\epsilon$, constant letter $a\in \Sigma$. The supported regex operations involve concatenation $\cdot$, disjunction $+$, intersection $\times$, closure $*$, complement $C$, and bounded repetition $\{m, n\}$. We use $term(\varphi)$ to denote the set of terms and $strvar(\varphi)$ to denote the string variables occurring in $\varphi$. The \emph{literals} of $\varphi$ are $x\in \regex$ and $\alpha_1 \leq \alpha_2$. $x\in \regex$ is called \emph{regular literals} and $\alpha_1 \leq \alpha_2$ is called \emph{linear literals}.
-\begin{table}[h]
+%\subsubsection{Syntax}
+In the sequel, we define string constraints with regex-counting and string-length function (abbreviated as RECL). The syntax of RECL is defined by the rules in Figure~\ref{fig:syntax}, where $x$ is a string variable, $i$ is an integer variable, $a$ is a character from an alphabet $\Sigma$, and $m, n$ are integer constants. 
+A RECL formula $\varphi$ is a conjunction of atomic formulas of the form $x \in \regex$, $x \not \in \regex$, or $t_1\ \op\ t_2$, where $\regex$ is a regular expression,  
+$t_1$ and $t_2$ are integer terms, and $\op \in \{=, \neq, \le, \ge, <, >\}$. Atomic formulas of the form $x \in \regex$ or $x \not \in \regex$ are called \emph{regular membership} constraints and atomic formulas of the form $t_1\ \op\ t_2$ are called \emph{length} constraints. 
+%
+A regular expression $\regex$ is built from $\emptyset$, the empty string $\epsilon$, and characters $a$ by using concatenation  $\cdot$, union $+$, Kleene star $^*$, intersection $\cap$, complement $\bar{\mbox{ }}$, difference $\setminus$, counting $^{\{m,n\}}$ or $^{\{m,\infty\}}$. An integer term is is built from constants $n$, variables $i$, and string lengths $|x|$, by operators $+$ and $-$.
+% 
+%is a quantifier-free formula that can be a regular membership $x\in\regex$, a quantifier-free Presburger formula $\alpha_1 \leq \alpha_2$, a negation of a formula, or a disjunction of two formulas. $\alpha$ is an integer term which can be an integer constant $m$, integer variable $i$, the length of the string term $|s|$, the minus of an integer term, and the plus of two integer terms. The regular expression $\regex$ is built on empty string $\epsilon$, constant letter $a\in \Sigma$. The supported regex operations involve concatenation $\cdot$, disjunction $+$, intersection $\times$, closure $*$, complement $C$, and bounded repetition $\{m, n\}$. We use $term(\varphi)$ to denote the set of terms and $strvar(\varphi)$ to denote the string variables occurring in $\varphi$. The \emph{literals} of $\varphi$ are $x\in \regex$ and $\alpha_1 \leq \alpha_2$. $x\in \regex$ is called \emph{regular literals} and $\alpha_1 \leq \alpha_2$ is called \emph{linear literals}.
+\begin{figure}[h]
   \centering
-  \begin{tabular}{l r}
-    $\varphi$ ::= $x\in \regex \mid \alpha_1\leq\alpha_2 \mid \neg\varphi\mid \varphi\vee\varphi$                                             & formulae            \\
-    $\regex$ ::= $\epsilon \mid a \mid \regex\cdot\regex \mid \regex+\regex \mid \regex^* \mid \regex \cap \regex \mid \regex^C \mid \regex \setminus \regex \mid \regex^{\{m,n\}}$ & regular expressions \\
-    $\alpha$ ::= $m \mid i \mid  |s|\mid -\alpha\mid \alpha_1+\alpha_2$                                                                       & integer terms
-  \end{tabular}
-  \caption{Syntax}\label{tab:syntax}
-\end{table}
-% Semantic 
-\subsubsection{Semantic}
+%  \begin{tabular}{l r}
+$ \begin{array}{l l l r}
+    \varphi & ::= & x\in \regex \mid x \not \in \regex \mid t_1\  \op\ t_2 \mid  \varphi \wedge \varphi                                              & \mbox{formulas}            \\
+    \regex &::= & \emptyset \mid \epsilon \mid a \mid \regex\cdot \regex \mid \regex+\regex \mid \regex^* \mid \regex \cap \regex \mid \overline{\regex} \mid \regex \setminus \regex \mid \regex^{\{m,n\}} \mid \regex^{\{m,\infty\}} \mid (e) & \mbox{regexes} \\
+    t &::= & n \mid i \mid  |x| \mid t - t \mid t + t                                                                    & \mbox{integer terms}
+    \end{array}
+  $
+%  \end{tabular}
+  \caption{Syntax of RECL }\label{fig:syntax}
+\end{figure}
+Moreover, for $S \subseteq \Sigma$ with $S = \{a_1, \cdots, a_k\}$, we use $S$ as an abbreviation of $a_1 + \cdots + a_k$.
+
+The definition of the semantics of RECL is somehow standard. Nevertheless, for completeness, we include the definition of semantics here. 
+
+For each regular expression $e$, the language defined by $e$, denoted by $\Lang(e)$, is defined recursively. For instance, $\Lang(\emptyset) = \emptyset$, $\Lang(\varepsilon) = \{\varepsilon\}$, $\Lang(a) = \{a\}$, and $\Lang(e_1 \cdot e_2) = \Lang(e_1) \cdot \Lang(e_2)$, $\Lang(e_1 + e_2) = \Lang(e_1) \cup \Lang(e_2)$, and so on. 
+It is well-known that regular expressions define the same class of languages as finite state automata, that is, the class of regular languages \cite{HU79}. 
+
+Let $\varphi$ be a RECL formula and $\svars(\varphi)$ (resp. $\ivars(\varphi)$) denote the set of string (resp. integer) variables occurring in $\varphi$. 
+%
+Then the semantics of formulas are defined with respect to a mapping $\theta: \svars(\varphi) \rightarrow \Sigma^* \uplus \ivars(\varphi) \rightarrow \Int$. 
+The mapping $\theta$ can be naturally extended to the set of integer terms. For instance, $\theta(|x|) =|\theta(x)|$, $\theta(t_1 + t_2) = \theta(t_1) + \theta(t_2)$. 
+A  mapping $\theta$ is said to satisfy $\varphi$, denoted by $\theta \models \varphi$, if one of the following holds,  
+\begin{itemize}
+\item $\varphi \equiv x \in \regex$ and $\theta(x) \in \Lang(\regex)$, 
+%
+\item $\varphi \equiv x \not \in \regex$ and $\theta(x) \not \in \Lang(\regex)$, 
+%
+\item $\varphi \equiv t_1\ \op\ t_2$ and $\theta(t_1)\ \op\ \theta(t_2)$, 
+%
+\item $\varphi \equiv \varphi_1 \wedge \varphi_2$ and $\theta \models \varphi_1$ and $\theta \models \varphi_2$.
+\end{itemize}
+A RECL formula $\varphi$ is said to be satisfiable if there is a mapping $\theta$ such that $\theta \models \varphi$. The satisfiability problem for RECL is to decide whether a given RECL formula $\varphi$ is satisfiable. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hide{
 We assume that $S$ is the set of string variables over $\Sigma^*$, and $I$ is the set of integer variables. $\eta: S\times\Sigma\rightarrow\Sigma^*$ is the interpretation on string where $\eta(c)=c$ for every letter $c\in \Sigma$. $\pi: I\rightarrow\mathbb{Z}$ is the interpretation of Presburger arithmetic. Then the semantics is given by a satisfaction relation: $\eta, \pi\models \varphi$ defined in Table \ref{tab:semantics}. We say a formula $\varphi$ is \emph{satisfiable} if a solution $(\eta, \pi)$ exists such as $\eta, \pi\models \varphi$. A formula $\varphi$ is \emph{unsatisfiable} if no solution exists.
 \begin{table}[h]
   \centering
@@ -27,7 +61,9 @@ We assume that $S$ is the set of string variables over $\Sigma^*$, and $I$ is th
   \caption{Semantics}
   \label{tab:semantics}
 \end{table}
+%
 In addition to the classic regex operators (union, concatenation, closure), we syntactically support intersection, complement, and repetition. As we all know, the classic regular language is closed under intersection and complement \cite{aut_hopcraft}. Furthermore, the operation \emph{repetition} $\regex\{m,n\}$ means repeating regex $\regex$ at least $m$ times and at most $n$ times. It can be syntactically rewritten by concatenation and union:
 $\regex\{m,n\} \equiv \regex^m\mid\cdots\mid\regex^n$ where $\regex^k$ defines concatenate $\regex$ $k$ times ($m\leq k\leq n$). So the regular language $\lan(\regex)$ defined in Table \ref{tab:syntax} is semantically equal to the classic regular language.
+}
 
 %\end{document}
