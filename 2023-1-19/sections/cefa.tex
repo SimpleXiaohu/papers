@@ -6,7 +6,7 @@ In this section, we introduce the definition of CEFA, Parikh image and pre-iamge
 
 %\subsection{Cost-Enriched Finite Automaton} \label{subsec:cefa}
 The definition of CEFA in this paper is lightly different from the definition in \cite{atva2020}. In \cite{atva2020}, the cost function is defined as a function $\eta: \Sigma \rightarrow \mathbb{N}$. In this paper, we define the cost function as an integer vector whose elements are the incremental value of registers. Furthermore, we add a new linear integer arithmetic constraint $\theta$ to each final state of the CEFA, which restricts the value of registers. Two types of definitions have the same expressive ability on the $SAT_{CL}$ problem.
-\begin{definition}[Cost-Enriched Finite Automaton]
+\begin{definition}[Cost-Enriched Finite Automaton]\newline
   A cost-enriched finite automaton $\aut$ is a 7-tuple $(Q, \Sigma, \delta, q_I, F, R, \theta)$ where
   \begin{itemize}
     \item $Q,\Sigma,q_I,F$ is defined as NFA,
@@ -24,37 +24,21 @@ The definition of CEFA in this paper is lightly different from the definition in
     \begin{tikzpicture}[
       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
       initial text=, every state/.style={minimum size = 0.001cm,
-          accepting text=$1\leq r_1\leq 100$, accepting/.style=accepting by arrow}
+          accepting text=$\scriptstyle 1\leq r_1\leq 100$, accepting/.style=accepting by arrow}
       ]
       \node[state,initial]            (q_0)                      {$q_0$};
       \node[state]                    (q_1) [right=of q_0]       {$q_1$};
       \node[state,accepting]          (q_2) [right=of q_1]       {$q_2$};
 
-      \path[->] (q_0) edge              node      [above]           {$a$/(1)} (q_1)
-      (q_1) edge              node      [above]           {$b$/(0)} (q_2)
-      (q_2) edge [bend left]  node      [below]           {$\epsilon$/(0)} (q_0);
+      \path[->] (q_0) edge              node      [above]           {$\scriptstyle a:(1)$} (q_1)
+      (q_1) edge              node      [above]           {$\scriptstyle b:(0)$} (q_2)
+      (q_2) edge [bend left]  node      [below]           {$\scriptstyle\epsilon: (0)$} (q_0);
     \end{tikzpicture}
     \caption{An automaton recognizing the language of $(ab)\{1,100\}$}
     \label{fig:repetition}
   \end{figure}
 \end{example}
-\begin{example}[The pre-image of length operation]\label{eg:pre_len} The length operation can be captured by a CEFA base on our previous work \cite{atva2020}. Fig.\ref{fig:len} shows a pre-image of linear literal $i=|x|$. It is easy to see that the pre-image accepts string words with length $i$.
-  \begin{figure}[h]
-    \centering
-    \begin{tikzpicture}[
-      shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-      initial text=, every state/.style={minimum size = 0.001cm},
-      accepting text=${r_1=1}$, accepting/.style=accepting by arrow
-      ]
 
-      \node[state,initial,accepting]            (q_0)       {$q$};
-
-      \path[->] (q_0) edge [loop below] node{$\Sigma$/(1)} ();
-    \end{tikzpicture}
-    \caption{The pre-image of $i = |x|$}
-    \label{fig:len}
-  \end{figure}
-\end{example}
 
 % Parikh's theorem \cite{parikh_theorem}\cite{parikh_anthony}\cite{parikh_compute} states that the Parikh image of a context-free language is semilinear so that it can be written as Presburger formula. Following the version for context-free grammar \cite{parikh_compute} and the version for regular expression \cite{parikh_for_nfa}, we define the Parikh image of language of an CEFA $\aut = (Q, \Sigma, \delta, q_I, F, R, \theta)$  as follows:
 % \begin{table}[h]

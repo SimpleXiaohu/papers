@@ -3,7 +3,7 @@
 %\begin{document}
 
 As mentioned in Section \ref{sec:overview}, the main idea of our approach is to model the counting operators symbolically by registers in automata, instead of unfolding them explicitly. Additionally, we represent string lengths using registers. This reduces the satisfiability of string constraints that involve regex-counting and string-length to the satisfiability of linear integer arithmetic, which can be solved by off-the-shelf SMT solvers. We also propose techniques to reduce automata sizes and utilize under approximations to enhance performance.
-\subsection{Encode Counting Operator to CEFA} \label{subsec:regex2cefa}
+\subsection{Encode Regex-Counting to CEFA} \label{subsec:regex2cefa}
 One key point of our approach is the encoding of counting operator. In this section, we define the construction of CEFA from the regular expression with counting. We divide the counting operator into \emph{handled} and \emph{non-handled}. The counting operator is called \emph{non-handled} if it is the sub-regex of other complement operator (e.g., $(\regex^{\{m,n\}})^C$), closure operator(e.g., $(\regex^{\{m,n\}})^*$), or counting operator (e.g., $(\regex^{\{m,n\}})^{\{m', n'\}}$), otherwise it is called \emph{handled}. A regex is called \emph{non-handled} if it contains any non-handled counting operators, and is called \emph{handled} otherwise.
 % We must syntactically rewrite bounded repetition $\regex\{m,n\}$ if it is the sub-regex of complement (e.g., $(\regex\{m,n\})^C$), closure(e.g., $(\regex\{m,n\})^*$), and bounded repetition(e.g., $(\regex\{m,n\})\{m', n'\}$), we unwind it to $\regex^m\mid\cdots\mid\regex^n$. After this syntactic rewriting, we call the resulting regex $\regex'$ \emph{non-nested}.
 Given a handled regex $\regex$, operations such as intersection, union, concatenation, complement, closure, and counting may appear. To construct the CEFA of $\regex$, we first create CEFA for each sub-regex and then combine them. Similar to the construction of NFA from regex\cite{aut_hopcraft}, our construction is inductive on the size of $\regex$. The base case is the construction for a single character, an empty string, or an empty language. The inductive step is the construction for the concatenation, union, intersection of two automata of sub-regexes, counting, closure, and complement of one automaton of sub-regex. We only discuss the inductive step for counting because it is the most important and the other operations are trivial. \newline
@@ -34,12 +34,12 @@ The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a n
     \begin{tikzpicture}[
       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
       initial text=, every state/.style={minimum size = 0.001cm},
-      accepting text=\myemph{$m\leq r\leq n$}, accepting/.style=accepting by arrow,
+      accepting text=\myemph{$\scriptstyle m\leq r\leq n$}, accepting/.style=accepting by arrow,
       ]
 
       \node[state,initial]            (q_0)                      {};
       \node[state, accepting]         (q_1) [right=of q_0]       {};
-      \path[->] (q_1) edge[bend right]   node    [above] {\myemph{$\mathbf{\epsilon/(1)}$}} (q_0);
+      \path[->] (q_1) edge[bend right]   node    [above] {\myemph{$\scriptstyle \mathbf{\epsilon:(1)}$}} (q_0);
       \node [fit=(q_0) (q_1)] {$\cdots$};
     \end{tikzpicture}
     \caption{The CEFA recognizing $\regex^{\{m,n\}}$}
@@ -55,14 +55,14 @@ The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a n
       \begin{tikzpicture}[
         shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
         initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=$\top$, accepting/.style=accepting by arrow,
+        accepting text=$\scriptstyle \top$, accepting/.style=accepting by arrow,
         accepting where=above
         ]
 
         \node[state,initial]            (q_0)                      {};
         \node[state,accepting]                    (q_1) [right=of q_0]       {};
 
-        \path[->] (q_0) edge              node      [above]           {$a$/()} (q_1);
+        \path[->] (q_0) edge              node      [above]           {$\scriptstyle a:()$} (q_1);
       \end{tikzpicture}
       \caption{The CEFA recognizing $a$}
       \label{subfig:rep_aut_a}
@@ -72,14 +72,14 @@ The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a n
       \begin{tikzpicture}[
         shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
         initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=$\top$, accepting/.style=accepting by arrow,
+        accepting text=$\scriptstyle \top$, accepting/.style=accepting by arrow,
         accepting where=above
         ]
 
         \node[state,initial]            (q_0)                      {};
         \node[state,accepting]                    (q_1) [right=of q_0]       {};
 
-        \path[->] (q_0) edge              node      [above]           {$b$/()} (q_1);
+        \path[->] (q_0) edge              node      [above]           {$\scriptstyle b:()$} (q_1);
       \end{tikzpicture}
       \caption{The CEFA recognizing $b$}
       \label{subfig:rep_aut_b}
@@ -89,7 +89,7 @@ The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a n
       \begin{tikzpicture}[
         shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
         initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=$\top$, accepting/.style=accepting by arrow,
+        accepting text=$\scriptstyle\top$, accepting/.style=accepting by arrow,
         accepting where=above
         ]
 
@@ -97,8 +97,8 @@ The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a n
         \node[state]                    (q_1) [right=of q_0]       {};
         \node[state, accepting]         (q_2) [right=of q_1]       {};
 
-        \path[->] (q_0) edge              node      [above]           {$a$/()} (q_1)
-        (q_1) edge              node      [above]           {$b$/()} (q_2);
+        \path[->] (q_0) edge              node      [above]           {$\scriptstyle a:()$} (q_1)
+        (q_1) edge              node      [above]           {$\scriptstyle b:()$} (q_2);
       \end{tikzpicture}
       \caption{The CEFA recognizing $ab$}
       \label{subfig:rep_aut_ab}
@@ -108,7 +108,7 @@ The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a n
       \begin{tikzpicture}[
         shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
         initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=\myemph{1}$\leq r_1\leq$\myemph{100}, accepting/.style=accepting by arrow,
+        accepting text=$\scriptstyle\myemph{1}\leq r_1\leq\myemph{100}$, accepting/.style=accepting by arrow,
         accepting where=above
         ]
 
@@ -116,9 +116,9 @@ The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a n
         \node[state]                    (q_1) [right=of q_0]       {};
         \node[state,accepting]          (q_2) [right=of q_1]       {};
 
-        \path[->] (q_0) edge              node      [above]           {$a$/(\myemph{0})} (q_1)
-        (q_1) edge              node      [above]           {$b$/(\myemph{0})} (q_2)
-        (q_2) edge [bend left]  node      [below]           {$\epsilon$/(\myemph{1})} (q_0);
+        \path[->] (q_0) edge              node      [above]           {$\scriptstyle a:(\myemph{0})$} (q_1)
+        (q_1) edge              node      [above]           {$\scriptstyle b:(\myemph{0})$} (q_2)
+        (q_2) edge [bend left]  node      [below]           {$\scriptstyle \epsilon:(\myemph{1})$} (q_0);
       \end{tikzpicture}
       \caption{The CEFA recognizing $(ab)\{\myemph{1},\myemph{100}\}$}
       \label{subfig:rep_aut_ab1_100}
@@ -126,43 +126,39 @@ The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a n
     \caption{The example of constructing regex with counting}
   \end{figure}
 \end{example}
-Above discusses the construction of counting operator in a handled regex. The counting operator of unhandled regex can not be constructed by the same way. For example, for an unhandled regex $(ab^{\{1,100\}})*$, there are infinite repetitions of regex $ab^{\{1,100\}}$. The counting times of each repetition are irrelevant, so that we can not represent them use finite registers. The way we solved this problem is to syntactically rewrite the unhandled counting operator. More exactly, the sub-regex $\regex^{\{m,n\}}$ in the unhandled regex is rewritten into $\underbrace{\regex\cdot\regex\cdots\regex}_{m \text{ times}}\mid\cdots\mid \underbrace{\regex\cdot\regex\cdots\regex}_{n \text{ times}}$.
+Above discusses the construction of counting operator in a handled regex. The counting operator of unhandled regex can not be constructed by the same way. For example, for an unhandled regex $(ab^{\{1,100\}})*$, there are infinite repetitions of regex $ab^{\{1,100\}}$. The counting times of each repetition are irrelevant, so that we can not represent them use finite registers. So we syntactically rewrite the unhandled counting operator into union operator and concatenation operator. More exactly, the sub-regex $\regex^{\{m,n\}}$ in the unhandled regex is rewritten into $\underbrace{\regex\cdot\regex\cdots\regex}_{m \text{ times}}\mid\cdots\mid \underbrace{\regex\cdot\regex\cdots\regex}_{n \text{ times}}$.
 % Based on the decision procedure defined in the paper \cite{atva2020}, we propose an efficient algorithm to solve ESL formula $\varphi\wedge \psi$ where $\varphi$ is the conjunction of literals and $\psi$ is the conjunction of linear literals without length operation. For each string variable $x$, we first compute pre-images of all linear literal $i=|x|$. Then we generate CEFAs of all regular expressions $\regex$ in all regular literals $x\in \regex$ and intersect these CEFAs and pre-images to get the final automaton $\aut_x$ for $x$. At present, there is a final CEFA for each string variable $x$. The linear arithmetic constraint $\psi$ restricts the accepting word of final CEFAs. Thus the satisfiability problem is the emptiness checking problem of final CEFAs under $\psi$. If it is empty, the string constraints are unsatisfiable. Otherwise, the string constraints are satisfiable.
 % The emptiness checking problem of CEFAs under linear integer arithmetic is theoretically pspace-complete\cite{atva2020}. To solve it efficiently for a practical example, we develop heuristic ways such as under-approximation (Section \ref{subsec:under-approx}) and symbolic-aware simplification (Section \ref{subsec:simplify}).
+\subsection{Pre-iamge of String-length}
+Given a string-length constraint, we build a CEFA with a register storing the length of accepted word. We call such a CEFA the \emph{pre-image} of it. Formally, the pre-image of length constraint is a CEFA $(\{q_I\}, \Sigma, \{q_I\xrightarrow[(1)]{\Sigma} q_I\}, q_I, \{q_I\}, r, \theta)$ where accpeting condition $\theta$ is based on the length value. For example, example \ref{eg:pre_len} shows the pre-image of length constraints $i=|x|$, in which $\theta(q_I)$ is $r = i$. This automaton contains a simple loop which increase $1$ on register $r$ for all char in $\Sigma$. So the accepting words of it is all words with length $i$. \newline
+% The formal definition of pre-images of abundant string functions is listed in \cite{atva2020}, and we do not repeat it here.
+\begin{example}[The pre-image of $i = |x|$]\label{eg:pre_len} 
+  \begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+      shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+      initial text=, every state/.style={minimum size = 0.001cm},
+      accepting text=$\scriptstyle{r=i}$, accepting/.style=accepting by arrow
+      ]
 
-\subsection{Pre-iamge}
-\denghang{TODO}
+      \node[state,initial,accepting]            (q_0)       {$q_I$};
 
-\subsection{High-level algorithm}
-\begin{algorithm}[h]
-  \caption{High-level algorithm}
-  \label{alg:high}
-  \begin{algorithmic}[1]
-    \Require Conjunction of literals $\varphi$ and conjunction of linear literals $\psi$
-    \Ensure \emph{sat} or \emph{unsat}
-    \Statex
-    \State $finalAuts \leftarrow \emptyset$
-    \ForAll{string variables $x$ occurring in $\varphi$}
-    \State $\aut_{len} \leftarrow$ intersection of all pre-images of $i=|x|$ in $\varphi$
-    \State $\aut_{regex} \leftarrow$ intersection of all CEFAs of $x \in \regex$ in $\varphi$
-    \State $\aut_x \leftarrow$ intersection of $\aut_{len}$ and $\aut_{regex}$
-    \State $\aut_{nfa} \leftarrow$ NFA form of $\aut_x$
-    \If{$\aut_{nfa}$ is empty}
-    \State \textbf{return} \emph{unsat}
-    \EndIf
-    \State $finalAuts \leftarrow finalAuts \cup \{\aut_x\}$
-    \EndFor
-    \If{$\algfun{isEmpty}(finalAuts, \psi)$ }
-    \State \textbf{return} \emph{unsat}
-    \Else
-    \State \textbf{return} \emph{sat}
-    \EndIf
-  \end{algorithmic}
-\end{algorithm}
-The pseudocode presented in Algorithm \ref{alg:high} outlines the framework of our solving process. We construct the automata of all length operations occurring in the ESL conjunction $\varphi$ at line 3 and the automata of all regular memberships at line 4. In the following steps, we call an automaton to be \emph{final} if we will not operate it anymore. The set $finalAuts$ contains all final automata for all string variables and is initially empty at line 1. The intersection of $\aut_{len}$ and $\aut_{regex}$ at line 5 ensures the final automaton of $x$ reserves both length and regular information. At line 6, we compute an NFA form to throw unsat rapidly. An NFA form of CEFA is obtained by removing update functions and accepting conditions while maintaining graph structure. More exactly, given a CEFA $\aut = (Q,\Sigma, \delta, q_I, F, R, \theta)$, the NFA form of $\aut$ is $(Q, \Sigma, \delta', q_I, F)$ where $\delta'$ is composed of transition $q\xrightarrow[]{a} q'$ for $q\xrightarrow[\myvec{v}]{a} q'\in \delta$. It is obvious that the NFA form is an over-approximation of the CEFA, so that unsat is directly thrown if we find the NFA form is already empty at line 7. Sometimes the over-approximation is useful. For example, to solve the string constraint $x\in \Sigma_{/a}\{1,300\}\wedge x\in \Sigma^*a\Sigma^* $ which CVC5 has failed on, the NFA form is empty because there is no path to accepting states. \newline
-After obtaining all final CEFAs of all string variables and their NFA forms are not empty, we check whether the final CEFAs are empty under the linear integer arithmetic $\psi$ at line 12. If they are empty under $\psi$, we return $unsat$. Otherwise, we return $sat$.
+      \path[->] (q_0) edge [loop below] node{$\scriptstyle\Sigma:(1)$} ();
+    \end{tikzpicture}
+  \end{figure}
+\end{example} 
+\subsection{Combine Regex-counting and String-length}
+In the previous section, we have discussed the construction of regex-counting operator and the pre-image of string-length constraint. In this section, we show how to combine them to deal with the string constraints with regex-counting and string-length. 
+\begin{definition} [The Product of Two CEFA]\newline
+  Given two CEFAs $\aut_1 = (Q_1, \Sigma, \delta_1, q_{I_1}, F_1, R_1, \theta_1)$ and $\aut_2 = (Q_2, \Sigma, \delta_2, q_{I_2}, F_2, R_2, \theta_2)$ with $R_1\cap R_2 = \emptyset$, the product of them, denoted by $\aut_1 \times \aut_2$, is defined as $(Q_1\times Q_2, \Sigma, \delta, (q_{I_1}, q_{I_2}), F_1\times F_2, R_1\cup R_2, \theta)$ where
+  \begin{itemize}
+    \item $\delta$ comprises the tuples $((q_1, q_2), a, (q_1', q_2'), \myvec{v_1}\cdot \myvec{v_2})$ such that $(q_1, a, q_1', \myvec{v_1})\in \delta_1$ and $(q_2, a, q_2', \myvec{v_2})\in \delta_2$.
+    \item $\theta((q_1, q_2))$ is $\theta_1(q_1)\wedge \theta_2(q_2)$ for each accepting state $(q_1, q_2)\in F_1\times F_2$.
+  \end{itemize}
+\end{definition}
+With the help of product, we can combine the CEFAs of regex-counting and string-length. For example, the CEFA of string constraints $x\in \regex \wedge i=|x|$ is the product of the CEFA of $x\in \regex$ and the pre-image of $i=|x|$.
 
-\subsection{Emptiness Checking} \label{subsec:emptiness}
+\subsection{Emptiness Checking Problem on CEFAs} \label{subsec:emptiness}
 As mentioned, the emptiness checking problem of CEFAs under linear integer arithmetic $P$ is theoretically Pspace-complete. In our previous research  \cite{atva2020}, we rewrote CEFAs to an infinite system and used a model-checking tool \emph{nuXmv}\cite{nuxmv} to solve it. However, it needs to be more effective. So we put forward a new framework that brings in under-approximation and symbolic-aware simplification heuristics.\newline
 As shown in Algorithm \ref{alg:emptiness}, we simplify the input CEFAs at line 1 because they may have many transitions and registers. The purpose of the simplification is to deal with duplication. After simplification, we try to find a solution by under-approximation at line 3 and line 4. An off-the-shelf SMT solver gives the result of $\varphi_{under}\wedge P$. If we find a solution, we return $false$ at line 5 because it implies that the CEFAs under linear integer arithmetic $P$ are not empty. Otherwise, we compute the Parikh images of the simplified CEFAs and check if the Parikh images are satisfiable in conjunction with $P$ at line 12. The Parikh image checking is complete so that satisfiability implies non-emptiness directly. \newline
 The under-approximation program is executed many times until the $MaxBound$ is reached. $MaxBound$ is an empirical bound set to $15$ in our experiment because it brings exponential growth of searching space. The details of simplification are shown in Algorithm \ref{alg:simplify} and under-approximation are shown in Algorithm \ref{alg:underApprox}.\newline
@@ -188,7 +184,6 @@ The under-approximation program is executed many times until the $MaxBound$ is r
     \EndIf
   \end{algorithmic}
 \end{algorithm}
-
 \subsubsection{Symbolic-Aware Simplification} \label{subsec:simplify}
 The purpose of simplification is to remove duplicated transitions and registers. In the emptiness checking Algorithm \ref{alg:emptiness}, the vectors on the transitions are meritorious, while the letters are not. So we see the alphabet of the CEFA as unary (i.e., the alphabet is $\{a\}$) and see the vectors in the CEFA as letters in the NFA. The vector $\myvec{0}_n$ is seen as $\epsilon$. Precisely, given an CEFA $\aut = (Q, \Sigma, \delta, q_I, F, R, \theta)$, we obtain a symbolic form  $\aut_{sym} = (Q, \Sigma', \delta', q_I, F, R, \theta)$ where
 \begin{itemize}
@@ -281,7 +276,7 @@ The process above comprises line 3 and line 4 of Algorithm \ref{alg:simplify}. F
       \caption{Simplify the CEFA based on symbolic label}
       \label{subfig:simp_final}
     \end{subfigure}
-    \caption{Symbolic simplification can remove duplicated transitions and states.}
+    \caption{Symbolic simplification removes duplicated transitions and states.}
     \label{fig:simplification_example}
   \end{figure}
 
@@ -320,7 +315,7 @@ The process above comprises line 3 and line 4 of Algorithm \ref{alg:simplify}. F
       \caption{Remove the duplicated registers and corresponding update functions}
       \label{subfig:remove_duplicate}
     \end{subfigure}
-    \caption{Symbolic simplification can remove duplicated transitions and states.}
+    \caption{Symbolic simplification removes duplicated transitions and states.}
     \label{fig:duplicate}
   \end{figure}
 
@@ -351,5 +346,36 @@ An under-approximation procedure solves the satisfiable instances of the emptine
 \begin{example}
   Consider the automaton in Fig. \ref{subfig:aut_x} again. The solution of the Parikh image of it leads to a complete but inefficient result since the quantifier-free linear integer arithmetic formulas are solved in exponential time \cite{parikh_compute}. Under-approximation can accelerate the solving process. When we set the bound to 2, the under-approximation program will enumerate all runs whose length is 2. One of them is $q_I\xrightarrow[(1,1)]{a} q_1\xrightarrow[(0,1)]{b} q_f$. The corresponding registers' values are $r_1 = 1+0 = 1, r_2 = 1+1 = 2$. Checking for $r_1= 1\wedge r_2=2\wedge r_2=i\wedge 1\leq r_1\leq100$ is a lightweight process because the values of $r_1$ and $r_2$ are fixed.
 \end{example}
+
+
+\subsection{High-level algorithm}
+\begin{algorithm}[h]
+  \caption{High-level algorithm}
+  \label{alg:high}
+  \begin{algorithmic}[1]
+    \Require Conjunction of literals $\varphi$ and conjunction of linear literals $\psi$
+    \Ensure \emph{sat} or \emph{unsat}
+    \Statex
+    \State $finalAuts \leftarrow \emptyset$
+    \ForAll{string variables $x$ occurring in $\varphi$}
+    \State $\aut_{len} \leftarrow$ intersection of all pre-images of $i=|x|$ in $\varphi$
+    \State $\aut_{regex} \leftarrow$ intersection of all CEFAs of $x \in \regex$ in $\varphi$
+    \State $\aut_x \leftarrow$ intersection of $\aut_{len}$ and $\aut_{regex}$
+    \State $\aut_{nfa} \leftarrow$ NFA form of $\aut_x$
+    \If{$\aut_{nfa}$ is empty}
+    \State \textbf{return} \emph{unsat}
+    \EndIf
+    \State $finalAuts \leftarrow finalAuts \cup \{\aut_x\}$
+    \EndFor
+    \If{$\algfun{isEmpty}(finalAuts, \psi)$ }
+    \State \textbf{return} \emph{unsat}
+    \Else
+    \State \textbf{return} \emph{sat}
+    \EndIf
+  \end{algorithmic}
+\end{algorithm}
+The pseudocode presented in Algorithm \ref{alg:high} outlines the framework of our solving process. We construct the automata of all length operations occurring in the ESL conjunction $\varphi$ at line 3 and the automata of all regular memberships at line 4. In the following steps, we call an automaton to be \emph{final} if we will not operate it anymore. The set $finalAuts$ contains all final automata for all string variables and is initially empty at line 1. The intersection of $\aut_{len}$ and $\aut_{regex}$ at line 5 ensures the final automaton of $x$ reserves both length and regular information. At line 6, we compute an NFA form to throw unsat rapidly. An NFA form of CEFA is obtained by removing update functions and accepting conditions while maintaining graph structure. More exactly, given a CEFA $\aut = (Q,\Sigma, \delta, q_I, F, R, \theta)$, the NFA form of $\aut$ is $(Q, \Sigma, \delta', q_I, F)$ where $\delta'$ is composed of transition $q\xrightarrow[]{a} q'$ for $q\xrightarrow[\myvec{v}]{a} q'\in \delta$. It is obvious that the NFA form is an over-approximation of the CEFA, so that unsat is directly thrown if we find the NFA form is already empty at line 7. Sometimes the over-approximation is useful. For example, to solve the string constraint $x\in \Sigma_{/a}\{1,300\}\wedge x\in \Sigma^*a\Sigma^* $ which CVC5 has failed on, the NFA form is empty because there is no path to accepting states. \newline
+After obtaining all final CEFAs of all string variables and their NFA forms are not empty, we check whether the final CEFAs are empty under the linear integer arithmetic $\psi$ at line 12. If they are empty under $\psi$, we return $unsat$. Otherwise, we return $sat$.
+
 
 %\end{document}
