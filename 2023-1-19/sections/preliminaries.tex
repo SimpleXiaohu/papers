@@ -6,7 +6,7 @@ We write $\Nat$ and $\Int$ for the sets of natural and integer numbers, respecti
 
 \paragraph*{Strings and languages.}
 A string over $\Sigma$ is a (possibly empty) sequence of elements from $\Sigma$,
-denoted by $u, v, w, \ldots$. An empty string is denoted by $\varepsilon$.  We write $\Sigma^*$ (resp., $\Sigma^+$) for the set of all (resp. nonempty) strings over $\Sigma$.
+denoted by $u, v, w, \ldots$. An empty string is denoted by $\varepsilon$. We use $\Sigma_\varepsilon$ to denote $\Sigma \cup \{\varepsilon\}$. We write $\Sigma^*$ (resp., $\Sigma^+$) for the set of all (resp. nonempty) strings over $\Sigma$.
 %Let 
 For a string $u$, we use $|u|$ to denote the number of letters in $u$. In particular, $|\varepsilon|=0$. 
 %Moreover, for $a \in \Sigma$, let $|u|_a$ denote the number of occurrences of $a$ in $u$. 
@@ -23,10 +23,10 @@ Finally, define $L^* = \bigcup \limits_{n \in \Nat} L^n$.
 %, that is, the string $w$ such that $|w|= |u| + |v|$ and for each $i \in [0, |u|-1]$, $w[i]= u[i]$, and for each $i \in [0,|v|-1]$, $w[|u|+i]=v[i]$. 
 
 \paragraph*{Finite state automata.} 
-A \emph{(nondeterministic) finite state automaton} (NFA)  is a tuple $\NFA=(Q, \Sigma, \delta, I, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, $I,F \subseteq Q$ are the set of initial and final states respectively. For readability, we write a transition $(q, a, q') \in \delta$ as $q \xrightarrow[\delta]{a} q'$ (or simply $q \xrightarrow{a} q'$). %Moreover, when $\delta$ is clear from context, we omit $\delta$ in $q \xrightarrow[\delta]{a} q'$ and write $q \xrightarrow{a} q'$. 
+A \emph{(nondeterministic) finite state automaton} (NFA)  is a tuple $\NFA=(Q, \Sigma, \delta, q_0, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, $q_0 \in Q$ is the initial state, and $F \subseteq Q$ is the set of final states. For readability, we write a transition $(q, a, q') \in \delta$ as $q \xrightarrow[\delta]{a} q'$ (or simply $q \xrightarrow{a} q'$). %Moreover, when $\delta$ is clear from context, we omit $\delta$ in $q \xrightarrow[\delta]{a} q'$ and write $q \xrightarrow{a} q'$. 
 The \emph{size} of an NFA $\NFA$, denoted by $|\NFA|$, is defined as the number of transitions of $\NFA$.
 %
-A \emph{run} of $\NFA$ on a string $w = a_1 \cdots a_n$ is a sequence of transitions $q_0 \xrightarrow{a_1} q_1 \cdots q_{n-1} \xrightarrow{a_n} q_n$ with $q_0 \in I$. The run is \emph{accepting} if $q_n \in F$.
+A \emph{run} of $\NFA$ on a string $w = a_1 \cdots a_n$ is a sequence of transitions $q_0 \xrightarrow{a_1} q_1 \cdots q_{n-1} \xrightarrow{a_n} q_n$. The run is \emph{accepting} if $q_n \in F$.
 A string $w$ is accepted by an NFA $\NFA$ if there is an accepting run of $\NFA$ on $w$. In particular, the empty string $\varepsilon$ is accepted by $\NFA$ if $I \cap F \neq \emptyset$. The language of $\NFA$, denoted by $\Lang(\NFA)$, is the set of strings accepted by $\NFA$. 
 %
 An NFA $\NFA$ is said to be \emph{deterministic} if $I$ is a singleton and, for every $q \in Q$ and $a \in \Sigma$, there is at most one state $q' \in Q$ such that $(q, a, q') \in \delta$.

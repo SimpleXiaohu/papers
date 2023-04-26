@@ -2,16 +2,19 @@
 %\documentclass{standalone}
 %\begin{document}
 
-In this section, we introduce the definition of CEFA, Parikh image and pre-iamge.
+In this section, we define the model of cost-enriched finite state automata (CEFA), which was introduced in \cite{atva2020} and will be used to solve the satisfiability problem of RECL later on. 
 
 %\subsection{Cost-Enriched Finite Automaton} \label{subsec:cefa}
-The definition of CEFA in this paper is lightly different from the definition in \cite{atva2020}. In \cite{atva2020}, the cost function is defined as a function $\eta: \Sigma \rightarrow \mathbb{N}$. In this paper, we define the cost function as an integer vector whose elements are the incremental value of registers. Furthermore, we add a new linear integer arithmetic constraint $\theta$ to each final state of the CEFA, which restricts the value of registers. Two types of definitions have the same expressive ability on the $SAT_{CL}$ problem.
+The definition of CEFA below is slightly different from the definition in~\cite{atva2020} in the sense that accepting conditions specified by LIA formulas, where the free variables are the registers, are attached to final states. 
+%
+%In~\cite{atva2020}, the cost function is defined as a function $\eta: \Sigma \rightarrow \mathbb{N}$. In this paper, we define the cost function as an integer vector whose elements are the incremental value of registers. Furthermore, we add a new linear integer arithmetic constraint $\theta$ to each final state of the CEFA, which restricts the value of registers. Two types of definitions have the same expressive ability on the $SAT_{CL}$ problem.
 \begin{definition}[Cost-Enriched Finite Automaton]
-  A cost-enriched finite automaton $\aut$ is a 7-tuple $(Q, \Sigma, \delta, q_I, F, R, \theta)$ where
+  A cost-enriched finite automaton $\aut$ is a tuple $(R, Q, \Sigma, \delta, q_0, F, \theta)$ where
   \begin{itemize}
-    \item $Q,\Sigma,q_I,F$ is defined as NFA,
-    \item $R = (r_1\cdots r_n)$ is a vector of mutually distinct cost registers,
-    \item $\delta$ is a transition set whose elements are tuples $(q, c, q', \myvec{v})$ where $q, q'$ are states of $Q$, $c$ is a letter in alphabet $\Sigma\cup\{\epsilon\}$ and $\myvec{v}$ is the cost update function for registers, which is an integer vector whose $i$-th element is the incremental value of register $r_i$.  $(q, a, q', \myvec{v})$ is written as $q\xrightarrow[\myvec{v}]{a} q'$ for readability.
+  \item $R = \{r_1, \cdots, r_n\}$ is a finite set of registers, 
+    \item $Q, \Sigma, q_0, F$ are as in the definition of NFA,
+%    \item $R = (r_1\cdots r_n)$ is a vector of mutually distinct cost registers,
+    \item $\delta \subseteq Q \times \Sigma_\varepsilon \times Q \times (\Int^n)^R$ is a transition set whose elements are tuples $(q, c, q', \myvec{v})$ where $q, q'$ are states of $Q$, $c$ is a letter in alphabet $\Sigma\cup\{\epsilon\}$ and $\myvec{v}$ is the cost update function for registers, which is an integer vector whose $i$-th element is the incremental value of register $r_i$.  $(q, a, q', \myvec{v})$ is written as $q\xrightarrow[\myvec{v}]{a} q'$ for readability.
     \item $\theta: F\rightarrow \varphi$ is a linear integer arithmetic constraint function on final states. $\theta$ is called \emph{accepting condition}.
   \end{itemize}
   The value of each register $r_i$ in $R$ is written as $\mathcal{V}(r_i)$ and is initiated to 0 at the initial state. A \emph{run} of $\aut$ on string $a_1\cdots a_m$ is a transition sequence $q_I\xrightarrow[\myvec{v_1}]{a_1}q_1\cdots q_{m-1}\xrightarrow[\myvec{v_m}]{a_m}q_m$  and $\mathcal{V}(r_i) = \displaystyle\sum_{j=1}^m \myvec{v_j}[i], i\in [1,n]$ is the value of $r_i$ after the run. $\theta[R/\mathcal{V}(R)](q_m)$ is obtained from $\theta(q_m)$ by replacing each register $r_i$ to its value $\mathcal{V}(r_i)$. The run is \emph{accepting} if $q_m\in F$ and $\theta[R/\mathcal{V}(R)](q_m)$ is satisfiable. $\top$ is the valid formula that is always satisfiable. A string $w$ is accepted by $\aut$ if it has an accepting run of $\aut$. The language of $\aut$ is the set of strings accepted by $\aut$, denoted by $\lan(\aut)$.
