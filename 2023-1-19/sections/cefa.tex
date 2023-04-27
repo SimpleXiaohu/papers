@@ -39,20 +39,8 @@ A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ is a sequence $q_0 \xrig
   Fig.\ref{fig:repetition} illustrates the CEFA recognizing $(ab)\{1,100\}$. The register vector is $(r_1)$, and the linear arithmetic constraint on $q_2$ is $1\leq r_1\leq 100$. Intuitively, the transition $q_0 \xrightarrow[(1)]{a} q_1$ accept the char $a$ and increase 1 on the value of $r_1$. The transition $q_1 \xrightarrow[(0)]{b} q_2$ accepts the char $b$ and does not change the value. The transition $q_2 \xrightarrow[(0)]{\epsilon} q_2$ is a nondeterministic choice back to initial state $q_0$. Because of the linear arithmetic constraint $1\leq r_1\leq 100$, the value of $r_1$ in the accepting run must be $[1,100]$. $\mathcal{V}(r_1)$ equal to the occurrence number of the transition $q_0 \xrightarrow[(1)]{a} q_1$, so that the accepted string is $ab\cdots ab$ in which $a$ appears at least once and at most 100 times. That is, the language of the automaton is $(ab)\{1,100\}$.
   \begin{figure}[h]
     \centering
-    \begin{tikzpicture}[
-      shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-      initial text=, every state/.style={minimum size = 0.001cm,
-          accepting text=$\scriptstyle 1\leq r_1\leq 100$, accepting/.style=accepting by arrow}
-      ]
-      \node[state,initial]            (q_0)                      {$q_0$};
-      \node[state]                    (q_1) [right=of q_0]       {$q_1$};
-      \node[state,accepting]          (q_2) [right=of q_1]       {$q_2$};
-
-      \path[->] (q_0) edge              node      [above]           {$\scriptstyle a:(1)$} (q_1)
-      (q_1) edge              node      [above]           {$\scriptstyle b:(0)$} (q_2)
-      (q_2) edge [bend left]  node      [below]           {$\scriptstyle\epsilon: (0)$} (q_0);
-    \end{tikzpicture}
-    \caption{An automaton recognizing the language of $(ab)\{1,100\}$}
+    \input{figures/cefa_example.tex}
+    \caption{An automaton recognizing the language of $(\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$}
     \label{fig:repetition}
   \end{figure}
 \end{example}
