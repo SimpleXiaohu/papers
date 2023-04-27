@@ -3,12 +3,9 @@
 %\begin{document}
 
 In this section, we define the model of cost-enriched finite state automata (CEFA), which was introduced in \cite{atva2020} and will be used to solve the satisfiability problem of RECL later on. 
+%
+Intuitively, CEFA add write-only cost registers to finite state automata. Here by ``write-only'', we mean that the cost registers can only be written/updated, but cannot be read, that is, cannot be used to guard the transitions. 
 
-%\subsection{Cost-Enriched Finite Automaton} \label{subsec:cefa}
-The definition of CEFA below is slightly different from the definition in~\cite{atva2020} in the sense that accepting conditions on register values
-%specified by LIA formulas
-%, where the free variables are the registers, 
-are attached to final states. 
 %
 %In~\cite{atva2020}, the cost function is defined as a function $\eta: \Sigma \rightarrow \mathbb{N}$. In this paper, we define the cost function as an integer vector whose elements are the incremental value of registers. Furthermore, we add a new linear integer arithmetic constraint $\theta$ to each final state of the CEFA, which restricts the value of registers. Two types of definitions have the same expressive ability on the $SAT_{CL}$ problem.
 \begin{definition}[Cost-Enriched Finite Automaton]
@@ -23,8 +20,12 @@ are attached to final states.
 %    a linear integer arithmetic constraint function on final states. $\theta$ is called \emph{accepting condition}.
   \end{itemize}
 \end{definition}
+The definition of CEFA above is slightly different from the definition in~\cite{atva2020} in the sense that accepting conditions on register values
+are attached to final states. 
 
 For readability, we assume a linear order on $R$ and write $R$ as a vector $\myvec{r} = (r_1, \cdots, r_k)$. Moreover, we write an element of $\Int^R$ as a vector $(v_1, \cdots, v_k)$, where for each $i \in [k]$, $v_i$ is the update on the value of $r_i$. We also write a transition $(q, a, q', \vec{v}) \in \delta$ as $q \xrightarrow[\vec{v}]{a} q'$.
+
+
 
 The semantics of CEFA is define as follows. Let $\aut = (R, Q, \Sigma, \delta, q_0, F, \alpha)$ be a CEFA. 
 A \emph{configuration} of $\aut$ is a pair $(q, \vec{v})$ where $q \in Q$ and $\vec{v}$ is a vector denoting the values of registers.  
