@@ -7,22 +7,24 @@ As mentioned in Section \ref{sec:overview}, the main idea of our approach is to 
 One key point of our approach is the encoding of counting operator. In this section, we define the construction of CEFA from the regular expression with counting. We divide the counting operator into \emph{handled} and \emph{non-handled}. The counting operator is called \emph{non-handled} if it is the sub-regex of other complement operator (e.g., $(\regex^{\{m,n\}})^C$), closure operator(e.g., $(\regex^{\{m,n\}})^*$), or counting operator (e.g., $(\regex^{\{m,n\}})^{\{m', n'\}}$), otherwise it is called \emph{handled}. A regex is called \emph{non-handled} if it contains any non-handled counting operators, and is called \emph{handled} otherwise.
 % We must syntactically rewrite bounded repetition $\regex\{m,n\}$ if it is the sub-regex of complement (e.g., $(\regex\{m,n\})^C$), closure(e.g., $(\regex\{m,n\})^*$), and bounded repetition(e.g., $(\regex\{m,n\})\{m', n'\}$), we unwind it to $\regex^m\mid\cdots\mid\regex^n$. After this syntactic rewriting, we call the resulting regex $\regex'$ \emph{non-nested}.
 Given a handled regex $\regex$, operations such as intersection, union, concatenation, complement, closure, and counting may appear. To construct the CEFA of $\regex$, we first create CEFA for each sub-regex and then combine them. Similar to the construction of NFA from regex\cite{aut_hopcraft}, our construction is inductive on the size of $\regex$. The base case is the construction for a single character, an empty string, or an empty language. The inductive step is the construction for the concatenation, union, intersection of two automata of sub-regexes, counting, closure, and complement of one automaton of sub-regex. We only discuss the inductive step for counting because it is the most important and the other operations are trivial. \newline
-For a handled regular expression $\regex\{m,n\}$, suppose the CEFA recognizing $\regex$ is $\aut = (Q,\Sigma,\delta,q_I,F,\emptyset,\top)$, then the CEFA recognizing $\regex\{m,n\}$ is defined as $\aut_{m,n} = (Q, \Sigma, \delta',q_ I, F, r, \theta)$ where:
+\denghang{The encoding of counting need to be corrected}\newline
+For a handled regular expression $\regex\{m,n\}$, suppose the CEFA recognizing $\regex$ is $\aut = (Q,\Sigma,\delta,q_I,F,\emptyset,\top)$, then the CEFA recognizing $\regex\{m,n\}$ is defined as $\aut_{m,n} = (Q, \Sigma, \delta',q_I, F\cup\{q_I\}, r, \theta)$ where:
 \begin{itemize}
+  \item $q_I$ is set to accepting state,
   \item $r$ is a new register,
   \item $\delta'$ is composed by transition $q\xrightarrow[(0)]{a} q'$ for each transition $q\xrightarrow[()]{a} q' \in \delta$, and transition $q_f\xrightarrow[(1)]{\epsilon} q_I$ for each accepting state $q_f\in F$,
   \item $\theta$ is the function mapping each accepting state to a same linear integer arithmetic $m\leq r\leq n$.
 \end{itemize}
-The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a new register $r$ is added to store the counting times. The transition $q\xrightarrow[(1)]{\epsilon} q_I$ is used to update the counting times for each $q\in F$. The accepting condition $\theta'$ constrains the counting times of the accepting word to the range $[m, n]$. 
+The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a new register $r$ is added to store the counting times. The transition $q\xrightarrow[(1)]{\epsilon} q_I$ is used to update the counting times for each $q\in F$. The accepting condition $\theta'$ constrains the counting times of the accepting word to the range $[m, n]$. After the construction, we need to eliminate the transition with epsilon character. The elimination is done after adding transition $q\xrightarrow[(1)]{a}$  \newline
 \begin{figure}[h]
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \begin{tikzpicture}[
       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
       initial text=, every state/.style={minimum size = 0.001cm},
-      accepting text=$\top$, accepting/.style=accepting by arrow,
       ]
 
+      \node at (-0.5,0.5) {$\scriptstyle \top$};
       \node[state,initial]            (q_0)                      {};
       \node[state, accepting]         (q_1) [right=of q_0]       {};
       \node [fit=(q_0) (q_1)] {$\cdots$};
@@ -34,10 +36,11 @@ The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a n
     \begin{tikzpicture}[
       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
       initial text=, every state/.style={minimum size = 0.001cm},
-      accepting text=\myemph{$\scriptstyle m\leq r\leq n$}, accepting/.style=accepting by arrow,
+      accepting text=
       ]
 
-      \node[state,initial]            (q_0)                      {};
+      \node at (-0.5,0.5) {$\scriptstyle \myemph{m}\leq r\leq \myemph{n}$};
+      \node[state,initial,accepting]            (q_0)                      {};
       \node[state, accepting]         (q_1) [right=of q_0]       {};
       \path[->] (q_1) edge[bend right]   node    [above] {\myemph{$\scriptstyle \mathbf{\epsilon:(1)}$}} (q_0);
       \node [fit=(q_0) (q_1)] {$\cdots$};
@@ -48,80 +51,75 @@ The construction is illustrated in Fig.\ref{fig:construct_repetition}, where a n
   \label{fig:construct_repetition}
 \end{figure}
 \begin{example}
-  To construct the CEFA recognizing $(\Sigma\setminus a)\{5,60\}$ with alphabet $\Sigma = \{a,b,c\}$. As shown in Fig.\ref{subfig:rep_aut_ab1_100}, the base cases are the constructions of character $a$ (Fig.\ref{subfig:rep_aut_a}) and $b$ (Fig.\ref{subfig:rep_aut_b}). The first inductive step is to concatenate them to one automaton (Fig.\ref{sub@subfig:rep_aut_ab}). The second inductive step is to add counting information on the automaton. To do that we add a new register $r_1$ and a transition $q_2\xrightarrow[(1)]{\epsilon} q_0$ to update the repetition times. The accepting condition in accepting state is $1\leq r_1\leq 100$ so that the counting time of the accepting word is in the range $[1,100]$. After that we get the CEFA recognizing $(ab)\{1,100\}$ shown in Fig.\ref{subfig:rep_aut_ab1_100}.
+  To construct the CEFA recognizing $(\Sigma\setminus a)\{5,60\}$ with alphabet $\Sigma = \{a,b,c\}$. As shown in Fig.\ref{subfig:count_aut_sigma_minus_a_5_60}, the base cases are the constructions of character $b$ (Fig.\ref{subfig:count_aut_b}) and $c$ (Fig.\ref{subfig:count_aut_c}). The first inductive step is construction the union of them (Fig.\ref{sub@subfig:count_aut_sigma_minus_a}). The second inductive step is to add counting information on the automaton. To do that we add a new register $r$ to save counting times,  transitions $q_2\xrightarrow[(1)]{\epsilon} q_0$ and $q_1\xrightarrow[(1)]{\epsilon} q_0$  to update the counting times. The accepting condition is $5\leq r\leq 60$ ensure the counting time of the accepting word is in the range $[5,60]$. After that we get the CEFA recognizing $(\Sigma\setminus a)\{5,60\}$ shown in Fig.\ref{subfig:count_aut_sigma_minus_a_5_60}.
   \begin{figure}[h]
     \begin{subfigure}[b]{0.49\textwidth}
       \centering
       \begin{tikzpicture}[
         shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
         initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=$\scriptstyle \top$, accepting/.style=accepting by arrow,
-        accepting where=above
         ]
-
-        \node[state,initial]            (q_0)                      {};
-        \node[state,accepting]                    (q_1) [right=of q_0]       {};
-
-        \path[->] (q_0) edge              node      [above]           {$\scriptstyle a:()$} (q_1);
-      \end{tikzpicture}
-      \caption{The CEFA recognizing $a$}
-      \label{subfig:rep_aut_a}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.49\textwidth}
-      \centering
-      \begin{tikzpicture}[
-        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-        initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=$\scriptstyle \top$, accepting/.style=accepting by arrow,
-        accepting where=above
-        ]
-
-        \node[state,initial]            (q_0)                      {};
-        \node[state,accepting]                    (q_1) [right=of q_0]       {};
+        \node at (-0.5, 0.5) {$\scriptstyle \top$};
+        \node[state,initial]            (q_0)                      {$\scriptstyle q_0$};
+        \node[state,accepting]                    (q_1) [right=of q_0]       {$\scriptstyle q_1$};
 
         \path[->] (q_0) edge              node      [above]           {$\scriptstyle b:()$} (q_1);
       \end{tikzpicture}
       \caption{The CEFA recognizing $b$}
-      \label{subfig:rep_aut_b}
+      \label{subfig:count_aut_b}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
       \centering
       \begin{tikzpicture}[
         shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
         initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=$\scriptstyle\top$, accepting/.style=accepting by arrow,
-        accepting where=above
         ]
+        \node at (-0.5, 0.5) {$\scriptstyle \top$};
+        \node[state,initial]            (q_0)                      {$\scriptstyle q_0$};
+        \node[state,accepting]                    (q_1) [right=of q_0]       {$\scriptstyle q_2$};
 
-        \node[state,initial]            (q_0)                      {};
-        \node[state]                    (q_1) [right=of q_0]       {};
-        \node[state, accepting]         (q_2) [right=of q_1]       {};
-
-        \path[->] (q_0) edge              node      [above]           {$\scriptstyle a:()$} (q_1)
-        (q_1) edge              node      [above]           {$\scriptstyle b:()$} (q_2);
+        \path[->] (q_0) edge              node      [above]           {$\scriptstyle c:()$} (q_1);
       \end{tikzpicture}
-      \caption{The CEFA recognizing $ab$}
-      \label{subfig:rep_aut_ab}
+      \caption{The CEFA recognizing $c$}
+      \label{subfig:count_aut_c}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
       \centering
       \begin{tikzpicture}[
-        shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
+        shorten >=1pt,node distance=1cm,on grid,>={Stealth[round]},
         initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=$\scriptstyle\myemph{1}\leq r_1\leq\myemph{100}$, accepting/.style=accepting by arrow,
-        accepting where=above
         ]
+        \node at (-0.5, 0.5) {$\scriptstyle \top$};
+        \node[state,initial]      (q_0)                      {$\scriptstyle q_0$};
+        \node (q_tmp) [right=of q_0]       {};
+        \node[state, accepting]   (q_1) [above=of q_tmp]       {$\scriptstyle q_1$};
+        \node[state, accepting]   (q_2) [below=of q_tmp]       {$\scriptstyle q_2$};
 
-        \node[state,initial]            (q_0)                      {};
-        \node[state]                    (q_1) [right=of q_0]       {};
-        \node[state,accepting]          (q_2) [right=of q_1]       {};
-
-        \path[->] (q_0) edge              node      [above]           {$\scriptstyle a:(\myemph{0})$} (q_1)
-        (q_1) edge              node      [above]           {$\scriptstyle b:(\myemph{0})$} (q_2)
-        (q_2) edge [bend left]  node      [below]           {$\scriptstyle \epsilon:(\myemph{1})$} (q_0);
+        \path[->] (q_0) edge node [right] {$\scriptstyle b:()$} (q_1)
+        (q_0) edge           node [right] {$\scriptstyle c:()$} (q_2);
       \end{tikzpicture}
-      \caption{The CEFA recognizing $(ab)\{\myemph{1},\myemph{100}\}$}
-      \label{subfig:rep_aut_ab1_100}
+      \caption{The CEFA recognizing $\Sigma \setminus a$}
+      \label{subfig:count_aut_sigma_minus_a}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        shorten >=1pt,node distance=1cm,on grid,>={Stealth[round]},
+        initial text=, every state/.style={minimum size = 0.005cm},
+        ]
+        \node at (-1, 1) {$\scriptstyle \myemph{5}\leq r \leq \myemph{60}$};
+        \node[state,initial, accepting]      (q_0)                      {$\scriptstyle q_0$};
+        \node (q_tmp) [right=of q_0]       {};
+        \node[state, accepting]   (q_1) [above=of q_tmp]       {$\scriptstyle q_1$};
+        \node[state, accepting]   (q_2) [below=of q_tmp]       {$\scriptstyle q_2$};
+
+        \path[->] (q_0) edge node [right] {$\scriptstyle b:(0)$} (q_1)
+        (q_1) edge [bend right] node [left] {$\scriptstyle \epsilon:(\myemph{1})$} (q_0)
+        (q_0) edge           node [right] {$\scriptstyle c:(0)$} (q_2)
+        (q_2) edge [bend left] node [left] {$\scriptstyle \epsilon:(\myemph{1})$} (q_0);
+      \end{tikzpicture}
+      \caption{The CEFA recognizing $(\Sigma\setminus a)\{\myemph{5},\myemph{60}\}$}
+      \label{subfig:count_aut_sigma_minus_a_5_60}
     \end{subfigure}
     \caption{The example of constructing regex with counting}
   \end{figure}
@@ -141,7 +139,7 @@ Given a string-length constraint, we build a CEFA with a register storing the le
       accepting text=$\scriptstyle{r > 120}$, accepting/.style=accepting by arrow
       ]
 
-      \node[state,initial,accepting]            (q_0)       {$q_I$};
+      \node[state,initial,accepting]            (q_0)       {$\scriptstyle q_I$};
 
       \path[->] (q_0) edge [loop below] node{$\scriptstyle\Sigma:(1)$} ();
     \end{tikzpicture}
@@ -224,28 +222,8 @@ We have the following proposition:
   \end{algorithmic}
 \end{algorithm}
 \begin{example}
-  Considering the CEFA (Fig.\ref{subfig:simp_origin_cefa}) recognizing $(\Sigma\setminus a)\{5,60\}$ where $\Sigma = \{a,b,c\}$. We first obtain a symbolic form of it by using unary alphabet (Fig.\ref{subfig:simp_symbolic_cefa}) and then minimize the symbolic form based on the label "$a:(1)$"(Fig.\ref{subfig:simp_final}).
+  Considering the CEFA (Fig.\ref{subfig:count_aut_sigma_minus_a_5_60}) recognizing $(\Sigma\setminus a)\{5,60\}$ where $\Sigma = \{a,b,c\}$. We first obtain a symbolic form of it by using unary alphabet (Fig.\ref{subfig:simp_symbolic_cefa}) and then minimize the symbolic form based on the label "$a:(1)$"(Fig.\ref{subfig:simp_final}).
   \begin{figure}[h]
-    \begin{subfigure}[b]{0.49\textwidth}
-      \centering
-      \begin{tikzpicture}[
-        shorten >=1pt,node distance=1cm,on grid,>={Stealth[round]},
-        initial text=, every state/.style={minimum size = 0.001cm},
-        accepting text=$\scriptstyle 5\leq r \leq 60$, accepting/.style=accepting by arrow,
-        ]
-
-        \node[state,initial]            (q_0)                      {};
-        \node         (q_tmp) [right=of q_0]       {};
-        \node[state, accepting]         (q_1) [above=of q_tmp]       {};
-        \node[state, accepting]         (q_2) [below=of q_tmp]       {};
-        \path[->] (q_0) edge   node    [right] {$\scriptstyle c:(1)$} (q_1)
-        (q_0) edge   node    [right] {$\scriptstyle b:(1)$} (q_2)
-        (q_1) edge[bend right]   node    [left] {$\scriptstyle \epsilon:(1)$} (q_0)
-        (q_2) edge[bend left]   node    [left] {$\scriptstyle \epsilon:(1)$} (q_0);
-      \end{tikzpicture}
-      \caption{The CEFA recognizing $(\Sigma\setminus a)\{5,60\}$}
-      \label{subfig:simp_origin_cefa}
-    \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
       \centering
       \begin{tikzpicture}[
@@ -263,10 +241,10 @@ We have the following proposition:
         (q_1) edge[bend right]   node    [left] {$\scriptstyle \myemph{a:(1)}$} (q_0)
         (q_2) edge[bend left]   node    [left] {$\scriptstyle \myemph{a:(1)}$} (q_0);
       \end{tikzpicture}
-      \caption{The symbolic form}
+      \caption{The symbolic form of the CEFA in Fig.\ref{subfig:count_aut_sigma_minus_a_5_60}}
       \label{subfig:simp_symbolic_cefa}
     \end{subfigure}
-    \begin{subfigure}[b]{1\textwidth}
+    \begin{subfigure}[b]{0.49\textwidth}
       \centering
       \begin{tikzpicture}[
         shorten >=1pt,node distance=1cm,on grid,>={Stealth[round]},
@@ -287,9 +265,8 @@ We have the following proposition:
   \end{figure}
 
 \end{example}
-\denghang{todo}
 \begin{example}
-  Considering the string constraints $i=|x|\wedge j=|x|$. We compute the CEFAs of $i=|x|$, $j=|x|$ and intersect them to get the final CEFA represented in Fig.\ref{subfig:duplicate}. However, the register $r_1$ and $r_2$ in the final CEFA are duplicated since their update functions are always same. We simplify the CEFA by removing the duplicated register $r_2$ and corresponding symbolic updates, as shown in Fig.\ref{subfig:remove_duplicate}. To maintain the value of $r_2$, we add a constraint $r_2=r_1$ to restrict the value of $r_2$ to be the same as $r_1$.
+  Considering the string constraints $i=|x|\wedge j=|x|$. We compute the CEFAs of $i=|x|$, $j=|x|$ and intersect them to get the final CEFA represented in Fig.\ref{subfig:duplicate}. However, the register $r_1$ and $r_2$ in the final CEFA are duplicated since their symbolic updates are always same. We simplify the CEFA by removing the duplicated register $r_2$ and corresponding symbolic updates, as shown in Fig.\ref{subfig:remove_duplicate}. To maintain the value of $r_2$, we add a constraint $r_2=r_1$ in the accepting condition.
   \begin{figure}[h]
     \begin{subfigure}[b]{0.49\textwidth}
       \centering
@@ -319,17 +296,18 @@ We have the following proposition:
 
         \path[->] (q_0) edge [loop below] node{$\scriptstyle\Sigma$/(1)} ();
       \end{tikzpicture}
-      \caption{Remove the duplicated registers and corresponding update functions}
+      \caption{Remove the duplicated registers and corresponding symbolic updates}
       \label{subfig:remove_duplicate}
     \end{subfigure}
-    \caption{Symbolic simplification removes duplicated transitions and states.}
+    \caption{Symbolic simplification removes duplicated registers.}
     \label{fig:duplicate}
   \end{figure}
 
 \end{example}
 
 \subsubsection{Under-Approximation} \label{subsec:under-approx}
-An under-approximation procedure solves the satisfiable instances of the emptiness checking problem. Inspired by Bounded Model Checking \cite{bmc_1}\cite{bmc_2}\cite{bmc_3}, we explore the states of CEFA in typological order. We use string length as the bound and probe the CEFA from low to high bound. This section discusses the situation in which the string length bound is fixed. The main idea is to enumerate all possible runs ending in accepting states with lengths less than the fixed bound. Although the number of possible runs is an exponential growth of the bound, we usually solve practical satisfiable instances within 1s. As shown in the Algorithm \ref{alg:underApprox}, for each CEFA, we enumerate all runs whose length is less than the bound and compute the value of registers by the sum of vectors on the run at line 4. If the run is ended with an accepting state, then we compute the updates of registers by the sum of vectors on the run at line 6. Together with the accepting condition of the accepting state, we add the updates of registers to the under-approximation formula at line 7.
+\denghang{revising} \newline
+The purpose of under-approximation is to accelerate the solving process of satisfiable instances. With the observation that the accepted string words in practical instances are usual short, we under-approximate the \emptinessprob{} by adding length bounds on string variables. We use string length as the bound and probe the CEFA from low to high bound. This section discusses the situation in which the string length bound is fixed. The main idea is to enumerate all possible runs ending in accepting states with lengths less than the fixed bound. Although the number of possible runs is an exponential growth of the bound, we usually solve practical satisfiable instances within 1s. As shown in the Algorithm \ref{alg:underApprox}, for each CEFA, we enumerate all runs whose length is less than the bound and compute the value of registers by the sum of vectors on the run at line 4. If the run is ended with an accepting state, then we compute the updates of registers by the sum of vectors on the run at line 6. Together with the accepting condition of the accepting state, we add the updates of registers to the under-approximation formula at line 7.
 \begin{algorithm}[h]
   \caption{$\algfun{underApprox}(auts, bound)$}
   \label{alg:underApprox}
