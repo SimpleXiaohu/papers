@@ -26,14 +26,27 @@ are attached to final states.
 For readability, we assume a linear order on $R$ and write $R$ as a vector $\myvec{r} = (r_1, \cdots, r_k)$. Moreover, we write an element of $\Int^R$ as a vector $(v_1, \cdots, v_k)$, where for each $i \in [k]$, $v_i$ is the update on the value of $r_i$. We also write a transition $(q, a, q', \vec{v}) \in \delta$ as $q \xrightarrow[\vec{v}]{a} q'$.
 
 
-
 The semantics of CEFA is define as follows. Let $\aut = (R, Q, \Sigma, \delta, q_0, F, \alpha)$ be a CEFA. 
 A \emph{configuration} of $\aut$ is a pair $(q, \vec{v})$ where $q \in Q$ and $\vec{v}$ is a vector denoting the values of registers.  
 The \emph{initial configuration} of $\aut$ is $(q_0, \vec{0})$, where the value of each register is zero. 
 A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ is a sequence $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ and $q_{i-1} \xrightarrow[\myvec{v_i}]{a_i} q_i$ for each $i \in [n]$. A run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ is \emph{accepting} if $q_n \in F$ and $\alpha(q_n)[\myvec{\myvec{v'}/\myvec{r}]$ is true, where $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v_j}}$. Note here we assume that the initial values of all registers are zero and $\sum \limits_{j \in [n]} \myvec{v_j}$ is the vector of register values after all the transitions in the run are executed. A string $w$ is \emph{accepted} by $\aut$ if there is an accepting run of $\aut$ on $w$. The language defined by $\aut$, denoted by $\Lang(\aut)$, is the set of strings that are accepted by $\aut$. 
 
+%Finally, we define the product of two CEFA. 
+Let $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1, \alpha_1)$ and  $\aut_2 = (R_2, Q_2, \Sigma, \delta_2, q_{2,0}, F_2, \alpha_2)$ be two CEFA that share the alphabet. Moreover, suppose $R_1 \cap R_2 = \emptyset$. We define the \emph{product} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \times \aut_2 = (R', Q', \Sigma, \delta', q'_0, F', \alpha')$, as follows. 
+\begin{itemize}
+\item $R' = R_1 \cup R_2$, $Q' = Q_1 \times Q_2$, $q'_0 = (q_{1,0}, q_{2,0})$, $F' = F_1 \times F_2$,
+%
+\item $\alpha'((q_1, q_2)) = \alpha_1(q_1) \wedge \alpha_2(q_2)$ for each $(q_1, q_2) \in F'$, 
+%
+\item $\delta'$ comprises the tuples $((q_1, q_2), a, (q'_1, q'_2), \myvec{v})$ such that $(q_1,a, q'_1, \prj_{R_1}(\myvec{v})) \in \delta_1$ and $(q_2,a, q'_2, \prj_{R_2}(\myvec{v})) \in \delta_2$, where $\myvec{v} \in \Int^{R'}$, $\prj_{R_1}(\myvec{v}))$ (resp. $\prj_{R_2}(\myvec{v}))$) is the restriction of $\myvec{v}$ to the domain $R_1$ (resp. $R_2$). 
+\end{itemize}
+Intuitively, $\aut_1 \times \aut_2$ defines the intersection of $\Lang(\aut_1)$ and $\Lang(\aut_2)$.
+
 %The value of each register $r_i$ in $R$ is written as $\mathcal{V}(r_i)$ and is initiated to 0 at the initial state. A \emph{run} of $\aut$ on string $a_1\cdots a_m$ is a transition sequence $q_I\xrightarrow[\myvec{v_1}]{a_1}q_1\cdots q_{m-1}\xrightarrow[\myvec{v_m}]{a_m}q_m$  and $\mathcal{V}(r_i) = \displaystyle\sum_{j=1}^m \myvec{v_j}[i], i\in [1,n]$ is the value of $r_i$ after the run. $\theta[R/\mathcal{V}(R)](q_m)$ is obtained from $\theta(q_m)$ by replacing each register $r_i$ to its value $\mathcal{V}(r_i)$. The run is \emph{accepting} if $q_m\in F$ and $\theta[R/\mathcal{V}(R)](q_m)$ is satisfiable. $\top$ is the valid formula that is always satisfiable. A string $w$ is accepted by $\aut$ if it has an accepting run of $\aut$. The language of $\aut$ is the set of strings accepted by $\aut$, denoted by $\lan(\aut)$.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hide{
 \zhilin{this example should be modified to match the running example}
 \begin{example} \label{eg:1}
   Fig.\ref{fig:counting} illustrates the CEFA recognizing $(ab)\{1,100\}$. The register vector is $(r_1)$, and the linear arithmetic constraint on $q_2$ is $1\leq r_1\leq 100$. Intuitively, the transition $q_0 \xrightarrow[(1)]{a} q_1$ accept the char $a$ and increase 1 on the value of $r_1$. The transition $q_1 \xrightarrow[(0)]{b} q_2$ accepts the char $b$ and does not change the value. The transition $q_2 \xrightarrow[(0)]{\epsilon} q_2$ is a nondeterministic choice back to initial state $q_0$. Because of the linear arithmetic constraint $1\leq r_1\leq 100$, the value of $r_1$ in the accepting run must be $[1,100]$. $\mathcal{V}(r_1)$ equal to the occurrence number of the transition $q_0 \xrightarrow[(1)]{a} q_1$, so that the accepted string is $ab\cdots ab$ in which $a$ appears at least once and at most 100 times. That is, the language of the automaton is $(ab)\{1,100\}$.
@@ -44,7 +57,9 @@ A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ is a sequence $q_0 \xrig
     \label{fig:counting}
   \end{figure}
 \end{example}
-
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Parikh's theorem \cite{parikh_theorem}\cite{parikh_anthony}\cite{parikh_compute} states that the Parikh image of a context-free language is semilinear so that it can be written as Presburger formula. Following the version for context-free grammar \cite{parikh_compute} and the version for regular expression \cite{parikh_for_nfa}, we define the Parikh image of language of an CEFA $\aut = (Q, \Sigma, \delta, q_I, F, R, \theta)$  as follows:
 % \begin{table}[h]
