@@ -9,38 +9,46 @@ Intuitively, CEFA add write-only cost registers to finite state automata. Here b
 %
 %In~\cite{atva2020}, the cost function is defined as a function $\eta: \Sigma \rightarrow \mathbb{N}$. In this paper, we define the cost function as an integer vector whose elements are the incremental value of registers. Furthermore, we add a new linear integer arithmetic constraint $\theta$ to each final state of the CEFA, which restricts the value of registers. Two types of definitions have the same expressive ability on the $SAT_{CL}$ problem.
 \begin{definition}[Cost-Enriched Finite Automaton]
-  A cost-enriched finite automaton $\aut$ is a tuple $(R, Q, \Sigma, \delta, q_0, F, \theta)$ where
+  A cost-enriched finite automaton $\aut$ is a tuple $(R, Q, \Sigma, \delta, q_0, F)$ where
   \begin{itemize}
   \item $R = \{r_1, \cdots, r_k\}$ is a finite set of registers, 
     \item $Q, \Sigma, q_0, F$ are as in the definition of NFA,
 %    \item $R = (r_1\cdots r_n)$ is a vector of mutually distinct cost registers,
-    \item $\delta \subseteq Q \times \Sigma \times Q \times \Int^R$ is a transition relation, where $\Int^R$ denotes the updates on the values of registers, 
+    \item $\delta \subseteq Q \times \Sigma \times Q \times \Int^R$ is a transition relation, where $\Int^R$ denotes the updates on the values of registers.
 %  set whose elements are tuples $(q, c, q', \myvec{v})$ where $q, q'$ are states of $Q$, $c$ is a letter in alphabet $\Sigma\cup\{\epsilon\}$ and $\myvec{v}$ is the cost update function for registers, which is an integer vector whose $i$-th element is the incremental value of register $r_i$.  $(q, a, q', \myvec{v})$ is written as $q\xrightarrow[\myvec{v}]{a} q'$ for readability.
-    \item $\alpha: F \rightarrow \Phi(R)$ attaches to each finite state an accepting condition that is specified by an LIA formula.
+%    \item $\alpha: F \rightarrow \Phi(R)$ attaches to each finite state an accepting condition that is specified by an LIA formula.
 %    a linear integer arithmetic constraint function on final states. $\theta$ is called \emph{accepting condition}.
   \end{itemize}
 \end{definition}
-The definition of CEFA above is slightly different from the definition in~\cite{atva2020} in the sense that accepting conditions on register values
-are attached to final states. 
+%The definition of CEFA above is slightly different from the definition in~\cite{atva2020} in the sense that accepting conditions on register values
+%are attached to final states. 
 
-For readability, we assume a linear order on $R$ and write $R$ as a vector $\myvec{r} = (r_1, \cdots, r_k)$. Moreover, we write an element of $\Int^R$ as a vector $(v_1, \cdots, v_k)$, where for each $i \in [k]$, $v_i$ is the update on the value of $r_i$. We also write a transition $(q, a, q', \vec{v}) \in \delta$ as $q \xrightarrow[\vec{v}]{a} q'$.
+For readability, from now on, we assume a linear order on $R$ and write $R$ as a vector $\myvec{r} = (r_1, \cdots, r_k)$. Accordingly, we write an element of $\Int^R$ as a vector $(v_1, \cdots, v_k)$, where for each $i \in [k]$, $v_i$ is the update on the value of $r_i$. We also write a transition $(q, a, q', \vec{v}) \in \delta$ as $q \xrightarrow[\vec{v}]{a} q'$.
 
 
 The semantics of CEFA is define as follows. Let $\aut = (R, Q, \Sigma, \delta, q_0, F, \alpha)$ be a CEFA. 
 A \emph{configuration} of $\aut$ is a pair $(q, \vec{v})$ where $q \in Q$ and $\vec{v}$ is a vector denoting the values of registers.  
 The \emph{initial configuration} of $\aut$ is $(q_0, \vec{0})$, where the value of each register is zero. 
-A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ is a sequence $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ and $q_{i-1} \xrightarrow[\myvec{v_i}]{a_i} q_i$ for each $i \in [n]$. A run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ is \emph{accepting} if $q_n \in F$ and $\alpha(q_n)[\myvec{\myvec{v'}/\myvec{r}]$ is true, where $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v_j}}$. Note here we assume that the initial values of all registers are zero and $\sum \limits_{j \in [n]} \myvec{v_j}$ is the vector of register values after all the transitions in the run are executed. A string $w$ is \emph{accepted} by $\aut$ if there is an accepting run of $\aut$ on $w$. The language defined by $\aut$, denoted by $\Lang(\aut)$, is the set of strings that are accepted by $\aut$. 
+A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ is a sequence $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ and $q_{i-1} \xrightarrow[\myvec{v_i}]{a_i} q_i$ for each $i \in [n]$. A run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ is \emph{accepting} if $q_n \in F$. The \emph{cost} of an accepting run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ is defined as $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v_j}$.Note here we assume that the initial values of all registers are zero and $\sum \limits_{j \in [n]} \myvec{v_j}$ is the vector of register values after all the transitions in the run are executed.  We use $\myvec{v'} \in \aut(w)$ to denote the fact that there is an accepting run of $\aut$ on $w$ whose cost is $\myvec{v'}$. 
+Finally, we define the semantics of a CEFA $\aut$ as $\Lang(\aut) = \{(w, \myvec{v'}) \mid  \myvec{v'} \in \aut(w)\}$.  
+
+%
+%and $\alpha(q_n)[\myvec{\myvec{v'}/\myvec{r}]$ is true, where $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v_j}}$. Note here we assume that the initial values of all registers are zero and $\sum \limits_{j \in [n]} \myvec{v_j}$ is the vector of register values after all the transitions in the run are executed. A string $w$ is \emph{accepted} by $\aut$ if there is an accepting run of $\aut$ on $w$. The language defined by $\aut$, denoted by $\Lang(\aut)$, is the set of strings that are accepted by $\aut$. 
 
 %Finally, we define the product of two CEFA. 
 Let $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1, \alpha_1)$ and  $\aut_2 = (R_2, Q_2, \Sigma, \delta_2, q_{2,0}, F_2, \alpha_2)$ be two CEFA that share the alphabet. Moreover, suppose $R_1 \cap R_2 = \emptyset$. We define the \emph{product} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \times \aut_2 = (R', Q', \Sigma, \delta', q'_0, F', \alpha')$, as follows. 
 \begin{itemize}
 \item $R' = R_1 \cup R_2$, $Q' = Q_1 \times Q_2$, $q'_0 = (q_{1,0}, q_{2,0})$, $F' = F_1 \times F_2$,
 %
-\item $\alpha'((q_1, q_2)) = \alpha_1(q_1) \wedge \alpha_2(q_2)$ for each $(q_1, q_2) \in F'$, 
+%\item $\alpha'((q_1, q_2)) = \alpha_1(q_1) \wedge \alpha_2(q_2)$ for each $(q_1, q_2) \in F'$, 
 %
 \item $\delta'$ comprises the tuples $((q_1, q_2), a, (q'_1, q'_2), \myvec{v})$ such that $(q_1,a, q'_1, \prj_{R_1}(\myvec{v})) \in \delta_1$ and $(q_2,a, q'_2, \prj_{R_2}(\myvec{v})) \in \delta_2$, where $\myvec{v} \in \Int^{R'}$, $\prj_{R_1}(\myvec{v}))$ (resp. $\prj_{R_2}(\myvec{v}))$) is the restriction of $\myvec{v}$ to the domain $R_1$ (resp. $R_2$). 
 \end{itemize}
-Intuitively, $\aut_1 \times \aut_2$ defines the intersection of $\Lang(\aut_1)$ and $\Lang(\aut_2)$.
+Roughly speaking, $\aut_1 \times \aut_2$ accepts the words that are accepted by both $\aut_1$ and $\aut_2$ and outputs the costs of both $\aut_1$ and $\aut_2$.  
+%the intersection of $\Lang(\aut_1)$ and $\Lang(\aut_2)$.
+
+Let $((\aut_1,\cdots, \aut_n), \varphi)$ be a tuple such that $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1)$, $\cdots$, $\aut_n = (R_n, Q_n, \Sigma, \delta_n, q_{n, 0}, F_n)$ are CEFA, and $\varphi(R_1, \cdots, R_n)$ is an LIA formula. Then the \emph{relation} defined by $((\aut_1, \cdots, \aut_n), \varphi)$, denoted by $\srel((\aut_1, \cdots, \aut_n), \varphi)$, is $\{(w, \myvec{v'_1}, \cdots, \myvec{v'_n}) \mid \forall i \in [n].\ (w, \myvec{v'_i}) \in \Lang(\aut_i), \varphi(\myvec{v'_1}/R_1, \cdots, \myvec{v'_n}/R_n) \mbox{ is true}\}$.
+
 
 %The value of each register $r_i$ in $R$ is written as $\mathcal{V}(r_i)$ and is initiated to 0 at the initial state. A \emph{run} of $\aut$ on string $a_1\cdots a_m$ is a transition sequence $q_I\xrightarrow[\myvec{v_1}]{a_1}q_1\cdots q_{m-1}\xrightarrow[\myvec{v_m}]{a_m}q_m$  and $\mathcal{V}(r_i) = \displaystyle\sum_{j=1}^m \myvec{v_j}[i], i\in [1,n]$ is the value of $r_i$ after the run. $\theta[R/\mathcal{V}(R)](q_m)$ is obtained from $\theta(q_m)$ by replacing each register $r_i$ to its value $\mathcal{V}(r_i)$. The run is \emph{accepting} if $q_m\in F$ and $\theta[R/\mathcal{V}(R)](q_m)$ is satisfiable. $\top$ is the valid formula that is always satisfiable. A string $w$ is accepted by $\aut$ if it has an accepting run of $\aut$. The language of $\aut$ is the set of strings accepted by $\aut$, denoted by $\lan(\aut)$.
 
