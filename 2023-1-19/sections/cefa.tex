@@ -44,12 +44,20 @@ Let $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1, \alpha_1)$ and  $\aut_2
 Moreover, suppose that $R_1 \cap R_2 = \emptyset$ and $Q_1 \cap Q_2 = \emptyset$. 
 %We define two operations of CEFA, namely, the product and union, as follows. 
 
-The \emph{union} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cup \aut_2$, is defined in a slightly more involved manner than NFA, as a result of the technical choice that the accepting conditions of CEFA do not distinguish final states. Two fresh auxiliary registers, say $r'_1,r'_2 \not \in R_1 \cup R_2$, are introduced so that the accepting condition knows whether a run is from $\aut_1$ or from $\aut_2$. Specifically, $\aut_1 \cup \aut_2 = (R', Q', \Sigma, \delta', \{q'_0\}, F', \alpha')$, where $R' = R_1 \cup R_2 \cup \{r'_1, r'_2\}$, $Q' = Q_1 \cup Q_2 \cup \{q'_0\}$ with $q'_0 \not \in Q_1 \cup Q_2$, $\delta' = \{(q'_0, a, q'_1, (\myvec{v_1}, \myvec{0}, 1,0)) \mid \exists q_1 \in I_1.\ (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\} \cup \{(q'_0, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 1)) \mid \exists q_2 \in I_2.\ (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\} \cup \{(q_1, a, q'_1, (\myvec{v_1}, \myvec{0}, 0, 0)) \mid (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\} \cup \{(q_2, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 0)) \mid (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\}$, moreover, 
+The \emph{union} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cup \aut_2$, is defined in a slightly more involved manner than NFA, as a result of the technical choice that the accepting conditions of CEFA do not distinguish final states. Two fresh auxiliary registers, say $r'_1,r'_2 \not \in R_1 \cup R_2$, are introduced so that the accepting condition knows whether a run is from $\aut_1$ or from $\aut_2$. Specifically, $\aut_1 \cup \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$, where 
+\begin{itemize}
+\item $R' = R_1 \cup R_2 \cup \{r'_1, r'_2\}$, $Q' = Q_1 \cup Q_2 \cup \{q'_0\}$ with $q'_0 \not \in Q_1 \cup Q_2$, $I' = \{q'_0\}$, 
+\item $\delta'$ is the union of $\{(q'_0, a, q'_1, (\myvec{v_1}, \myvec{0}, 1,0)) \mid \exists q_1 \in I_1.\ (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\}$, $\{(q'_0, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 1)) \mid \exists q_2 \in I_2.\ (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\}$, $\{(q_1, a, q'_1, (\myvec{v_1}, \myvec{0}, 0, 0)) \mid (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\}$, and $\{(q_2, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 0)) \mid (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\}$, where the last two components of the vectors denote the updates of $r'_1$ and $r'_2$, 
+
+\item $F'$ and $\alpha'$ are defined as follows, 
 \begin{itemize}
 \item if $I_1 \cap F_1 \neq \emptyset$ or $I_2 \cap F_2 \neq \emptyset$, then $F' = F_1 \cup F_2 \cup \{q'_0\}$ and $\alpha' = (r'_1 = 0 \wedge r'_2 = 0) \vee (r'_1=1 \wedge \alpha_1) \vee (r'_2=1 \wedge \alpha_2)$, 
 %
 \item otherwise, $F'=F_1 \cup F_2$ and $\alpha' = (r'_1=1 \wedge \alpha_1) \vee (r'_2=1 \wedge \alpha_2)$.
 \end{itemize}
+\end{itemize}
+From the construction, we know that 
+$$\Lang(\aut_1 \cup \aut_2) = \{(w; \myvec{v}) \mid \myvec{v} \in \Int^{R'}, (w; \prj_{R_1}(\myvec{v})) \in \Lang(\aut_1) \mbox{ or } (w; \prj_{R_2}(\myvec{v})) \in \Lang(\aut_2)\}.$$ 
 
 The \emph{intersection} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cap \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$, is defined in the sequel. 
 \begin{itemize}
@@ -60,11 +68,12 @@ The \emph{intersection} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cap \aut_2
 \item $\delta'$ comprises the tuples $((q_1, q_2), a, (q'_1, q'_2), (\myvec{v_1}, \myvec{v_2}))$ such that $(q_1,a, q'_1, \myvec{v_1}) \in \delta_1$ and $(q_2,a, q'_2, \myvec{v_2}) \in \delta_2$.
 %, where $\myvec{v} \in \Int^{R'}$, $\prj_{R_1}(\myvec{v}))$ (resp. $\prj_{R_2}(\myvec{v}))$) is the restriction of $\myvec{v}$ to the domain $R_1$ (resp. $R_2$). 
 \end{itemize}
-From the construction, $\Lang(\aut_1 \cap \aut_2) = \{(w; \myvec{v'_1}, \myvec{v'_2}) \mid (w; \myvec{v'_1}) \in \Lang(\aut_1), (w; \myvec{v'_2}) \in \Lang(\aut_2)\}$. 
+From the construction, 
+$$\Lang(\aut_1 \cap \aut_2) = \{(w; \myvec{v}) \mid \myvec{v} \in \Int^{R'}, (w; \prj_{R_1}(\myvec{v})) \in \Lang(\aut_1) \mbox{ and } (w; \prj_{R_2}(\myvec{v})) \in \Lang(\aut_2)\}.$$ 
 Intuitively, $\aut_1 \cap \aut_2$ accepts the words that are accepted by both $\aut_1$ and $\aut_2$ and outputs the costs of $\aut_1$ and $\aut_2$.  
 
-
-The \emph{concatenation} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \concat \aut_2$, is defined similarly as that of NFA, that is, a tuple $(Q', \Sigma, \delta', I', F', \alpha')$, where $Q' = Q_1 \cup Q_2$, $I' = I_1$, $\alpha' = \alpha_1 \wedge \alpha_2$, $\delta' = \{(q_1, a, q'_1, (\myvec{v_1}, \myvec{0})) \mid (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\} \cup \{(q_2, a, q'_2, (\myvec{0}, \myvec{v_2})) \mid (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\} \cup \{(q_1, a, q_2, \vec{v_2}) \mid q_1 \in F_1, \exists q' \in I_2.\ (q', a, q_2, \vec{v_2}) \in \delta_2\}$, moreover, if $I_2 \cap F_2 \neq \emptyset$, then $F'= F_1 \cup F_2$, otherwise, $F'= F_2$.
+The \emph{concatenation} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \concat \aut_2$, is defined similarly as that of NFA, that is, a tuple $(Q', \Sigma, \delta', I', F', \alpha')$, where $Q' = Q_1 \cup Q_2$, $I' = I_1$, $\alpha' = \alpha_1 \wedge \alpha_2$, $\delta' = \{(q_1, a, q'_1, (\myvec{v_1}, \myvec{0})) \mid (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\} \cup \{(q_2, a, q'_2, (\myvec{0}, \myvec{v_2})) \mid (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\} \cup \{(q_1, a, q_2, \vec{v_2}) \mid q_1 \in F_1, \exists q' \in I_2.\ (q', a, q_2, \vec{v_2}) \in \delta_2\}$, moreover, if $I_2 \cap F_2 \neq \emptyset$, then $F'= F_1 \cup F_2$, otherwise, $F'= F_2$. From the construction, 
+$$\Lang(\aut_1 \concat \aut_2) = \{(w_1w_2; \myvec{v}) \mid (w_1; \prj_{R_1}(\myvec{v})) \in \Lang(\aut_1), (w_2; \prj_{R_2}(\myvec{v})) \in \Lang(\aut_2)\}.$$
 
 
 %Let $((\aut_1,\cdots, \aut_n), \varphi)$ be a tuple such that $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1)$, $\cdots$, $\aut_n = (R_n, Q_n, \Sigma, \delta_n, q_{n, 0}, F_n)$ are CEFA, and $\varphi(R_1, \cdots, R_n)$ is an LIA formula. Then the \emph{relation} defined by $((\aut_1, \cdots, \aut_n), \varphi)$, denoted by $\srel((\aut_1, \cdots, \aut_n), \varphi)$, is $\{(w, \myvec{v'_1}, \cdots, \myvec{v'_n}) \mid \varphi(\myvec{v'_1}/R_1, \cdots, \myvec{v'_n}/R_n)\equiv \ltrue, \forall i \in [n].\ (w, \myvec{v'_i}) \in \Lang(\aut_i)\}$.
