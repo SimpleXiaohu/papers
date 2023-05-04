@@ -14,7 +14,7 @@ A regular expression $\regex$ is built from $\emptyset$, the empty string $\epsi
   \centering
 %  \begin{tabular}{l r}
 $ \begin{array}{l l l r}
-    \varphi & ::= & x\in \regex \mid x \not \in \regex \mid t_1\  \op\ t_2 \mid  \varphi \wedge \varphi                                              & \mbox{formulas}            \\
+    \varphi & ::= & x\in \regex \mid t_1\  \op\ t_2 \mid  \varphi \wedge \varphi                                              & \mbox{formulas}            \\
     \regex &::= & \emptyset \mid \epsilon \mid a \mid \regex\cdot \regex \mid \regex+\regex \mid \regex^* \mid \regex \cap \regex \mid \overline{\regex} \mid \regex \setminus \regex \mid \regex^{\{m,n\}} \mid \regex^{\{m,\infty\}} \mid (e) & \mbox{regexes} \\
     t &::= & n \mid i \mid  |x| \mid t - t \mid t + t                                                                    & \mbox{integer terms}
     \end{array}
@@ -37,7 +37,7 @@ A  mapping $\theta$ is said to satisfy $\varphi$, denoted by $\theta \models \va
 \begin{itemize}
 \item $\varphi \equiv x \in \regex$ and $\theta(x) \in \Lang(\regex)$, 
 %
-\item $\varphi \equiv x \not \in \regex$ and $\theta(x) \not \in \Lang(\regex)$, 
+%\item $\varphi \equiv x \not \in \regex$ and $\theta(x) \not \in \Lang(\regex)$, 
 %
 \item $\varphi \equiv t_1\ \op\ t_2$ and $\theta(t_1)\ \op\ \theta(t_2)$, 
 %

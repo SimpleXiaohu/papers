@@ -22,7 +22,8 @@ The decision procedure for proving the upper bound in Proposition~\ref{prop-cefa
 
 \subsection{From $\reclsat$ to $\cefadec$} \label{subsec:regex2cefa}
 
-Let $\varphi$ be an RECL constraint. We shall reduce the satisfiability of $\varphi$ to an instance of $\cefadec$. 
+Let $\varphi$ be an RECL constraint and $x_1, \cdots, x_n$ be an enumeration of the string variables occurring in $\varphi$. Moreover, let $\varphi \equiv \varphi_1 \wedge \varphi_2$ such that $\varphi_1$ is a conjunction of regular membership constraints of $\varphi$, and $\varphi_2$ is a conjunction of length constraints of $\varphi$.
+We shall reduce the satisfiability of $\varphi$ to an instance of $\cefadec$. 
 
 At first, we show how to construct a CEFA from a regular expression where counting operators may occur. 
 Let us start with register-representable regular expressions defined in the sequel. 
@@ -35,7 +36,7 @@ Let $e$ be a register-representable regular expression over $\Sigma$. We are goi
 \begin{enumerate}
 \item For each maximal sub-expression $e'$ of $e$ such that $e'$ contains no occurrences of counting operators, an NFA $\aut_{e'}$ can be constructed by a structural induction on the syntax of $e'$. 
 %
-\item For each sub-expression $(e')^{\{m,n\}}$ with $m \le n$ (resp. $(e')^{\{m, \infty\}}$) of $e$, we construct a CEFA $\aut_{(e')^{\{m,n\}}}$ (resp. $\aut_{(e')^{\{m, \infty\}}}$) as follows. Let $\aut_{e'} = (Q, \Sigma, \delta, I, F)$. From the construction for Kleene star in Section~\ref{sec:pre}, $(\aut_{e'})^* = (Q', \Sigma, \delta', I', F')$, where $Q' = Q \cup \{q_0\}$ with $q_0 \not \in Q$, $I' = \{q_0\}$, $F'= F \cup \{q_0\}$, $\delta' = \delta  \cup \{(q_0, a, q')  \mid \exists q'_0 \in I.\ (q'_0, a, q') \in \delta\} \cup \{(q, a, q') \mid q \in F, \exists q'_0 \in I.\ (q'_0, a, q') \in \delta\}$. Then $\aut_{(e')^{\{m,n\}}} = ((r'), Q', \Sigma, \delta'', I', F', \alpha')$, where $r'$ is a register, \\
+\item For each sub-expression $(e')^{\{m,n\}}$ with $m \le n$ (resp. $(e')^{\{m, \infty\}}$) of $e$, we construct a CEFA $\aut_{(e')^{\{m,n\}}}$ (resp. $\aut_{(e')^{\{m, \infty\}}}$) as follows. Let $\aut_{e'} = (Q, \Sigma, \delta, I, F)$. From the construction for Kleene star in Section~\ref{sec:pre}, $(\aut_{e'})^* = (Q', \Sigma, \delta', I', F')$, where $Q' = Q \cup \{q_0\}$ with $q_0 \not \in Q$, $I' = \{q_0\}$, $F'= F \cup \{q_0\}$, $\delta' = \delta  \cup \{(q_0, a, q')  \mid \exists q'_0 \in I.\ (q'_0, a, q') \in \delta\} \cup \{(q, a, q') \mid q \in F, \exists q'_0 \in I.\ (q'_0, a, q') \in \delta\}$. Then $\aut_{(e')^{\{m,n\}}} = ((r'), Q', \Sigma, \delta'', I', F', \alpha')$, where $r'$ is a register, 
 %
 $$
 \begin{array}{l c l}
@@ -48,15 +49,25 @@ $$
 moreover, $\alpha' = m \le r' \le n$ if $I \cap F = \emptyset$, and $\alpha' = r' \le n$ otherwise.  (Intuitively, if $\varepsilon$ is accepted by $\aut_{e'}$, then the value of $r'$ can be less than $m$.) Finally, $\aut_{(e')^{\{m, \infty\}}}$ is constructed by adapting $\alpha'$ in $\aut_{(e')^{\{m,n\}}}$ as follows: $\alpha' = m \le r'$ if $I \cap F = \emptyset$ and $\alpha' = \ltrue$ otherwise. 
 
 %
-\item For each sub-expression $e'$ of $e$ such that $e'$ contains occurrences of counting operators but $e'$ itself is not of the form $(e'_1)^{\{m,n\}}$ or $(e'_1)^{\{m,\infty\}}$, from the assumption that $e$ is register-representable, we know that $e'$ is of the form $e'_1 \concat e'_2$, $e'_1 + e'_2$, $e'_1 \cap e'_2$, or $(e'_1)$. For $e' = (e'_1)$, we have $\aut_{e'} = \aut_{e'_1}$. For $e' = e'_1 \concat e'_2$, $e' = e'_1 + e'_2$, or $e' = e'_1 \cap e'_2$, suppose that CEFA $\aut_{e'_1}$ and $\aut_{e'_2}$ have been constructed. Without loss of generality,  we assume that $R_{\aut_{e'_1}} \cap R_{\aut_{e'_2}} = \emptyset$. Then we have $\aut_{e'} = \aut_{e'_1} \concat \aut_{e'_2}$, $\aut_{e'} = \aut_{e'_1} \cup \aut_{e'_2}$, $\aut_{e'} = \aut_{e'_1} \cap \aut_{e'_2}$ respectively. 
+\item For each sub-expression $e'$ of $e$ such that $e'$ contains occurrences of counting operators but $e'$ itself is not of the form $(e'_1)^{\{m,n\}}$ or $(e'_1)^{\{m,\infty\}}$, from the assumption that $e$ is register-representable, we know that $e'$ is of the form $e'_1 \concat e'_2$, $e'_1 + e'_2$, $e'_1 \cap e'_2$, or $(e'_1)$. For $e' = (e'_1)$, we have $\aut_{e'} = \aut_{e'_1}$. For $e' = e'_1 \concat e'_2$, $e' = e'_1 + e'_2$, or $e' = e'_1 \cap e'_2$, suppose that CEFA $\aut_{e'_1}$ and $\aut_{e'_2}$ have been constructed. Without loss of generality,  we assume that $R_{\aut_{e'_1}} \cap R_{\aut_{e'_2}} = \emptyset$. Then we have $\aut_{e'} = \aut_{e'_1} \concat \aut_{e'_2}$, $\aut_{e'} = \aut_{e'_1} \cup \aut_{e'_2}$, and $\aut_{e'} = \aut_{e'_1} \cap \aut_{e'_2}$ respectively. 
 \end{enumerate}
 
 \begin{example}
 an example here
 \end{example}
 
+For non-register-representable regular expressions, we first transform them into register-representable regular expressions by unfolding all the non-register-representable occurrences of  counting operators, then utilize the aforementioned procedure to construct CEFA. For instance, $(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa + aaaa) \concat b^*) \setminus (a+b)(a+b)(a+b)(a+b)(a+b)^*$.
+
+For each $i \in [n]$, let $x_i \in e_{i, 1}, \cdots, x_i \in e_{i, l_i}$ be an enumeration of the regular membership constraints for $x_i$ in $\varphi_1$.  Then we can construct CEFA $\aut_{i, j}$ from $e_{i, j}$ for each $i \in [n]$ and $j \in [l_i]$. Moreover, we construct another CEFA $\aut_{i, 0}$ for each $i \in [n]$ to model the length of $x_i$. Specifically, $\aut_{i,0}$ is constructed as $((r_{i,0}), \{q_{i,0}\}, \Sigma, \delta_{i,0}, \{q_{i,0}\}, \{q_{i,0}\}, \ltrue)$, where $r_{i,0}$ is a fresh register (in particular, $r_{i,0}$ does not occur in $\aut_{i,1}, \cdots, \aut_{i, l_i}$) and $\delta_{i,0} = \{(q_{i,0}, a, q_{i,0}, (1)) \mid a \in \Sigma\}$. 
+Let $\Lambda_{x_i} = \{\aut_{i,0}, \aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for each $i \in [n]$. Moreover, let $\varphi'_2 \equiv \varphi_2[r_{1,0}/|x_1|, \cdots, r_{n,0}/|x_n|]$.
+Then the satisfiability of $\varphi$ is reduced to the nonemptiness of CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi'_2$.
+
 \zhilin{stopped here}
 
+
+%%%%%%%%%%% original texts by denghang %%%%%
+%%%%%%%%%%% original texts by denghang %%%%%
+\hide{
 The most important point of our approach is encoding counting operators by registers rather than explicitly unfolding them. In this section, we discuss the encoding in detail. A counting operator is called \emph{handled} if it is not the sub-regex of complement, closure, or another counting, and called \emph{unhandled} otherwise. For example, $(\Sigma \setminus a)^{\{m,n\}}$ is handled, while $((\Sigma \setminus a)^{\{m,n\}})^*$ is unhandled. We first discuss the encoding of handled counting operators and then the encoding of unhandled counting operators.
 
 % We must syntactically rewrite bounded repetition $\regex\{m,n\}$ if it is the sub-regex of complement (e.g., $(\regex\{m,n\})^C$), closure(e.g., $(\regex\{m,n\})^*$), and bounded repetition(e.g., $(\regex\{m,n\})\{m', n'\}$), we unwind it to $\regex^m\mid\cdots\mid\regex^n$. After this syntactic rewriting, we call the resulting regex $\regex'$ \emph{non-nested}.
@@ -210,6 +221,9 @@ Given a string-length constraint, we build a CEFA with a register storing the wo
 %   \end{itemize}
 % \end{definition}
 % With the help of product, we can combine the CEFAs of regex-counting and string-length. For example, the CEFA of $x$ in the string constraints $x \in (\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}} \wedge x \in \Sigma^* c \wedge |x| > 120$ is the product of the CEFA of regex $(\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$, the CEFA of regex $\Sigma^*$ and the CEFA of length constraints $|x| > 120$.
+}
+%%%%%%%%%%% original texts by denghang %%%%%
+%%%%%%%%%%% original texts by denghang %%%%%
 
 \subsection{Solving $\cefadec$} \label{subsec:cefadec}
 After encoding counting operator and length constraint to CEFAs, there are only automaton memberships $x\in \aut$ and LIA formula $t_1 \ \op \ t_2$ where $\aut$ is CEFA and $t_1, t_2$ are integer terms. Let $\psi$ denotes the conjunction of all LIA formulae $t_1\ \op\ t_2$ and $\Lambda_x = \{\aut_x^1, \aut_x^2,\cdots \aut_x^n\}$ denotes the set of CEFAs in the automaton membership $x\in \aut$. The emptiness checking problem of $\Lambda_x$ under $\psi$ is the problem that checks whether there exists a word $w$ such that $w\in \aut_x^1, w\in \aut_x^2\cdots w\in \aut_x^n$ and $\psi[\myvec{V}/\myvec{r}]$ holds, where $\myvec{r}$ are all registers and $\myvec{V}$ are corresponding register values in automata of $\Lambda_x$ after running $w$. The emptiness problem is \emph{abbreviated as $SAT_{CEFA}[LIA]$ problem}. 
