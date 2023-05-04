@@ -25,8 +25,37 @@ The decision procedure for proving the upper bound in Proposition~\ref{prop-cefa
 Let $\varphi$ be an RECL constraint. We shall reduce the satisfiability of $\varphi$ to an instance of $\cefadec$. 
 
 At first, we show how to construct a CEFA from a regular expression where counting operators may occur. 
+Let us start with register-representable regular expressions defined in the sequel. 
 
-Let $e$ be a regular expression and $(e')^{\{m,n\}}$ be an occurrence of the counting operators in $e$. Then $(e')^{\{m,n\}}$ is said to be \emph{persistent} in $e$ if  $(e')^{\{m,n\}}$ is not in the scope of a complement, Kleene star, or counting operator in $e$. 
+Let us fix an alphabet $\Sigma$.
+
+Let $e$ be a regular expression over $\Sigma$. Then an occurrence of counting operators in $e$, say $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$), is said to be \emph{register-representable} if $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$) is not in the scope of a Kleene star, another counting operator, complement, or language difference in $e$. We say that $e$ is \emph{register-representable} if all occurrences of counting operators in $e$ are register-representable. For instance, $(a^{\{2, 6\}} \concat b^*) \cap (a + b)^{\{4, \infty\}}$ is register-representable, while $(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ and $(a^{\{2, 6\}} \concat b^*)^{\{1,\infty\}}$ are not. 
+
+Let $e$ be a register-representable regular expression over $\Sigma$. We are going to construct a CEFA out of $e$, denoted by $\aut_e$, by the following procedure. 
+\begin{enumerate}
+\item For each maximal sub-expression $e'$ of $e$ such that $e'$ contains no occurrences of counting operators, an NFA $\aut_{e'}$ can be constructed by a structural induction on the syntax of $e'$. 
+%
+\item For each sub-expression $(e')^{\{m,n\}}$ with $m \le n$ (resp. $(e')^{\{m, \infty\}}$) of $e$, we construct a CEFA $\aut_{(e')^{\{m,n\}}}$ (resp. $\aut_{(e')^{\{m, \infty\}}}$) as follows. Let $\aut_{e'} = (Q, \Sigma, \delta, I, F)$. From the construction for Kleene star in Section~\ref{sec:pre}, $(\aut_{e'})^* = (Q', \Sigma, \delta', I', F')$, where $Q' = Q \cup \{q_0\}$ with $q_0 \not \in Q$, $I' = \{q_0\}$, $F'= F \cup \{q_0\}$, $\delta' = \delta  \cup \{(q_0, a, q')  \mid \exists q'_0 \in I.\ (q'_0, a, q') \in \delta\} \cup \{(q, a, q') \mid q \in F, \exists q'_0 \in I.\ (q'_0, a, q') \in \delta\}$. Then $\aut_{(e')^{\{m,n\}}} = ((r'), Q', \Sigma, \delta'', I', F', \alpha')$, where $r'$ is a register, \\
+%
+$$
+\begin{array}{l c l}
+\delta'' & = & \{(q, a, q', (0)) \mid (q, a, q') \in \delta\}\  \cup \\
+& & \{(q_0, a, q', (1))  \mid \exists q'_0 \in I.\ (q'_0, a, q') \in \delta\}\ \cup \\
+& & \{(q, a, q', (1)) \mid q \in F, \exists q'_0 \in I.\ (q'_0, a, q') \in \delta\},
+\end{array}
+$$ 
+%
+moreover, $\alpha' = m \le r' \le n$ if $I \cap F = \emptyset$, and $\alpha' = r' \le n$ otherwise.  (Intuitively, if $\varepsilon$ is accepted by $\aut_{e'}$, then the value of $r'$ can be less than $m$.) Finally, $\aut_{(e')^{\{m, \infty\}}}$ is constructed by adapting $\alpha'$ in $\aut_{(e')^{\{m,n\}}}$ as follows: $\alpha' = m \le r'$ if $I \cap F = \emptyset$ and $\alpha' = \ltrue$ otherwise. 
+
+%
+\item For each sub-expression $e'$ of $e$ such that $e'$ contains occurrences of counting operators but $e'$ itself is not of the form $(e'_1)^{\{m,n\}}$ or $(e'_1)^{\{m,\infty\}}$, from the assumption that $e$ is register-representable, we know that $e'$ is of the form $e'_1 \concat e'_2$, $e'_1 + e'_2$, $e'_1 \cap e'_2$, or $(e'_1)$. For $e' = (e'_1)$, we have $\aut_{e'} = \aut_{e'_1}$. For $e' = e'_1 \concat e'_2$, $e' = e'_1 + e'_2$, or $e' = e'_1 \cap e'_2$, suppose that CEFA $\aut_{e'_1}$ and $\aut_{e'_2}$ have been constructed. Without loss of generality,  we assume that $R_{\aut_{e'_1}} \cap R_{\aut_{e'_2}} = \emptyset$. Then we have $\aut_{e'} = \aut_{e'_1} \concat \aut_{e'_2}$, $\aut_{e'} = \aut_{e'_1} \cup \aut_{e'_2}$, $\aut_{e'} = \aut_{e'_1} \cap \aut_{e'_2}$ respectively. 
+\end{enumerate}
+
+\begin{example}
+an example here
+\end{example}
+
+\zhilin{stopped here}
 
 The most important point of our approach is encoding counting operators by registers rather than explicitly unfolding them. In this section, we discuss the encoding in detail. A counting operator is called \emph{handled} if it is not the sub-regex of complement, closure, or another counting, and called \emph{unhandled} otherwise. For example, $(\Sigma \setminus a)^{\{m,n\}}$ is handled, while $((\Sigma \setminus a)^{\{m,n\}})^*$ is unhandled. We first discuss the encoding of handled counting operators and then the encoding of unhandled counting operators.
 
