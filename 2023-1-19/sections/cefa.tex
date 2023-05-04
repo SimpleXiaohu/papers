@@ -9,14 +9,14 @@ Intuitively, CEFA add write-only cost registers to finite state automata. Here b
 %
 %In~\cite{atva2020}, the cost function is defined as a function $\eta: \Sigma \rightarrow \mathbb{N}$. In this paper, we define the cost function as an integer vector whose elements are the incremental value of registers. Furthermore, we add a new linear integer arithmetic constraint $\theta$ to each final state of the CEFA, which restricts the value of registers. Two types of definitions have the same expressive ability on the $SAT_{CL}$ problem.
 \begin{definition}[Cost-Enriched Finite Automaton]
-  A cost-enriched finite automaton $\aut$ is a tuple $(R, Q, \Sigma, \delta, q_0, F)$ where
+  A cost-enriched finite automaton $\aut$ is a tuple $(R, Q, \Sigma, \delta, I, F)$ where
   \begin{itemize}
   \item $R = \{r_1, \cdots, r_k\}$ is a finite set of registers, 
-    \item $Q, \Sigma, q_0, F$ are as in the definition of NFA,
+    \item $Q, \Sigma, I, F$ are as in the definition of NFA,
 %    \item $R = (r_1\cdots r_n)$ is a vector of mutually distinct cost registers,
     \item $\delta \subseteq Q \times \Sigma \times Q \times \Int^R$ is a transition relation, where $\Int^R$ denotes the updates on the values of registers.
 %  set whose elements are tuples $(q, c, q', \myvec{v})$ where $q, q'$ are states of $Q$, $c$ is a letter in alphabet $\Sigma\cup\{\epsilon\}$ and $\myvec{v}$ is the cost update function for registers, which is an integer vector whose $i$-th element is the incremental value of register $r_i$.  $(q, a, q', \myvec{v})$ is written as $q\xrightarrow[\myvec{v}]{a} q'$ for readability.
-%    \item $\alpha: F \rightarrow \Phi(R)$ attaches to each finite state an accepting condition that is specified by an LIA formula.
+    \item $\alpha \in \Phi(R)$ is an LIA formula specifying an accepting condition.
 %    a linear integer arithmetic constraint function on final states. $\theta$ is called \emph{accepting condition}.
   \end{itemize}
 \end{definition}
@@ -25,41 +25,49 @@ Intuitively, CEFA add write-only cost registers to finite state automata. Here b
 
 For readability, from now on, we assume a linear order on $R$ and write $R$ as a vector $\myvec{r} = (r_1, \cdots, r_k)$. Accordingly, we write an element of $\Int^R$ as a vector $(v_1, \cdots, v_k)$, where for each $i \in [k]$, $v_i$ is the update on the value of $r_i$. We also write a transition $(q, a, q', \vec{v}) \in \delta$ as $q \xrightarrow[\vec{v}]{a} q'$.
 
-
-The semantics of CEFA is define as follows. Let $\aut = (R, Q, \Sigma, \delta, q_0, F, \alpha)$ be a CEFA. 
+The semantics of CEFA is define as follows. Let $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$ be a CEFA. 
 A \emph{configuration} of $\aut$ is a pair $(q, \vec{v})$ where $q \in Q$ and $\vec{v}$ is a vector denoting the values of registers.  
-The \emph{initial configuration} of $\aut$ is $(q_0, \vec{0})$, where the value of each register is zero. 
-A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ is a sequence $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ and $q_{i-1} \xrightarrow[\myvec{v_i}]{a_i} q_i$ for each $i \in [n]$. A run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ is \emph{accepting} if $q_n \in F$. The \emph{cost} of an accepting run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ is defined as $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v_j}$. Note here we assume that the initial values of all registers are zero and $\sum \limits_{j \in [n]} \myvec{v_j}$ is the vector of register values after all the transitions in the run are executed.  We use $\myvec{v'} \in \aut(w)$ to denote the fact that there is an accepting run of $\aut$ on $w$ whose cost is $\myvec{v'}$. 
+%An \emph{initial configuration} of $\aut$ is $(q_0, \vec{0})$ with $q_0 \in I$, where the value of each register is zero. 
+A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ is a sequence $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ such that $q_0 \in I$ and $q_{i-1} \xrightarrow[\myvec{v_i}]{a_i} q_i$ for each $i \in [n]$. A run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ is \emph{accepting} if $q_n \in F$ and $\alpha(\myvec{v'}/R)$ is true, where $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v_j}$. The vector $\myvec{v'}= \sum \limits_{j \in [n]} \myvec{v_j}$ is called the \emph{cost} of an accepting run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$. Note here we assume that the initial values of all registers are zero and $\sum \limits_{j \in [n]} \myvec{v_j}$ is the vector of register values after all the transitions in the run are executed.  We use $\myvec{v'} \in \aut(w)$ to denote the fact that there is an accepting run of $\aut$ on $w$ whose cost is $\myvec{v'}$. 
 Finally, we define the semantics of a CEFA $\aut$ as $\Lang(\aut) = \{(w; \myvec{v'}) \mid  \myvec{v'} \in \aut(w)\}$.  
+
+We would like to remark that the accepting conditions $\alpha$ in CEFA are defined in a \emph{global} fashion in the sense that the accepting condition does not distinguish final states. This technical choice is made so that determinization and minimization of NFA can be utilized to reduce the size of CEFA in the next section. 
 
 %
 %and $\alpha(q_n)[\myvec{\myvec{v'}/\myvec{r}]$ is true, where $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v_j}}$. Note here we assume that the initial values of all registers are zero and $\sum \limits_{j \in [n]} \myvec{v_j}$ is the vector of register values after all the transitions in the run are executed. A string $w$ is \emph{accepted} by $\aut$ if there is an accepting run of $\aut$ on $w$. The language defined by $\aut$, denoted by $\Lang(\aut)$, is the set of strings that are accepted by $\aut$. 
 
 %Finally, we define the product of two CEFA. 
 
-In the sequel, we define three operations on CEFA, namely, concatenation, intersection, and union. These three operations will be used for solving RECL constraints in the next section. 
+In the sequel, we define three operations on CEFA, namely, union, intersection, and concatenation. These three operations will be used for solving RECL constraints in the next section. 
 
 Let $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1, \alpha_1)$ and  $\aut_2 = (R_2, Q_2, \Sigma, \delta_2, q_{2,0}, F_2, \alpha_2)$ be two CEFA that share the alphabet. 
-Moreover, suppose $R_1 \cap R_2 = \emptyset$. 
+Moreover, suppose that $R_1 \cap R_2 = \emptyset$ and $Q_1 \cap Q_2 = \emptyset$. 
 %We define two operations of CEFA, namely, the product and union, as follows. 
 
-The \emph{concatenation} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \concat \aut_2$, is 
-
-The \emph{product} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \times \aut_2 = (R', Q', \Sigma, \delta', q'_0, F', \alpha')$, is defined in the sequel. 
+The \emph{union} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cup \aut_2$, is defined in a slightly more involved manner than NFA, as a result of the technical choice that the accepting conditions of CEFA do not distinguish final states. Two fresh auxiliary registers, say $r'_1,r'_2 \not \in R_1 \cup R_2$, are introduced so that the accepting condition knows whether a run is from $\aut_1$ or from $\aut_2$. Specifically, $\aut_1 \cup \aut_2 = (R', Q', \Sigma, \delta', \{q'_0\}, F', \alpha')$, where $R' = R_1 \cup R_2 \cup \{r'_1, r'_2\}$, $Q' = Q_1 \cup Q_2 \cup \{q'_0\}$ with $q'_0 \not \in Q_1 \cup Q_2$, $\delta' = \{(q'_0, a, q'_1, (\myvec{v_1}, \myvec{0}, 1,0)) \mid \exists q_1 \in I_1.\ (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\} \cup \{(q'_0, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 1)) \mid \exists q_2 \in I_2.\ (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\} \cup \{(q_1, a, q'_1, (\myvec{v_1}, \myvec{0}, 0, 0)) \mid (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\} \cup \{(q_2, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 0)) \mid (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\}$, moreover, 
 \begin{itemize}
-\item $R' = R_1 \cup R_2$, $Q' = Q_1 \times Q_2$, $q'_0 = (q_{1,0}, q_{2,0})$, $F' = F_1 \times F_2$,
+\item if $I_1 \cap F_1 \neq \emptyset$ or $I_2 \cap F_2 \neq \emptyset$, then $F' = F_1 \cup F_2 \cup \{q'_0\}$ and $\alpha' = (r'_1 = 0 \wedge r'_2 = 0) \vee (r'_1=1 \wedge \alpha_1) \vee (r'_2=1 \wedge \alpha_2)$, 
+%
+\item otherwise, $F'=F_1 \cup F_2$ and $\alpha' = (r'_1=1 \wedge \alpha_1) \vee (r'_2=1 \wedge \alpha_2)$.
+\end{itemize}
+
+The \emph{intersection} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cap \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$, is defined in the sequel. 
+\begin{itemize}
+\item $R' = R_1 \cup R_2$, $Q' = Q_1 \times Q_2$, $I' = I_1 \times I_2$, $F' = F_1 \times F_2$, $\alpha' = \alpha_1 \wedge \alpha_2$, 
 %
 %\item $\alpha'((q_1, q_2)) = \alpha_1(q_1) \wedge \alpha_2(q_2)$ for each $(q_1, q_2) \in F'$, 
 %
-\item $\delta'$ comprises the tuples $((q_1, q_2), a, (q'_1, q'_2), \myvec{v})$ such that $(q_1,a, q'_1, \prj_{R_1}(\myvec{v})) \in \delta_1$ and $(q_2,a, q'_2, \prj_{R_2}(\myvec{v})) \in \delta_2$, where $\myvec{v} \in \Int^{R'}$, $\prj_{R_1}(\myvec{v}))$ (resp. $\prj_{R_2}(\myvec{v}))$) is the restriction of $\myvec{v}$ to the domain $R_1$ (resp. $R_2$). 
+\item $\delta'$ comprises the tuples $((q_1, q_2), a, (q'_1, q'_2), (\myvec{v_1}, \myvec{v_2}))$ such that $(q_1,a, q'_1, \myvec{v_1}) \in \delta_1$ and $(q_2,a, q'_2, \myvec{v_2}) \in \delta_2$.
+%, where $\myvec{v} \in \Int^{R'}$, $\prj_{R_1}(\myvec{v}))$ (resp. $\prj_{R_2}(\myvec{v}))$) is the restriction of $\myvec{v}$ to the domain $R_1$ (resp. $R_2$). 
 \end{itemize}
-From the construction, $\Lang(\aut_1 \times \aut_2) = \{(w; \myvec{v'_1}, \myvec{v'_2}) \mid (w; \myvec{v'_1}) \in \Lang(\aut_1), (w; \myvec{v'_2}) \in \Lang(\aut_2)\}$. 
-Intuitively, $\aut_1 \times \aut_2$ accepts the words that are accepted by both $\aut_1$ and $\aut_2$ and outputs the costs of $\aut_1$ and $\aut_2$.  
-
-The \emph{union} of $\aut_1$ and $\aut_2$
+From the construction, $\Lang(\aut_1 \cap \aut_2) = \{(w; \myvec{v'_1}, \myvec{v'_2}) \mid (w; \myvec{v'_1}) \in \Lang(\aut_1), (w; \myvec{v'_2}) \in \Lang(\aut_2)\}$. 
+Intuitively, $\aut_1 \cap \aut_2$ accepts the words that are accepted by both $\aut_1$ and $\aut_2$ and outputs the costs of $\aut_1$ and $\aut_2$.  
 
 
-Let $((\aut_1,\cdots, \aut_n), \varphi)$ be a tuple such that $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1)$, $\cdots$, $\aut_n = (R_n, Q_n, \Sigma, \delta_n, q_{n, 0}, F_n)$ are CEFA, and $\varphi(R_1, \cdots, R_n)$ is an LIA formula. Then the \emph{relation} defined by $((\aut_1, \cdots, \aut_n), \varphi)$, denoted by $\srel((\aut_1, \cdots, \aut_n), \varphi)$, is $\{(w, \myvec{v'_1}, \cdots, \myvec{v'_n}) \mid \varphi(\myvec{v'_1}/R_1, \cdots, \myvec{v'_n}/R_n)\equiv \ltrue, \forall i \in [n].\ (w, \myvec{v'_i}) \in \Lang(\aut_i)\}$.
+The \emph{concatenation} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \concat \aut_2$, is defined similarly as that of NFA, that is, a tuple $(Q', \Sigma, \delta', I', F', \alpha')$, where $Q' = Q_1 \cup Q_2$, $I' = I_1$, $\alpha' = \alpha_1 \wedge \alpha_2$, $\delta' = \{(q_1, a, q'_1, (\myvec{v_1}, \myvec{0})) \mid (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\} \cup \{(q_2, a, q'_2, (\myvec{0}, \myvec{v_2})) \mid (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\} \cup \{(q_1, a, q_2, \vec{v_2}) \mid q_1 \in F_1, \exists q' \in I_2.\ (q', a, q_2, \vec{v_2}) \in \delta_2\}$, moreover, if $I_2 \cap F_2 \neq \emptyset$, then $F'= F_1 \cup F_2$, otherwise, $F'= F_2$.
+
+
+%Let $((\aut_1,\cdots, \aut_n), \varphi)$ be a tuple such that $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1)$, $\cdots$, $\aut_n = (R_n, Q_n, \Sigma, \delta_n, q_{n, 0}, F_n)$ are CEFA, and $\varphi(R_1, \cdots, R_n)$ is an LIA formula. Then the \emph{relation} defined by $((\aut_1, \cdots, \aut_n), \varphi)$, denoted by $\srel((\aut_1, \cdots, \aut_n), \varphi)$, is $\{(w, \myvec{v'_1}, \cdots, \myvec{v'_n}) \mid \varphi(\myvec{v'_1}/R_1, \cdots, \myvec{v'_n}/R_n)\equiv \ltrue, \forall i \in [n].\ (w, \myvec{v'_i}) \in \Lang(\aut_i)\}$.
 
 %the intersection of $\Lang(\aut_1)$ and $\Lang(\aut_2)$.
 

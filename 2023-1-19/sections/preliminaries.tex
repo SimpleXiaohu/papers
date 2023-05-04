@@ -4,6 +4,8 @@
 
 We write $\Nat$ and $\Int$ for the sets of natural and integer numbers, respectively. For $n \in \Nat$ with $n \ge 1$, $[n]$ denotes $\{1, \ldots, n\}$; for $m,n \in \Nat$ with $m \le n$,  $[m, n]$ denotes $\{ i \in \Nat \mid m \le i \le n \}$. Throughout the paper, $\Sigma$ is a finite alphabet, ranged over by $a,b,\ldots$.  
 
+For a function $f$ from $X$ to $Y$ and $X' \subseteq X$, we use $\prj_{X'}(f)$ to denote the restriction (aka projection) of $f$ to $X'$, that is, $\prj_{X'}(f)$ is a function from $X'$ to $Y$, and $\prj_{X'}(f)(x') = f(x')$ for each $x' \in X'$.
+
 \paragraph*{Strings and languages.}
 A string over $\Sigma$ is a (possibly empty) sequence of elements from $\Sigma$,
 denoted by $u, v, w, \ldots$. An empty string is denoted by $\varepsilon$. We use $\Sigma_\varepsilon$ to denote $\Sigma \cup \{\varepsilon\}$. We write $\Sigma^*$ (resp., $\Sigma^+$) for the set of all (resp. nonempty) strings over $\Sigma$.
@@ -23,28 +25,29 @@ Finally, define $L^* = \bigcup \limits_{n \in \Nat} L^n$.
 %, that is, the string $w$ such that $|w|= |u| + |v|$ and for each $i \in [0, |u|-1]$, $w[i]= u[i]$, and for each $i \in [0,|v|-1]$, $w[|u|+i]=v[i]$. 
 
 \paragraph*{Finite automata.} 
-A \emph{(nondeterministic) finite automaton} (NFA)  is a tuple $\NFA=(Q, \Sigma, \delta, q_0, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, $q_0 \in Q$ is the initial state, and $F \subseteq Q$ is the set of final states. For readability, we write a transition $(q, a, q') \in \delta$ as $q \xrightarrow[\delta]{a} q'$ (or simply $q \xrightarrow{a} q'$). %Moreover, when $\delta$ is clear from context, we omit $\delta$ in $q \xrightarrow[\delta]{a} q'$ and write $q \xrightarrow{a} q'$. 
+A \emph{(nondeterministic) finite automaton} (NFA)  is a tuple $\NFA=(Q, \Sigma, \delta, I, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, $I \subseteq Q$ is the set of initial states, and $F \subseteq Q$ is the set of final states. For readability, we write a transition $(q, a, q') \in \delta$ as $q \xrightarrow[\delta]{a} q'$ (or simply $q \xrightarrow{a} q'$). %Moreover, when $\delta$ is clear from context, we omit $\delta$ in $q \xrightarrow[\delta]{a} q'$ and write $q \xrightarrow{a} q'$. 
 The \emph{size} of an NFA $\NFA$, denoted by $|\NFA|$, is defined as the number of transitions of $\NFA$.
 %
-A \emph{run} of $\NFA$ on a string $w = a_1 \cdots a_n$ is a sequence of transitions $q_0 \xrightarrow{a_1} q_1 \cdots q_{n-1} \xrightarrow{a_n} q_n$. The run is \emph{accepting} if $q_n \in F$.
+A \emph{run} of $\NFA$ on a string $w = a_1 \cdots a_n$ is a sequence of transitions $q_0 \xrightarrow{a_1} q_1 \cdots q_{n-1} \xrightarrow{a_n} q_n$ such that $q_0 \in I$. The run is \emph{accepting} if $q_n \in F$.
 A string $w$ is accepted by an NFA $\NFA$ if there is an accepting run of $\NFA$ on $w$. In particular, the empty string $\varepsilon$ is accepted by $\NFA$ if $I \cap F \neq \emptyset$. The language of $\NFA$, denoted by $\Lang(\NFA)$, is the set of strings accepted by $\NFA$. 
 %
 An NFA $\NFA$ is said to be \emph{deterministic} if $I$ is a singleton and, for every $q \in Q$ and $a \in \Sigma$, there is at most one state $q' \in Q$ such that $(q, a, q') \in \delta$. We use DFA to denote deterministic finite automata. 
 %
+
 It is well-known that finite automata capture regular languages. 
-Moreover, the class of regular languages is closed under union, intersection, concatenation, Kleene star, complement, and language difference \cite{HU79}.  In the sequel, we recall the constructions of NFA corresponding to these language operations. Let $\NFA_1 = (Q_1, \Sigma, \delta_1, q_{1,0}, F_1)$ and $\NFA_2 = (Q_2, \Sigma, \delta_2, q_{2,0}, F_2)$ be two NFA such that $Q_1 \cap Q_2 = \emptyset$. 
+Moreover, the class of regular languages is closed under union, intersection, concatenation, Kleene star, complement, and language difference \cite{HU79}.  In the sequel, we recall the constructions of NFA corresponding to these language operations. Let $\NFA_1 = (Q_1, \Sigma, \delta_1, I_1, F_1)$ and $\NFA_2 = (Q_2, \Sigma, \delta_2, I_2, F_2)$ be two NFA such that $Q_1 \cap Q_2 = \emptyset$. 
 \begin{itemize}
-\item The union of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \cup \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', q'_0, F')$, where $Q'= Q_1 \cup Q_2 \cup \{q'_0\}$ with $q'_0 \not \in Q_1 \cup Q_2$, $\delta' = \delta_1 \cup \delta_2 \cup \{(q'_0, a, q') \mid (q_{1,0}, a, q') \in \delta_1\} \cup \{(q'_0, a, q') \mid (q_{2,0}, a, q') \in \delta_2\}$, $F'=F_1 \cup F_2$. 
+\item The union of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \cup \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q'= Q_1 \cup Q_2$, $\delta' = \delta_1 \cup \delta_2$, $I' = I_1 \cup I_2$, and $F'=F_1 \cup F_2$. 
 %
-\item The intersection of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \cap \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', q'_0, F')$, where $Q' = Q_1 \times Q_2$, $q'_0 = (q_{1,0}, q_{2,0})$, $F' = F_1 \times F_2$, $\delta' = \{((q_1, q_2), a, (q'_1, q'_2)) \mid (q_1, a, q'_1) \in \delta_1, (q_2, a, q'_2) \in \delta_2\}$.
+\item The intersection of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \cap \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q' = Q_1 \times Q_2$, $I' = I_1 \times I_2$, $F' = F_1 \times F_2$, and $\delta' = \{((q_1, q_2), a, (q'_1, q'_2)) \mid (q_1, a, q'_1) \in \delta_1, (q_2, a, q'_2) \in \delta_2\}$.
 %
-\item The concatenation of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \concat \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', q'_0, F')$, where $Q' = Q_1 \cup Q_2$, $q'_0 = q_{1,0}$, $\delta' = \delta_1 \cup \delta_2 \cup \{(q_1, a, q_2) \mid q_1 \in F_1, (q_{2,0}, a, q_2) \in \delta_2\}$, moreover, if $q_{2,0} \in F_2$, then $F'= F_1 \cup F_2$, otherwise, $F'= F_2$.
+\item The concatenation of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \concat \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q' = Q_1 \cup Q_2$, $I' = I_1$, $\delta' = \delta_1 \cup \delta_2 \cup \{(q_1, a, q_2) \mid q_1 \in F_1, \exists q' \in I_2.\ (q', a, q_2) \in \delta_2\}$, moreover, if $I_2 \cap F_2 \neq \emptyset$, then $F'= F_1 \cup F_2$, otherwise, $F'= F_2$.
 %
-\item The Kleene star of $\NFA_1$, denoted by $\NFA_1^*$, is defined as $(Q_1, \Sigma, \delta'_1, q_{1,0}, F'_1)$, where $\delta'_1 = \delta_1 \cup \{(q_1, a, q'_1) \mid q_1 \in F_1, (q_{1,0}, a, q'_1) \in \delta_1\}$, $F'_1= F_1 \cup \{q_{1,0}\}$.
+\item The Kleene star of $\NFA_1$, denoted by $\NFA_1^*$, is defined as $(Q'_1, \Sigma, \delta'_1, I'_1, F'_1)$, where $Q'_1 = Q_1 \cup \{q_0\}$ with $q_0 \not \in Q_1$, $I'_1 = \{q_0\}$, $F'_1= F_1 \cup \{q_0\}$, $\delta'_1 = \delta_1 \cup \{(q_0, a, q'_1)  \mid \exists q'_0 \in I_1.\ (q'_0, a, q'_1) \in \delta_1\} \cup \{(q_1, a, q'_1) \mid q_1 \in F_1, \exists q'_0 \in I_1.\ (q'_0, a, q'_1) \in \delta_1\}$.
 %
-\item The complement of $\NFA_1$, denoted by $\overline{\NFA_1}$, is defined as $(Q'_1, \Sigma, \delta'_1, \{q_{1,0}\}, Q'_1 \setminus F'_1)$, where  $(Q'_1, \Sigma, \delta'_1, \{q_{1,0}\}, F'_1)$ is the DFA obtained from $\NFA_1$ by subset construction.  
+\item The complement of $\NFA_1$, denoted by $\overline{\NFA_1}$, is defined as $(Q'_1, \Sigma, \delta'_1, q'_0, Q'_1 \setminus F'_1)$, where  $(Q'_1, \Sigma, \delta'_1, q'_0, F'_1)$ is the DFA obtained from $\NFA_1$ by subset construction.  
 %
-\item The language difference of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \setminus \NFA_2$, is defined as $\NFA_1 \times \overline{\NFA_2}$.
+\item The language difference of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \setminus \NFA_2$, is defined as $\NFA_1 \cap \overline{\NFA_2}$.
 \end{itemize}
 
 
