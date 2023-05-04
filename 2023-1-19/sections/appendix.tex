@@ -1,4 +1,4 @@
-\section{Encoding Other Operations to CEFA}
+\section{Encoding Other Operations to CEFA} \label{appendix:cefa}
 
 \subsection{Concatenation}\label{subsec:con}
 Given two CEFAs $\aut_1 = (Q_1, \Sigma, \delta_1, q_{I_1}, F_1, R_1, \theta_1)$ and $\aut_2 = (Q_2, \Sigma, \delta_2, q_{I_2}, F_2, R_2, \theta_2)$ with $R_1\cap R_2= \emptyset$ and $|R_1|=m,|R_2|=n$, the concatenation of them is defined as $\aut_{\cdot}=(Q_1\cup Q_2, \Sigma, \delta', q_{I_1}, F_2, R_1\cdot R_2, \theta_1\wedge\theta_2)$ where $\delta'$ is composed by
@@ -172,3 +172,53 @@ To simulate the semantics of the union, we add transitions from $q_I$ to initial
 Given an CEFA $\aut = (Q, \Sigma, q_{I}, F, \delta, \emptyset, true)$, the complement is defined as the CEFA $\aut_c = (Q', \Sigma, q_{I}, F', \delta', \emptyset, true)$ where $(Q', \Sigma, q_{I}, F', \delta')$ is the complement of NFA $(Q, \Sigma, q_{I}, F, \delta)$.
 \subsection{Closure} \label{subsec:closure}
 Given an CEFA $\aut = (Q, \Sigma, q_{I}, F, \delta, \emptyset, true)$, the complement is defined as the CEFA $\aut_c = (Q', \Sigma, q_{I}, F', \delta', \emptyset, true)$ where $(Q', \Sigma, q_{I}', F', \delta')$ is the closure of NFA $(Q, \Sigma, q_{I}', F, \delta)$.
+
+\section{Detailed Evaluation} \label{appendix:experiential_results}
+The detailed results for the \textbf{AutomatArk} benchmark are presented in Figure \ref{fig:cactus_automatrk} and Table \ref{tab:results_automatrk}. OstrichCEA solved the most \emph{unsat} instances. Z3str3RE solved the most \emph{sat} instances. Ostrich solved the greatest number of instances, while Z3str3RE used the least time with timeouts.\newline
+The detailed results for the \textbf{Redos} benchmark are presented in Figure \ref{fig:cactus_redos} and Table \ref{tab:results_redos}. OstrichCEA solved the most instances on both tracks of \emph{sat} and \emph{unsat}. Including timeouts, OstrichCEA is \textbf{4.4}\mult{} faster than CVC5, \textbf{3.74}\mult{} faster than Ostrich, \textbf{2.09}\mult{} faster than Z3str3, \textbf{5.40}\mult{} faster than Z3seq, \textbf{2.49}\mult{} faster than Z3-Trau and close to Z3str3RE with \%20 speed loss. \newline 
+The detailed results for the \textbf{RegexLib} benchmark are presented in Figure \ref{fig:cactus_regexlib} and Table \ref{tab:results_regexlib}. Ostrich solved the most \emph{unsat} instances. OstrichCEA solved the most \emph{sat} instances. In total, OstrichCEA solved the greatest number of instances and was the solver with medium speed. \newline
+The detailed results for the \textbf{StackOverflow} benchmark are presented in Figure \ref{fig:cactus_stackoverflow} and Table \ref{tab:results_stackoverflow}. OstrichCEA solved the most instances on both tracks of \emph{sat} and \emph{unsat} and was the faster solver.\newline Including timeouts, OstrichCEA is \textbf{3.98}\mult{} faster than CVC5, \textbf{2.63}\mult{} faster than Ostrich, \textbf{2.19}\mult{} faster than Z3str3, \textbf{1.59}\mult{} faster than Z3seq, \textbf{1.28}\mult{} faster than CVC5 and \textbf{1.47}\mult{} to Z3str3RE. \newline
+\begin{figure}
+  \centering
+  \subimport{figures}{cactus_plot_automatark.tex}
+  \caption{The plot of a cactus graph depicting a comprehensive evaluation of the performance of the AutomatArk benchmark.}
+  \label{fig:cactus_automatrk}
+\end{figure}
+\begin{table}
+  \subimport{tables}{table_automatark.tex}
+  \caption{Detailed results for the AutomatArk benchmark.}
+  \label{tab:results_automatrk}
+\end{table}
+
+\begin{figure}
+  \subimport{figures}{cactus_plot_redos.tex}
+  \caption{The plot of a cactus graph depicting a comprehensive evaluation of the performance of the ReDos benchmark.}
+  \label{fig:cactus_redos}
+\end{figure}
+\begin{table}
+  \subimport{tables}{table_redos.tex}
+  \caption{Detailed results for the ReDos benchmark.}
+  \label{tab:results_redos}
+\end{table}
+
+\begin{figure}
+  \subimport{figures}{cactus_plot_regexlib.tex}
+  \caption{The plot of a cactus graph depicting a comprehensive evaluation of the performance of the RegexLib benchmark.}
+  \label{fig:cactus_regexlib}
+\end{figure}
+\begin{table}
+  \subimport{tables}{table_regexlib.tex}
+  \caption{Detailed results for the RegexLib benchmark.}
+  \label{tab:results_regexlib}
+\end{table}
+
+\begin{figure}
+  \subimport{figures/}{cactus_plot_stackoverflow.tex}
+  \caption{The plot of a cactus graph depicting a comprehensive evaluation of the performance of the StackOverflow benchmark.}
+  \label{fig:cactus_stackoverflow}
+\end{figure}
+\begin{table}
+  \subimport{tables}{table_stackoverflow.tex}
+  \caption{Detailed results for the StackOverflow benchmark.}
+  \label{tab:results_stackoverflow}
+\end{table}
