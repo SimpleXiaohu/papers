@@ -226,7 +226,25 @@ Given a string-length constraint, we build a CEFA with a register storing the wo
 %%%%%%%%%%% original texts by denghang %%%%%
 %%%%%%%%%%% original texts by denghang %%%%%
 
+
 \subsection{Solving $\cefadec$} \label{subsec:cefadec}
+
+In the sequel, we present a procedure to solve the $\cefadec$ problem.
+
+Suppose that $x_1, \cdots, x_n$ are mutually distinct string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the same alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$, moreover, the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{1, l_1}}, \cdots, R_{\aut_{n, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, and $\varphi$ is an LIA formula whose free variables are from $R' = \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. 
+
+At first, we compute CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$ for each $i \in [n]$. For each $i \in [n]$, let $\Lambda'_{x_i} = \{\cB_i\}$. 
+Then the nonemptiness of CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$ is reduced to the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$. 
+
+Since the construction of $\cB_1, \cdots, \cB_n$ may involve exponential blow-up, it is vital to reduce the sizes of these CEFAs.
+
+It turns out that to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$, we can ignore the characters in $\cB_1,\cdots, \cB_n$. 
+
+compute the product, ignore the alphabet, determinization, minimization
+
+under approximation
+
+
 After encoding counting operator and length constraint to CEFAs, there are only automaton memberships $x\in \aut$ and LIA formula $t_1 \ \op \ t_2$ where $\aut$ is CEFA and $t_1, t_2$ are integer terms. Let $\psi$ denotes the conjunction of all LIA formulae $t_1\ \op\ t_2$ and $\Lambda_x = \{\aut_x^1, \aut_x^2,\cdots \aut_x^n\}$ denotes the set of CEFAs in the automaton membership $x\in \aut$. The emptiness checking problem of $\Lambda_x$ under $\psi$ is the problem that checks whether there exists a word $w$ such that $w\in \aut_x^1, w\in \aut_x^2\cdots w\in \aut_x^n$ and $\psi[\myvec{V}/\myvec{r}]$ holds, where $\myvec{r}$ are all registers and $\myvec{V}$ are corresponding register values in automata of $\Lambda_x$ after running $w$. The emptiness problem is \emph{abbreviated as $SAT_{CEFA}[LIA]$ problem}. 
 
 As mentioned in \cite{atva2020}, the \emptinessprob{} is theoretically Pspace-complete. In previous work, we have used a model-checking tool \emph{nuXmv}\cite{nuxmv} to solve it. However, it needs to be more efficient for complex string constraints. So we put forward a new framework that brings in symbolic-aware simplification and under-approximation heuristics.
