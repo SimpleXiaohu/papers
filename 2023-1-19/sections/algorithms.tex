@@ -30,7 +30,7 @@ Let us start with register-representable regular expressions defined in the sequ
 
 Let us fix an alphabet $\Sigma$.
 
-Let $e$ be a regular expression over $\Sigma$. Then an occurrence of counting operators in $e$, say $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$), is said to be \emph{register-representable} if $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$) is not in the scope of a Kleene star, another counting operator, complement, or language difference in $e$. We say that $e$ is \emph{register-representable} if all occurrences of counting operators in $e$ are register-representable. For instance, $(a^{\{2, 6\}} \concat b^*) \cap (a + b)^{\{4, \infty\}}$ is register-representable, while $(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ and $(a^{\{2, 6\}} \concat b^*)^{\{1,\infty\}}$ are not. 
+Let $e$ be a regular expression over $\Sigma$. Then an occurrence of counting operators in $e$, say $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$), is said to be \emph{register-representable} if $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$) is not in the scope of a Kleene star, another counting operator, complement, or language difference in $e$. We say that $e$ is \emph{register-representable} if all occurrences of counting operators in $e$ are register-representable. For instance, $(a^{\{2, 6\}} \concat b^*) \cap (a + b)^{\{4, \infty\}}$ is register-representable, while $(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ and $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ are not. 
 
 Let $e$ be a register-representable regular expression over $\Sigma$. We are going to construct a CEFA out of $e$, denoted by $\aut_e$, by the following procedure. 
 \begin{enumerate}
@@ -56,7 +56,8 @@ moreover, $\alpha' = m \le r' \le n$ if $I \cap F = \emptyset$, and $\alpha' = r
 an example here
 \end{example}
 
-For non-register-representable regular expressions, we first transform them into register-representable regular expressions by unfolding all the non-register-representable occurrences of  counting operators, then utilize the aforementioned procedure to construct CEFA. For instance, $(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa + aaaa) \concat b^*) \setminus (a+b)(a+b)(a+b)(a+b)(a+b)^*$.
+For non-register-representable regular expressions, we first transform them into register-representable regular expressions by unfolding all the non-register-representable occurrences of  counting operators, then utilize the aforementioned procedure to construct CEFA. For instance, $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa+aaaa) \concat b^*)^{\{2, \infty\}}$.
+%$(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa + aaaa) \concat b^*) \setminus (a+b)(a+b)(a+b)(a+b)(a+b)^*$.
 
 For each $i \in [n]$, let $x_i \in e_{i, 1}, \cdots, x_i \in e_{i, l_i}$ be an enumeration of the regular membership constraints for $x_i$ in $\varphi_1$.  Then we can construct CEFA $\aut_{i, j}$ from $e_{i, j}$ for each $i \in [n]$ and $j \in [l_i]$. Moreover, we construct another CEFA $\aut_{i, 0}$ for each $i \in [n]$ to model the length of $x_i$. Specifically, $\aut_{i,0}$ is constructed as $((r_{i,0}), \{q_{i,0}\}, \Sigma, \delta_{i,0}, \{q_{i,0}\}, \{q_{i,0}\}, \ltrue)$, where $r_{i,0}$ is a fresh register (in particular, $r_{i,0}$ does not occur in $\aut_{i,1}, \cdots, \aut_{i, l_i}$) and $\delta_{i,0} = \{(q_{i,0}, a, q_{i,0}, (1)) \mid a \in \Sigma\}$. 
 Let $\Lambda_{x_i} = \{\aut_{i,0}, \aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for each $i \in [n]$. Moreover, let $\varphi'_2 \equiv \varphi_2[r_{1,0}/|x_1|, \cdots, r_{n,0}/|x_n|]$.
