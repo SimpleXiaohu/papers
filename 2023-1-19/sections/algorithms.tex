@@ -2,8 +2,32 @@
 %\documentclass{standalone}
 %\begin{document}
 
-As mentioned in Section \ref{sec:overview}, the main idea of our approach is to model the counting operators symbolically by registers instead of unfolding them explicitly. Additionally, we use registers to represent string lengths. After that, the satisfiability of string constraints involves regex-counting, and string-length is reduced to the satisfiability of LIA, which off-the-shelf SMT solvers can solve. We also propose techniques to reduce automata sizes and utilize under approximations to enhance performance.
-\subsection{Encode Regex with Counting to CEFA} \label{subsec:regex2cefa}
+The goal of this section is to show how we solve RECL constraints by utilizing CEFA. 
+At first, we show how to reduce the satisfiability of RECL constraints into a decision problem for CEFA defined in the sequel. Then we propose algorithms to solve the decision problem. 
+
+\begin{definition}[Nonemptiness of CEFA w.r.t. an LIA formula\footnote{The decision problem was called satisfiability of an LIA formula w.r.t. CEFA in \cite{atva2020}.}, abbreviated as $\cefadec$]
+Suppose that $x_1, \cdots, x_n$ are mutually distinct string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the same alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$, moreover, the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{1, l_1}}, \cdots, R_{\aut_{n, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, and $\varphi$ is an LIA formula whose free variables are from $R' = \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. Then  the CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are said to be nonempty w.r.t. $\varphi$ if there are an assignment $\eta: \{x_1, \cdots, x_n\} \rightarrow \Sigma^*$ and vectors 
+$\myvec{v_{1,1}}, \cdots, \myvec{v_{1, l_1}}, \cdots, \myvec{v_{n, 1}}, \cdots, \myvec{v_{n, l_n}}$ such that $(w_i; \myvec{v_{i,j}}) \in \Lang(\aut_{i, j})$ for every $i \in [n], j \in [l_i]$,
+% \in \aut_{i,1}(\eta(x_1)), \cdots, \myvec{v_{i, l_i}} \in \aut_{i,l_i}(\eta(x_i))$ for every $i \in [n]$  
+%\cdots, \myvec{v_{n,1}} \in \aut_{n,1}(w_n), \cdots, \myvec{v_{n, l_n}} \in \aut_{n, l_n}(w_n)$ 
+and $\varphi[\myvec{v_{1,1}}/R_{\aut_{1,1}}, \cdots, \myvec{v_{n, l_n}}/R_{\aut_{n, l_n}}]$ is true. 
+\end{definition}
+
+\begin{proposition}[\cite{atva2020}]\label{prop-cefadec}
+$\cefadec$ is PSPACE-complete. 
+\end{proposition}
+The decision procedure for proving the upper bound in Proposition~\ref{prop-cefadec} in \cite{atva2020}  was not implemented as a matter of fact. Instead, the symbolic model checker nuXmv was used to solve $\cefadec$ in \cite{atva2020}. We do not rely on nuXmv in this work and will propose an efficient algorithm for solving $\cefadec$ in Section~\ref{subsec:cefadec}. 
+
+%As mentioned in Section \ref{sec:overview}, the main idea of our approach is to model the counting operators symbolically by registers instead of unfolding them explicitly. Additionally, we use registers to represent string lengths. After that, the satisfiability of string constraints involves regex-counting, and string-length is reduced to the satisfiability of LIA, which off-the-shelf SMT solvers can solve. We also propose techniques to reduce automata sizes and utilize under approximations to enhance performance.
+
+\subsection{From $\reclsat$ to $\cefadec$} \label{subsec:regex2cefa}
+
+Let $\varphi$ be an RECL constraint. We shall reduce the satisfiability of $\varphi$ to an instance of $\cefadec$. 
+
+At first, we show how to construct a CEFA from a regular expression where counting operators may occur. 
+
+Let $e$ be a regular expression and $(e')^{\{m,n\}}$ be an occurrence of the counting operators in $e$. Then $(e')^{\{m,n\}}$ is said to be \emph{persistent} in $e$ if  $(e')^{\{m,n\}}$ is not in the scope of a complement, Kleene star, or counting operator in $e$. 
+
 The most important point of our approach is encoding counting operators by registers rather than explicitly unfolding them. In this section, we discuss the encoding in detail. A counting operator is called \emph{handled} if it is not the sub-regex of complement, closure, or another counting, and called \emph{unhandled} otherwise. For example, $(\Sigma \setminus a)^{\{m,n\}}$ is handled, while $((\Sigma \setminus a)^{\{m,n\}})^*$ is unhandled. We first discuss the encoding of handled counting operators and then the encoding of unhandled counting operators.
 
 % We must syntactically rewrite bounded repetition $\regex\{m,n\}$ if it is the sub-regex of complement (e.g., $(\regex\{m,n\})^C$), closure(e.g., $(\regex\{m,n\})^*$), and bounded repetition(e.g., $(\regex\{m,n\})\{m', n'\}$), we unwind it to $\regex^m\mid\cdots\mid\regex^n$. After this syntactic rewriting, we call the resulting regex $\regex'$ \emph{non-nested}.
@@ -126,7 +150,8 @@ The main idea is to add an epsilon transition to the initial state from each acc
 Above discusses the construction of handled counting operators. In the same way, we can not construct the unhandled counting operator. For example, for the regex $(ab^{\{1,100\}})*$ with unhandled counting operator, there are infinite repetitions of $ab^{\{1,100\}}$. The counting times of each repetition are irrelevant, so we can not represent them using finite registers. We must syntactically rewrite the unhandled counting operator into union and concatenation operators. More exactly, the sub-regex $\regex^{\{m,n\}}$ in the unhandled regex is rewritten into $\underbrace{\regex\cdot\regex\cdots\regex}_{m \text{ times}}\mid\cdots\mid \underbrace{\regex\cdot\regex\cdots\regex}_{n \text{ times}}$.
 % Based on the decision procedure defined in the paper \cite{atva2020}, we propose an efficient algorithm to solve ESL formula $\varphi\wedge \psi$ where $\varphi$ is the conjunction of literals and $\psi$ is the conjunction of linear literals without length operation. For each string variable $x$, we first compute pre-images of all linear literal $i=|x|$. Then we generate CEFAs of all regular expressions $\regex$ in all regular literals $x\in \regex$ and intersect these CEFAs and pre-images to get the final automaton $\aut_x$ for $x$. There is a final CEFA for each string variable $x$. The linear arithmetic constraint $\psi$ restricts the accepting word of final CEFAs. Thus the satisfiability problem is the emptiness checking problem of final CEFAs under $\psi$. If it is empty, the string constraints are unsatisfiable. Otherwise, the string constraints are satisfiable.
 % The emptiness checking problem of CEFAs under linear integer arithmetic is theoretically pspace-complete\cite{atva2020}. To solve it efficiently for a practical example, we develop heuristic ways such as under-approximation (Section \ref{subsec:under-approx}) and symbolic-aware simplification (Section \ref{subsec:simplify}).
-\subsection{Handling of String-length}
+
+%\subsection{Handling of String-length}
 Given a string-length constraint, we build a CEFA with a register storing the word length. Namely, the CEFA is $(\{q_I\}, \Sigma, \{q_I\xrightarrow[(1)]{\Sigma} q_I\}, q_I, \{q_I\}, r, \theta)$ where accpeting condition $\theta$ is based on the length formula. As an illustration, example \ref{eg:pre_len} shows the CEFA of length constraints $|x| > 120$, whose language is the set of all words with a length greater than $120$. The simple loop $q_I\xrightarrow[(1)]{\Sigma} q_I$ increase $1$ on register $r$ for all char in $\Sigma$, so that the value of $r$ is equal to the length of the accepting word. The accepting condition $\theta$ attaches $q_I$ to $r > 120$, ensuring the length of the accepting word is greater than $120$.
 
 % The formal definition of pre-images of abundant string functions is listed in \cite{atva2020}, and we do not repeat it here.
@@ -157,7 +182,7 @@ Given a string-length constraint, we build a CEFA with a register storing the wo
 % \end{definition}
 % With the help of product, we can combine the CEFAs of regex-counting and string-length. For example, the CEFA of $x$ in the string constraints $x \in (\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}} \wedge x \in \Sigma^* c \wedge |x| > 120$ is the product of the CEFA of regex $(\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$, the CEFA of regex $\Sigma^*$ and the CEFA of length constraints $|x| > 120$.
 
-\subsection{Emptiness Checking Problem on CEFAs} \label{subsec:emptiness}
+\subsection{Solving $\cefadec$} \label{subsec:cefadec}
 After encoding counting operator and length constraint to CEFAs, there are only automaton memberships $x\in \aut$ and LIA formula $t_1 \ \op \ t_2$ where $\aut$ is CEFA and $t_1, t_2$ are integer terms. Let $\psi$ denotes the conjunction of all LIA formulae $t_1\ \op\ t_2$ and $\Lambda_x = \{\aut_x^1, \aut_x^2,\cdots \aut_x^n\}$ denotes the set of CEFAs in the automaton membership $x\in \aut$. The emptiness checking problem of $\Lambda_x$ under $\psi$ is the problem that checks whether there exists a word $w$ such that $w\in \aut_x^1, w\in \aut_x^2\cdots w\in \aut_x^n$ and $\psi[\myvec{V}/\myvec{r}]$ holds, where $\myvec{r}$ are all registers and $\myvec{V}$ are corresponding register values in automata of $\Lambda_x$ after running $w$. The emptiness problem is \emph{abbreviated as $SAT_{CEFA}[LIA]$ problem}. 
 
 As mentioned in \cite{atva2020}, the \emptinessprob{} is theoretically Pspace-complete. In previous work, we have used a model-checking tool \emph{nuXmv}\cite{nuxmv} to solve it. However, it needs to be more efficient for complex string constraints. So we put forward a new framework that brings in symbolic-aware simplification and under-approximation heuristics.
