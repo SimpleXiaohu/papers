@@ -233,17 +233,32 @@ In the sequel, we present a procedure to solve the $\cefadec$ problem.
 
 Suppose that $x_1, \cdots, x_n$ are mutually distinct string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the same alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$, moreover, the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{1, l_1}}, \cdots, R_{\aut_{n, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, and $\varphi$ is an LIA formula whose free variables are from $R' = \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. 
 
-At first, we compute CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$ for each $i \in [n]$. For each $i \in [n]$, let $\Lambda'_{x_i} = \{\cB_i\}$. 
+At first, we compute CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$ for each $i \in [n]$. For each $i \in [n]$, let $\Lambda'_{x_i} = \{\cB_i\}$. Evidently, $R_{\cB_i}= \bigcup \limits_{j \in [l_i]} R_{\aut_{i, j}}$ for each $i \in [n]$.
 Then the nonemptiness of CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$ is reduced to the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$. 
 
 Since the construction of $\cB_1, \cdots, \cB_n$ may involve exponential blow-up, it is vital to reduce the sizes of these CEFAs.
 
-It turns out that to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$, we can ignore the characters in $\cB_1,\cdots, \cB_n$. 
+It turns out that to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$, we can ignore the characters in $\cB_1,\cdots, \cB_n$. This is due to the fact that there is only one CEFA for each string variable and $\varphi$ only cares about the values of registers.
 
-compute the product, ignore the alphabet, determinization, minimization
+%When the characters in $\cB_1, \cdots, \cB_n$ are ignored, they can be seen as NFAs. 
+For each $i \in [n]$, let $\cC_i$ be the automaton obtained from $\cB_i$ by replacing each transition $(q, a, q', \myvec{v})$ with $(q, \myvec{v}, q')$. 
+Then for each $i \in [n]$, $\cC_i$ can be seen as an NFA over the alphabet $V_i$, where $V_i$ is the set of vectors $\myvec{v}$ occurring in the transitions $(q, a, q', \myvec{v})$ of $\cB_i$. 
+
+Then the set of costs output by $\cB_i$, that is, $\{\myvec{v} \mid (w; \myvec{v}) \in \Lang(\cB_i)\}$ can be reduced to the computation of the Parikh image of $\cC_i$, namely, 
+%
+$$\{ \sum\limits_{\myvec{v} \in V_i} m_{\myvec{v}} \myvec{v} \mid \myvec{m} \in parikh(\cC_i)\}.$$
+
+Moreover, the transitions $(q, \myvec{0}, q')$ in $\cC_i$ can be seen as $\varepsilon$-transitions, that is, we can replace each transition $(q, \myvec{0}, q')$ with $(q, \varepsilon, q')$, without affecting the set $\{ \sum\limits_{\myvec{v} \in V_i} m_{\myvec{v}} \myvec{v} \mid \myvec{m} \in parikh(\cC_i)\}$. Therefore, we first do these replacements, apply the $\varepsilon$-transition removal procedure. Then we utilize the determinization and minimization algorithm for NFA to reduce the size of $\cC_i$. 
+
+Finally, if there are two indices $1 \le i' < j' \le |R_{\cB_i}|$ such that $v_{i'} = v_{j'}$ for each vector $\myvec{v} \in V_i$, then we can remove the $j'$-th component from the characters (vectors) of $\cC_i$, and let $\varphi := \varphi \wedge r_{i, i'} = r_{i, j'}$. By abusing the notation, we still use $\cC_i$ to denote the resulting NFA. 
+
+By doing this, we reduce the automata sizes. Then we compute an LIA formula $\psi_{i}$ from $\cC_i$ to specify the Parikh images of $\cC_i$.  Then the nonemptiness of $\cB_1, \cdots, \cB_n$ w.r.t. $\varphi$ is reduced to the satisfiability of $\psi_1 \wedge \cdots \psi_n \wedge \varphi$.
 
 under approximation
 
+In summary, we obtain an algorithm for solving the nonemptiness of $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$, as illustrated in Figure~\ref{xxx}. 
+
+\zhilin{stopped here}
 
 After encoding counting operator and length constraint to CEFAs, there are only automaton memberships $x\in \aut$ and LIA formula $t_1 \ \op \ t_2$ where $\aut$ is CEFA and $t_1, t_2$ are integer terms. Let $\psi$ denotes the conjunction of all LIA formulae $t_1\ \op\ t_2$ and $\Lambda_x = \{\aut_x^1, \aut_x^2,\cdots \aut_x^n\}$ denotes the set of CEFAs in the automaton membership $x\in \aut$. The emptiness checking problem of $\Lambda_x$ under $\psi$ is the problem that checks whether there exists a word $w$ such that $w\in \aut_x^1, w\in \aut_x^2\cdots w\in \aut_x^n$ and $\psi[\myvec{V}/\myvec{r}]$ holds, where $\myvec{r}$ are all registers and $\myvec{V}$ are corresponding register values in automata of $\Lambda_x$ after running $w$. The emptiness problem is \emph{abbreviated as $SAT_{CEFA}[LIA]$ problem}. 
 
