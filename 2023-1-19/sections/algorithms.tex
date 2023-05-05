@@ -260,16 +260,20 @@ CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are non
 %\item there are $\myvec{v_{1}} \in \cefaout(\cB_1), \cdots, \myvec{v_{n}} \in \cefaout(\cB_n)$ such that $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true.
 %\end{itemize}
 
-Let $\aut = (R, Q, \Sigma, \delta, I, F)$ be a CEFA and $\costset_\aut = \{\myvec{v} \mid \exists q, a, q'.\ (q, a, q', \myvec{v}) \in \delta\}$. 
-Moreover, let $\aut'$ be an NFA over the alphabet $\costset_\aut$ that is obtained from $\aut$ by ignoring the characters, that is, the transitions of $\NFA'$ are the tuples $(q, \myvec{v}, q')$ such that $(q, a, q', \myvec{v}) \in \delta$ for some $a \in \Sigma$.
+Let $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$ be a CEFA and $\costset_\aut = \{\myvec{v} \mid \exists q, a, q'.\ (q, a, q', \myvec{v}) \in \delta\}$. 
+Moreover, let $\aut' = (Q, \costset_\aut, \delta', I, F)$ be an NFA over the alphabet $\costset_\aut$ that is obtained from $\aut$ by dropping the accepting condition and ignoring the characters, that is, $\delta'$, the transition relation of $\aut'$, comprises the tuples $(q, \myvec{v}, q')$ such that $(q, a, q', \myvec{v}) \in \delta$ for some $a \in \Sigma$.
 %Then $\cefaout(\aut) = \parikh(\NFA')$.
+%
 \begin{observation}\label{obs-cefa-nfa}
-For each CEFA $\aut$, $\cefaout(\aut) = \left\{\sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v}  \mid \eta \in \parikh(\NFA') \right\}$.
+For each CEFA $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$, 
+%
+$$\cefaout(\aut) = \left\{\sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v} \  \big{|}\ \eta \in \parikh(\NFA') \mbox{ and }  \alpha\left[ \sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v} \big{/} R \right] \mbox{ is true}\right\}.$$
+%
 \end{observation}
 
 
-
-From Observation~\ref{obs-cefa-nfa}, we know that the following two conditions are equivalent, 
+For $i \in [n]$, let $\alpha_i$ be the accepting condition of $\cB_i$. 
+Then from Observation~\ref{obs-cefa-nfa}, we know that the following two conditions are equivalent, 
 \begin{itemize}
 %\item CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are nonempty w.r.t. $\varphi$, namely, 
 %there are an assignment $\theta: \{x_1, \cdots, x_n\} \rightarrow \Sigma^*$ and vectors $\myvec{v_{1}}, \cdots, \myvec{v_{n}}$ such that $(\theta(x_1); \myvec{v_1}) \in \Lang(\cB_1)$, $\cdots$, $(\theta(x_n); \myvec{v_n}) \in \Lang(\cB_n)$ and $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true,
@@ -282,61 +286,87 @@ there are $\eta_1 \in \parikh(\cB'_1), \cdots, \eta_n \in \parikh(\cB'_n)$ such 
 %
 %\begin{equation}\label{eqn-cefa-lia}
 \[
-\varphi \left[\sum \limits_{\myvec{v} \in \costset_{\cB_1}} \eta(\myvec{v}) \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum \limits_{\myvec{v} \in \costset_{\cB_n}} \eta(\myvec{v}) \myvec{v} \big{/}R_{\cB_n} \right]
+\bigwedge \limits_{i \in [n]} \alpha_i\left[ \sum \limits_{\myvec{v} \in \costset_{\cB_i}} \eta_i(\myvec{v}) \myvec{v} \big{/}R_{\cB_i}  \right] \wedge \varphi \left[\sum \limits_{\myvec{v} \in \costset_{\cB_1}} \eta_1(\myvec{v}) \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum \limits_{\myvec{v} \in \costset_{\cB_n}} \eta_n(\myvec{v}) \myvec{v} \big{/}R_{\cB_n} \right]
 \]
 %\end{equation} 
 %
 is true. 
 \end{itemize}
 
-Therefore, to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$, it is sufficient to compute the existential LIA formulas $\psi_{\cB'_1}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cB'_n}(\fZ_{\costset_{\cB_n}})$, which define the Parikh images of $\cB'_1$, $\cdots$, $\cB'_n$ respectively, and solve the satisfiability of the following existential LIA formula
-\begin{equation}\label{eqn-cefa-lia}
-\bigwedge \limits_{i \in [n]} \psi_{\cB'_i}(\fZ_{\costset_{\cB_i}}) \wedge 
-\varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cB_1}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cB_n}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right],
-\end{equation}
-where $\anivarz_{\myvec{v}}$'s are integer variables to represent the number of occurrences of $\myvec{v}$. 
+Therefore, to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$, it is sufficient to compute the existential LIA formulas $\psi_{\cB'_1}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cB'_n}(\fZ_{\costset_{\cB_n}})$ to represent the Parikh images of $\cB'_1$, $\cdots$, $\cB'_n$ respectively, where $\fZ_{\costset_{\cB_i}} = \{\anivarz_{i,\myvec{v}} \mid \myvec{v} \in \costset_{\cB_i}\}$ for $i \in [n]$, and solve the satisfiability of the following existential LIA formula
+%
+%\begin{equation}\label{eqn-cefa-lia}
+\[
+\begin{array}{l}
+%\scriptsize
+\bigwedge \limits_{i \in [n]} \left(\psi_{\cB'_i}(\fZ_{\costset_{\cB_i}}) \wedge \alpha_i\left[\sum\limits_{\myvec{v} \in \costset_{\cB_i}} \anivarz_{i, \myvec{v}} \myvec{v} \big{/}R_{\cB_i}  \right] \right)\  \wedge \\
+\ \ \varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cB_1}} \anivarz_{1, \myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cB_n}} \anivarz_{n, \myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
+\end{array}
+\]
+%\end{equation}
+Intuitively, the integer variables $\anivarz_{i, \myvec{v}}$ represent the number of occurrences of $\myvec{v}$ in the strings accepted by $\cB'_i$.
+%where $\anivarz_{\myvec{v}}$'s are integer variables to represent the number of occurrences of $\myvec{v}$. 
 
 Because the sizes of the LIA formulas $\psi_{\cB'_1}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cB'_n}(\fZ_{\costset_{\cB_n}})$ are proportional to the sizes (more precisely, the alphabet size, the number of states and transitions) of NFA $\cB'_1, \cdots, \cB'_n$, and it is expensive (NP-complete) to solve the satisfiability of existential LIA formulas, it is vital to reduce the sizes of these NFA.
 
-We also have the following observation: For each $i \in [n]$ and $\eta \in \parikh(\cB'_i)$, we have 
-$$\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v} = \sum \limits_{\myvec{v} \in \costset(\cB_i) \setminus \{\myvec{0}\}} \eta(\myvec{v}) \myvec{v}.$$
+Furthermore, we have the following observation: For each $i \in [n]$ and $\eta \in \parikh(\cB'_i)$, we have 
+$\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v} = \sum \limits_{\myvec{v} \in \costset(\cB_i) \setminus \{\myvec{0}\}} \eta(\myvec{v}) \myvec{v}.$
 In other words, the $\myvec{0}$-labeled transitions in $\cB'_i$ do not contribute to the sum $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v}$.  
 
-Therefore, we can reduce the sizes of $\cB'_1, \cdots, \cB'_n$ by Step II presented in the sequel. 
+Therefore, we can reduce the sizes of $\cB'_1, \cdots, \cB'_n$ by Step II in the sequel. 
 
 \paragraph*{Step 2.} For each $i \in [n]$, view the transitions $(q, \myvec{0}, q')$ in $\cB'_i$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, then remove the $\varepsilon$-transitions from $\cB'_i$, determinize and minimize the resulting NFA.  \qed
 
-For $i \in [n]$, let  $\cC_i$ denote the DFA obtained from $\cB'_i$ by executing Step 2. From the construction, we know that $\parikh(\cC_i) = \parikh(\cB'_i)$ for each $i \in [n]$.
-Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cB'_i$'s, to represent Parikh images. 
+For $i \in [n]$, let  $\cC_i$ denote the DFA obtained from $\cB'_i$ by executing Step 2 and $\costset_{\cC_i} := \costset_{\cB_i} \setminus \{\myvec{0}\}$. From the construction, we know that $\parikh(\cC_i) = \prj_{\costset_{\cC_i}}(\parikh(\cB'_i))$ for each $i \in [n]$.
+Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cB'_i$'s, to represent the Parikh images. 
 
 
-\paragraph*{Step 3.} For each $i \in [n]$, compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cB_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then solve the satisfiability of the following existential LIA formula 
+\paragraph*{Step 3.} For each $i \in [n]$, compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then solve the satisfiability of the following existential LIA formula 
 %
 \[
-\bigwedge \limits_{i \in [n]} \psi_{\cC_i}(\fZ_{\costset_{\cB_i}}) \wedge 
-\varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cB_1}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cB_n}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
+\begin{array}{l}
+\bigwedge \limits_{i \in [n]} \left(\psi_{\cC_i}(\fZ_{\costset_{\cC_i}}) \wedge \alpha_i\left[\sum\limits_{\myvec{v} \in \costset_{\cC_i}} \anivarz_{i, \myvec{v}} \myvec{v} \big{/}R_{\cB_i}  \right] \right) \ \wedge \\
+\ \ \varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cC_1}} \anivarz_{1, \myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cC_n}} \anivarz_{n, \myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
+\end{array}
 \]
 
-Finally, although we propose techniques to reduce the sizes of $\cB'_i$'s, it is still relatively expensive to compute LIA formulas from NFA and solve their satisfiability, especially for those problem instances with positive answers, namely, those instances where CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty w.r.t. $\varphi$.   
-Therefore, in the sequel, we propose a heuristic to search for solutions for those positive problem instances by utilizing under approximations, before Step 3. Intuitively, we search for solutions by bounding the lengths of the strings that are accepted by $\cC_i$'s. The heuristic uses a constant bound $B > 0$. Since the heuristic is applied before Step 3, we call it Step 2.5, to denote the fact that it is applied after Step 2 and before Step 3. 
+%\[
+%\bigwedge \limits_{i \in [n]} \psi_{\cC_i}(\fZ_{\costset_{\cB_i}}) \wedge 
+%\varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cB_1}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cB_n}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
+%\]
 
-For $i \in [n]$, suppose $R_{\cB_i} = (r_{i,1},\cdots, r_{i, k_i})$ and $\cC_i = (Q'_i, \costset_{\cB_i}, \delta'_i, q_{i,0}, F'_i)$. 
+Finally, although we propose techniques to reduce the sizes of $\cB'_i$'s, it is still relatively expensive to compute LIA formulas from $\cC_i$'s and solve their satisfiability, especially for those problem instances with positive answers, namely, those instances where CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty w.r.t. $\varphi$.   
+Therefore, in the sequel, we propose a heuristic to search for solutions for those positive problem instances by utilizing under approximations, to be executed before Step 3. Intuitively, we search for solutions by bounding the lengths of the strings that are accepted by $\cC_i$'s. The heuristic uses a constant bound $B > 0$ and searches for solutions incrementally, starting from strings of length $0$. Since the heuristic is executed after Step 2 and before Step 3, we call it Step 2.5. 
 
-\paragraph*{Step 2.5.} Initially, let $len := 0$, and for each $i \in [n]$, let $\confset_{\cC_i}:=\{(q_{i,0}, \myvec{0})\}$ and $\psi_{\cC_i}:= \lfalse$.  Then iterate the following procedure until $len = B$.
-\begin{quote}
-For each $i \in [n]$, let $\confset'_{\cC_i}:=\confset_{\cC_i}$ and do the following:  For each $(q, \myvec{v}) \in \confset_{\cC_i}$,
-\begin{itemize}
+For $i \in [n]$, suppose $R_{\cB_i} = (r_{i,1},\cdots, r_{i, k_i})$ and $\cC_i = (Q'_i, \costset_{\cC_i}, \delta'_i, q_{i,0}, F'_i)$. 
+
+\paragraph*{Step 2.5.} Initially, let $len := 0$, and for each $i \in [n]$, let $\confset_{\cC_i}:=\emptyset$, $\confset'_{\cC_i}:=\{(q_{i,0}, \myvec{0})\}$, and $\psi_{\cC_i}:= \lfalse$.  Then iterate the following procedure, until $len = B+1$.
+\begin{enumerate}
+\item Let $\xi: = \bigwedge \limits_{i \in [n]} \alpha_i \wedge \varphi$.
+%
+\item For each $i \in [n]$, do the following.
+\begin{enumerate}
+\item Let $\confset_{\cC_i}:= \confset_{\cC_i} \cup \confset'_{\cC_i}$, $temp:=\confset'_{\cC_i}$, $\confset'_{\cC_i}:=\emptyset$.
+%
+\item For each $(q, \myvec{v}) \in temp$,
+\begin{enumerate}
 \item if $q \in F'_i$, then let $\psi_{\cC_i}:=\psi_{\cC_i} \vee (\bigwedge \limits_{j \in [k_i]} r_{i,j} = v_j)$, 
 %
-\item let $\confset'_{\cC_i}:=\confset'_{\cC_i} \setminus \{(q, \myvec{v})\}$, 
+%\item let $\confset'_{\cC_i}:=\confset'_{\cC_i} \setminus \{(q, \myvec{v})\}$, 
 %
-\item for each transition $(q, \myvec{v'}, q') \in \delta'_i$, let $\confset'_{\cC_i}:=\confset'_{\cC_i} \cup \{(q', \myvec{v}+ \myvec{v'})\}$. 
-\end{itemize}
-Let $\varphi:=\varphi \wedge \psi_{\cC_i}$. 
-
-If $\varphi$ is satisfiable, then return $\ltrue$. Let $len: = len+1$. \qed
-\end{quote}
-
+\item for each $(q, \myvec{v'}, q') \in \delta'_i$, let $\confset'_{\cC_i}:=\confset'_{\cC_i} \cup \{(q', \myvec{v}+ \myvec{v'})\}$. 
+\end{enumerate}
+%
+%\item 
+%
+\item Let $\xi := \xi \wedge \psi_{\cC_i}$. 
+\end{enumerate}
+%
+\item If $\xi$ is satisfiable, then report $\ltrue$ and the whole algorithm terminates. 
+%
+\item Let $len: = len+1$.
+\end{enumerate}
+Intuitively, for each $i \in [n]$, $\confset'_{\cC_i}$ stores the set of ``configurations'' of $\cC_i$ that were newly discovered, and $\confset_{\cC_i}$ stores those that have been discovered before.
 %Furthermore, for each $i \in [n]$, we can remove the redundancy of characters/vectors in $\cC_i$. 
 
 \zhilin{stopped here}
@@ -578,9 +608,6 @@ As shown in the Algorithm \ref{alg:underApprox}, $\varphi_{under}$ is the under-
 \begin{example}
   Consider the automaton $\aut$ in Fig. \ref{fig:overview:product:reduced} again without the LIA constraint $r_0 > 120$, i.e., $\theta$ changes to $1\leq r_1\leq 60\wedge 1\leq r_2 \leq 60\wedge 0\leq r_3 \leq 60 $. The solution of the Parikh image of it leads to a complete but inefficient result since the quantifier-free LIA formulas are solved in exponential time. Under-approximation can accelerate the solving process. In the first iteration of under-approximation, the pairs in the $lastStates(\aut)$ is the initial pair $(q_0', (0,0,0,0))$ and $\varphi_\aut$ maintains false at line 9 because $q_0'$ is not accepted. Then we update $lastStates(\aut)$ by removing the pair $(q_0', (0,0,0,0))$ and adding pairs $(q_0', (1,1,0,0)), (q_1', (1,0,1,0)), (q_2', (1,0,0,0))$. In the second iteration, $\varphi_\aut$ changes to $r_0=1\vee r_1=0\vee r_2=0\vee r_3 = 0$ because $q_2'$ is accepted. $\varphi_{under}$ is always equal to $\varphi_\aut$ since there is only one automaton. We solve the formula $\theta\wedge \varphi_{under}$ and find it is unsatisfiable. In the third iteration, the pairs in the $lastStates(\aut)$ with accepting state should be $(q_0', (2,2, 0, 0)), (q_1', (2,1,1,0))$, $(q_1', (2,0,2,0))$, $(q_2', (2,1,0,0)), (q_2', (2,0,1,0)),$ $(q_2', (2,0, 0, 0))$. The corresponding registers' values for the accepted state $q_2'$ is $(2,1,0,0), (2, 0, 1, 0), (2, 0, 0, 0)$, in which the value of $r_1$ and $r_2$ can not be both larger than 1 which is required by $\theta$. So the formula $\theta\wedge \varphi_{under}$ is still unsatisfiable. Finally, We obtain a pair $(q_2', (3,1,1,0))$ from the pair $(q_1', (2,1,1,0))$ and the transition $q_1'\xrightarrow[(1,0,0,0)]{} q_2'$, whose corresponding registers' values is a solution $(3,1,1,0)$, i.e., $r_0=3, r_1=1, r_2=1, r_3=0$.
 \end{example}
-}
-%%%%%%%%%%%% the original texts by Denghang %%%%%%%%%
-%%%%%%%%%%%% the original texts by Denghang %%%%%%%%%
 
 \subsection{High-level algorithm}
 
@@ -613,6 +640,9 @@ After obtaining all final CEFAs of all string variables and their NFA forms are 
     \EndIf
   \end{algorithmic}
 \end{algorithm}
+}
+%%%%%%%%%%%% the original texts by Denghang %%%%%%%%%
+%%%%%%%%%%%% the original texts by Denghang %%%%%%%%%
 
 
 
