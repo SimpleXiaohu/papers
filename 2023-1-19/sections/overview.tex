@@ -6,38 +6,44 @@ In this section, we utilize the string constraint in Equation~(\ref{eqn-running}
 
 %$x \in (\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}} \wedge x \in \Sigma^* c^+ \wedge |x| > 120$.
 
-We first construct an automaton for the regular expression $(\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$. We introduce three registers, say $r_1, r_2, r_3$, to represent the three counting operators.  
+We first construct an automaton for the regular expression $(\Sigma \setminus a)^{\{1, 60\}} (\Sigma \setminus b)^{\{1, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$. We introduce three registers, say $r_1, r_2, r_3$, to represent the three counting operators.  
 %Moreover, we introduce another register, say $r_0$, to denote the length of strings. 
-Then we first construct a nondeterministic finite automaton (NFA) for $(\Sigma \setminus a)^* (\Sigma \setminus b)^* (\Sigma \setminus c)^*$, then add the updates of registers to transitions, resulting into a so-called cost-enriched finite automaton (CEFA) $\aut_1$,  as illustrated in Figure~\ref{fig:overview}(a). 
+Then we first construct a nondeterministic finite automaton (NFA) for $(\Sigma \setminus a)^* (\Sigma \setminus b)^* (\Sigma \setminus c)^*$, then add the updates of registers to transitions, resulting into a so-called cost-enriched finite automaton (CEFA, see Section~\ref{sec:automaton} for the definition) $\aut_1$,  as illustrated in Figure~\ref{fig:overview}(a). 
 %Then we obtain a cost-enriched finite automaton (CEFA) $\aut_1$ that is illustrated in Figure~\ref{fig:overview}(a), where the self-loops around $p_0, p_1, p_2$ represent the first, second, and third counting operator respectively, in which $r_1, r_2, r_3$ are incremented. 
 %Moreover, $r_0$ is incremented in all the three self-loops. 
-Furthermore, the counting bounds are specified by the accepting condition $5 \le r_1 \le 60 \wedge 5 \le r_2 \le 60 \wedge 0 \le r_3 \le 60$ that is attached to the final state $p_2$. Note here we represent the counting operators symbolically by registers, instead of unfolding them explicitly. Moreover, we also construct a CEFA $\aut_2$ for $\Sigma^* c^+$ (see Figure~\ref{fig:overview}(b)), which is actually an NFA, since $\Sigma^* c^+$ contains no (explicit) counting operators. 
+Furthermore, the counting bounds are specified by the accepting condition $1 \le r_1 \le 60 \wedge 1 \le r_2 \le 60 \wedge 0 \le r_3 \le 60$. Note here we represent the counting operators symbolically by registers, instead of unfolding them explicitly. Moreover, we construct another CEFA $\aut_2$ for $\Sigma^* c^+$ (see Figure~\ref{fig:overview}(b)), which is actually an NFA, since $\Sigma^* c^+$ contains no (explicit) counting operators. Finally, we construct the third CEFA $\aut_3$ (see Figure~\ref{fig:overview}(c)), where a register $r_4$ is used to denote the length of strings and the accepting condition is $\ltrue$. 
 %where the register $r_0$ is used to record the length of strings. 
 
 % the register $r_1$ is incremented in the two transitions from $q_0$ to $q_0$ and $q_1$ respectively,  the register $r_2$ is incremented in the two transitions from $q_1$ to $q_1$ and $q_2$ respectively, and the register $r_3$ is incremented in the transition from $q_2$ to $q_2$ itself. Moreover, the register $r_4$ is incremented in each transition.  
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width = 0.9\textwidth]{sections/overview-cefa.pdf}
-  \caption{CEFA for $(\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$ and $\Sigma^* c^+$}
+  \includegraphics[width = 0.95\textwidth]{sections/overview-cefa.pdf}
+  \caption{CEFA for $(\Sigma \setminus a)^{\{1, 60\}} (\Sigma \setminus b)^{\{1, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$, $\Sigma^* c^+$, and $|x|$}
   \label{fig:overview}
 \end{figure}
 
 Next, 
 %we remove the $\varepsilon$-transitions of $\aut_1$, resulting into $\aut'_1$, 
-we construct $\aut_1 \times \aut_2$, that is, the product of $\aut_1$ and $\aut_2$, as illustrated in Figure~\ref{fig:overview:product}(a). Furthermore, we add one special register, say $r_0$, to record the length of strings. Note that $r_0$ is incremented in all transitions. In $\aut_1 \times \aut_2$, the accepting condition $5 \le r_1 \le 60 \wedge 5 \le r_2 \le 60 \wedge 0 \le r_3 \le 60 \wedge r_0 > 120$ is attached to both $(p_0,q_1)$ and $(p_1,q_1)$, where $r_0 > 120$ is added as a conjunct to express $|x| > 120$.  For technical convenience, we also think the updates on the values of registers in transitions as vectors $(v_1, v_2, v_3, v_4)$, where $v_i \in \Int$ is the update on the register $r_{i-1}$ for each $i \in [4]$. For instance, the transitions corresponding to the self-loop around $(p_0, q_0)$ are thought as $(q, a', q', (1,1,0,0))$ with $a' \in \Sigma \setminus \{a\}$, since $r_0$ and $r_1$ are incremented in these transitions. With the updates thought as vectors, the resulting CEFA is illustrated in Figure~\ref{fig:overview:product}(b).
+we construct $\aut_1 \cap \aut_2 \cap \aut_3$, that is, the intersection (aka product) of $\aut_1$, $\aut_2$, and $\aut_3$, as illustrated in Figure~\ref{fig:overview:product}(a), where the states from which no final states are reachable are removed. 
+%Furthermore, we add one special register, say $r_0$, to record the length of strings. Note that $r_0$ is incremented in all transitions. 
+%In $\aut_1 \cap \aut_2 \cap \aut_3$, the accepting condition $1 \le r_1 \le 60 \wedge 1 \le r_2 \le 60 \wedge 0 \le r_3 \le 60 \wedge r_0 > 120$ is attached to both $(p_0,q_1)$ and $(p_1,q_1)$, where $r_0 > 120$ is added as a conjunct to express $|x| > 120$.  
+For technical convenience, we also think the updates on the values of registers in transitions as vectors $(v_1, v_2, v_3, v_4)$, where $v_i \in \Int$ is the update on the register $r_{i}$ for each $i \in [4]$. For instance, the transitions corresponding to the self-loop around $(p_0, q_0, q'_0)$ are thought as $((p_0, q_0, q'_0), a', (p_0, q_0, q'_0), (1,0,0,1))$ with $a' \in \Sigma \setminus \{a\}$, since $r_1$ and $r_4$ are incremented in these transitions. With the updates thought as vectors, the resulting CEFA is illustrated in Figure~\ref{fig:overview:product}(b).
 %the transitions corresponding to the self-loop is $(q, a', q', (1,1,0,0))$ with $a' \in \Sigma \setminus \{a\}$.  
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width = 0.9\textwidth]{sections/overview-cefa-product.pdf}
-  \caption{Product of $\aut_1$ and $\aut_2$, where the length register $r_0$ is added}
+  \includegraphics[width = 0.95\textwidth]{sections/overview-cefa-product.pdf}
+  \caption{$\aut_1 \cap \aut_2 \cap \aut_3$: Intersection of $\aut_1$, $\aut_2$, and $\aut_3$}
   \label{fig:overview:product}
 \end{figure}
 
-Let $\tau_1, \cdots, \tau_m$ be an enumeration of the transitions of $\aut_1 \times \aut_2$ and $\myvec{v_1}, \cdots, \myvec{v_m}$ be the vectors of updates on the register values in these transitions. For instance, in the transition from $(p_0, q_1)$ to $(p_1, q_1)$, $r_0$ is incremented, and the values of the other registers is unchanged. Therefore, the vector for this transition is $(1, 0, 0, 0)$. 
-Then the satisfiability of the original string constraint is reduced to the nonemptiness of the CEFA $\aut_1 \times \aut_2$. 
-From the results in \cite{SSMH04,VSS05}, an existential LIA formula $\psi(i_1, \cdots, i_m)$ can be computed to express the constraints on the number of occurrences of $\tau_1, \cdots, \tau_m$ in the accepting runs of $\aut_1 \times \aut_2$, where $i_1, \cdots, i_m$ are the integer variables representing the number of occurrences of $\tau_1, \cdots, \tau_m$ respectively. 
+\zhilin{stopped here}
+
+Let $\tau_1, \cdots, \tau_m$ be an enumeration of the transitions of $\aut_1 \cap \aut_2 \cap \aut_3$ and $\myvec{v_1}, \cdots, \myvec{v_m}$ be the vectors of updates on the registers in these transitions. 
+%For instance, in the transition from $(p_0, q_1)$ to $(p_1, q_1)$, $r_0$ is incremented, and the values of the other registers is unchanged. Therefore, the vector for this transition is $(1, 0, 0, 0)$. 
+Then the satisfiability of the original string constraint is reduced to the nonemptiness of the CEFA $\aut_1 \cap \aut_2 \cap \aut_3$ with respect to the LIA formula $\varphi \equiv r_4 > 120$. 
+From the results in \cite{SSMH04,VSS05}, an existential LIA formula $\psi(i_1, \cdots, i_m)$ can be computed to express the constraints on the number of occurrences of $\tau_1, \cdots, \tau_m$ in the accepting runs of $\aut_1 \cap \aut_2 \cap \aut_3$, where $i_1, \cdots, i_m$ are the integer variables representing the number of occurrences of $\tau_1, \cdots, \tau_m$ respectively. 
 Therefore, the satisfiability of the string constraint in~(\ref{eqn-running}) is reduced to the satisfiability of the following existential LIA formula
 \begin{equation}\label{eqn-LIA}
 \psi(i_1, \cdots, i_m) \wedge \bigwedge \limits_{0 \le j \le 3} r_j = \sum \limits_{k \in [m]}  i_k v_{k, j+1} \wedge \alpha(r_0, r_1, r_2, r_3),
