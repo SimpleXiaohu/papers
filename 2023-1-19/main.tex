@@ -16,6 +16,7 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage[]{float}
+\usepackage{mathbbol}
 % set algorithmicx
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}  % Use Input in the format of Algorithm  
 \renewcommand{\algorithmicensure}{\textbf{Output:}} % Use Output in the format of Algorithm 
@@ -23,14 +24,24 @@
 \newcommand*{\Int}{\mathbb{Z}}
 \newcommand*{\Nat}{\mathbb{N}}
 \newcommand*{\NFA}{\mathcal{A}}
-\newcommand*{\Lang}{\mathcal{L}}
+\newcommand{\Lang}{\mathcal{L}}
+\newcommand{\cefaout}{\mathcal{O}}
 \newcommand*{\op}{o}
 \newcommand*{\svars}{{\sf SVars}}
 \newcommand*{\ivars}{{\sf IVars}}
 
+\newcommand{\anivar}{\mathfrak{x}}
+\newcommand{\anivary}{\mathfrak{y}}
+\newcommand{\anivarz}{\mathfrak{z}}
+
+\newtheorem{observation}{Observation}
+
 \newcommand*{\prj}{{\sf prj}}
 
 \newcommand*{\red}[1]{\textcolor{red}{#1}}
+
+\newcommand{\costset}{\mathbb{C}}
+\newcommand{\confset}{\mathsf{Conf}}
 
 \newcommand*{\myvec}[1]{\vec{#1}}
 \newcommand*{\regex}{e}
@@ -56,11 +67,14 @@
 \newcommand{\cB}{\mathcal{B}}
 \newcommand{\cC}{\mathcal{C}}
 \newcommand{\cD}{\mathcal{D}}
+\newcommand{\fZ}{\mathfrak{Z}}
 
 \newcommand{\concat}{\cdot}
 
 \newcommand{\reclsat}{{\sf SAT_{RECL}}}
 \newcommand{\cefadec}{{\sf NE_{LIA}(CEFA)}}
+
+\newcommand{\parikh}{\mathsf{parikh}}
 
 %%%%% comments commands
 \newcommand{\zhilin}[1]{\color{orange}\textbf{ZL:} #1 \textbf{:LZ}\color{black}}

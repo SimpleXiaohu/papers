@@ -6,8 +6,8 @@ The goal of this section is to show how we solve RECL constraints by utilizing C
 At first, we show how to reduce the satisfiability of RECL constraints into a decision problem for CEFA defined in the sequel. Then we propose algorithms to solve the decision problem. 
 
 \begin{definition}[Nonemptiness of CEFA w.r.t. an LIA formula\footnote{The decision problem was called satisfiability of an LIA formula w.r.t. CEFA in \cite{atva2020}.}, abbreviated as $\cefadec$]
-Suppose that $x_1, \cdots, x_n$ are mutually distinct string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the same alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$, moreover, the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{1, l_1}}, \cdots, R_{\aut_{n, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, and $\varphi$ is an LIA formula whose free variables are from $R' = \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. Then  the CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are said to be nonempty w.r.t. $\varphi$ if there are an assignment $\eta: \{x_1, \cdots, x_n\} \rightarrow \Sigma^*$ and vectors 
-$\myvec{v_{1,1}}, \cdots, \myvec{v_{1, l_1}}, \cdots, \myvec{v_{n, 1}}, \cdots, \myvec{v_{n, l_n}}$ such that $(w_i; \myvec{v_{i,j}}) \in \Lang(\aut_{i, j})$ for every $i \in [n], j \in [l_i]$,
+Suppose that $x_1, \cdots, x_n$ are mutually distinct string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the same alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$, moreover, the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{1, l_1}}, \cdots, R_{\aut_{n, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, and $\varphi$ is an LIA formula whose free variables are from $R' = \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. Then  the CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are said to be nonempty w.r.t. $\varphi$ if there are an assignment $\theta: \{x_1, \cdots, x_n\} \rightarrow \Sigma^*$ and vectors 
+$\myvec{v_{1,1}}, \cdots, \myvec{v_{1, l_1}}, \cdots, \myvec{v_{n, 1}}, \cdots, \myvec{v_{n, l_n}}$ such that $(\theta(x_i); \myvec{v_{i,j}}) \in \Lang(\aut_{i, j})$ for every $i \in [n], j \in [l_i]$,
 % \in \aut_{i,1}(\eta(x_1)), \cdots, \myvec{v_{i, l_i}} \in \aut_{i,l_i}(\eta(x_i))$ for every $i \in [n]$  
 %\cdots, \myvec{v_{n,1}} \in \aut_{n,1}(w_n), \cdots, \myvec{v_{n, l_n}} \in \aut_{n, l_n}(w_n)$ 
 and $\varphi[\myvec{v_{1,1}}/R_{\aut_{1,1}}, \cdots, \myvec{v_{n, l_n}}/R_{\aut_{n, l_n}}]$ is true. 
@@ -62,8 +62,6 @@ For non-register-representable regular expressions, we first transform them into
 For each $i \in [n]$, let $x_i \in e_{i, 1}, \cdots, x_i \in e_{i, l_i}$ be an enumeration of the regular membership constraints for $x_i$ in $\varphi_1$.  Then we can construct CEFA $\aut_{i, j}$ from $e_{i, j}$ for each $i \in [n]$ and $j \in [l_i]$. Moreover, we construct another CEFA $\aut_{i, 0}$ for each $i \in [n]$ to model the length of $x_i$. Specifically, $\aut_{i,0}$ is constructed as $((r_{i,0}), \{q_{i,0}\}, \Sigma, \delta_{i,0}, \{q_{i,0}\}, \{q_{i,0}\}, \ltrue)$, where $r_{i,0}$ is a fresh register (in particular, $r_{i,0}$ does not occur in $\aut_{i,1}, \cdots, \aut_{i, l_i}$) and $\delta_{i,0} = \{(q_{i,0}, a, q_{i,0}, (1)) \mid a \in \Sigma\}$. 
 Let $\Lambda_{x_i} = \{\aut_{i,0}, \aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for each $i \in [n]$. Moreover, let $\varphi'_2 \equiv \varphi_2[r_{1,0}/|x_1|, \cdots, r_{n,0}/|x_n|]$.
 Then the satisfiability of $\varphi$ is reduced to the nonemptiness of CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi'_2$.
-
-\zhilin{stopped here}
 
 
 %%%%%%%%%%% original texts by denghang %%%%%
@@ -229,16 +227,128 @@ Given a string-length constraint, we build a CEFA with a register storing the wo
 
 \subsection{Solving $\cefadec$} \label{subsec:cefadec}
 
-In the sequel, we present a procedure to solve the $\cefadec$ problem.
+In the sequel, we present a procedure to solve the $\cefadec$ problem: Suppose that $x_1, \cdots, x_n$ are mutually distinct string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the same alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$, moreover, the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, and $\varphi$ is an LIA formula whose free variables are from $R' = \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. 
 
-Suppose that $x_1, \cdots, x_n$ are mutually distinct string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the same alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$, moreover, the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{1, l_1}}, \cdots, R_{\aut_{n, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, and $\varphi$ is an LIA formula whose free variables are from $R' = \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. 
+The procedure comprises four steps. 
+%
+\paragraph*{Step 1.} For each $i \in [n]$, compute a CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$, and let $\Lambda'_{x_i} := \{\cB_i\}$. \qed
 
-At first, we compute CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$ for each $i \in [n]$. For each $i \in [n]$, let $\Lambda'_{x_i} = \{\cB_i\}$. Evidently, $R_{\cB_i}= \bigcup \limits_{j \in [l_i]} R_{\aut_{i, j}}$ for each $i \in [n]$.
-Then the nonemptiness of CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$ is reduced to the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$. 
+%At first, we compute CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$ for each $i \in [n]$. For each $i \in [n]$, let $\Lambda'_{x_i} = \{\cB_i\}$. Evidently, $R_{\cB_i}= \bigcup \limits_{j \in [l_i]} R_{\aut_{i, j}}$ for each $i \in [n]$.
+After Step 1, the nonemptiness of CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$ is reduced to the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$. 
 
-Since the construction of $\cB_1, \cdots, \cB_n$ may involve exponential blow-up, it is vital to reduce the sizes of these CEFAs.
+%CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are nonempty w.r.t. $\varphi$ 
+%
 
-It turns out that to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$, we can ignore the characters in $\cB_1,\cdots, \cB_n$. This is due to the fact that there is only one CEFA for each string variable and $\varphi$ only cares about the values of registers.
+%Therefore, to solve the nonemptiness of CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ w.r.t. $\varphi$, it is sufficient to compute $\cefaout(\cB_1)$
+
+
+%Since the construction of $\cB_1, \cdots, \cB_n$ involves the computation of the product of multiple CEFA, it incurs an exponential blow-up in the worst case. Therefore, it is vital to reduce the sizes of these CEFAs. In the sequel, we propose some techniques to reduce the automata sizes. 
+
+In the sequel, we reduce the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$ to the satisfiability of an LIA formula. The reduction relies on two observations. 
+
+The first observation follows from the fact that $\Lambda'_{x_i}$ for each $i \in [n]$ contains exactly one CEFA. 
+
+\begin{observation}\label{obs-cefa-output}
+CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are nonempty w.r.t. $\varphi$ iff there are $\myvec{v_{1}} \in \cefaout(\cB_1), \cdots, \myvec{v_{n}} \in \cefaout(\cB_n)$ such that $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true.
+\end{observation}
+
+%From the fact that $\Lambda'_{x_i}$ for each $i \in [n]$ contains exactly one CEFA, we deduce that the following two conditions are equivalent.  
+%\begin{itemize}
+%\item CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are nonempty w.r.t. $\varphi$, namely, 
+%there are an assignment $\theta: \{x_1, \cdots, x_n\} \rightarrow \Sigma^*$ and vectors $\myvec{v_{1}}, \cdots, \myvec{v_{n}}$ such that $(\theta(x_1); \myvec{v_1}) \in \Lang(\cB_1)$, $\cdots$, $(\theta(x_n); \myvec{v_n}) \in \Lang(\cB_n)$ and $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true,
+%
+%\item there are $\myvec{v_{1}} \in \cefaout(\cB_1), \cdots, \myvec{v_{n}} \in \cefaout(\cB_n)$ such that $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true.
+%\end{itemize}
+
+Let $\aut = (R, Q, \Sigma, \delta, I, F)$ be a CEFA and $\costset_\aut = \{\myvec{v} \mid \exists q, a, q'.\ (q, a, q', \myvec{v}) \in \delta\}$. 
+Moreover, let $\aut'$ be an NFA over the alphabet $\costset_\aut$ that is obtained from $\aut$ by ignoring the characters, that is, the transitions of $\NFA'$ are the tuples $(q, \myvec{v}, q')$ such that $(q, a, q', \myvec{v}) \in \delta$ for some $a \in \Sigma$.
+%Then $\cefaout(\aut) = \parikh(\NFA')$.
+\begin{observation}\label{obs-cefa-nfa}
+For each CEFA $\aut$, $\cefaout(\aut) = \left\{\sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v}  \mid \eta \in \parikh(\NFA') \right\}$.
+\end{observation}
+
+
+
+From Observation~\ref{obs-cefa-nfa}, we know that the following two conditions are equivalent, 
+\begin{itemize}
+%\item CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are nonempty w.r.t. $\varphi$, namely, 
+%there are an assignment $\theta: \{x_1, \cdots, x_n\} \rightarrow \Sigma^*$ and vectors $\myvec{v_{1}}, \cdots, \myvec{v_{n}}$ such that $(\theta(x_1); \myvec{v_1}) \in \Lang(\cB_1)$, $\cdots$, $(\theta(x_n); \myvec{v_n}) \in \Lang(\cB_n)$ and $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true,
+%
+\item there are $\myvec{v_{1}} \in \cefaout(\cB_1), \cdots, \myvec{v_{n}} \in \cefaout(\cB_n)$ such that $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true, 
+%CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are nonempty w.r.t. $\varphi$ 
+%
+\item 
+there are $\eta_1 \in \parikh(\cB'_1), \cdots, \eta_n \in \parikh(\cB'_n)$ such that 
+%
+%\begin{equation}\label{eqn-cefa-lia}
+\[
+\varphi \left[\sum \limits_{\myvec{v} \in \costset_{\cB_1}} \eta(\myvec{v}) \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum \limits_{\myvec{v} \in \costset_{\cB_n}} \eta(\myvec{v}) \myvec{v} \big{/}R_{\cB_n} \right]
+\]
+%\end{equation} 
+%
+is true. 
+\end{itemize}
+
+Therefore, to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$, it is sufficient to compute the existential LIA formulas $\psi_{\cB'_1}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cB'_n}(\fZ_{\costset_{\cB_n}})$, which define the Parikh images of $\cB'_1$, $\cdots$, $\cB'_n$ respectively, and solve the satisfiability of the following existential LIA formula
+\begin{equation}\label{eqn-cefa-lia}
+\bigwedge \limits_{i \in [n]} \psi_{\cB'_i}(\fZ_{\costset_{\cB_i}}) \wedge 
+\varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cB_1}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cB_n}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right],
+\end{equation}
+where $\anivarz_{\myvec{v}}$'s are integer variables to represent the number of occurrences of $\myvec{v}$. 
+
+Because the sizes of the LIA formulas $\psi_{\cB'_1}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cB'_n}(\fZ_{\costset_{\cB_n}})$ are proportional to the sizes (more precisely, the alphabet size, the number of states and transitions) of NFA $\cB'_1, \cdots, \cB'_n$, and it is expensive (NP-complete) to solve the satisfiability of existential LIA formulas, it is vital to reduce the sizes of these NFA.
+
+We also have the following observation: For each $i \in [n]$ and $\eta \in \parikh(\cB'_i)$, we have 
+$$\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v} = \sum \limits_{\myvec{v} \in \costset(\cB_i) \setminus \{\myvec{0}\}} \eta(\myvec{v}) \myvec{v}.$$
+In other words, the $\myvec{0}$-labeled transitions in $\cB'_i$ do not contribute to the sum $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v}$.  
+
+Therefore, we can reduce the sizes of $\cB'_1, \cdots, \cB'_n$ by Step II presented in the sequel. 
+
+\paragraph*{Step 2.} For each $i \in [n]$, view the transitions $(q, \myvec{0}, q')$ in $\cB'_i$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, then remove the $\varepsilon$-transitions from $\cB'_i$, determinize and minimize the resulting NFA.  \qed
+
+For $i \in [n]$, let  $\cC_i$ denote the DFA obtained from $\cB'_i$ by executing Step 2. From the construction, we know that $\parikh(\cC_i) = \parikh(\cB'_i)$ for each $i \in [n]$.
+Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cB'_i$'s, to represent Parikh images. 
+
+
+\paragraph*{Step 3.} For each $i \in [n]$, compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cB_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then solve the satisfiability of the following existential LIA formula 
+%
+\[
+\bigwedge \limits_{i \in [n]} \psi_{\cC_i}(\fZ_{\costset_{\cB_i}}) \wedge 
+\varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cB_1}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cB_n}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
+\]
+
+Finally, although we propose techniques to reduce the sizes of $\cB'_i$'s, it is still relatively expensive to compute LIA formulas from NFA and solve their satisfiability, especially for those problem instances with positive answers, namely, those instances where CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty w.r.t. $\varphi$.   
+Therefore, in the sequel, we propose a heuristic to search for solutions for those positive problem instances by utilizing under approximations, before Step 3. Intuitively, we search for solutions by bounding the lengths of the strings that are accepted by $\cC_i$'s. The heuristic uses a constant bound $B > 0$. Since the heuristic is applied before Step 3, we call it Step 2.5, to denote the fact that it is applied after Step 2 and before Step 3. 
+
+For $i \in [n]$, suppose $R_{\cB_i} = (r_{i,1},\cdots, r_{i, k_i})$ and $\cC_i = (Q'_i, \costset_{\cB_i}, \delta'_i, q_{i,0}, F'_i)$. 
+
+\paragraph*{Step 2.5.} Initially, let $len := 0$, and for each $i \in [n]$, let $\confset_{\cC_i}:=\{(q_{i,0}, \myvec{0})\}$ and $\psi_{\cC_i}:= \lfalse$.  Then iterate the following procedure until $len = B$.
+\begin{quote}
+For each $i \in [n]$, let $\confset'_{\cC_i}:=\confset_{\cC_i}$ and do the following:  For each $(q, \myvec{v}) \in \confset_{\cC_i}$,
+\begin{itemize}
+\item if $q \in F'_i$, then let $\psi_{\cC_i}:=\psi_{\cC_i} \vee (\bigwedge \limits_{j \in [k_i]} r_{i,j} = v_j)$, 
+%
+\item let $\confset'_{\cC_i}:=\confset'_{\cC_i} \setminus \{(q, \myvec{v})\}$, 
+%
+\item for each transition $(q, \myvec{v'}, q') \in \delta'_i$, let $\confset'_{\cC_i}:=\confset'_{\cC_i} \cup \{(q', \myvec{v}+ \myvec{v'})\}$. 
+\end{itemize}
+Let $\varphi:=\varphi \wedge \psi_{\cC_i}$. 
+
+If $\varphi$ is satisfiable, then return $\ltrue$. Let $len: = len+1$. \qed
+\end{quote}
+
+%Furthermore, for each $i \in [n]$, we can remove the redundancy of characters/vectors in $\cC_i$. 
+
+\zhilin{stopped here}
+
+
+
+%%%%%%%%%%%% the original texts by Denghang %%%%%%%%%
+%%%%%%%%%%%% the original texts by Denghang %%%%%%%%%
+\hide{
+Moreover, the transitions $(q, \myvec{0}, q')$ in $\cC_i$ can be seen as $\varepsilon$-transitions, that is, we can replace each transition $(q, \myvec{0}, q')$ with $(q, \varepsilon, q')$, without affecting the set $\{ \sum\limits_{\myvec{v} \in V_i} m_{\myvec{v}} \myvec{v} \mid \myvec{m} \in parikh(\cC_i)\}$. Therefore, we first do these replacements, apply the $\varepsilon$-transition removal procedure. Then we utilize the determinization and minimization algorithm for NFA to reduce the size of $\cC_i$. 
+
+It turns out that to solve the nonemptiness of CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ w.r.t. $\varphi$, we can ignore the characters in $\cB_1,\cdots, \cB_n$. This is due to the fact that there is only one CEFA for each string variable and $\varphi$ only cares about the values of registers.
 
 %When the characters in $\cB_1, \cdots, \cB_n$ are ignored, they can be seen as NFAs. 
 For each $i \in [n]$, let $\cC_i$ be the automaton obtained from $\cB_i$ by replacing each transition $(q, a, q', \myvec{v})$ with $(q, \myvec{v}, q')$. 
@@ -468,7 +578,9 @@ As shown in the Algorithm \ref{alg:underApprox}, $\varphi_{under}$ is the under-
 \begin{example}
   Consider the automaton $\aut$ in Fig. \ref{fig:overview:product:reduced} again without the LIA constraint $r_0 > 120$, i.e., $\theta$ changes to $1\leq r_1\leq 60\wedge 1\leq r_2 \leq 60\wedge 0\leq r_3 \leq 60 $. The solution of the Parikh image of it leads to a complete but inefficient result since the quantifier-free LIA formulas are solved in exponential time. Under-approximation can accelerate the solving process. In the first iteration of under-approximation, the pairs in the $lastStates(\aut)$ is the initial pair $(q_0', (0,0,0,0))$ and $\varphi_\aut$ maintains false at line 9 because $q_0'$ is not accepted. Then we update $lastStates(\aut)$ by removing the pair $(q_0', (0,0,0,0))$ and adding pairs $(q_0', (1,1,0,0)), (q_1', (1,0,1,0)), (q_2', (1,0,0,0))$. In the second iteration, $\varphi_\aut$ changes to $r_0=1\vee r_1=0\vee r_2=0\vee r_3 = 0$ because $q_2'$ is accepted. $\varphi_{under}$ is always equal to $\varphi_\aut$ since there is only one automaton. We solve the formula $\theta\wedge \varphi_{under}$ and find it is unsatisfiable. In the third iteration, the pairs in the $lastStates(\aut)$ with accepting state should be $(q_0', (2,2, 0, 0)), (q_1', (2,1,1,0))$, $(q_1', (2,0,2,0))$, $(q_2', (2,1,0,0)), (q_2', (2,0,1,0)),$ $(q_2', (2,0, 0, 0))$. The corresponding registers' values for the accepted state $q_2'$ is $(2,1,0,0), (2, 0, 1, 0), (2, 0, 0, 0)$, in which the value of $r_1$ and $r_2$ can not be both larger than 1 which is required by $\theta$. So the formula $\theta\wedge \varphi_{under}$ is still unsatisfiable. Finally, We obtain a pair $(q_2', (3,1,1,0))$ from the pair $(q_1', (2,1,1,0))$ and the transition $q_1'\xrightarrow[(1,0,0,0)]{} q_2'$, whose corresponding registers' values is a solution $(3,1,1,0)$, i.e., $r_0=3, r_1=1, r_2=1, r_3=0$.
 \end{example}
-
+}
+%%%%%%%%%%%% the original texts by Denghang %%%%%%%%%
+%%%%%%%%%%%% the original texts by Denghang %%%%%%%%%
 
 \subsection{High-level algorithm}
 

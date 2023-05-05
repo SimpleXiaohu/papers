@@ -3,7 +3,7 @@
 %\begin{document}
 
 %\subsubsection{Syntax}
-In the sequel, we define string constraints with regex-counting and string-length function (abbreviated as RECL). The syntax of RECL is defined by the rules in Figure~\ref{fig:syntax}, where $x$ is a string variable, $i$ is an integer variable, $a$ is a character from an alphabet $\Sigma$, and $m, n$ are integer constants. 
+In the sequel, we define string constraints with regex-counting and string-length function (abbreviated as RECL). The syntax of RECL is defined by the rules in Figure~\ref{fig:syntax}, where $x$ is a string variable, $\anivar$ is an integer variable, $a$ is a character from an alphabet $\Sigma$, and $m, n$ are integer constants. 
 A RECL formula $\varphi$ is a conjunction of atomic formulas of the form $x \in \regex$, $x \not \in \regex$, or $t_1\ \op\ t_2$, where $\regex$ is a regular expression,  
 $t_1$ and $t_2$ are integer terms, and $\op \in \{=, \neq, \le, \ge, <, >\}$. Atomic formulas of the form $x \in \regex$ or $x \not \in \regex$ are called \emph{regular membership} constraints and atomic formulas of the form $t_1\ \op\ t_2$ are called \emph{length} constraints. 
 %
@@ -16,7 +16,7 @@ A regular expression $\regex$ is built from $\emptyset$, the empty string $\epsi
 $ \begin{array}{l l l r}
     \varphi & ::= & x\in \regex \mid t_1\  \op\ t_2 \mid  \varphi \wedge \varphi                                              & \mbox{formulas}            \\
     \regex &::= & \emptyset \mid \epsilon \mid a \mid \regex\cdot \regex \mid \regex+\regex \mid \regex^* \mid \regex \cap \regex \mid \overline{\regex} \mid \regex \setminus \regex \mid \regex^{\{m,n\}} \mid \regex^{\{m,\infty\}} \mid (e) & \mbox{regexes} \\
-    t &::= & n \mid i \mid  |x| \mid t - t \mid t + t                                                                    & \mbox{integer terms}
+    t &::= & n \mid \anivar \mid  |x| \mid t - t \mid t + t                                                                    & \mbox{integer terms}
     \end{array}
   $
 %  \end{tabular}

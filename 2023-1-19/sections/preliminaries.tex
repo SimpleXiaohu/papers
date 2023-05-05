@@ -11,7 +11,7 @@ A string over $\Sigma$ is a (possibly empty) sequence of elements from $\Sigma$,
 denoted by $u, v, w, \ldots$. An empty string is denoted by $\varepsilon$. We use $\Sigma_\varepsilon$ to denote $\Sigma \cup \{\varepsilon\}$. We write $\Sigma^*$ (resp., $\Sigma^+$) for the set of all (resp. nonempty) strings over $\Sigma$.
 %Let 
 For a string $u$, we use $|u|$ to denote the number of letters in $u$. In particular, $|\varepsilon|=0$. 
-%Moreover, for $a \in \Sigma$, let $|u|_a$ denote the number of occurrences of $a$ in $u$. 
+Moreover, for $a \in \Sigma$, let $|u|_a$ denote the number of occurrences of $a$ in $u$. 
 Assume $u=a_0\cdots a_{n-1}$ is nonempty and $i<j \in [0,n-1]$. %Then a \emph{position} of $u$ is a number $i \in [|u|]$ (Note that the first position is $1$, instead of  0). In addition, 
 We let $u[i]$ denote $a_i$ and $u[i,j]$ for the substring %of $u$ starting from $i$ and ending with $j$ (i.e., 
 $a_i\cdots a_j$. 
@@ -50,6 +50,7 @@ Moreover, the class of regular languages is closed under union, intersection, co
 \item The language difference of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \setminus \NFA_2$, is defined as $\NFA_1 \cap \overline{\NFA_2}$.
 \end{itemize}
 
+Let $w \in \Sigma^*$. The \emph{Parikh image} of $w$, denoted by $\parikh(w)$, is defined as the function $\eta: \Sigma \rightarrow \Nat$ such that $\eta(a) = |w|_a$ for each $a \in \Sigma$. The \emph{Parikh image} of an NFA $\NFA$, denoted by $\parikh(\NFA)$, is defined as $\{\parikh(w) \mid w \in \Lang(\NFA)\}$.
 
 
 %\tl{to put in a different place later} Note that our decision procedure is applicable to general transducers as well, however, the EXPSPACE complexity bound is not, because the distributive property $f^{-1}(L_1\cap L_2)= f^{-1}(L_1)\cap f^{-1}(L_2)$ for regular languages $L_1, L_2$ only holds for functional transducers $f$.  
@@ -60,11 +61,22 @@ Moreover, the class of regular languages is closed under union, intersection, co
 
 %In this paper, we consider logics involving two data-types, i.e., the string data-type and the integer data-type. We will use $u, v, \dots$ to denote string constants,  $c, d,\dots$ to denote integer constants, $x, y, \dots$ to denote string variables, and $i, j, \dots$ to denote  integer variables.
 
+\paragraph*{Linear integer arithmetic and Parikh images.}
 We will also use standard quantifier-free/existential \emph{linear integer arithmetic} (LIA) formulae, which are typically ranged over by $\phi, \varphi$, etc. 
-For a set $X$ of variables, we use $\Phi(X)$ to denote the set of quantifier-free LIA formulas whose free variables are from $X$. 
-For convenience, we use $\varphi(\vec{x})$ with $\myvec{x} = (x_1, \cdots, x_k)$ to denote an LIA formula $\varphi$ whose free variables are from $\{x_1, \cdots, x_k\}$. For an LIA formula $\varphi(\vec{x})$ with $\myvec{x} = (x_1, \cdots, x_k)$ and $\myvec{t} = (t_1, \cdots, t_k)$ be a tuple of integer terms, we use $\varphi[\myvec{t}/\myvec{x}]$ to denote the formula obtained by replacing (simultaneously) $x_i$ with $t_i$ for every $i \in [k]$.
+For a set $\mathfrak{X}$ of variables, we use $\Phi(\mathfrak{X})$ to denote the set of quantifier-free LIA formulas whose free variables are from $\mathfrak{X}$. 
+For convenience, we use $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ to denote an LIA formula $\varphi$ whose free variables are from $\{\anivar_1, \cdots, \anivar_k\}$. For an LIA formula $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ and $\myvec{t} = (t_1, \cdots, t_k)$ be a tuple of integer terms, we use $\varphi[\myvec{t}/\myvec{\anivar}]$ to denote the formula obtained by replacing (simultaneously) $\anivar_i$ with $t_i$ for every $i \in [k]$.
 %For convenience, we usually assume that a set $X$ of variables is a vector. 
 %, which is essentially Presburger 
+
+At last, we recall a result about Parikh images of NFA. 
+For each $a \in \Sigma$, let $\anivarz_a$ be an integer variable. Let $\fZ_\Sigma$ denote the set of integer variables $\anivarz_a$ for $a \in \Sigma$. 
+Let $\NFA$ be an NFA over the alphabet $\Sigma$. Then 
+we say that an LIA formula $\varphi(\fZ_\Sigma)$ defines the Parikh image of $\NFA$, if $\{\eta: \Sigma \rightarrow \Nat \mid \varphi[(\eta(a) /\anivarz_a)_{a \in \Sigma}] \mbox{ is true}\} = \parikh(\NFA)$. 
+
+\begin{theorem}[\cite{SSMH04}]\label{thm-nfa-parikh}
+Given an NFA $\NFA$,  an existential LIA formula $\varphi_\NFA(\fZ_\Sigma)$ can be computed in linear time that defines the Parikh image of $\NFA$.
+\end{theorem}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
