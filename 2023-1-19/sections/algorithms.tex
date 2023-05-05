@@ -315,7 +315,7 @@ In other words, the $\myvec{0}$-labeled transitions in $\cB'_i$ do not contribut
 
 Therefore, we can reduce the sizes of $\cB'_1, \cdots, \cB'_n$ by Step II in the sequel. 
 
-\paragraph*{Step 2.} For each $i \in [n]$, view the transitions $(q, \myvec{0}, q')$ in $\cB'_i$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, then remove the $\varepsilon$-transitions from $\cB'_i$, determinize and minimize the resulting NFA.  \qed
+\paragraph*{Step 2.} For each $i \in [n]$, we view the transitions $(q, \myvec{0}, q')$ in $\cB'_i$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, then remove the $\varepsilon$-transitions from $\cB'_i$, determinize the resulting NFA, and minimize it.  \qed
 
 For $i \in [n]$, let  $\cC_i$ denote the DFA obtained from $\cB'_i$ by executing Step 2 and $\costset_{\cC_i} := \costset_{\cB_i} \setminus \{\myvec{0}\}$. From the construction, we know that $\parikh(\cC_i) = \prj_{\costset_{\cC_i}}(\parikh(\cB'_i))$ for each $i \in [n]$.
 Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cB'_i$'s, to represent the Parikh images. 
