@@ -7,25 +7,25 @@
 \begin{document}
 \resizebox{.95\textwidth}{!}{\begin{tabular}{|c |c |c |c |c |c |c |c |}
     \hline
-                     & CVC5       & OSTRICH$^{\rm RECL}$ & OSTRICH    & Z3str3 & Z3seq      & Z3str3RE      & Z3-Trau \\
+                     & CVC5       & Z3seq & Z3-Trau    & Z3str3 & Z3str3RE      & OSTRICH      & OSTRICH$^{\rm RECL}$ \\
     \hline\hline
-    sat              & 28489      & \textbf{29328}       & 0          & 23263  & 28474      & 28961         & 10110   \\
+    sat              & 28,489      & 28,474       & 10,110          & 23,263  & 28,961      &          & {\bf 29,328}   \\
     \hline
-    unsat            & 16741      & \textbf{20155}       & 0          & 12477  & 18504      & 19159         & 14309   \\
-    \hline
-    \hline
-    unknown          & \textbf{8} & 32                   & 49379      & 6883   & 98         & 99            & 21884   \\
-    \hline
-    timeout          & 4141       & \textbf{149}         & 0          & 6756   & 2303       & 1160          & 3076    \\
-    \hline
-    soundness error  & \textbf{0} & \textbf{0}           & \textbf{0} & 44     & 56         & 44            & 2120    \\
-    \hline
-    program crashes  & \textbf{0} & \textbf{0}           & 7          & 2      & \textbf{0} & 1             & 7395    \\
+    unsat            & 16,741      & 18,504       & 14,309         & 12,477  & 19,159      &          & {\bf 20,155}   \\
     \hline
     \hline
-    Total correct    & 45230      & \textbf{49483}       & 0          & 35696  & 46922      & 48076         & 22299   \\
+    unknown          & \textbf{8} & 98                   & 21,884      & 6,883   & 99         &             & 32   \\
     \hline
-    Average Time (s) & 5.67       & 1.77                 & 0.64       & 8.54   & 3.49       & \textbf{1.61} & 5.41    \\
+    timeout          & 4,141       & 2,303         & 3,076          & 6,756   & 1,160       &           & {\bf 149}    \\
+    \hline
+    soundness errors  & \textbf{0} & 56           & 2,120 & 44     & 44         &             & {\bf 0}    \\
+    \hline
+    program crashes  & \textbf{0} & \textbf{0}           & 7,395          & 2      &1 &              & {\bf 0}    \\
+    \hline
+    \hline
+    solved correctly    & 45,230      & 46,922       & 22,299          & 35,696  & 48,076      &          & {\bf 49,483}   \\
+    \hline
+    \begin{tabular}{l}average time \\ per instance \\ (seconds)\end{tabular} & 5.67       & 3.49                 & 5.41       & 8.54   & {\bf 1.61}       &  & 1.77    \\
     \hline
   \end{tabular}}
 

@@ -41,7 +41,7 @@ counting operator, consisting of a total of 49,379 instances. We analyze all 19 
 
 \subsection{Experiment results}
 
-We evaluated the performance of OSTRICH$^{\rm RECL}$ against the main-stream string constraint solvers, including CVC5 (version 1.0.5) \cite{cvc5}, Z3seq (version 4.8.9) \cite{z3seq}, Z3-Trau (github commit 1628747) \cite{z3trau}, Z3str3 (github commit 59e9c87) \cite{z3str3}, Z3str3RE \cite{z3str3re}, and OSTRICH (github commit 8297d8d) \cite{atva2020}. All experiments are conducted on CentOS Stream release 8 with 12 Intel(R) Xeon(R) Platinum 8269CY 3.10GHz CPU cores and 190 GB memory. We use the Zaligvinder framework \cite{zaligvinder_2021} to execute the experiments, with the timeout limit set as 60 seconds per instance. 
+We evaluated the performance of OSTRICH$^{\rm RECL}$ against the main-stream string constraint solvers, including CVC5 (version 1.0.5) \cite{cvc5}, Z3seq (version 4.8.9) \cite{z3seq}, Z3-Trau (github commit 1628747) \cite{z3trau}, Z3str3 (github commit 59e9c87) \cite{z3str3}, Z3str3RE \cite{z3str3re}, and OSTRICH (github commit 8297d8d) \cite{atva2020}. All experiments are conducted on CentOS Stream release 8 with 12 Intel(R) Xeon(R) Platinum 8269CY 3.10GHz CPU cores and 190 GB memory. We use the Zaligvinder framework \cite{zaligvinder_2021} to execute the experiments, where the timeout period is set as 60 seconds per instance. 
 
 The experiments are designed to answer the following two research questions. 
 \begin{description}
@@ -50,17 +50,22 @@ The experiments are designed to answer the following two research questions.
 \item[Q2] Do the size-reduction and under-approximation techniques proposed in Section~\ref{sec:algorithm} indeed improve the performance ?
 \end{description}
 
-Q1 is answered by running OSTRICH$^{\rm RECL}$ and the aforementioned solvers on AutomatArk and RegCoL. The experimental results can be found in Table~\ref{tab:results_all}. From Table~\ref{tab:results_all}, we can see that OSTRICH$^{\rm RECL}$ solves 49,128 instances, which is 5,127/2,315/25,369/12,808/1,721/1,756 more than the number of instances solved by CVC5/Z3seq/Z3-Trau/Z3str3/Z3str3RE/OSTRICH respectively. 
+Q1 is answered by running OSTRICH$^{\rm RECL}$ and the aforementioned solvers on AutomatArk and RegCoL. The experimental results can be found in Table~\ref{tab:results_all}. From Table~\ref{tab:results_all}, we can see that OSTRICH$^{\rm RECL}$ solves 49,483 instances correctly, which is 4,253/2,561/27,184/13,787/1,407/\zhilin{xxx} more than the number of instances solved by CVC5/Z3seq/Z3-Trau/Z3str3/Z3str3RE/OSTRICH respectively. 
 %    
-Moreover, OSTRICH$^{\rm RECL}$ is almost as fast as Z3str3RE, the fastest solver. More specifically, OSTRICH$^{\rm RECL}$ spends 2.51 seconds per instance on average, while Z3str3RE spends 2.46 seconds per instance. Z3-Trau reports ``unknown'' on 21,152 instances, which is mainly attributed to the fact that it does not support \verb|re.diff|, the language difference operator of regular expressions. Furthermore, Z3seq, Z3-Trau, Z3str3, and Z3str3RE have soundness issues, that is, their results on some instances are inconsistent with the results of the other three solvers, i.e. CVC5, OSTRICH, and OSTRICH$^{\rm RECL}$.
+Note that Z3seq, Z3-Trau, Z3str3, and Z3str3RE have soundness errors, where the result of CVC5 is taken as the ground truth.  If CVC5 reports ``unknown'' or ``timeout'' in some instance, then no soundness errors will be reported in this instance. 
+%A soundness error is reported if the result of a solver for an instance is different from CVC5. 
+% their results on some instances are inconsistent with the results of the other three solvers, i.e. CVC5, OSTRICH, and OSTRICH$^{\rm RECL}$.
+%
+Moreover, OSTRICH$^{\rm RECL}$ is almost as fast as the fastest solver Z3str3RE. More specifically, OSTRICH$^{\rm RECL}$ spends 1.77 seconds per instance on average, while Z3str3RE spends 1.61 seconds per instance, while the other solvers spend at least 3 seconds per instance.  
+Z3-Trau reports ``unknown'' on 21,152 instances, which is mainly attributed to the fact that it does not support \verb|re.diff|, the language difference operator of regular expressions. 
 
-\zhilin{may add the results for the two benchmark suites separately.}
+%\zhilin{may add the results for the two benchmark suites separately.}
 
 \begin{table}[ht]
 \begin{center}
   \import{tables}{table_all.tex}
 \end{center}
-  \caption{Experiment results for Q1}
+  \caption{Experiment results for Q1, where the timeout period is 60 seconds}
   \label{tab:results_all}
 \end{table}
 
