@@ -3,35 +3,30 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 \usepgfplotslibrary{fillbetween}
-%\pgfplotsset{compat=1.10}
+\pgfplotsset{compat=1.16}
 \begin{document}
-\resizebox{.95\textwidth}{!}{
-\begin{tabular}{|c |c |c |c |c |c |c |c |}
-  \hline
-                         & CVC5       & Z3seq    & Z3-Trau     & Z3str3          & Z3str3RE      & OSTRICH       & OSTRICH$^{\rm RECL}$  \\
-  \hline\hline
-  sat                    & 21,863    & 22,767   & 6,781      & 18,413         & 23,284  & 21,666   & \textbf{23,300}  \\
-  \hline
-  unsat                  & 22,138    & 24,097  & 18,211         & 17,945      &  24,162 & 25,706  & \textbf{25,828}   \\
-  \hline
-  \hline
-  unknown                & 8        & 98      &  21,152    & 6,882          & 99  & 76      & \textbf{5}    \\
-  \hline
-  timeout                & 5,370     & 2,417  & 3,235          & 6,139             & 1,834     & 1,931    & \textbf{246}   \\
-  \hline
-  soundness issues        & \textbf{0}   & 51    & 1,233     & 38                     & 39   & \textbf{0} & \textbf{0}      \\
-  \hline
-  crashes        & \textbf{0}  & \textbf{0}    & 6,673     & 2  & 1              &    \textbf{0}   & \textbf{0}    \\
-  \hline
-  \hline
-  solved correctly          & 44,001    & 46,813   & 23,759             & 36,320              & 47,407   & 47,372     & \textbf{49,128} \\
-  \hline
-  \begin{tabular}{c} average time \\ per instance \\ (seconds)\end{tabular}      & 7.79  & 3.82  & 5.69 & 7.73 & \textbf{2.46}  & 5.60   & 2.51   \\
-  \hline
-  % Average Time w/o timeouts (s) & 1.42   & 2.22      & 3.39  & 0.37  & 0.93   & \textbf{0.24}  & 3.65  \\
-  % Average Time w/o timeouts (s) & 62569944   & 109013852      & 160773959  & 13404544  & 43655832   & \textbf{11500521}  & 86718135  \\
-  % \hline
-\end{tabular}
-}
+\resizebox{.95\textwidth}{!}{\begin{tabular}{|c |c |c |c |c |c |c |c |}
+    \hline
+                     & CVC5       & OSTRICH$^{\rm RECL}$ & OSTRICH    & Z3str3 & Z3seq      & Z3str3RE      & Z3-Trau \\
+    \hline\hline
+    sat              & 28489      & \textbf{29328}       & 0          & 23263  & 28474      & 28961         & 10110   \\
+    \hline
+    unsat            & 16741      & \textbf{20155}       & 0          & 12477  & 18504      & 19159         & 14309   \\
+    \hline
+    \hline
+    unknown          & \textbf{8} & 32                   & 49379      & 6883   & 98         & 99            & 21884   \\
+    \hline
+    timeout          & 4141       & \textbf{149}         & 0          & 6756   & 2303       & 1160          & 3076    \\
+    \hline
+    soundness error  & \textbf{0} & \textbf{0}           & \textbf{0} & 44     & 56         & 44            & 2120    \\
+    \hline
+    program crashes  & \textbf{0} & \textbf{0}           & 7          & 2      & \textbf{0} & 1             & 7395    \\
+    \hline
+    \hline
+    Total correct    & 45230      & \textbf{49483}       & 0          & 35696  & 46922      & 48076         & 22299   \\
+    \hline
+    Average Time (s) & 5.67       & 1.77                 & 0.64       & 8.54   & 3.49       & \textbf{1.61} & 5.41    \\
+    \hline
+  \end{tabular}}
 
 \end{document}
