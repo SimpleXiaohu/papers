@@ -13,7 +13,7 @@ Then we first construct a nondeterministic finite automaton (NFA) for $(\Sigma \
 %Moreover, $r_0$ is incremented in all the three self-loops. 
 Furthermore, the counting bounds are specified by the accepting condition $1 \le r_1 \le 60 \wedge 1 \le r_2 \le 60 \wedge 0 \le r_3 \le 60$. 
 A string $w$ is accepted by $\aut_1$ if\denghang{,} when reading the characters in $w$, $\aut_1$ applies the transitions to update the state and the values of registers, and reaches a final state $q$ in the end, moreover, the resulting values of the three registers, say $v_1, v_2, v_3$, satisfy the accepting condition. 
-Note here\denghang{Note that} we represent the counting operators symbolically by registers, instead of unfolding them explicitly. 
+Note here\denghang{here to that} we represent the counting operators symbolically by registers, instead of unfolding them explicitly. 
 Moreover, we construct another CEFA $\aut_2$ for $\Sigma^* c^+$ (see Figure~\ref{fig:overview}(b)), which is actually an NFA, since $\Sigma^* c^+$ contains no (explicit) counting operators. Finally, we construct the third CEFA $\aut_3$ (see Figure~\ref{fig:overview}(c)), where a register $r_4$ is used to denote the length of strings and the accepting condition is $\ltrue$. (See Section~\ref{subsec:regex2cefa} for more details about the construction of CEFA.)
 %where the register $r_0$ is used to record the length of strings. 
 
@@ -68,7 +68,7 @@ Therefore, the satisfiability of the string constraint in~(\ref{eqn-running}) is
 Since the satisfiability of LIA formulas can be solved by the off-the-shelf SMT solvers for LIA, the satisfiability of the string constraint in~(\ref{eqn-running}) can thus be solved.
 
 Nevertheless, it turns out that the algorithm illustrated above is insufficient to solve the string constraints with regex-counting and string-length efficiently, since the sizes of NFA obtained from CEFA can still be big, resulting into\denghang{result in} the LIA formulas of big sizes, while the satisfiability of existential LIA formulas is NP-complete (see e.g. \cite{Haase18}). 
-To tackle this issue, we proposes techniques to reduce the sizes of NFA over the alphabet $\costset$.
+To tackle this issue, we proposes\denghang{propose} techniques to reduce the sizes\denghang{size} of NFA over the alphabet $\costset$.
 
 %the performance could be improved if the size of the formula in~(\ref{eqn-LIA}) can be reduced. Since the size of the formula in~(\ref{eqn-LIA}) depends on the size of $\aut_1 \times \aut_2$, that is, the number of states, transitions, and registers in $\aut_1 \times \aut_2$, we propose the techniques to reduce the size of the CEFA $\aut_1 \times \aut_2$.
 
@@ -248,3 +248,5 @@ Sometimes the string constraints are satisfiable, and the strings in the solutio
 % \end{example}
 
 % \pagebreak
+
+The wrong encoding of the backslash causes the soundness errors of z3str3re. Two backslashes are seen as two characters in the Smtlib2.6 standard, but z3str3re encodes them as one.
