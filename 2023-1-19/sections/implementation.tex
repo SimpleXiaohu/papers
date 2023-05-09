@@ -71,13 +71,14 @@ Z3-Trau reports ``unknown'' on 21,152 instances, which is mainly attributed to t
 
 
 To answer Q2, we compare OSTRICH$^{\rm RECL}$ with its three variants, namely, OSTRICH$^{\rm RECL}_{\rm -SR}$, OSTRICH$^{\rm RECL}_{\rm -UA}$, OSTRICH$^{\rm RECL}_{\rm -SRUA}$, which remove size-reduction, under-approximation, and both from OSTRICH$^{\rm RECL}$ respectively. The experiment results can be found in Table~\ref{tab:results_heuristics}.
-From Table~\ref{tab:results_heuristics}, we can see that adding size-reduction techniques help solve \zhilin{xxx} more instances, while adding under-approximation techniques help solve \zhilin{xxx} more instances, while adding both help solve \zhilin{xxx} more instances. Moreover, adding these techniques also decrease the average time spent in solving each instance considerably.
+From Table~\ref{tab:results_heuristics}, we can see that adding size-reduction techniques help solve \zhilin{xxx} more instances and reduce the average time per instance for \zhilin{xxx}/\%, while adding under-approximation techniques help solve \zhilin{xxx} more instances and reduce the average time per instance for \zhilin{xxx}/\%, while adding both help solve \zhilin{xxx} more instances and reduce the average time per instance for \zhilin{xxx}/\%. 
+%Moreover, adding these techniques also decrease the average time spent in solving each instance considerably.
 
 \begin{table}[ht]
 \begin{center}
   \subimport{tables}{table_heuristic.tex}
 \end{center}
-  \caption{Experiment results for Q2}
+  \caption{Experiment results for Q2, where the timeout period is 60 seconds}
   \label{tab:results_heuristics}
 \end{table}
 
