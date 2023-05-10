@@ -6,7 +6,7 @@ In modern programming languages---such as JavaScript, Python, Java, and PHP---th
 It is well-known that string manipulations are error-prone and could even give rise to security vulnerabilities (e.g. \ cross-site scripting, aka XSS). 
 One powerful method for identifying such bugs in programs is \emph{symbolic execution} (possibly in combination with dynamic analysis), which analyses symbolic paths in a program by viewing them as constraints, whose feasibility is checked by constraint solvers. 
 %
-Symbolic execution of string manipulating programs has motivated the highly active research area of \emph{string constraint solving}, resulting in the development of numerous string solvers in the last decade or so, including the state-of-the-art string constraint solvers (e.g.
+Symbolic execution of string manipulating programs has motivated the highly active research area of \emph{string constraint solving}, resulting in the development of numerous string solvers in the last decade or so\denghang{or so?}, including the state-of-the-art string constraint solvers (e.g.
 Z3~\cite{Z3}, CVC4/5~\cite{cvc4}, Z3str/2/3/4~\cite{Z3-str,Z3-str2,Z3-str3,BerzishMurphy2021}, Z3str3RE~\cite{BD+23}, 
 Z3-Trau~\cite{Z3-trau}, OSTRICH~\cite{CHL+19}, Slent~\cite{WC+18}, among many others. 
 
