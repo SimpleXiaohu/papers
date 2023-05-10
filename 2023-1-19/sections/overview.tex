@@ -8,7 +8,7 @@ In this section, we utilize the string constraint in Equation~(\ref{eqn-running}
 
 We first construct an automaton for the regular expression $(\Sigma \setminus a)^{\{1, 60\}} (\Sigma \setminus b)^{\{1, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$. We introduce three registers, say $r_1, r_2, r_3$, to represent the three counting operators.  
 %Moreover, we introduce another register, say $r_0$, to denote the length of strings. 
-Then we first construct a nondeterministic finite automaton (NFA) for $(\Sigma \setminus a)^* (\Sigma \setminus b)^* (\Sigma \setminus c)^*$, then add the updates of registers to transitions, resulting into a so-called cost-enriched finite automaton (CEFA, see Section~\ref{sec:automaton} for the definition) $\aut_1$,  as illustrated in Figure~\ref{fig:overview}(a). 
+Then we first construct a nondeterministic finite automaton (NFA) for $(\Sigma \setminus a)^* (\Sigma \setminus b)^* (\Sigma \setminus c)^*$, then add the updates of registers to transitions, resulting into\denghang{in} a so-called cost-enriched finite automaton (CEFA, see Section~\ref{sec:automaton} for the definition) $\aut_1$,  as illustrated in Figure~\ref{fig:overview}(a). 
 %Then we obtain a cost-enriched finite automaton (CEFA) $\aut_1$ that is illustrated in Figure~\ref{fig:overview}(a), where the self-loops around $p_0, p_1, p_2$ represent the first, second, and third counting operator respectively, in which $r_1, r_2, r_3$ are incremented. 
 %Moreover, $r_0$ is incremented in all the three self-loops. 
 Furthermore, the counting bounds are specified by the accepting condition $1 \le r_1 \le 60 \wedge 1 \le r_2 \le 60 \wedge 0 \le r_3 \le 60$. 
