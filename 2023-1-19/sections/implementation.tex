@@ -2,7 +2,7 @@
 %\documentclass{standalone}
 %\begin{document}
 
-We implement the algorithms in Section~\ref{sec:algorithm} on top of OSTRICH~\cite{ostrich,atva2020}, resulting into\denghang{in} a version of OSTRICH called OSTRICH$^{\rm RECL}$.
+We implement the algorithms in Section~\ref{sec:algorithm} on top of OSTRICH~\cite{ostrich,atva2020}, resulting in a version of OSTRICH called OSTRICH$^{\rm RECL}$.
 Then we do experiments on two benchmark suites, to evaluate the performance of OSTRICH$^{\rm RECL}$. In the sequel, we first describe the two benchmark suites, then present the settings and results of the experiments. 
 
 %This section presents the empirical evaluation of OstrichCEA, which is our implementation of the decision procedure introduced in Section \ref{sec:algorithm}. Our objective is to validate the effectiveness of the proposed techniques by evaluating our tool's correctness and efficiency compared to other solvers. Furthermore, we assess the efficacy of our heuristics by testing different configurations of the tool. We have implemented our encoding for counting with two heuristic algorithms on Ostrich+ \cite{atva2020}. The pre-image computation for concatenation, \verb|indexOf|, \verb|substring|, \verb|replaceAll|, \verb|reverse| and finite transducer remain unchanged. OstrichCEA is written in Scala and based on the SMT solver Princess\cite{princess}.
@@ -59,14 +59,14 @@ The experiments are designed to answer the following two research questions.
 \item[Q2] Do the size-reduction and under-approximation techniques proposed in Section~\ref{sec:algorithm} indeed improve the performance ?
 \end{description}
 
-Q1 is answered by running OSTRICH$^{\rm RECL}$ and the aforementioned solvers on AutomatArk and RegCoL. The experimental results can be found in Table~\ref{tab:results_all}. From Table~\ref{tab:results_all}, we can see that OSTRICH$^{\rm RECL}$ solvers almost all 48,834 instances, except 144 of them, that is, it solves 48,689 instances correctly, which is 3,982/2,263/24,568/12,823/1,082/7083 more than the number of instances solved by CVC5/Z3seq/Z3-Trau/Z3str3/Z3str3RE/OSTRICH respectively. 
+Q1 is answered by running OSTRICH$^{\rm RECL}$ and the aforementioned solvers on AutomatArk and RegCoL. The experimental results can be found in Table~\ref{tab:results_all}. From Table~\ref{tab:results_all}, we can see that OSTRICH$^{\rm RECL}$ solvers almost all 48,834 instances, except 145 of them, that is, it solves 48,698 instances correctly, which is 3,994/2,272/24,577/12,832/1,091/7,092 more than the number of instances solved by CVC5/Z3seq/Z3-Trau/Z3str3/Z3str3RE/OSTRICH respectively. 
 %    
 Note that Z3seq, Z3-Trau, Z3str3, and Z3str3RE have soundness errors, where the result of CVC5 is taken as the ground truth. If CVC5 reports ``unknown'' or ``timeout'' in some instance, then no soundness errors will be reported in this instance. 
 %A soundness error is reported if the result of a solver for an instance is different from CVC5. 
 % their results on some instances are inconsistent with the results of the other three solvers, i.e. CVC5, OSTRICH, and OSTRICH$^{\rm RECL}$.
 %
-Moreover, OSTRICH$^{\rm RECL}$ is the second fastest solver. More specifically, OSTRICH$^{\rm RECL}$ spends 2.93 seconds per instance on average, while the fastest solver Z3str3RE spends 1.71 seconds per instance, and the other solvers spend at least 3 seconds per instance.  
-Z3-Trau reports ``unknown'' on 21,655 instances, which is mainly attributed to the fact that it does not support \verb|re.diff|, the language difference operator of regular expressions. 
+Moreover, OSTRICH$^{\rm RECL}$ is the second fastest solver. More specifically, OSTRICH$^{\rm RECL}$ spends 2.93 seconds per instance on average, while the fastest solver Z3str3RE spends 1.71 seconds per instance, and the other solvers spend at least 3.49 seconds per instance.  
+Note that Z3-Trau reports ``unknown'' on 21,655 instances, which seems to be mainly attributed to the fact that it does not support \verb|re.diff|, the language difference operator of regular expressions. 
 
 %\zhilin{may add the results for the two benchmark suites separately.}
 
@@ -79,8 +79,12 @@ Z3-Trau reports ``unknown'' on 21,655 instances, which is mainly attributed to t
 \end{table}
 
 
-To answer Q2, we compare OSTRICH$^{\rm RECL}$ with its three variants, namely, OSTRICH$^{\rm RECL}_{\rm -SR}$, OSTRICH$^{\rm RECL}_{\rm -UA}$, OSTRICH$^{\rm RECL}_{\rm -SRUA}$, which remove size-reduction, under-approximation, and both from OSTRICH$^{\rm RECL}$ respectively. The experiment results can be found in Table~\ref{tab:results_heuristics}.
-From Table~\ref{tab:results_heuristics}, we can see that adding size-reduction techniques help solve \zhilin{xxx} more instances and reduce the average time per instance for \zhilin{xxx}/\%, while adding under-approximation techniques help solve \zhilin{xxx} more instances and reduce the average time per instance for \zhilin{xxx}/\%, while adding both help solve \zhilin{xxx} more instances and reduce the average time per instance for \zhilin{xxx}/\%. 
+To answer Q2, we compare OSTRICH$^{\rm RECL}$ with its three variants, namely, OSTRICH$^{\rm RECL}$ where the size-reduction, under-approximation, or both are removed. 
+For convenience, let us use OSTRICH$^{\rm RECL^-}$ to denote the variant of OSTRICH$^{\rm RECL}$ that both size-reduction and under-approximation techniques are removed, 
+OSTRICH$^{\rm RECL^-}_{+\rm SR}$ (resp. OSTRICH$^{\rm RECL^-}_{+\rm UA}$) to denote the variant that is obtained by adding the size-reduction (resp. under-approximation) techniques to OSTRICH$^{\rm RECL^-}$.
+%OSTRICH$^{\rm RECL}_{\rm -SR}$, OSTRICH$^{\rm RECL}_{\rm -UA}$, OSTRICH$^{\rm RECL}_{\rm -SRUA}$, which remove size-reduction, under-approximation, and both from OSTRICH$^{\rm RECL}$ respectively. 
+The experiment results can be found in Table~\ref{tab:results_heuristics}.
+From Table~\ref{tab:results_heuristics}, we can see that adding size-reduction techniques help to solve 1,563 more instances and reduce the average time per instance for 46.4\% (see the OSTRICH$^{\rm RECL^-}_{\rm +SR}$ column), while adding under-approximation techniques help to solve 1,476 more instances and reduce the average time per instance for 42.7\% (see the OSTRICH$^{\rm RECL^-}_{\rm +UA}$ column), moreover, adding both help to solve 1,579 more instances and reduce the average time per instance for 46.5\% (see the OSTRICH$^{\rm RECL}$ column). Note that adding under-approximation to OSTRICH$^{\rm RECL^-}_{\rm +SR}$ help to solve 19 more sat instances, while reduces the number of solved unsat instances by 3, since under approximation techniques do not help to solve unsat instances.
 %Moreover, adding these techniques also decrease the average time spent in solving each instance considerably.
 
 \begin{table}[ht]
@@ -91,7 +95,7 @@ From Table~\ref{tab:results_heuristics}, we can see that adding size-reduction t
   \label{tab:results_heuristics}
 \end{table}
 
-\zhilin{stopped here}
+%\zhilin{stopped here}
 
 %%%%%%%%%% original texts by denghang %%%%%%%%%
 %%%%%%%%%% original texts by denghang %%%%%%%%%

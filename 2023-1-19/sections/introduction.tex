@@ -6,7 +6,7 @@ In modern programming languages---such as JavaScript, Python, Java, and PHP---th
 It is well-known that string manipulations are error-prone and could even give rise to security vulnerabilities (e.g. \ cross-site scripting, aka XSS). 
 One powerful method for identifying such bugs in programs is \emph{symbolic execution} (possibly in combination with dynamic analysis), which analyses symbolic paths in a program by viewing them as constraints, whose feasibility is checked by constraint solvers. 
 %
-Symbolic execution of string manipulating programs has motivated the highly active research area of \emph{string constraint solving}, resulting in the development of numerous string solvers in the last decade or so\denghang{or so?}, including the state-of-the-art string constraint solvers (e.g.
+Symbolic execution of string manipulating programs has motivated the highly active research area of \emph{string constraint solving}, resulting in the development of numerous string solvers in the last decade, including the state-of-the-art string constraint solvers (e.g.
 Z3~\cite{Z3}, CVC4/5~\cite{cvc4}, Z3str/2/3/4~\cite{Z3-str,Z3-str2,Z3-str3,BerzishMurphy2021}, Z3str3RE~\cite{BD+23}, 
 Z3-Trau~\cite{Z3-trau}, OSTRICH~\cite{CHL+19}, Slent~\cite{WC+18}, among many others. 
 
@@ -39,15 +39,15 @@ Because the sizes of LIA formulas depend much on the sizes of CEFA, it is benefi
 
 The representation of regex-counting and string-length as registers in CEFA, combined with the aforementioned size-reduction and under-approximation techniques, entails an efficient algorithm for solving RECL constraints. We implement the algorithm on top of OSTRICH, resulting in a new version of OSTRICH, called $\ostrichrecl$ for convenience. 
 %
-Furthermore, we utilize a collection of benchmark suites, which comprise 49,379 RECL constraints in total, to evaluate the performance of $\ostrichrecl$. The collection of benchmark suites includes a widely-used benchmark suite for string constraints, as well as benchmark suites comprising constraints generated from regular expressions in various open source regex libraries. 
+Furthermore, we utilize a collection of benchmark suites, which comprise 48,834 RECL constraints in total, to evaluate the performance of $\ostrichrecl$. The collection of benchmark suites includes a widely-used benchmark suite for string constraints, as well as benchmark suites comprising constraints generated from regular expressions in various open source regex libraries. 
 %
 %Note that in the benchmark suites, we only consider the regexes that contain explicit counting, that is, regexes that contain sub-expressions of the form $e^{\{n, m\}}$, and ignore those that contain only implicit counting operators, that is, $e^*$ or $e^+$, since the state-of-the-art string solvers suffer mainly from the explicit counting operators. 
 %
-The experimental results show that $\ostrichrecl$ can solve 49,128 out of 49,379 instances, while the state-of-the-art best solver Z3str3RE solves only 47,407 instances, with the timeout set as 60 seconds. Moreover, $\ostrichrecl$ and Z3str3RE spend almost the same amount of time, on average, 2.5 seconds, to solve each instance. 
-In particular, the string constraint in~(\ref{eqn-running}) can be solved by $\ostrichrecl$ within one second. 
-In comparison, CVC5, Z3str3, and Z3seq solve only 44,001, 36,320, 46,813 instances respectively, with an average time 7.8, 7.7, 3.8 seconds per instance. 
+The experimental results show that $\ostrichrecl$ can solve 48,698 out of 48,834 instances, while the state-of-the-art best solver Z3str3RE on RECL constraints solves only 47,607 instances, with the timeout period set as 60 seconds. In particular, the string constraint in~(\ref{eqn-running}) can be solved by $\ostrichrecl$ within one second. 
+Moreover, while $\ostrichrecl$ solves 1,091 more instances than Z3str3RE, it is only slightly slower than it (2.93 versus 1.71 seconds per instance). 
+In comparison, CVC5, Z3seq, Z3-Trau, and Z3str3 solve only 44,704, 46,426, 24,121, and 35,866 instances respectively, with an average time 5.67, 3.49, 5.41, and 8.54 seconds per instance. (See Table~\ref{tab:results_all})
 
-At last, we would like to clarify the relationship of this work with~\cite{atva2020}, where CEFA was introduced. This work differs from \cite{atva2020} in the following aspects: In \cite{atva2020}, the regex-counting was unfolded explicitly. Moreover, in~\cite{atva2020}, the nonemptiness of CEFA was solved by utilizing the model checker nuXmv~\cite{nuxmv}. In contrast, this work solves it by integrating the techniques of Parikh image computation, automata-size reduction, under approximation, and SMT solvers for LIA. The experimental results show that our approach achieves better performance than that in~\cite{atva2020}. \zhilin{this point should be supposed by experimental results.}
+At last, we would like to clarify the relationship of this work with~\cite{atva2020}, where CEFA was introduced. This work differs from \cite{atva2020} in the following aspects: In \cite{atva2020}, the regex-counting was unfolded explicitly. Moreover, in~\cite{atva2020}, the nonemptiness of CEFA w.r.t. LIA formulas was solved by utilizing the model checker nuXmv~\cite{nuxmv}. In contrast, this work solves it by integrating the techniques of Parikh image computation, automata-size reduction, and under approximation. The experimental results show that our approach solves 7,092 more instances while spending less time than the solver in~\cite{atva2020}. (See Table~\ref{tab:results_all}, where OSTRICH denotes the solver in \cite{atva2020}.)
 
 \paragraph*{Related work} 
 Here, we discuss more related work about regular expressions with counting and real-world regular expressions in programming languages.  
