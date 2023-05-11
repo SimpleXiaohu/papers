@@ -9,10 +9,10 @@ Then we do experiments on two benchmark suites, to evaluate the performance of O
 
 \subsection{Benchmark suites}
 
-Our experiments utilize two benchmark suites, namely, AutomatArk and RegCoL. In total, there are 49,379 instances in the two benchmark suites. All the benchmark instances are in SMTLIB2 format. 
+Our experiments utilize two benchmark suites, namely, AutomatArk and RegCoL. In total, there are 48,834 instances in the two benchmark suites. All the benchmark instances are in SMTLIB2 format. 
 
 \paragraph*{AutomatArk benchmark suite.}
-The AutomatArk benchmark suite is adapted from the AutomatArk suite in \cite{z3str3re} by filtering out the string constraints that contain no occurrences of counting operators and adding the length constraint $|x| > 10$ (where $x$ is a string variable). There are 8,751 instances in the AutomatArk suite here.
+The AutomatArk benchmark suite is adapted from the AutomatArk suite in \cite{z3str3re} by filtering out the string constraints that contain no occurrences of counting operators and adding the length constraint $|x| > 10$ (where $x$ is a string variable). There are 8,215 instances in the AutomatArk suite here.
 Note that the original AutomatArk benchmark suite in \cite{z3str3re} includes 19,979 instances in total, which are conjunctions of regular membership queries and generated out of regular expressions from \cite{automatark}. 
 %Only 8,751 ones that contain counting operators out of 19,979 instances. 
 
@@ -59,14 +59,14 @@ The experiments are designed to answer the following two research questions.
 \item[Q2] Do the size-reduction and under-approximation techniques proposed in Section~\ref{sec:algorithm} indeed improve the performance ?
 \end{description}
 
-Q1 is answered by running OSTRICH$^{\rm RECL}$ and the aforementioned solvers on AutomatArk and RegCoL. The experimental results can be found in Table~\ref{tab:results_all}. From Table~\ref{tab:results_all}, we can see that OSTRICH$^{\rm RECL}$ solves 49,483 instances correctly, which is 4,253/2,561/27,184/13,787/1,407/\zhilin{xxx} more than the number of instances solved by CVC5/Z3seq/Z3-Trau/Z3str3/Z3str3RE/OSTRICH respectively. 
+Q1 is answered by running OSTRICH$^{\rm RECL}$ and the aforementioned solvers on AutomatArk and RegCoL. The experimental results can be found in Table~\ref{tab:results_all}. From Table~\ref{tab:results_all}, we can see that OSTRICH$^{\rm RECL}$ solves 48,689 instances correctly, which is 3,982/2,263/24,568/12,823/1,082/7083\zhilin{xxx} more than the number of instances solved by CVC5/Z3seq/Z3-Trau/Z3str3/Z3str3RE/OSTRICH respectively. 
 %    
 Note that Z3seq, Z3-Trau, Z3str3, and Z3str3RE have soundness errors, where the result of CVC5 is taken as the ground truth. If CVC5 reports ``unknown'' or ``timeout'' in some instance, then no soundness errors will be reported in this instance. 
 %A soundness error is reported if the result of a solver for an instance is different from CVC5. 
 % their results on some instances are inconsistent with the results of the other three solvers, i.e. CVC5, OSTRICH, and OSTRICH$^{\rm RECL}$.
 %
-Moreover, OSTRICH$^{\rm RECL}$ is almost as fast as the fastest solver Z3str3RE. More specifically, OSTRICH$^{\rm RECL}$ spends 1.77 seconds per instance on average, while Z3str3RE spends 1.61 seconds per instance, while the other solvers spend at least 3 seconds per instance.  
-Z3-Trau reports ``unknown'' on 21,152 instances, which is mainly attributed to the fact that it does not support \verb|re.diff|, the language difference operator of regular expressions. 
+Moreover, OSTRICH$^{\rm RECL}$ is almost as fast as the fastest solver Z3str3RE. More specifically, OSTRICH$^{\rm RECL}$ spends 2.93 seconds per instance on average, while Z3str3RE spends 1.71 seconds per instance, while the other solvers spend at least 3 seconds per instance.  
+Z3-Trau reports ``unknown'' on 21,655 instances, which is mainly attributed to the fact that it does not support \verb|re.diff|, the language difference operator of regular expressions. 
 
 %\zhilin{may add the results for the two benchmark suites separately.}
 
