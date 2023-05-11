@@ -3,9 +3,9 @@
 %\documentclass{standalone}
 %\begin{document}
 
-Regular expressions (abbreviated as regex) and string-length function are widely used in string-manipulating programs. 
+Regular expressions (regex for short) and string-length function are widely used in string-manipulating programs. 
 %Solving string constraints involving regular membership and string-length function has been widely investigated. 
-Counting is a frequently used feature of regular expressions that count the number of matchings of sub-patterns. The state-of-the-art string solvers e.g. CVC4/5, Z3str3(RE), and Z3seq are incapable of solving string constraints with regex-counting and string-length efficiently, especially when the counting bounds are large. In this work, we propose an automata-theoretic approach for solving such a class of string constraints efficiently. 
+Counting is a frequently used feature of regexes that count the number of matchings of sub-patterns. The state-of-the-art string solvers are incapable of solving string constraints with regex-counting and string-length efficiently, especially when the counting bounds are large. In this work, we propose an automata-theoretic approach for solving such class of string constraints efficiently. 
 %
 The main idea is to model the counting operators symbolically by registers in automata, instead of unfolding them explicitly, thus alleviating the state explosion problem resulted from the unfolding.  
 %
