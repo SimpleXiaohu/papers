@@ -6,7 +6,9 @@ We write $\Nat$ and $\Int$ for the sets of natural and integer numbers, respecti
 
 For a function $f$ from $X$ to $Y$ and $X' \subseteq X$, we use $\prj_{X'}(f)$ to denote the restriction (aka projection) of $f$ to $X'$, that is, $\prj_{X'}(f)$ is a function from $X'$ to $Y$, and $\prj_{X'}(f)(x') = f(x')$ for each $x' \in X'$.
 
-\paragraph*{Strings and languages.}
+\medskip
+\noindent \emph{Strings and languages.}
+%\paragraph*{Strings and languages.}
 A string over $\Sigma$ is a (possibly empty) sequence of elements from $\Sigma$,
 denoted by $u, v, w, \ldots$. An empty string is denoted by $\varepsilon$. We use $\Sigma_\varepsilon$ to denote $\Sigma \cup \{\varepsilon\}$. We write $\Sigma^*$ (resp., $\Sigma^+$) for the set of all (resp. nonempty) strings over $\Sigma$.
 %Let 
@@ -24,7 +26,9 @@ For a language $L$ and $n \in \Nat$, we define $L^n$ inductively as follows: $L^
 Finally, define $L^* = \bigcup \limits_{n \in \Nat} L^n$.
 %, that is, the string $w$ such that $|w|= |u| + |v|$ and for each $i \in [0, |u|-1]$, $w[i]= u[i]$, and for each $i \in [0,|v|-1]$, $w[|u|+i]=v[i]$. 
 
-\paragraph*{Finite automata.} 
+\medskip
+\noindent 
+\emph{Finite automata.} 
 A \emph{(nondeterministic) finite automaton} (NFA)  is a tuple $\NFA=(Q, \Sigma, \delta, I, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, $I \subseteq Q$ is the set of initial states, and $F \subseteq Q$ is the set of final states. For readability, we write a transition $(q, a, q') \in \delta$ as $q \xrightarrow[\delta]{a} q'$ (or simply $q \xrightarrow{a} q'$). %Moreover, when $\delta$ is clear from context, we omit $\delta$ in $q \xrightarrow[\delta]{a} q'$ and write $q \xrightarrow{a} q'$. 
 The \emph{size} of an NFA $\NFA$, denoted by $|\NFA|$, is defined as the number of transitions of $\NFA$.
 %
@@ -61,7 +65,9 @@ Let $w \in \Sigma^*$. The \emph{Parikh image} of $w$, denoted by $\parikh(w)$, i
 
 %In this paper, we consider logics involving two data-types, i.e., the string data-type and the integer data-type. We will use $u, v, \dots$ to denote string constants,  $c, d,\dots$ to denote integer constants, $x, y, \dots$ to denote string variables, and $i, j, \dots$ to denote  integer variables.
 
-\paragraph*{Linear integer arithmetic and Parikh images.}
+\medskip
+\noindent 
+\emph{Linear integer arithmetic and Parikh images.}
 We will also use standard quantifier-free/existential \emph{linear integer arithmetic} (LIA) formulae, which are typically ranged over by $\phi, \varphi$, etc. 
 For a set $\mathfrak{X}$ of variables, we use $\Phi(\mathfrak{X})$ to denote the set of quantifier-free LIA formulas whose free variables are from $\mathfrak{X}$. 
 For convenience, we use $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ to denote an LIA formula $\varphi$ whose free variables are from $\{\anivar_1, \cdots, \anivar_k\}$. For an LIA formula $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ and $\myvec{t} = (t_1, \cdots, t_k)$ be a tuple of integer terms, we use $\varphi[\myvec{t}/\myvec{\anivar}]$ to denote the formula obtained by replacing (simultaneously) $\anivar_i$ with $t_i$ for every $i \in [k]$.

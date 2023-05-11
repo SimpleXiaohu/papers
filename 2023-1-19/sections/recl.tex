@@ -11,6 +11,7 @@ A regular expression $\regex$ is built from $\emptyset$, the empty string $\epsi
 % 
 %is a quantifier-free formula that can be a regular membership $x\in\regex$, a quantifier-free Presburger formula $\alpha_1 \leq \alpha_2$, a negation of a formula, or a disjunction of two formulas. $\alpha$ is an integer term which can be an integer constant $m$, integer variable $i$, the length of the string term $|s|$, the minus of an integer term, and the plus of two integer terms. The regular expression $\regex$ is built on empty string $\epsilon$, constant letter $a\in \Sigma$. The supported regex operations involve concatenation $\cdot$, disjunction $+$, intersection $\times$, closure $*$, complement $C$, and bounded repetition $\{m, n\}$. We use $term(\varphi)$ to denote the set of terms and $strvar(\varphi)$ to denote the string variables occurring in $\varphi$. The \emph{literals} of $\varphi$ are $x\in \regex$ and $\alpha_1 \leq \alpha_2$. $x\in \regex$ is called \emph{regular literals} and $\alpha_1 \leq \alpha_2$ is called \emph{linear literals}.
 \begin{figure}[h]
+\vspace{-3mm}
   \centering
 %  \begin{tabular}{l r}
 $ \begin{array}{l l l r}
@@ -21,6 +22,7 @@ $ \begin{array}{l l l r}
   $
 %  \end{tabular}
   \caption{Syntax of RECL }\label{fig:syntax}
+\vspace{-3mm}
 \end{figure}
 Moreover, for $S \subseteq \Sigma$ with $S = \{a_1, \cdots, a_k\}$, we use $S$ as an abbreviation of $a_1 + \cdots + a_k$.
 

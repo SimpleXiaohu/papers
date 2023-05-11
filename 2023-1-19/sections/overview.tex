@@ -19,11 +19,14 @@ Moreover, we construct another CEFA $\aut_2$ for $\Sigma^* c^+$ (see Figure~\ref
 
 % the register $r_1$ is incremented in the two transitions from $q_0$ to $q_0$ and $q_1$ respectively,  the register $r_2$ is incremented in the two transitions from $q_1$ to $q_1$ and $q_2$ respectively, and the register $r_3$ is incremented in the transition from $q_2$ to $q_2$ itself. Moreover, the register $r_4$ is incremented in each transition.  
 
+
 \begin{figure}[ht]
+\vspace{-3mm}
   \centering
   \includegraphics[width = 0.95\textwidth]{sections/overview-cefa.pdf}
   \caption{CEFA for $(\Sigma \setminus a)^{\{1, 60\}} (\Sigma \setminus b)^{\{1, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$, $\Sigma^* c^+$, and $|x|$}
   \label{fig:overview}
+\vspace{-3mm}
 \end{figure}
 
 Next, 
@@ -35,10 +38,12 @@ For technical convenience, we also think of the updates on the values of registe
 %the transitions corresponding to the self-loop is $(q, a', q', (1,1,0,0))$ with $a' \in \Sigma \setminus \{a\}$.  
 
 \begin{figure}[ht]
+\vspace{-3mm}
   \centering
   \includegraphics[width = 0.95\textwidth]{sections/overview-cefa-product.pdf}
   \caption{$\aut_1 \cap \aut_2 \cap \aut_3$: Intersection of $\aut_1$, $\aut_2$, and $\aut_3$}
   \label{fig:overview:product}
+\vspace{-3mm}
 \end{figure}
 
 %For instance, in the transition from $(p_0, q_1)$ to $(p_1, q_1)$, $r_0$ is incremented, and the values of the other registers is unchanged. Therefore, the vector for this transition is $(1, 0, 0, 0)$. 
@@ -46,10 +51,12 @@ The satisfiability of the original string constraint is reduced to the nonemptin
 It is not hard to observe that the nonemptiness of $\aut_1 \cap \aut_2 \cap \aut_3$ w.r.t. $\varphi \equiv r_4 > 120$ is independent of the characters of $\aut_1 \cap \aut_2 \cap \aut_3$.  Therefore, the characters in $\aut_1 \cap \aut_2 \cap \aut_3$ can be ignored, resulting into an NFA $\cB$ over the alphabet $\costset$ (see Figure~\ref{fig:overview:product:reduced}(a)), where $\costset$ is the set of vectors from $\Int^4$ occurring in the transitions of $\aut_1 \cap \aut_2 \cap \aut_3$. Then the nonemptiness of $\aut_1 \cap \aut_2 \cap \aut_3$ w.r.t. $\varphi \equiv r_4 > 120$ is reduced to the problem of deciding whether there exists $w' \in \costset^*$ such that it is accepted by $\cB$ and its Parikh image (i.e. numbers of occurrences of characters), say $\eta_{w'}: \costset \rightarrow \Nat$, satisfies that $1 \le v'_1 \le 60\wedge 1 \le v'_2 \le 60 \wedge 0 \le v'_3 \le 60$ and $v'_4 > 120$, where $\myvec{v'} = \sum \limits_{\myvec{v} \in \costset} \eta_{w'}(\myvec{v}) \myvec{v}$. Intuitively, $\myvec{v'}$ here is a weighted sum of vectors $\myvec{v} \in \costset$, where the weight for $\myvec{v}$ is the number of occurrences of $\myvec{v}$ in $w'$. (See Section~\ref{subsec:cefadec} for more detailed arguments.)
 
 \begin{figure}[ht]
+\vspace{-3mm}
   \centering
   \includegraphics[width = 0.8\textwidth]{sections/overview-cefa-reduced.pdf}
   \caption{Reduced automaton $\cB$ and $\cC$}
   \label{fig:overview:product:reduced}
+\vspace{-3mm}
 \end{figure}
 
 %Let $\tau_1, \cdots, \tau_m$ be an enumeration of the transitions of $\aut_1 \cap \aut_2 \cap \aut_3$ and $\myvec{v_1}, \cdots, \myvec{v_m}$ be the vectors of updates on the registers in these transitions. 
