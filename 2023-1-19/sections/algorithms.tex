@@ -20,6 +20,7 @@ The decision procedure for proving the upper bound in Proposition~\ref{prop-cefa
 
 %As mentioned in Section \ref{sec:overview}, the main idea of our approach is to model the counting operators symbolically by registers instead of unfolding them explicitly. Additionally, we use registers to represent string lengths. After that, the satisfiability of string constraints involves regex-counting, and string-length is reduced to the satisfiability of LIA, which off-the-shelf SMT solvers can solve. We also propose techniques to reduce automata sizes and utilize under approximations to enhance performance.
 
+\vspace{-2mm}
 \subsection{From $\reclsat$ to $\cefadec$} \label{subsec:regex2cefa}
 
 Let $\varphi$ be a RECL constraint and $x_1, \cdots, x_n$ be an enumeration of the string variables occurring in $\varphi$. Moreover, let $\varphi \equiv \varphi_1 \wedge \varphi_2$ such that $\varphi_1$ is a conjunction of regular membership constraints of $\varphi$, and $\varphi_2$ is a conjunction of length constraints of $\varphi$.
@@ -224,7 +225,7 @@ Given a string-length constraint, we build a CEFA with a register storing the wo
 %%%%%%%%%%% original texts by denghang %%%%%
 %%%%%%%%%%% original texts by denghang %%%%%
 
-
+\vspace{-2mm}
 \subsection{Solving $\cefadec$} \label{subsec:cefadec}
 
 In the sequel, we present a procedure to solve the $\cefadec$ problem: Suppose that $x_1, \cdots, x_n$ are mutually distinct string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the same alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$, moreover, the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, and $\varphi$ is an LIA formula whose free variables are from $R' = \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. 

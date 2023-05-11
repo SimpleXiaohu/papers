@@ -20,6 +20,7 @@ Intuitively, CEFA add write-only cost registers to finite state automata. Here b
 %    a linear integer arithmetic constraint function on final states. $\theta$ is called \emph{accepting condition}.
   \end{itemize}
 \end{definition}
+For a CEFA $\aut$, we use $R_\aut$ to denote the set of registers of $\aut$. 
 %The definition of CEFA above is slightly different from the definition in~\cite{atva2020} in the sense that accepting conditions on register values
 %are attached to final states. 
 
@@ -37,8 +38,6 @@ We would like to remark that the accepting conditions $\alpha$ in CEFA are defin
 %and $\alpha(q_n)[\myvec{\myvec{v'}/\myvec{r}]$ is true, where $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v_j}}$. Note here \denghang{that} we assume that the initial values of all registers are zero and $\sum \limits_{j \in [n]} \myvec{v_j}$ is the vector of register values after all the transitions in the run are executed. A string $w$ is \emph{accepted} by $\aut$ if there is an accepting run of $\aut$ on $w$. The language defined by $\aut$, denoted by $\Lang(\aut)$, is the set of strings that are accepted by $\aut$. 
 
 %Finally, we define the product of two CEFA. 
-
-For convenience, for a CEFA $\aut$, we use $R_\aut$ to denote the set of registers of $\aut$. 
 
 In the sequel, we define three operations on CEFA, namely, union, intersection, and concatenation. These three operations will be used for solving RECL constraints in the next section. 
 

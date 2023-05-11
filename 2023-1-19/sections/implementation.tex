@@ -7,6 +7,7 @@ Then we do experiments on two benchmark suites, to evaluate the performance of O
 
 %This section presents the empirical evaluation of OstrichCEA, which is our implementation of the decision procedure introduced in Section \ref{sec:algorithm}. Our objective is to validate the effectiveness of the proposed techniques by evaluating our tool's correctness and efficiency compared to other solvers. Furthermore, we assess the efficacy of our heuristics by testing different configurations of the tool. We have implemented our encoding for counting with two heuristic algorithms on Ostrich+ \cite{atva2020}. The pre-image computation for concatenation, \verb|indexOf|, \verb|substring|, \verb|replaceAll|, \verb|reverse| and finite transducer remain unchanged. OstrichCEA is written in Scala and based on the SMT solver Princess\cite{princess}.
 
+\vspace{-2mm}
 \subsection{Benchmark suites}
 
 Our experiments utilize two benchmark suites, namely, AutomatArk and RegCoL. In total, there are 48,834 instances in the two benchmark suites. All the benchmark instances are in SMTLIB2 format. 
@@ -44,6 +45,7 @@ counting operator, consisting of a total of 49,379 instances. We analyze all 19 
 %%%%%%%%%%%%%%%%%% the benchmark suite written by Denghang %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% the benchmark suite written by Denghang %%%%%%%%%%%
 
+\vspace{-3mm}
 \subsection{Experiment results}
 
 We evaluated the performance of OSTRICH$^{\rm RECL}$ against the state-of-the-art string constraint solvers, including CVC5 
@@ -63,6 +65,17 @@ The experiments are designed to answer the following two research questions.
 \item[Q2] Do the size-reduction and under-approximation techniques proposed in Section~\ref{sec:algorithm} indeed improve the performance ?
 \end{description}
 
+\begin{table}[ht]
+\vspace{-6mm}
+\begin{center}
+  \import{tables}{table_all.tex}
+\end{center}
+  \caption{Experiment results for Q1, where the timeout period is 60 seconds}
+  \label{tab:results_all}
+\vspace{-7mm}
+\end{table}
+
+
 Q1 is answered by running OSTRICH$^{\rm RECL}$ and the aforementioned solvers on AutomatArk and RegCoL. The experimental results can be found in Table~\ref{tab:results_all}. From Table~\ref{tab:results_all}, we can see that OSTRICH$^{\rm RECL}$ solvers almost all 48,834 instances, except 145 of them, that is, it solves 48,698 instances correctly, which is 3,994/2,272/24,577/12,832/1,091/7,092 more than the number of instances solved by CVC5/Z3seq/Z3-Trau/Z3str3/Z3str3RE/OSTRICH respectively. 
 %    
 Note that Z3seq, Z3-Trau, Z3str3, and Z3str3RE have soundness errors, where the result of CVC5 is taken as the ground truth. If CVC5 reports ``unknown'' or ``timeout'' in some instance, then no soundness errors will be reported in this instance. 
@@ -74,15 +87,6 @@ Note that Z3-Trau reports ``unknown'' on 21,655 instances, which seems to be mai
 
 %\zhilin{may add the results for the two benchmark suites separately.}
 
-\begin{table}[t]
-\vspace{-1mm}
-\begin{center}
-  \import{tables}{table_all.tex}
-\end{center}
-  \caption{Experiment results for Q1, where the timeout period is 60 seconds}
-  \label{tab:results_all}
-\vspace{-5mm}
-\end{table}
 
 
 \begin{table}[ht]
@@ -92,7 +96,7 @@ Note that Z3-Trau reports ``unknown'' on 21,655 instances, which seems to be mai
 \end{center}
   \caption{Experiment results for Q2, where the timeout period is 60 seconds}
   \label{tab:results_heuristics}
-\vspace{-5mm}
+\vspace{-6mm}
 \end{table}
 
 To answer Q2, we compare OSTRICH$^{\rm RECL}$ with its three variants, namely, OSTRICH$^{\rm RECL}$ where the size-reduction, under-approximation, or both are removed. 

@@ -35,16 +35,19 @@ Let $\varphi$ be a RECL formula and $\svars(\varphi)$ (resp. $\ivars(\varphi)$) 
 %
 Then the semantics of formulas are defined with respect to a mapping $\theta: \svars(\varphi) \rightarrow \Sigma^* \uplus \ivars(\varphi) \rightarrow \Int$. 
 The mapping $\theta$ can be naturally extended to the set of integer terms. For instance, $\theta(|x|) =|\theta(x)|$, $\theta(t_1 + t_2) = \theta(t_1) + \theta(t_2)$. 
-A  mapping $\theta$ is said to satisfy $\varphi$, denoted by $\theta \models \varphi$, if one of the following holds,  
-\begin{itemize}
-\item $\varphi \equiv x \in \regex$ and $\theta(x) \in \Lang(\regex)$, 
+A  mapping $\theta$ is said to satisfy $\varphi$, denoted by $\theta \models \varphi$, if one of the following holds: 
+%\begin{itemize}
+%\item 
+$\varphi \equiv x \in \regex$ and $\theta(x) \in \Lang(\regex)$, 
 %
 %\item $\varphi \equiv x \not \in \regex$ and $\theta(x) \not \in \Lang(\regex)$, 
 %
-\item $\varphi \equiv t_1\ \op\ t_2$ and $\theta(t_1)\ \op\ \theta(t_2)$, 
+%\item 
+$\varphi \equiv t_1\ \op\ t_2$ and $\theta(t_1)\ \op\ \theta(t_2)$, 
 %
-\item $\varphi \equiv \varphi_1 \wedge \varphi_2$ and $\theta \models \varphi_1$ and $\theta \models \varphi_2$.
-\end{itemize}
+%\item 
+$\varphi \equiv \varphi_1 \wedge \varphi_2$ and $\theta \models \varphi_1$ and $\theta \models \varphi_2$.
+%\end{itemize}
 A RECL formula $\varphi$ is said to be satisfiable if there is a mapping $\theta$ such that $\theta \models \varphi$. The satisfiability problem for RECL (abbreviated as $\reclsat$) is to decide whether a given RECL formula $\varphi$ is satisfiable. 
 
 
