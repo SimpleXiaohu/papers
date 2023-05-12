@@ -14,7 +14,7 @@ denoted by $u, v, w, \ldots$. An empty string is denoted by $\varepsilon$. We us
 %Let 
 For a string $u$, we use $|u|$ to denote the number of letters in $u$. In particular, $|\varepsilon|=0$. 
 Moreover, for $a \in \Sigma$, let $|u|_a$ denote the number of occurrences of $a$ in $u$. 
-Assume $u=a_0\cdots a_{n-1}$ is nonempty and $i<j \in [0,n-1]$. %Then a \emph{position} of $u$ is a number $i \in [|u|]$ (Note that the first position is $1$, instead of  0). In addition, 
+Assume that $u=a_1\cdots a_{n}$ is nonempty and $i<j \in [n]$. %Then a \emph{position} of $u$ is a number $i \in [|u|]$ (Note that the first position is $1$, instead of  0). In addition, 
 We let $u[i]$ denote $a_i$ and $u[i,j]$ for the substring %of $u$ starting from $i$ and ending with $j$ (i.e., 
 $a_i\cdots a_j$. 
 %\tl{check later for consistency}\zhilin{the indices start from 0, to be consistent with the semantics of substring and indexof}\zhilin{i do use it in section 4}
@@ -68,7 +68,7 @@ Let $w \in \Sigma^*$. The \emph{Parikh image} of $w$, denoted by $\parikh(w)$, i
 \medskip
 \noindent 
 \emph{Linear integer arithmetic and Parikh images.}
-We will also use standard quantifier-free/existential \emph{linear integer arithmetic} (LIA) formulae, which are typically ranged over by $\phi, \varphi$, etc. 
+We will also use standard quantifier-free/existential \emph{linear integer arithmetic} (LIA) formulas, which are typically ranged over by $\phi, \varphi$, etc. 
 For a set $\mathfrak{X}$ of variables, we use $\Phi(\mathfrak{X})$ to denote the set of quantifier-free LIA formulas whose free variables are from $\mathfrak{X}$. 
 For convenience, we use $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ to denote an LIA formula $\varphi$ whose free variables are from $\{\anivar_1, \cdots, \anivar_k\}$. For an LIA formula $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ and $\myvec{t} = (t_1, \cdots, t_k)$ be a tuple of integer terms, we use $\varphi[\myvec{t}/\myvec{\anivar}]$ to denote the formula obtained by replacing (simultaneously) $\anivar_i$ with $t_i$ for every $i \in [k]$.
 %For convenience, we usually assume that a set $X$ of variables is a vector. 
