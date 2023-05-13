@@ -5,6 +5,7 @@
 The goal of this section is to show how we solve RECL constraints by utilizing CEFA. 
 At first, we reduce the satisfiability of RECL constraints into a decision problem for CEFA defined in the sequel. Then we propose an algorithm to solve the decision problem. 
 
+\vspace{-3mm}
 \begin{definition}[Nonemptiness of CEFA w.r.t. an LIA formula\footnote{The decision problem was called satisfiability of an LIA formula w.r.t. CEFA in \cite{atva2020}.}, abbreviated as $\cefadec$]
 Suppose that $x_1, \cdots, x_n$ are string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$, and the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{1, l_1}}, \cdots, R_{\aut_{n, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, moreover, $\varphi$ is an LIA formula whose free variables are from $R' = \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. Then  the CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are said to be nonempty w.r.t. $\varphi$ if there are an assignment $\theta: \{x_1, \cdots, x_n\} \rightarrow \Sigma^*$ and vectors $\myvec{v_{i,j}}$ for $i \in [n], j \in [l_i]$
 %$\myvec{v_{1,1}}, \cdots, \myvec{v_{1, l_1}}, \cdots, \myvec{v_{n, 1}}, \cdots, \myvec{v_{n, l_n}}$ 
@@ -16,6 +17,7 @@ $\varphi[(\myvec{v_{i,j}}/R_{\aut_{i,j}})_{i \in [n], j \in [l_i]}]$ is true.
 %$\varphi[\myvec{v_{1,1}}/R_{\aut_{1,1}}, \cdots, \myvec{v_{n, l_n}}/R_{\aut_{n, l_n}}]$ is true. 
 \end{definition}
 
+\vspace{-4mm}
 \begin{proposition}[\cite{atva2020}]\label{prop-cefadec}
 $\cefadec$ is PSPACE-complete. 
 \end{proposition}
@@ -23,7 +25,7 @@ The decision procedure in \cite{atva2020} was only used to prove the upper bound
 
 %As mentioned in Section \ref{sec:overview}, the main idea of our approach is to model the counting operators symbolically by registers instead of unfolding them explicitly. Additionally, we use registers to represent string lengths. After that, the satisfiability of string constraints involves regex-counting, and string-length is reduced to the satisfiability of LIA, which off-the-shelf SMT solvers can solve. We also propose techniques to reduce automata sizes and utilize under approximations to enhance performance.
 
-\vspace{-2mm}
+\vspace{-3mm}
 \subsection{From $\reclsat$ to $\cefadec$} \label{subsec:regex2cefa}
 
 Let $\varphi$ be a RECL constraint and $x_1, \cdots, x_n$ be an enumeration of the string variables occurring in $\varphi$. Moreover, let $\varphi \equiv \varphi_1 \wedge \varphi_2$ such that $\varphi_1$ is a conjunction of regular membership constraints of $\varphi$, and $\varphi_2$ is a conjunction of length constraints of $\varphi$.
@@ -257,6 +259,7 @@ In the sequel, we reduce the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \L
 
 The first observation follows from the fact that $\Lambda'_{x_i}$ for each $i \in [n]$ contains exactly one CEFA. 
 
+\vspace{-2mm}
 \begin{observation}\label{obs-cefa-output}
 CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are nonempty w.r.t. $\varphi$ iff there are $\myvec{v_{1}} \in \cefaout(\cB_1), \cdots, \myvec{v_{n}} \in \cefaout(\cB_n)$ such that $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true.
 \end{observation}
@@ -273,6 +276,7 @@ Let $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$ be a CEFA and $\costset_\aut =
 Moreover, let $\cU_\aut = (Q, \costset_\aut, \delta', I, F)$ be an NFA over the alphabet $\costset_\aut$ that is obtained from $\aut$ by dropping the accepting condition and ignoring the characters, that is, $\delta'$ comprises the tuples $(q, \myvec{v}, q')$ such that $(q, a, q', \myvec{v}) \in \delta$ for some $a \in \Sigma$.
 %Then $\cefaout(\aut) = \parikh(\NFA')$.
 %
+\vspace{-2mm}
 \begin{observation}\label{obs-cefa-nfa}
 For each CEFA $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$, 
 %

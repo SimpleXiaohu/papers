@@ -68,13 +68,13 @@ We evaluate the performance of $\ostrichrecl$ against the state-of-the-art strin
 %\end{description}
 
 \begin{table}[ht]
-\vspace{-2mm}
+\vspace{-3mm}
 \begin{center}
   \import{tables}{table_regcol.tex}
 \end{center}
   \caption{Experiment results on RegCol, with timeout = 60 seconds}
   \label{tab:results_regcol}
-\vspace{-5mm}
+\vspace{-6mm}
 \end{table}
 
 The experiment results on the RegCol benchmark suite are put in Table~\ref{tab:results_regcol}. 
@@ -90,13 +90,13 @@ Note that Z3-Trau reports ``unknown'' on 21,655 instances, which seems to be mai
 
 
 \begin{table}[ht]
-\vspace{-2mm}
+%\vspace{-1mm}
 \begin{center}
   \import{tables}{table_automatark.tex}
 \end{center}
   \caption{Experiment results on AutomatArk, with timeout = 60 seconds}
   \label{tab:results_automatark}
-\vspace{-5mm}
+\vspace{-6mm}
 \end{table}
 
 The experiment results on the AutomatArk benchmark suite are put in Table~\ref{tab:results_automatark}. 
@@ -113,7 +113,17 @@ Moreover, $\ostrichrecl$ spends 2.49 seconds per instance on average.
 %while the fastest solver Z3str3RE spends 1.71 seconds per instance, and the other solvers spend at least 3.49 seconds per instance.  
 %Note that Z3-Trau reports ``unknown'' on 2,552 instances, which seems to be mainly attributed to the fact that it does not support \verb|re.diff|, the language difference operator of regular expressions. 
 
-In summary, from the results in Table~\ref{tab:results_regcol} and Table~\ref{tab:results_automatark}, $\ostrichrecl$ solves 48,698 out of 48,834 instances, which is 1,091 more than Z3str3RE, the state-of-the-art best solver on RECL constraints. Moreover, the performance (speed) of $\ostrichrecl$ is comparable to that of Z3str3RE.
+In summary, $\ostrichrecl$ solves 48,698 out of 48,834 instances, which is 1,091 more than Z3str3RE, the state-of-the-art best solver on RECL constraints. Moreover, the speed of $\ostrichrecl$ is the second fastest and comparable to that of Z3str3RE. (See Table~\ref{tab:results_summary}.)
+
+\begin{table}[ht]
+\vspace{-3mm}
+\begin{center}
+  \import{tables}{table_summary.tex}
+\end{center}
+  \caption{Experiment results: A Summary}
+  \label{tab:results_summary}
+\vspace{-6mm}
+\end{table}
 
 
 %Q1 is answered by running OSTRICH$^{\rm RECL}$ and the aforementioned solvers on AutomatArk and RegCoL. 
