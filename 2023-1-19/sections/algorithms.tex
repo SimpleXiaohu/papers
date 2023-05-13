@@ -34,7 +34,7 @@ Let us start with register-representable regular expressions defined in the sequ
 
 Let us fix an alphabet $\Sigma$.
 
-Let $e$ be a regular expression over $\Sigma$. Then an occurrence of counting operators in $e$, say $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$), is said to be \emph{register-representable} if $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$) is not in the scope of a Kleene star, another counting operator, complement, or language difference in $e$. We say that $e$ is \emph{register-representable} if all occurrences of counting operators in $e$ are register-representable. For instance, $(a^{\{2, 6\}} \concat b^*) \cap (a + b)^{\{4, \infty\}}$ is register-representable, while $(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ and $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ are not. 
+Let $e$ be a regular expression over $\Sigma$. Then an occurrence of counting operators in $e$, say $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$), is said to be \emph{register-representable} if $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$) is not in the scope of a Kleene star, another counting operator, complement, or language difference in $e$. We say that $e$ is \emph{register-representable} if all occurrences of counting operators in $e$ are register-representable. For instance, $(a^{\{2, 6\}} \concat b^*) \cap (a + b)^{\{4, \infty\}}$ is register-representable, while $(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ and $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ are not, since $a^{\{2,6\}}$ is in the scope of language difference and the counter operator $\{2, \infty\}$ respectively.  
 
 Let $e$ be a register-representable regular expression over $\Sigma$. We are going to construct a CEFA out of $e$, denoted by $\aut_e$, by the following procedure. 
 \begin{enumerate}
@@ -53,14 +53,17 @@ $$
 moreover, $\alpha' = m \le r' \le n$ if $I \cap F = \emptyset$, and $\alpha' = r' \le n$ otherwise.  (Intuitively, if $\varepsilon$ is accepted by $\aut_{e'}$, then the value of $r'$ can be less than $m$.) Finally, $\aut_{(e')^{\{m, \infty\}}}$ is constructed by adapting $\alpha'$ in $\aut_{(e')^{\{m,n\}}}$ as follows: $\alpha' = m \le r'$ if $I \cap F = \emptyset$ and $\alpha' = \ltrue$ otherwise. 
 
 %
-\item For each sub-expression $e'$ of $e$ such that $e'$ contains occurrences of counting operators but $e'$ itself is not of the form $(e'_1)^{\{m,n\}}$ or $(e'_1)^{\{m,\infty\}}$, from the assumption that $e$ is register-representable, we know that $e'$ is of the form $e'_1 \concat e'_2$, $e'_1 + e'_2$, $e'_1 \cap e'_2$, or $(e'_1)$. For $e' = (e'_1)$, we have $\aut_{e'} = \aut_{e'_1}$. For $e' = e'_1 \concat e'_2$, $e' = e'_1 + e'_2$, or $e' = e'_1 \cap e'_2$, suppose that CEFA $\aut_{e'_1}$ and $\aut_{e'_2}$ have been constructed. Without loss of generality,  we assume that $R_{\aut_{e'_1}} \cap R_{\aut_{e'_2}} = \emptyset$. Then we have $\aut_{e'} = \aut_{e'_1} \concat \aut_{e'_2}$, $\aut_{e'} = \aut_{e'_1} \cup \aut_{e'_2}$, or $\aut_{e'} = \aut_{e'_1} \cap \aut_{e'_2}$. 
+\item For each sub-expression $e'$ of $e$ such that $e'$ contains occurrences of counting operators but $e'$ itself is not of the form $(e'_1)^{\{m,n\}}$ or $(e'_1)^{\{m,\infty\}}$, from the assumption that $e$ is register-representable, we know that $e'$ is of the form $e'_1 \concat e'_2$, $e'_1 + e'_2$, $e'_1 \cap e'_2$, or $(e'_1)$. For $e' = (e'_1)$, we have $\aut_{e'} = \aut_{e'_1}$. For $e' = e'_1 \concat e'_2$, $e' = e'_1 + e'_2$, or $e' = e'_1 \cap e'_2$, suppose that CEFA $\aut_{e'_1}$ and $\aut_{e'_2}$ have been constructed. 
+%Without loss of generality,  we assume that $R_{\aut_{e'_1}} \cap R_{\aut_{e'_2}} = \emptyset$. 
+Then we have $\aut_{e'} = \aut_{e'_1} \concat \aut_{e'_2}$, $\aut_{e'} = \aut_{e'_1} \cup \aut_{e'_2}$, or $\aut_{e'} = \aut_{e'_1} \cap \aut_{e'_2}$. 
 \end{enumerate}
 
-\begin{example}
-an example here
-\end{example}
+%\begin{example}
+%an example here
+%\end{example}
 
-For non-register-representable regular expressions, we first transform them into register-representable regular expressions by unfolding all the non-register-representable occurrences of  counting operators, then utilize the aforementioned procedure to construct CEFA. For instance, $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa+aaaa) \concat b^*)^{\{2, \infty\}}$.
+For non-register-representable regular expressions, we first transform them into register-representable regular expressions by unfolding all the non-register-representable occurrences of  counting operators, then utilize the aforementioned procedure to construct CEFA. For instance, $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa+aaaa) \concat b^*)^{\{2, \infty\}}$. 
+The unfoldings of the inner counting operators of non-register-representable regexes incur an exponential blow-up in the worst case. Nevertheless, those regexes occupy only 5\% of the 40,628 regexes that are collected from the practice (see Section~\ref{sec:bench}). Moreover, the unfoldings are partial in the sense that the outmost counting operators are not unfolded. It turns out that our approach can solve almost all of them, except 106.   
 %$(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa + aaaa) \concat b^*) \setminus (a+b)(a+b)(a+b)(a+b)(a+b)^*$.
 
 For each $i \in [n]$, let $x_i \in e_{i, 1}, \cdots, x_i \in e_{i, l_i}$ be an enumeration of the regular membership constraints for $x_i$ in $\varphi_1$.  Then we can construct CEFA $\aut_{i, j}$ from $e_{i, j}$ for each $i \in [n]$ and $j \in [l_i]$. Moreover, we construct another CEFA $\aut_{i, 0}$ for each $i \in [n]$ to model the length of $x_i$. Specifically, $\aut_{i,0}$ is constructed as $((r_{i,0}), \{q_{i,0}\}, \Sigma, \delta_{i,0}, \{q_{i,0}\}, \{q_{i,0}\}, \ltrue)$, where $r_{i,0}$ is a fresh register (in particular, $r_{i,0}$ does not occur in $\aut_{i,1}, \cdots, \aut_{i, l_i}$) and $\delta_{i,0} = \{(q_{i,0}, a, q_{i,0}, (1)) \mid a \in \Sigma\}$. 
@@ -232,10 +235,12 @@ Given a string-length constraint, we build a CEFA with a register storing the wo
 \subsection{Solving $\cefadec$} \label{subsec:cefadec}
 
 In the sequel, we present a procedure to solve the $\cefadec$ problem: Suppose that $x_1, \cdots, x_n$ are mutually distinct string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the same alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$, moreover, the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, and $\varphi$ is an LIA formula whose free variables are from $R' = \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. 
-
-The procedure comprises four steps. 
 %
-\paragraph*{Step 1.} For each $i \in [n]$, compute a CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$, and let $\Lambda'_{x_i} := \{\cB_i\}$. \qed
+The procedure comprises four steps. 
+
+\medskip
+\noindent
+\emph{Step 1.} For each $i \in [n]$, compute a CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$, and let $\Lambda'_{x_i} := \{\cB_i\}$. \qed
 
 %At first, we compute CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$ for each $i \in [n]$. For each $i \in [n]$, let $\Lambda'_{x_i} = \{\cB_i\}$. Evidently, $R_{\cB_i}= \bigcup \limits_{j \in [l_i]} R_{\aut_{i, j}}$ for each $i \in [n]$.
 After Step 1, the nonemptiness of CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$ is reduced to the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$. 
@@ -265,13 +270,13 @@ CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are non
 %\end{itemize}
 
 Let $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$ be a CEFA and $\costset_\aut = \{\myvec{v} \mid \exists q, a, q'.\ (q, a, q', \myvec{v}) \in \delta\}$. 
-Moreover, let $\aut' = (Q, \costset_\aut, \delta', I, F)$ be an NFA over the alphabet $\costset_\aut$ that is obtained from $\aut$ by dropping the accepting condition and ignoring the characters, that is, $\delta'$, the transition relation of $\aut'$, comprises the tuples $(q, \myvec{v}, q')$ such that $(q, a, q', \myvec{v}) \in \delta$ for some $a \in \Sigma$.
+Moreover, let $\cU_\aut = (Q, \costset_\aut, \delta', I, F)$ be an NFA over the alphabet $\costset_\aut$ that is obtained from $\aut$ by dropping the accepting condition and ignoring the characters, that is, $\delta'$ comprises the tuples $(q, \myvec{v}, q')$ such that $(q, a, q', \myvec{v}) \in \delta$ for some $a \in \Sigma$.
 %Then $\cefaout(\aut) = \parikh(\NFA')$.
 %
 \begin{observation}\label{obs-cefa-nfa}
 For each CEFA $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$, 
 %
-$$\cefaout(\aut) = \left\{\sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v} \  \big{|}\ \eta \in \parikh(\NFA') \mbox{ and }  \alpha\left[ \sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v} \big{/} R \right] \mbox{ is true}\right\}.$$
+$$\cefaout(\aut) = \left\{\sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v} \  \big{|}\ \eta \in \parikh(\cU_\aut) \mbox{ and }  \alpha\left[ \sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v} \big{/} R \right] \mbox{ is true}\right\}.$$
 %
 \end{observation}
 
@@ -286,7 +291,7 @@ Then from Observation~\ref{obs-cefa-nfa}, we know that the following two conditi
 %CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are nonempty w.r.t. $\varphi$ 
 %
 \item 
-there are $\eta_1 \in \parikh(\cB'_1), \cdots, \eta_n \in \parikh(\cB'_n)$ such that 
+there are $\eta_1 \in \parikh(\cU_{\cB_1}), \cdots, \eta_n \in \parikh(\cU_{\cB_n})$ such that 
 %
 %\begin{equation}\label{eqn-cefa-lia}
 \[
@@ -297,32 +302,32 @@ there are $\eta_1 \in \parikh(\cB'_1), \cdots, \eta_n \in \parikh(\cB'_n)$ such 
 is true. 
 \end{itemize}
 
-Therefore, to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$, it is sufficient to compute the existential LIA formulas $\psi_{\cB'_1}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cB'_n}(\fZ_{\costset_{\cB_n}})$ to represent the Parikh images of $\cB'_1$, $\cdots$, $\cB'_n$ respectively, where $\fZ_{\costset_{\cB_i}} = \{\anivarz_{i,\myvec{v}} \mid \myvec{v} \in \costset_{\cB_i}\}$ for $i \in [n]$, and solve the satisfiability of the following existential LIA formula
+Therefore, to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$, it is sufficient to compute the existential LIA formulas $\psi_{\cU_{\cB_1}}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cU_{\cB_n}}(\fZ_{\costset_{\cB_n}})$ to represent the Parikh images of $\cU_{\cB_1}$, $\cdots$, $\cU_{\cB_n}$ respectively, where $\fZ_{\costset_{\cB_i}} = \{\anivarz_{i,\myvec{v}} \mid \myvec{v} \in \costset_{\cB_i}\}$ for $i \in [n]$, and solve the satisfiability of the following existential LIA formula
 %
 %\begin{equation}\label{eqn-cefa-lia}
 \[
 \begin{array}{l}
 %\scriptsize
-\bigwedge \limits_{i \in [n]} \left(\psi_{\cB'_i}(\fZ_{\costset_{\cB_i}}) \wedge \alpha_i\left[\sum\limits_{\myvec{v} \in \costset_{\cB_i}} \anivarz_{i, \myvec{v}} \myvec{v} \big{/}R_{\cB_i}  \right] \right)\  \wedge \\
+\bigwedge \limits_{i \in [n]} \left(\psi_{\cU_{\cB_i}}(\fZ_{\costset_{\cB_i}}) \wedge \alpha_i\left[\sum\limits_{\myvec{v} \in \costset_{\cB_i}} \anivarz_{i, \myvec{v}} \myvec{v} \big{/}R_{\cB_i}  \right] \right)\  \wedge \\
 \ \ \varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cB_1}} \anivarz_{1, \myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cB_n}} \anivarz_{n, \myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
 \end{array}
 \]
 %\end{equation}
-Intuitively, the integer variables $\anivarz_{i, \myvec{v}}$ represent the number of occurrences of $\myvec{v}$ in the strings accepted by $\cB'_i$.
+Intuitively, the integer variables $\anivarz_{i, \myvec{v}}$ represent the number of occurrences of $\myvec{v}$ in the strings accepted by $\cU_{\cB_i}$.
 %where $\anivarz_{\myvec{v}}$'s are integer variables to represent the number of occurrences of $\myvec{v}$. 
 
-Because the sizes of the LIA formulas $\psi_{\cB'_1}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cB'_n}(\fZ_{\costset_{\cB_n}})$ are proportional to the sizes (more precisely, the alphabet size, the number of states and transitions) of NFA $\cB'_1, \cdots, \cB'_n$, and it is expensive (NP-complete) to solve the satisfiability of existential LIA formulas, it is vital to reduce the sizes of these NFA.
+Because the sizes of the LIA formulas $\psi_{\cU_{\cB_1}}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cU_{\cB_n}}(\fZ_{\costset_{\cB_n}})$ are proportional to the sizes (more precisely, the alphabet size, the number of states and transitions) of NFA $\cU_{\cB_1}, \cdots, \cU_{\cB_n}$, and it is expensive (NP-complete) to solve the satisfiability of existential LIA formulas, it is vital to reduce the sizes of these NFA.
 
-Furthermore, we have the following observation: For each $i \in [n]$ and $\eta \in \parikh(\cB'_i)$, we have 
+Furthermore, we have the following observation: For each $i \in [n]$ and $\eta \in \parikh(\cU_{\cB_i})$, we have 
 $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v} = \sum \limits_{\myvec{v} \in \costset(\cB_i) \setminus \{\myvec{0}\}} \eta(\myvec{v}) \myvec{v}.$
-In other words, the $\myvec{0}$-labeled transitions in $\cB'_i$ do not contribute to the sum $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v}$.  
+In other words, the $\myvec{0}$-labeled transitions in $\cU_{\cB_i}$ do not contribute to the sum $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v}$.  
 
-Therefore, we can reduce the sizes of $\cB'_1, \cdots, \cB'_n$ by Step II in the sequel. 
+Therefore, we can reduce the sizes of $\cU_{\cB_1}, \cdots, \cU_{\cB_n}$ by Step 2 in the sequel. 
 
-\paragraph*{Step 2.} For each $i \in [n]$, we view the transitions $(q, \myvec{0}, q')$ in $\cB'_i$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, then remove the $\varepsilon$-transitions from $\cB'_i$, determinize the resulting NFA, and minimize it.  \qed
+\paragraph*{Step 2.} For each $i \in [n]$, we view the transitions $(q, \myvec{0}, q')$ in $\cU_{\cB_i}$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, then remove the $\varepsilon$-transitions from $\cU_{\cB_i}$, determinize and minimize the resulting NFA.  \qed
 
-For $i \in [n]$, let  $\cC_i$ denote the DFA obtained from $\cB'_i$ by executing Step 2 and $\costset_{\cC_i} := \costset_{\cB_i} \setminus \{\myvec{0}\}$. From the construction, we know that $\parikh(\cC_i) = \prj_{\costset_{\cC_i}}(\parikh(\cB'_i))$ for each $i \in [n]$.
-Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cB'_i$'s, to represent the Parikh images. 
+For $i \in [n]$, let  $\cC_i$ denote the DFA obtained from $\cU_{\cB_i}$ by executing Step 2 and $\costset_{\cC_i} := \costset_{\cB_i} \setminus \{\myvec{0}\}$. From the construction, we know that $\parikh(\cC_i) = \prj_{\costset_{\cC_i}}(\parikh(\cU_{\cB_i}))$ for each $i \in [n]$.
+Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cU_{\cB_i}$'s, to represent the Parikh images. 
 
 
 \paragraph*{Step 3.} For each $i \in [n]$, compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then solve the satisfiability of the following existential LIA formula 
@@ -339,26 +344,31 @@ Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cB'_i$'s, to rep
 %\varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cB_1}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cB_n}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
 %\]
 
-Finally, although we propose techniques to reduce the sizes of $\cB'_i$'s, it is still relatively expensive to compute LIA formulas from $\cC_i$'s and solve their satisfiability, especially for those problem instances with positive answers, namely, those instances where CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty w.r.t. $\varphi$.   
-Therefore, in the sequel, we propose a heuristic to search for solutions for those positive problem instances by utilizing under approximations, to be executed before Step 3. Intuitively, we search for solutions by bounding the lengths of the strings that are accepted by $\cC_i$'s. The heuristic uses a constant bound $B > 0$ and searches for solutions incrementally, starting from strings of length $0$. Since the heuristic is executed after Step 2 and before Step 3, we call it Step 2.5. 
+Finally, although we propose techniques to reduce the sizes of $\cU_{\cB_i}$'s, it is still relatively expensive to compute LIA formulas from $\cC_i$'s and solve their satisfiability, especially for those satisfiable problem instances, namely, those instances where CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty w.r.t. $\varphi$.   
+Therefore, in the sequel, we propose a heuristic to search for solutions by utilizing under approximations, to be executed before Step 3. Intuitively, we search for solutions by bounding the lengths of the strings that are accepted by $\cC_i$'s. The heuristic uses a constant bound $B > 0$ and searches for solutions incrementally, starting from strings of length $0$. Since the heuristic is executed after Step 2 and before Step 3, we call it Step 2.5. 
 
 For $i \in [n]$, suppose $R_{\cB_i} = (r_{i,1},\cdots, r_{i, k_i})$ and $\cC_i = (Q'_i, \costset_{\cC_i}, \delta'_i, q_{i,0}, F'_i)$. 
 
-\paragraph*{Step 2.5.} Initially, let $len := 0$, and for each $i \in [n]$, let $\confset_{\cC_i}:=\emptyset$, $\confset'_{\cC_i}:=\{(q_{i,0}, \myvec{0})\}$, and $\psi_{\cC_i}:= \lfalse$.  Then iterate the following procedure, until $len = B+1$.
+\paragraph*{Step 2.5.} Initially, let $len := 0$, and for each $i \in [n]$, let 
+%$\confset_{\cC_i}:=\emptyset$, 
+$\confset_{\cC_i}:=\{(q_{i,0}, \myvec{0})\}$ 
+and $\psi_{\cC_i}:= \lfalse$.  Then iterate the following procedure, until $len = B+1$.
 \begin{enumerate}
 \item Let $\xi: = \bigwedge \limits_{i \in [n]} \alpha_i \wedge \varphi$.
 %
 \item For each $i \in [n]$, do the following.
 \begin{enumerate}
-\item Let $\confset_{\cC_i}:= \confset_{\cC_i} \cup \confset'_{\cC_i}$, $temp:=\confset'_{\cC_i}$, $\confset'_{\cC_i}:=\emptyset$.
+\item Let 
+%$\confset_{\cC_i}:= \confset_{\cC_i} \cup \confset'_{\cC_i}$, 
+$old_i:=\confset_{\cC_i}$, $\confset_{\cC_i}:=\emptyset$.
 %
-\item For each $(q, \myvec{v}) \in temp$,
+\item For each $(q, \myvec{v}) \in old_i$,
 \begin{enumerate}
 \item if $q \in F'_i$, then let $\psi_{\cC_i}:=\psi_{\cC_i} \vee (\bigwedge \limits_{j \in [k_i]} r_{i,j} = v_j)$, 
 %
 %\item let $\confset'_{\cC_i}:=\confset'_{\cC_i} \setminus \{(q, \myvec{v})\}$, 
 %
-\item for each $(q, \myvec{v'}, q') \in \delta'_i$, let $\confset'_{\cC_i}:=\confset'_{\cC_i} \cup \{(q', \myvec{v}+ \myvec{v'})\}$. 
+\item for each $(q, \myvec{v'}, q') \in \delta'_i$, let $\confset_{\cC_i}:=\confset_{\cC_i} \cup \{(q', \myvec{v}+ \myvec{v'})\}$. 
 \end{enumerate}
 %
 %\item 
@@ -368,9 +378,12 @@ For $i \in [n]$, suppose $R_{\cB_i} = (r_{i,1},\cdots, r_{i, k_i})$ and $\cC_i =
 %
 \item If $\xi$ is satisfiable, then report $\ltrue$ and the whole algorithm terminates. 
 %
-\item Let $len: = len+1$.
+\item Let $len: = len+1$. \qed
 \end{enumerate}
-Intuitively, for each $i \in [n]$, $\confset'_{\cC_i}$ stores the set of ``configurations'' of $\cC_i$ that were newly discovered, and $\confset_{\cC_i}$ stores those that have been discovered before.
+Intuitively, for each $i \in [n]$, $\psi_{\cC_i}$ is a global variable whose value is never reset and it stores the set of ``final'' valuations of registers of $\cC_i$ (that is, the valuations obtained when reaching final states), and $\confset_{\cC_i}$ stores the set of newly discovered (not necessarily final) ``configurations'' of $\cC_i$.
+%, and $\confset_{\cC_i}$ stores those that have been discovered before. 
+Note that the solution searching algorithm in Step 2.5 is incremental in the sense that when the value of $len$ is incremented, the searching continues from $\confset_{\cC_i}$'s, not from scratch.
+%, whose values are not reset.
 %Furthermore, for each $i \in [n]$, we can remove the redundancy of characters/vectors in $\cC_i$. 
 
 

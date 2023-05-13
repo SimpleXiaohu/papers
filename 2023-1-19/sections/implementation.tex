@@ -8,7 +8,7 @@ Then we do experiments on two benchmark suites, to evaluate the performance of O
 %This section presents the empirical evaluation of OstrichCEA, which is our implementation of the decision procedure introduced in Section \ref{sec:algorithm}. Our objective is to validate the effectiveness of the proposed techniques by evaluating our tool's correctness and efficiency compared to other solvers. Furthermore, we assess the efficacy of our heuristics by testing different configurations of the tool. We have implemented our encoding for counting with two heuristic algorithms on Ostrich+ \cite{atva2020}. The pre-image computation for concatenation, \verb|indexOf|, \verb|substring|, \verb|replaceAll|, \verb|reverse| and finite transducer remain unchanged. OstrichCEA is written in Scala and based on the SMT solver Princess\cite{princess}.
 
 \vspace{-2mm}
-\subsection{Benchmark suites}
+\subsection{Benchmark suites}\label{sec:bench}
 
 Our experiments utilize two benchmark suites, namely, AutomatArk and RegCoL. In total, there are 48,834 instances in the two benchmark suites. All the benchmark instances are in SMTLIB2 format. 
 
