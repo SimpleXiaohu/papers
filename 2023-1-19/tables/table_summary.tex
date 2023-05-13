@@ -1,0 +1,18 @@
+%\documentclass[11pt]{standalone}
+%\usepackage{color}
+%\usepackage{tikz}
+%\usepackage{pgfplots}
+%\usepgfplotslibrary{fillbetween}
+%\pgfplotsset{compat=1.16}
+%\begin{document}
+\resizebox{.95\textwidth}{!}{\begin{tabular}{|c |c |c |c |c |c |c |c |}
+    \hline
+         solver                                                                  & CVC5       & Z3seq      & Z3-Trau & Z3str3     & Z3str3RE   & OSTRICH    & OSTRICH$^{\rm RECL}$ \\
+    \hline\hline
+    solved correctly                                                         & 44,704     & 46,426     & 24,121  & 35,866     & 47,607     & 41,606      & {\bf 48,698}         \\
+    \hline
+    \begin{tabular}{c}average time \\ per instance \\ (seconds)\end{tabular} & 5.67       & 3.49       & 5.41    & 8.54       & {\bf 1.71} & 3.9        & 2.93                 \\
+    \hline
+  \end{tabular}}
+
+%\end{document}
