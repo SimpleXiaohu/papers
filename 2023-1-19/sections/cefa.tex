@@ -9,7 +9,7 @@ Intuitively, CEFA add write-only cost registers to finite state automata. Here b
 %
 %In~\cite{atva2020}, the cost function is defined as a function $\eta: \Sigma \rightarrow \mathbb{N}$. In this paper, we define the cost function as an integer vector whose elements are the incremental value of registers. Furthermore, we add a new linear integer arithmetic constraint $\theta$ to each final state of the CEFA, which restricts the value of registers. Two types of definitions have the same expressive ability on the $SAT_{CL}$ problem.
 \begin{definition}[Cost-Enriched Finite Automaton]
-  A cost-enriched finite automaton $\aut$ is a tuple $(R, Q, \Sigma, \delta, I, F)$ where
+  A cost-enriched finite automaton $\aut$ is a tuple $(R, Q, \Sigma, \delta, I, F, \alpha)$ where
   \begin{itemize}
   \item $R = \{r_1, \cdots, r_k\}$ is a finite set of registers, 
     \item $Q, \Sigma, I, F$ are as in the definition of NFA,
