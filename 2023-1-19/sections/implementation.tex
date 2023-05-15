@@ -18,7 +18,6 @@ Our experiments utilize two benchmark suites, namely, RegCoL and AutomatArk. In 
 $x \in e \wedge x \in \overline{\Sigma^*(<+ >+'+''+\&)\Sigma^*} \wedge |x| > 10,$   
 where $\Sigma^*(<+ >+'+''+\&)\Sigma^*$ is a regular expression that specifies at least one occurrence of special characters $<$, $>$, $'$, $''$, or $\&$, and $\overline{e'}$ denotes the complement of a regular expression $e'$. 
 %We would like to remark that there are about 500,000 real-world regular expressions in \cite{regex_lingua_franca,redos_lenka} and regular expressions with counting operators occupy about 8\% of them. 
-Moreover, among these 40,628 RECL constraints, only 5\% of them include non-register-representable regexes.
 
 \medskip
 \noindent
@@ -26,6 +25,8 @@ Moreover, among these 40,628 RECL constraints, only 5\% of them include non-regi
 The AutomatArk benchmark suite is adapted from the AutomatArk suite in \cite{z3str3re} by filtering out the string constraints that contain no occurrences of counting operators and adding the length constraint $|x| > 10$ (where $x$ is a string variable). There are 8,215 instances in the AutomatArk suite here.
 Note that the original AutomatArk benchmark suite in \cite{z3str3re} includes 19,979 instances in total, which are conjunctions of regular membership queries and generated out of regular expressions from \cite{automatark}. 
 %Only 8,751 ones that contain counting operators out of 19,979 instances. 
+
+Moreover, among the 48,834 RECL constraints in the RegCoL or AutomatArk suite, only 5\% of them include non-register-representable regexes.
 
 %%%%%%%%%%%%%%%%%% the benchmark suite written by Denghang %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% the benchmark suite written by Denghang %%%%%%%%%%%
