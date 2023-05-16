@@ -9,7 +9,7 @@ Intuitively, CEFA add write-only cost registers to finite state automata. Here b
 %
 %In~\cite{atva2020}, the cost function is defined as a function $\eta: \Sigma \rightarrow \mathbb{N}$. In this paper, we define the cost function as an integer vector whose elements are the incremental value of registers. Furthermore, we add a new linear integer arithmetic constraint $\theta$ to each final state of the CEFA, which restricts the value of registers. Two types of definitions have the same expressive ability on the $SAT_{CL}$ problem.
 \begin{definition}[Cost-Enriched Finite Automaton]
-  A cost-enriched finite automaton $\aut$ is a tuple $(R, Q, \Sigma, \delta, I, F)$ where
+  A cost-enriched finite automaton $\aut$ is a tuple $(R, Q, \Sigma, \delta, I, F, \alpha)$ where
   \begin{itemize}
   \item $R = \{r_1, \cdots, r_k\}$ is a finite set of registers, 
     \item $Q, \Sigma, I, F$ are as in the definition of NFA,
@@ -49,17 +49,30 @@ Moreover, suppose that $R_1 \cap R_2 = \emptyset$ and $Q_1 \cap Q_2 = \emptyset$
 The \emph{union} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cup \aut_2$, is defined in a slightly more involved manner than NFA, as a result of the technical choice that the accepting conditions of CEFA do not distinguish final states. Two fresh auxiliary registers, say $r'_1,r'_2 \not \in R_1 \cup R_2$, are introduced so that the accepting condition knows whether a run is from $\aut_1$ or from $\aut_2$. Specifically, $\aut_1 \cup \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$, where 
 \begin{itemize}
 \item $R' = R_1 \cup R_2 \cup \{r'_1, r'_2\}$, $Q' = Q_1 \cup Q_2 \cup \{q'_0\}$ with $q'_0 \not \in Q_1 \cup Q_2$, $I' = \{q'_0\}$, 
-\item $\delta'$ is the union of $\{(q'_0, a, q'_1, (\myvec{v_1}, \myvec{0}, 1,0)) \mid \exists q_1 \in I_1.\ (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\}$, $\{(q'_0, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 1)) \mid \exists q_2 \in I_2.\ (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\}$, $\{(q_1, a, q'_1, (\myvec{v_1}, \myvec{0}, 0, 0)) \mid (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\}$, and $\{(q_2, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 0)) \mid (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\}$, where $\myvec{0}$ in $(\myvec{v_1}, \myvec{0}, 1,0)$ is a vector of updates on $R_2$ and $1,0$, the last two components of the vector, denote the updates on $r'_1$ and $r'_2$, similarly for $(\myvec{0}, \myvec{v_2}, 0, 1)$, and so on.
+%
+\item $\delta'$ is the union of $\{(q'_0, a, q'_1, (\myvec{v_1}, \myvec{0}, 1,0)) \mid \exists q_1 \in I_1.\ (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\}$, $\{(q'_0, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 1)) \mid \exists q_2 \in I_2.\ (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\}$, $\{(q_1, a, q'_1, (\myvec{v_1}, \myvec{0}, 0, 0)) \mid (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\}$, and $\{(q_2, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 0)) \mid (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\}$, where $(\myvec{v_1}, \myvec{0}, 1,0)$ is a vector that updates $R_1$ by $\myvec{v_1}$, updates $R_2$ by $\myvec{0}$, and updates $r'_1,r'_2$ by $1,0$ respectively. Similarly for $(\myvec{0}, \myvec{v_2}, 0, 1)$, and so on.
 
 \item $F'$ and $\alpha'$ are defined as follows, 
 \begin{itemize}
-\item if $I_1 \cap F_1 \neq \emptyset$ or $I_2 \cap F_2 \neq \emptyset$, then $F' = F_1 \cup F_2 \cup \{q'_0\}$ and $\alpha' = (r'_1 = 0 \wedge r'_2 = 0) \vee (r'_1=1 \wedge \alpha_1) \vee (r'_2=1 \wedge \alpha_2)$, 
+\item if either $I_1 \cap F_1 \neq \emptyset$ and $\alpha_1[\myvec{0}/R_1]$ is true, or $I_2 \cap F_2 \neq \emptyset$ and $\alpha_2[\myvec{0}/R_2]$ is true, then $F' = F_1 \cup F_2 \cup \{q'_0\}$ and $\alpha' = (r'_1 = 0 \wedge r'_2 = 0) \vee (r'_1=1 \wedge \alpha_1) \vee (r'_2=1 \wedge \alpha_2)$, 
+%
+%\item otherwise, if $I_2 \cap F_2 \neq \emptyset$, then $F' = F_1 \cup F_2 \cup \{q'_0\}$ and $\alpha' = (r'_1 = 0 \wedge r'_2 = 0 \wedge \alpha_2) \vee (r'_1=1 \wedge \alpha_1) \vee (r'_2=1 \wedge \alpha_2)$, 
 %
 \item otherwise, $F'=F_1 \cup F_2$ and $\alpha' = (r'_1=1 \wedge \alpha_1) \vee (r'_2=1 \wedge \alpha_2)$.
 \end{itemize}
 \end{itemize}
 From the construction, we know that 
-$$\Lang(\aut_1 \cup \aut_2) = \{(w; \myvec{v}) \mid \myvec{v} \in \Int^{R'}, (w; \prj_{R_1}(\myvec{v})) \in \Lang(\aut_1) \mbox{ or } (w; \prj_{R_2}(\myvec{v})) \in \Lang(\aut_2)\}.$$ 
+$$
+\Lang(\aut_1 \cup \aut_2) = 
+\left\{(w; \myvec{v}) \left \vert 
+\begin{array}{l}
+%\myvec{v} \in \Int^{R'}, 
+(w; \prj_{R_1}(\myvec{v})) \in \Lang(\aut_1) \mbox{ and } \prj_{R_2}(\myvec{v}) = \myvec{0}, \mbox{ or } \\
+(w; \prj_{R_2}(\myvec{v})) \in \Lang(\aut_2) \mbox{ and } \prj_{R_1}(\myvec{v}) = \myvec{0}
+\end{array}
+\right.
+\right\}.
+$$ 
 
 The \emph{intersection} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cap \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$, is defined in the sequel. 
 \begin{itemize}
