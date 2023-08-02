@@ -2,7 +2,7 @@
 %\documentclass{standalone}
 %\begin{document}
 
-We write $\Nat$ and $\Int$ for the sets of natural and integer numbers, respectively. For $n \in \Nat$ with $n \ge 1$, $[n]$ denotes $\{1, \ldots, n\}$; for $m,n \in \Nat$ with $m \le n$,  $[m, n]$ denotes $\{ i \in \Nat \mid m \le i \le n \}$. Throughout the paper, $\Sigma$ is a finite alphabet, ranged over by $a,b,\ldots$.  
+We write $\Nat$ and $\Int$ for the sets of natural and integer numbers. For $n \in \Nat$ with $n \ge 1$, $[n]$ denotes $\{1, \ldots, n\}$; for $m,n \in \Nat$ with $m \le n$,  $[m, n]$ denotes $\{ i \in \Nat \mid m \le i \le n \}$. Throughout the paper, $\Sigma$ is a finite alphabet, ranged over by $a,b,\ldots$.  
 
 For a function $f$ from $X$ to $Y$ and $X' \subseteq X$, we use $\prj_{X'}(f)$ to denote the restriction (aka projection) of $f$ to $X'$, that is, $\prj_{X'}(f)$ is a function from $X'$ to $Y$, and $\prj_{X'}(f)(x') = f(x')$ for each $x' \in X'$.
 
@@ -39,7 +39,7 @@ An NFA $\NFA$ is said to be \emph{deterministic} if $I$ is a singleton and, for 
 %
 
 It is well-known that finite automata capture regular languages. 
-Moreover, the class of regular languages is closed under union, intersection, concatenation, Kleene star, complement, and language difference \cite{HU79}.  In the sequel, we recall the constructions of NFA corresponding to these language operations. Let $\NFA_1 = (Q_1, \Sigma, \delta_1, I_1, F_1)$ and $\NFA_2 = (Q_2, \Sigma, \delta_2, I_2, F_2)$ be two NFA such that $Q_1 \cap Q_2 = \emptyset$. 
+Moreover, the class of regular languages is closed under union, intersection, concatenation, Kleene star, complement, and language difference \cite{HU79}. In the sequel, we recall the constructions of NFA corresponding to these language operations. Let $\NFA_1 = (Q_1, \Sigma, \delta_1, I_1, F_1)$ and $\NFA_2 = (Q_2, \Sigma, \delta_2, I_2, F_2)$ be two NFA such that $Q_1 \cap Q_2 = \emptyset$. 
 \begin{itemize}
 \item The union of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \cup \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q'= Q_1 \cup Q_2$, $\delta' = \delta_1 \cup \delta_2$, $I' = I_1 \cup I_2$, and $F'=F_1 \cup F_2$. 
 %
@@ -57,21 +57,21 @@ Moreover, the class of regular languages is closed under union, intersection, co
 Let $w \in \Sigma^*$. The \emph{Parikh image} of $w$, denoted by $\parikh(w)$, is defined as the function $\eta: \Sigma \rightarrow \Nat$ such that $\eta(a) = |w|_a$ for each $a \in \Sigma$. The \emph{Parikh image} of an NFA $\NFA$, denoted by $\parikh(\NFA)$, is defined as $\{\parikh(w) \mid w \in \Lang(\NFA)\}$.
 
 
-%\tl{to put in a different place later} Note that our decision procedure is applicable to general transducers as well, however, the EXPSPACE complexity bound is not, because the distributive property $f^{-1}(L_1\cap L_2)= f^{-1}(L_1)\cap f^{-1}(L_2)$ for regular languages $L_1, L_2$ only holds for functional transducers $f$.  
+%\tl{to put in a different place later} Note that our decision procedure also applies to general transducers. However, the EXPSPACE complexity bound is not because the distributive property $f^{-1}(L_1\cap L_2)= f^{-1}(L_1)\cap f^{-1}(L_2)$ for regular languages $L_1, L_2$ only holds for functional transducers $f$.  
 
 %We remark that an FT usually defines a relation.
 
 %\smallskip
 
-%In this paper, we consider logics involving two data-types, i.e., the string data-type and the integer data-type. We will use $u, v, \dots$ to denote string constants,  $c, d,\dots$ to denote integer constants, $x, y, \dots$ to denote string variables, and $i, j, \dots$ to denote  integer variables.
+%In this paper, we consider logic involving two data types, i.e., the string and integer data types. We will use $u, v, \dots$ to denote string constants,  $c, d,\dots$ to denote integer constants, $x, y, \dots$ to denote string variables, and $i, j, \dots$ to denote integer variables.
 
 \medskip
 \noindent 
 \emph{Linear integer arithmetic and Parikh images.}
-We will also use standard quantifier-free/existential \emph{linear integer arithmetic} (LIA) formulas, which are typically ranged over by $\phi, \varphi$, etc. 
+We will also use standard quantifier-free/existential \emph{linear integer arithmetic} (LIA) formulas, which typically range over by $\phi, \varphi$. 
 For a set $\mathfrak{X}$ of variables, we use $\Phi(\mathfrak{X})$ to denote the set of quantifier-free LIA formulas whose free variables are from $\mathfrak{X}$. 
 For convenience, we use $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ to denote an LIA formula $\varphi$ whose free variables are from $\{\anivar_1, \cdots, \anivar_k\}$. For an LIA formula $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ and $\myvec{t} = (t_1, \cdots, t_k)$ be a tuple of integer terms, we use $\varphi[\myvec{t}/\myvec{\anivar}]$ to denote the formula obtained by replacing (simultaneously) $\anivar_i$ with $t_i$ for every $i \in [k]$.
-%For convenience, we usually assume that a set $X$ of variables is a vector. 
+%For convenience, we assume a set $X$ of variables is a vector. 
 %, which is essentially Presburger 
 
 At last, we recall a result about Parikh images of NFA. 

@@ -3,9 +3,9 @@
 %\begin{document}
 
 %\subsubsection{Syntax}
-In the sequel, we define string constraints with regex-counting and string-length function (abbreviated as RECL). The syntax of RECL is defined by the rules in Figure~\ref{fig:syntax}, where $x$ is a string variable, $\anivar$ is an integer variable, $a$ is a character from an alphabet $\Sigma$, and $m, n$ are integer constants. 
+In the sequel, we define string constraints with regex-counting and string-length functions (abbreviated as RECL). The syntax of RECL is defined by the rules in Figure~\ref{fig:syntax}, where $x$ is a string variable, $\anivar$ is an integer variable, $a$ is a character from an alphabet $\Sigma$, and $m, n$ are integer constants. 
 A RECL formula $\varphi$ is a conjunction of atomic formulas of the form $x \in \regex$ or $t_1\ \op\ t_2$, where $\regex$ is a regular expression,  
-$t_1$ and $t_2$ are integer terms, and $\op \in \{=, \neq, \le, \ge, <, >\}$. Atomic formulas of the form $x \in \regex$ are called \emph{regular membership} constraints and atomic formulas of the form $t_1\ \op\ t_2$ are called \emph{length} constraints. 
+$t_1$ and $t_2$ are integer terms, and $\op \in \{=, \neq, \le, \ge, <, >\}$. Atomic formulas of the form $x \in \regex$ are called \emph{regular membership} constraints, and atomic formulas of the form $t_1\ \op\ t_2$ are called \emph{length} constraints. 
 %
 A regular expression $\regex$ is built from $\emptyset$, the empty string $\epsilon$, and characters $a$ by using concatenation  $\cdot$, union $+$, Kleene star $^*$, intersection $\cap$, complement $\bar{\mbox{ }}$, difference $\setminus$, counting $^{\{m,n\}}$ or $^{\{m,\infty\}}$. An integer term is built from constants $n$, variables $\anivar$, and string lengths $|x|$, by operators $+$ and $-$.
 % 
@@ -26,7 +26,7 @@ $ \begin{array}{l l l r}
 \end{figure}
 Moreover, for $S \subseteq \Sigma$ with $S = \{a_1, \cdots, a_k\}$, we use $S$ as an abbreviation of $a_1 + \cdots + a_k$.
 
-%The definition of the semantics of RECL is standard. Nevertheless, for readibility, we include the definition of its semantics here. 
+%The definition of the semantics of RECL is standard. Nevertheless, for readability, we include the definition of its semantics here. 
 
 For each regular expression $e$, the language defined by $e$, denoted by $\Lang(e)$, is defined recursively. For instance, $\Lang(\emptyset) = \emptyset$, $\Lang(\varepsilon) = \{\varepsilon\}$, $\Lang(a) = \{a\}$, and $\Lang(e_1 \cdot e_2) = \Lang(e_1) \cdot \Lang(e_2)$, $\Lang(e_1 + e_2) = \Lang(e_1) \cup \Lang(e_2)$, and so on. 
 It is well-known that regular expressions define the same class of languages as finite state automata, that is, the class of regular languages \cite{HU79}. 
@@ -34,7 +34,7 @@ It is well-known that regular expressions define the same class of languages as 
 Let $\varphi$ be a RECL formula and $\svars(\varphi)$ (resp. $\ivars(\varphi)$) denote the set of string (resp. integer) variables occurring in $\varphi$. 
 %
 Then the semantics of  $\varphi$ is defined with respect to a mapping $\theta: \svars(\varphi) \rightarrow \Sigma^* \uplus \ivars(\varphi) \rightarrow \Int$ (where $\uplus$ denotes the disjoint union). 
-Note that the mapping $\theta$ can be naturally extended to the set of integer terms. For instance, $\theta(|x|) =|\theta(x)|$, $\theta(t_1 + t_2) = \theta(t_1) + \theta(t_2)$. 
+Note that the mapping $\theta$ can naturally extend to the set of integer terms. For instance, $\theta(|x|) =|\theta(x)|$, $\theta(t_1 + t_2) = \theta(t_1) + \theta(t_2)$. 
 A  mapping $\theta$ is said to satisfy $\varphi$, denoted by $\theta \models \varphi$, if one of the following holds: 
 %\begin{itemize}
 %\item 
@@ -48,7 +48,7 @@ $\varphi \equiv t_1\ \op\ t_2$ and $\theta(t_1)\ \op\ \theta(t_2)$,
 %\item 
 $\varphi \equiv \varphi_1 \wedge \varphi_2$ and $\theta \models \varphi_1$ and $\theta \models \varphi_2$.
 %\end{itemize}
-A RECL formula $\varphi$ is said to be satisfiable if there is a mapping $\theta$ such that $\theta \models \varphi$. The satisfiability problem for RECL (abbreviated as $\reclsat$) is to decide whether a given RECL formula $\varphi$ is satisfiable. 
+A RECL formula $\varphi$ is satisfiable if there is a mapping $\theta$ such as $\theta \models \varphi$. The satisfiability problem for RECL (which is abbreviated as $\reclsat$) is deciding whether a given RECL formula $\varphi$ is satisfiable. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

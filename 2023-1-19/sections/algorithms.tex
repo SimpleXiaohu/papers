@@ -2,7 +2,7 @@
 %\documentclass{standalone}
 %\begin{document}
 
-The goal of this section is to show how we solve RECL constraints by utilizing CEFA. 
+This section aims to show how we solve RECL constraints by utilizing CEFA. 
 At first, we reduce the satisfiability of RECL constraints into a decision problem for CEFA defined in the sequel. Then we propose an algorithm to solve the decision problem. 
 
 \vspace{-3mm}
@@ -36,11 +36,11 @@ Let us start with register-representable regular expressions defined in the sequ
 
 Let us fix an alphabet $\Sigma$.
 
-Let $e$ be a regular expression over $\Sigma$. Then an occurrence of counting operators in $e$, say $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$), is said to be \emph{register-representable} if $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$) is not in the scope of a Kleene star, another counting operator, complement, or language difference in $e$. We say that $e$ is \emph{register-representable} if all occurrences of counting operators in $e$ are register-representable. For instance, $(a^{\{2, 6\}} \concat b^*) \cap (a + b)^{\{4, \infty\}}$ is register-representable, while $(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ and $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ are not, since $a^{\{2,6\}}$ is in the scope of language difference and the counter operator $\{2, \infty\}$ respectively.  
+Let $e$ be a regular expression over $\Sigma$. Then an occurrence of counting operators in $e$, say $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$), is said to be \emph{register-representable} if $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$) is not in the scope of a Kleene star, another counting operator, complement, or language difference in $e$. We say that $e$ is \emph{register-representable} if all occurrences of counting operators in $e$ are register-representable. For instance, $(a^{\{2, 6\}} \concat b^*) \cap (a + b)^{\{4, \infty\}}$ is register-representable, while $(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ and $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ are not since $a^{\{2,6\}}$ is in the scope of language difference and the counter operator $\{2, \infty\}$ respectively.  
 
-Let $e$ be a register-representable regular expression over $\Sigma$. We are going to construct a CEFA out of $e$, denoted by $\aut_e$, by the following procedure. 
+Let $e$ be a register-representable regular expression over $\Sigma$. By the following procedure, we will construct a CEFA out of $e$, denoted by $\aut_e$. 
 \begin{enumerate}
-\item For each maximal sub-expression $e'$ of $e$ such that $e'$ contains no occurrences of counting operators, an NFA $\aut_{e'}$ can be constructed by a structural induction on the syntax of $e'$. 
+\item For each maximal sub-expression $e'$ of $e$ such that $e'$ contains no occurrences of counting operators, an NFA $\aut_{e'}$ can be constructed by structural induction on the syntax of $e'$. 
 %
 \item For each sub-expression $(e')^{\{m,n\}}$ with $m \le n$ (resp. $(e')^{\{m, \infty\}}$) of $e$, we construct a CEFA $\aut_{(e')^{\{m,n\}}}$ (resp. $\aut_{(e')^{\{m, \infty\}}}$) as follows. Let $\aut_{e'} = (Q, \Sigma, \delta, I, F)$. From the construction for Kleene star in Section~\ref{sec:pre}, $(\aut_{e'})^* = (Q', \Sigma, \delta', I', F')$, where $Q' = Q \cup \{q_0\}$ with $q_0 \not \in Q$, $I' = \{q_0\}$, $F'= F \cup \{q_0\}$, $\delta' = \delta  \cup \{(q_0, a, q')  \mid \exists q'_0 \in I.\ (q'_0, a, q') \in \delta\} \cup \{(q, a, q') \mid q \in F, \exists q'_0 \in I.\ (q'_0, a, q') \in \delta\}$. Then $\aut_{(e')^{\{m,n\}}} = ((r'), Q', \Sigma, \delta'', I', F', \alpha')$, where $r'$ is a register, 
 %
@@ -64,8 +64,8 @@ Then we have $\aut_{e'} = \aut_{e'_1} \concat \aut_{e'_2}$, $\aut_{e'} = \aut_{e
 %an example here
 %\end{example}
 
-For non-register-representable regular expressions, we first transform them into register-representable regular expressions by unfolding all the non-register-representable occurrences of  counting operators, then utilize the aforementioned procedure to construct CEFA. For instance, $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa+aaaa) \concat b^*)^{\{2, \infty\}}$. 
-The unfoldings of the inner counting operators of non-register-representable regexes incur an exponential blow-up in the worst case. Nevertheless, those regexes occupy only 5\% of the 48,834 regexes that are collected from the practice (see Section~\ref{sec:bench}). Moreover, the unfoldings are partial in the sense that the outmost counting operators are not unfolded. It turns out that our approach can solve almost all of them, except 145.   
+For non-register-representable regular expressions, we first transform them into register-representable regular expressions by unfolding all the non-register-representable occurrences of counting operators, then utilize the aforementioned procedure to construct CEFA. For instance, $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa+aaaa) \concat b^*)^{\{2, \infty\}}$. 
+The unfoldings of the inner counting operators of non-register-representable regexes incur an exponential blow-up in the worst case. Nevertheless, those regexes occupy only 5\% of the 48,834 regexes that are collected from the practice (see Section~\ref{sec:bench}). Moreover, the unfoldings are partial in the sense that the outmost counting operators are not unfolded. It turns out that our approach can solve almost all of them except 145.   
 %$(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa + aaaa) \concat b^*) \setminus (a+b)(a+b)(a+b)(a+b)(a+b)^*$.
 
 For each $i \in [n]$, let $x_i \in e_{i, 1}, \cdots, x_i \in e_{i, l_i}$ be an enumeration of the regular membership constraints for $x_i$ in $\varphi_1$.  Then we can construct CEFA $\aut_{i, j}$ from $e_{i, j}$ for each $i \in [n]$ and $j \in [l_i]$. Moreover, we construct another CEFA $\aut_{i, 0}$ for each $i \in [n]$ to model the length of $x_i$. Specifically, $\aut_{i,0}$ is constructed as $((r_{i,0}), \{q_{i,0}\}, \Sigma, \delta_{i,0}, \{q_{i,0}\}, \{q_{i,0}\}, \ltrue)$, where $r_{i,0}$ is a fresh register (in particular, $r_{i,0}$ does not occur in $\aut_{i,1}, \cdots, \aut_{i, l_i}$) and $\delta_{i,0} = \{(q_{i,0}, a, q_{i,0}, (1)) \mid a \in \Sigma\}$. 
@@ -79,7 +79,7 @@ Then the satisfiability of $\varphi$ is reduced to the nonemptiness of CEFA in $
 The most important point of our approach is encoding counting operators by registers rather than explicitly unfolding them. In this section, we discuss the encoding in detail. A counting operator is called \emph{handled} if it is not the sub-regex of complement, closure, or another counting, and called \emph{unhandled} otherwise. For example, $(\Sigma \setminus a)^{\{m,n\}}$ is handled, while $((\Sigma \setminus a)^{\{m,n\}})^*$ is unhandled. We first discuss the encoding of handled counting operators and then the encoding of unhandled counting operators.
 
 % We must syntactically rewrite bounded repetition $\regex\{m,n\}$ if it is the sub-regex of complement (e.g., $(\regex\{m,n\})^C$), closure(e.g., $(\regex\{m,n\})^*$), and bounded repetition(e.g., $(\regex\{m,n\})\{m', n'\}$), we unwind it to $\regex^m\mid\cdots\mid\regex^n$. After this syntactic rewriting, we call the resulting regex $\regex'$ \emph{non-nested}.
-Given a regex $\regex$ without an unhandled counting operator, the base case is constructing the CEFA of a single character, an empty string, or an empty language. The inductive step is constructing CEFA of the concatenation, union, intersection, closure, complement, and counting of CEFA(s) of sub-regex(es). Operations except for counting are trivial and represented in Appendix \ref{appendix:cefa}, we only illustrate counting here.
+Given a regex $\regex$ without an unhandled counting operator, the base case is constructing the CEFA of a single character, an empty string, or an empty language. The inductive step is constructing CEFA of the concatenation, union, intersection, closure, complement, and counting of CEFA(s) of sub-regex(es). Operations except for counting are trivial and represented in Appendix \ref{appendix:cefa}; we only illustrate counting here.
 
 Given a regex $\regex^{\{m,n\}}$ without unhandled counting operator, suppose the NFA recognizing $\regex$ is $\aut = (Q,\Sigma,\delta,q_I,F)$, then the CEFA recognizing $\regex^{\{m,n\}}$ is defined as $\aut_{m,n} = (Q, \Sigma, \delta',q_I, F\cup\{q_I\}, r, \theta)$ where:
 \begin{itemize}
@@ -219,7 +219,7 @@ Given a string-length constraint, we build a CEFA with a register storing the wo
   \end{figure}
 \end{example} 
 % \subsection{Combine Regex-counting and String-length}
-% In the previous section, we discussed the construction of the regex-counting operator and string-length constraint. In this section, we show how to combine them to deal with the string constraints with regex-counting and string-length. 
+% In the previous section, we discussed the construction of the regex-counting operator and string-length constraint. In this section, we show how to combine them. 
 % \begin{definition} [The Product of Two CEFA]
 
 %   Given two CEFAs $\aut_1 = (Q_1, \Sigma, \delta_1, q_{I_1}, F_1, R_1, \theta_1)$ and $\aut_2 = (Q_2, \Sigma, \delta_2, q_{I_2}, F_2, R_2, \theta_2)$ with $R_1\cap R_2 = \emptyset$, the product of them, denoted by $\aut_1 \times \aut_2$, is defined as $(Q_1\times Q_2, \Sigma, \delta, (q_{I_1}, q_{I_2}), F_1\times F_2, R_1\cup R_2, \theta)$ where
@@ -255,9 +255,9 @@ After Step 1, the nonemptiness of CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$
 
 %Since the construction of $\cB_1, \cdots, \cB_n$ involves the computation of the product of multiple CEFA, it incurs an exponential blow-up in the worst case. Therefore, it is vital to reduce the sizes of these CEFAs. In the sequel, we propose some techniques to reduce the automata sizes. 
 
-In the sequel, we reduce the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$ to the satisfiability of an LIA formula. The reduction relies on two observations. 
+In the sequel, we reduce the non-emptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$ to the satisfiability of an LIA formula. The reduction relies on two observations. 
 
-The first observation follows from the fact that $\Lambda'_{x_i}$ for each $i \in [n]$ contains exactly one CEFA. 
+The first observation follows that $\Lambda'_{x_i}$ for each $i \in [n]$ contains exactly one CEFA. 
 
 \vspace{-2mm}
 \begin{observation}\label{obs-cefa-output}
@@ -356,7 +356,7 @@ For $i \in [n]$, suppose $R_{\cB_i} = (r_{i,1},\cdots, r_{i, k_i})$ and $\cC_i =
 \paragraph*{Step 2.5.} Initially, let $len := 0$, and for each $i \in [n]$, let 
 %$\confset_{\cC_i}:=\emptyset$, 
 $\confset_{\cC_i}:=\{(q_{i,0}, \myvec{0})\}$ 
-and $\psi_{\cC_i}:= \lfalse$.  Then iterate the following procedure, until $len = B+1$.
+and $\psi_{\cC_i}:= \lfalse$.  Then iterate the following procedure until $len = B+1$.
 \begin{enumerate}
 \item Let $\xi: = \bigwedge \limits_{i \in [n]} \alpha_i \wedge \varphi$.
 %
@@ -384,9 +384,9 @@ $old_i:=\confset_{\cC_i}$, $\confset_{\cC_i}:=\emptyset$.
 %
 \item Let $len: = len+1$. \qed
 \end{enumerate}
-Intuitively, for each $i \in [n]$, $\psi_{\cC_i}$ is a global variable whose value is never reset and it stores the set of ``final'' valuations of registers of $\cC_i$ (that is, the valuations obtained when reaching final states), and $\confset_{\cC_i}$ stores the set of newly discovered (not necessarily final) ``configurations'' of $\cC_i$.
+Intuitively, for each $i \in [n]$, $\psi_{\cC_i}$ is a global variable whose value is never reset, and it stores the set of ``final'' valuations of registers of $\cC_i$ (that is, the valuations obtained when reaching final states), and $\confset_{\cC_i}$ stores the set of newly discovered (not necessarily final) ``configurations'' of $\cC_i$.
 %, and $\confset_{\cC_i}$ stores those that have been discovered before. 
-Note that the solution searching algorithm in Step 2.5 is incremental in the sense that when the value of $len$ is incremented, the searching continues from $\confset_{\cC_i}$'s, not from scratch.
+Note that the solution searching algorithm in Step 2.5 is incremental because when the value of $len$ is incremented, the searching continues from $\confset_{\cC_i}$'s, not from scratch.
 %, whose values are not reset.
 %Furthermore, for each $i \in [n]$, we can remove the redundancy of characters/vectors in $\cC_i$. 
 
@@ -395,9 +395,9 @@ Note that the solution searching algorithm in Step 2.5 is incremental in the sen
 %%%%%%%%%%%% the original texts by Denghang %%%%%%%%%
 %%%%%%%%%%%% the original texts by Denghang %%%%%%%%%
 \hide{
-Moreover, the transitions $(q, \myvec{0}, q')$ in $\cC_i$ can be seen as $\varepsilon$-transitions, that is, we can replace each transition $(q, \myvec{0}, q')$ with $(q, \varepsilon, q')$, without affecting the set $\{ \sum\limits_{\myvec{v} \in V_i} m_{\myvec{v}} \myvec{v} \mid \myvec{m} \in parikh(\cC_i)\}$. Therefore, we first do these replacements, apply the $\varepsilon$-transition removal procedure. Then we utilize the determinization and minimization algorithm for NFA to reduce the size of $\cC_i$. 
+Moreover, the transitions $(q, \myvec{0}, q')$ in $\cC_i$ can be seen as $\varepsilon$-transitions, that is, we can replace each transition $(q, \myvec{0}, q')$ with $(q, \varepsilon, q')$, without affecting the set $\{ \sum\limits_{\myvec{v} \in V_i} m_{\myvec{v}} \myvec{v} \mid \myvec{m} \in parikh(\cC_i)\}$. Therefore, we first do these replacements and apply the $\varepsilon$-transition removal procedure. Then we utilize the determinization and minimization algorithm for NFA to reduce the size of $\cC_i$. 
 
-It turns out that to solve the nonemptiness of CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ w.r.t. $\varphi$, we can ignore the characters in $\cB_1,\cdots, \cB_n$. This is due to the fact that there is only one CEFA for each string variable and $\varphi$ only cares about the values of registers.
+It turns out that to solve the non-emptiness of CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ w.r.t. $\varphi$. We can ignore the characters in $\cB_1,\cdots, \cB_n$ because there is only one CEFA for each string variable, and $\varphi$ only cares about the values of registers.
 
 %When the characters in $\cB_1, \cdots, \cB_n$ are ignored, they can be seen as NFAs. 
 For each $i \in [n]$, let $\cC_i$ be the automaton obtained from $\cB_i$ by replacing each transition $(q, a, q', \myvec{v})$ with $(q, \myvec{v}, q')$. 
@@ -407,7 +407,7 @@ Then the set of costs output by $\cB_i$, that is, $\{\myvec{v} \mid (w; \myvec{v
 %
 $$\{ \sum\limits_{\myvec{v} \in V_i} m_{\myvec{v}} \myvec{v} \mid \myvec{m} \in parikh(\cC_i)\}.$$
 
-Moreover, the transitions $(q, \myvec{0}, q')$ in $\cC_i$ can be seen as $\varepsilon$-transitions, that is, we can replace each transition $(q, \myvec{0}, q')$ with $(q, \varepsilon, q')$, without affecting the set $\{ \sum\limits_{\myvec{v} \in V_i} m_{\myvec{v}} \myvec{v} \mid \myvec{m} \in parikh(\cC_i)\}$. Therefore, we first do these replacements, apply the $\varepsilon$-transition removal procedure. Then we utilize the determinization and minimization algorithm for NFA to reduce the size of $\cC_i$. 
+Moreover, the transitions $(q, \myvec{0}, q')$ in $\cC_i$ can be seen as $\varepsilon$-transitions, that is, we can replace each transition $(q, \myvec{0}, q')$ with $(q, \varepsilon, q')$, without affecting the set $\{ \sum\limits_{\myvec{v} \in V_i} m_{\myvec{v}} \myvec{v} \mid \myvec{m} \in parikh(\cC_i)\}$. Therefore, we first do these replacements and apply the $\varepsilon$-transition removal procedure. Then we utilize the determinization and minimization algorithm for NFA to reduce the size of $\cC_i$. 
 
 Finally, if there are two indices $1 \le i' < j' \le |R_{\cB_i}|$ such that $v_{i'} = v_{j'}$ for each vector $\myvec{v} \in V_i$, then we can remove the $j'$-th component from the characters (vectors) of $\cC_i$, and let $\varphi := \varphi \wedge r_{i, i'} = r_{i, j'}$. By abusing the notation, we still use $\cC_i$ to denote the resulting NFA. 
 
@@ -415,7 +415,7 @@ By doing this, we reduce the automata sizes. Then we compute an LIA formula $\ps
 
 under approximation
 
-In summary, we obtain an algorithm for solving the nonemptiness of $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$, as illustrated in Figure~\ref{xxx}. 
+In summary, we obtain an algorithm for solving the non-emptiness of $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$, as illustrated in Figure~\ref{xxx}. 
 
 \zhilin{stopped here}
 
@@ -579,7 +579,7 @@ We have the following proposition:
 \subsubsection{Under-Approximation} \label{subsec:under-approx}
 The purpose of under-approximation is to accelerate the solving process of satisfiable instances. With the observation that the accepted string words in practical instances are usually short, we under-approximate the \emptinessprob{} by adding length bounds on string variables. The LIA formula representing possible register value is incrementally generated based on the incremental length bounds, and this section discusses its implementation details. The main idea is to create an LIA formula enumerating all possible values of registers in accepting runs within some length bounds. More detailed, The enumeration is carried out from low to high length bounds, in which the end states and registers' values of the last enumeration are maintained and used in the following enumeration. Although the number of possible runs is an exponential growth of the bound, we usually solve practical satisfiable instances within 1s because the lengths of strings in the solution are generally less than 5.
 
-As shown in the Algorithm \ref{alg:underApprox}, $\varphi_{under}$ is the under-approximated LIA formula which is initialized to the input LIA formula $\psi$ at line 2. $\varphi_\aut$ is the under-approximated LIA formula of each automaton $\aut$ which is initialized to $false$ at line 3. $lastStates$ maps each automaton $\aut$ to the set consisting of pairs of state and corresponding registers' value in the last enumeration. $lastStates(\aut)$ is initialized to the pair of the initial state and zero values for each automaton $\aut$ at line 4. $length$ is the current bound of lengths of string variables which is initialized to $0$ at line 5. The main loop at lines 6-20 iteratively tries possible solutions from low to high length bound. For each iteration, we generate the LIA formula respectively for each automaton. To each CEFA $\aut$, we get pairs of last state and corresponding registers' values from $lastStates$ at line 8. In each pair, if the last state is accepted at line 9, we add the LIA formula of the possible registers' values to $\varphi_\aut$ as a conjunct at line 10. After that, we update the set of pairs in $lastStates$ by removing the probed pair at line 12 and adding new pairs of the next state and corresponding registers' values at line 13. Finally, we combine the incremental LIA formula of each automaton at line 15. If the LIA formula $\varphi\wedge \theta$ is satisfiable at line 17, i.e., we find a solution with all strings having length less than or equal to $length$, we return \emph{true} at line 18. Otherwise, the next iteration would be invoked with a larger length. If we can not find a solution within the max string length bound, we return \emph{false} at line 22.
+As shown in the Algorithm \ref{alg:underApprox}, $\varphi_{under}$ is the under-approximated LIA formula which is initialized to the input LIA formula $\psi$ at line 2. $\varphi_\aut$ is the under-approximated LIA formula of each automaton $\aut$ which is initialized to $false$ at line 3. $lastStates$ maps each automaton $\aut$ to the set consisting of pairs of state and corresponding registers' value in the last enumeration. $lastStates(\aut)$ is initialized to the pair of the initial state and zero values for each automaton $\aut$ at line 4. $length$ is the current bound of lengths of string variables which is initialized to $0$ at line 5. The main loop at lines 6-20 iteratively tries possible solutions from low to high length bound. For each iteration, we generate the LIA formula respectively for each automaton. To each CEFA $\aut$, we get pairs of last state and corresponding registers' values from $lastStates$ at line 8. If the last state is accepted at line 9 in each pair, we add the LIA formula of the possible registers' values to $\varphi_\aut$ as a conjunct at line 10. After that, we update the set of pairs in $lastStates$ by removing the probed pair at line 12 and adding new pairs of the next state and corresponding registers' values at line 13. Finally, we combine the incremental LIA formula of each automaton at line 15. If the LIA formula $\varphi\wedge \theta$ is satisfiable at line 17, i.e., we find a solution with all strings having length less than or equal to $length$, we return \emph{true} at line 18. Otherwise, the next iteration would be invoked with a larger length. If we can not find a solution within the max string length bound, we return \emph{false} at line 22.
 \begin{algorithm}[h]
   \caption{$\algfun{underApproxSolve}(auts, bound, \psi)$}
   \label{alg:underApprox}
@@ -625,7 +625,7 @@ As shown in the Algorithm \ref{alg:underApprox}, $\varphi_{under}$ is the under-
   \end{algorithmic}
 \end{algorithm}
 \begin{example}
-  Consider the automaton $\aut$ in Fig. \ref{fig:overview:product:reduced} again without the LIA constraint $r_0 > 120$, i.e., $\theta$ changes to $1\leq r_1\leq 60\wedge 1\leq r_2 \leq 60\wedge 0\leq r_3 \leq 60 $. The solution of the Parikh image of it leads to a complete but inefficient result since the quantifier-free LIA formulas are solved in exponential time. Under-approximation can accelerate the solving process. In the first iteration of under-approximation, the pairs in the $lastStates(\aut)$ is the initial pair $(q_0', (0,0,0,0))$ and $\varphi_\aut$ maintains false at line 9 because $q_0'$ is not accepted. Then we update $lastStates(\aut)$ by removing the pair $(q_0', (0,0,0,0))$ and adding pairs $(q_0', (1,1,0,0)), (q_1', (1,0,1,0)), (q_2', (1,0,0,0))$. In the second iteration, $\varphi_\aut$ changes to $r_0=1\vee r_1=0\vee r_2=0\vee r_3 = 0$ because $q_2'$ is accepted. $\varphi_{under}$ is always equal to $\varphi_\aut$ since there is only one automaton. We solve the formula $\theta\wedge \varphi_{under}$ and find it is unsatisfiable. In the third iteration, the pairs in the $lastStates(\aut)$ with accepting state should be $(q_0', (2,2, 0, 0)), (q_1', (2,1,1,0))$, $(q_1', (2,0,2,0))$, $(q_2', (2,1,0,0)), (q_2', (2,0,1,0)),$ $(q_2', (2,0, 0, 0))$. The corresponding registers' values for the accepted state $q_2'$ is $(2,1,0,0), (2, 0, 1, 0), (2, 0, 0, 0)$, in which the value of $r_1$ and $r_2$ can not be both larger than 1 which is required by $\theta$. So the formula $\theta\wedge \varphi_{under}$ is still unsatisfiable. Finally, We obtain a pair $(q_2', (3,1,1,0))$ from the pair $(q_1', (2,1,1,0))$ and the transition $q_1'\xrightarrow[(1,0,0,0)]{} q_2'$, whose corresponding registers' values is a solution $(3,1,1,0)$, i.e., $r_0=3, r_1=1, r_2=1, r_3=0$.
+  Consider the automaton $\aut$ in Fig. \ref{fig:overview:product:reduced} again without the LIA constraint $r_0 > 120$, i.e., $\theta$ changes to $1\leq r_1\leq 60\wedge 1\leq r_2 \leq 60\wedge 0\leq r_3 \leq 60 $. The solution of the Parikh image of it leads to a complete but inefficient result since the quantifier-free LIA formulas are solved in exponential time. Under-approximation can accelerate the solving process. In the first iteration of under-approximation, the pairs in the $lastStates(\aut)$ is the initial pair $(q_0', (0,0,0,0))$ and $\varphi_\aut$ maintains false at line 9 because $q_0'$ is not accepted. Then we update $lastStates(\aut)$ by removing the pair $(q_0', (0,0,0,0))$ and adding pairs $(q_0', (1,1,0,0)), (q_1', (1,0,1,0)), (q_2', (1,0,0,0))$. In the second iteration, $\varphi_\aut$ changes to $r_0=1\vee r_1=0\vee r_2=0\vee r_3 = 0$ because $q_2'$ is accepted. $\varphi_{under}$ is always equal to $\varphi_\aut$ since there is only one automaton. We solve the formula $\theta\wedge \varphi_{under}$ and find it is unsatisfiable. In the third iteration, the pairs in the $lastStates(\aut)$ with accepting state should be $(q_0', (2,2, 0, 0)), (q_1', (2,1,1,0))$, $(q_1', (2,0,2,0))$, $(q_2', (2,1,0,0)), (q_2', (2,0,1,0)),$ $(q_2', (2,0, 0, 0))$. The corresponding registers' values for the accepted state $q_2'$ are $(2,1,0,0), (2, 0, 1, 0), (2, 0, 0, 0)$, in which the value of $r_1$ and $r_2$ can not be both larger than 1 which is required by $\theta$. So the formula $\theta\wedge \varphi_{under}$ is still unsatisfiable. Finally, We obtain a pair $(q_2', (3,1,1,0))$ from the pair $(q_1', (2,1,1,0))$ and the transition $q_1'\xrightarrow[(1,0,0,0)]{} q_2'$, whose corresponding registers' values is a solution $(3,1,1,0)$, i.e., $r_0=3, r_1=1, r_2=1, r_3=0$.
 \end{example}
 
 \subsection{High-level algorithm}
