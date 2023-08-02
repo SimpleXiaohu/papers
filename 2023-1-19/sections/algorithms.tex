@@ -348,45 +348,45 @@ Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cU_{\cB_i}$'s, t
 %\varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cB_1}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cB_n}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
 %\]
 
-Finally, although we propose techniques to reduce the sizes of $\cU_{\cB_i}$'s, it is still relatively expensive to compute LIA formulas from $\cC_i$'s and solve their satisfiability, especially for those satisfiable problem instances, namely, those instances where CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty w.r.t. $\varphi$.   
-Therefore, in the sequel, we propose a heuristic to search for solutions by utilizing under approximations, to be executed before Step 3. Intuitively, we search for solutions by bounding the lengths of the strings that are accepted by $\cC_i$'s. The heuristic uses a constant bound $B > 0$ and searches for solutions incrementally, starting from strings of length $0$. Since the heuristic is executed after Step 2 and before Step 3, we call it Step 2.5. 
+% Finally, although we propose techniques to reduce the sizes of $\cU_{\cB_i}$'s, it is still relatively expensive to compute LIA formulas from $\cC_i$'s and solve their satisfiability, especially for those satisfiable problem instances, namely, those instances where CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty w.r.t. $\varphi$.   
+% Therefore, in the sequel, we propose a heuristic to search for solutions by utilizing under approximations, to be executed before Step 3. Intuitively, we search for solutions by bounding the lengths of the strings that are accepted by $\cC_i$'s. The heuristic uses a constant bound $B > 0$ and searches for solutions incrementally, starting from strings of length $0$. Since the heuristic is executed after Step 2 and before Step 3, we call it Step 2.5. 
 
-For $i \in [n]$, suppose $R_{\cB_i} = (r_{i,1},\cdots, r_{i, k_i})$ and $\cC_i = (Q'_i, \costset_{\cC_i}, \delta'_i, q_{i,0}, F'_i)$. 
+% For $i \in [n]$, suppose $R_{\cB_i} = (r_{i,1},\cdots, r_{i, k_i})$ and $\cC_i = (Q'_i, \costset_{\cC_i}, \delta'_i, q_{i,0}, F'_i)$. 
 
-\paragraph*{Step 2.5.} Initially, let $len := 0$, and for each $i \in [n]$, let 
-%$\confset_{\cC_i}:=\emptyset$, 
-$\confset_{\cC_i}:=\{(q_{i,0}, \myvec{0})\}$ 
-and $\psi_{\cC_i}:= \lfalse$.  Then iterate the following procedure until $len = B+1$.
-\begin{enumerate}
-\item Let $\xi: = \bigwedge \limits_{i \in [n]} \alpha_i \wedge \varphi$.
-%
-\item For each $i \in [n]$, do the following.
-\begin{enumerate}
-\item Let 
-%$\confset_{\cC_i}:= \confset_{\cC_i} \cup \confset'_{\cC_i}$, 
-$old_i:=\confset_{\cC_i}$, $\confset_{\cC_i}:=\emptyset$.
-%
-\item For each $(q, \myvec{v}) \in old_i$,
-\begin{enumerate}
-\item if $q \in F'_i$, then let $\psi_{\cC_i}:=\psi_{\cC_i} \vee (\bigwedge \limits_{j \in [k_i]} r_{i,j} = v_j)$, 
-%
-%\item let $\confset'_{\cC_i}:=\confset'_{\cC_i} \setminus \{(q, \myvec{v})\}$, 
-%
-\item for each $(q, \myvec{v'}, q') \in \delta'_i$, let $\confset_{\cC_i}:=\confset_{\cC_i} \cup \{(q', \myvec{v}+ \myvec{v'})\}$. 
-\end{enumerate}
-%
-%\item 
-%
-\item Let $\xi := \xi \wedge \psi_{\cC_i}$. 
-\end{enumerate}
-%
-\item If $\xi$ is satisfiable, then report $\ltrue$ and the whole algorithm terminates. 
-%
-\item Let $len: = len+1$. \qed
-\end{enumerate}
-Intuitively, for each $i \in [n]$, $\psi_{\cC_i}$ is a global variable whose value is never reset, and it stores the set of ``final'' valuations of registers of $\cC_i$ (that is, the valuations obtained when reaching final states), and $\confset_{\cC_i}$ stores the set of newly discovered (not necessarily final) ``configurations'' of $\cC_i$.
-%, and $\confset_{\cC_i}$ stores those that have been discovered before. 
-Note that the solution searching algorithm in Step 2.5 is incremental because when the value of $len$ is incremented, the searching continues from $\confset_{\cC_i}$'s, not from scratch.
+% \paragraph*{Step 2.5.} Initially, let $len := 0$, and for each $i \in [n]$, let 
+% %$\confset_{\cC_i}:=\emptyset$, 
+% $\confset_{\cC_i}:=\{(q_{i,0}, \myvec{0})\}$ 
+% and $\psi_{\cC_i}:= \lfalse$.  Then iterate the following procedure until $len = B+1$.
+% \begin{enumerate}
+% \item Let $\xi: = \bigwedge \limits_{i \in [n]} \alpha_i \wedge \varphi$.
+% %
+% \item For each $i \in [n]$, do the following.
+% \begin{enumerate}
+% \item Let 
+% %$\confset_{\cC_i}:= \confset_{\cC_i} \cup \confset'_{\cC_i}$, 
+% $old_i:=\confset_{\cC_i}$, $\confset_{\cC_i}:=\emptyset$.
+% %
+% \item For each $(q, \myvec{v}) \in old_i$,
+% \begin{enumerate}
+% \item if $q \in F'_i$, then let $\psi_{\cC_i}:=\psi_{\cC_i} \vee (\bigwedge \limits_{j \in [k_i]} r_{i,j} = v_j)$, 
+% %
+% %\item let $\confset'_{\cC_i}:=\confset'_{\cC_i} \setminus \{(q, \myvec{v})\}$, 
+% %
+% \item for each $(q, \myvec{v'}, q') \in \delta'_i$, let $\confset_{\cC_i}:=\confset_{\cC_i} \cup \{(q', \myvec{v}+ \myvec{v'})\}$. 
+% \end{enumerate}
+% %
+% %\item 
+% %
+% \item Let $\xi := \xi \wedge \psi_{\cC_i}$. 
+% \end{enumerate}
+% %
+% \item If $\xi$ is satisfiable, then report $\ltrue$ and the whole algorithm terminates. 
+% %
+% \item Let $len: = len+1$. \qed
+% \end{enumerate}
+% Intuitively, for each $i \in [n]$, $\psi_{\cC_i}$ is a global variable whose value is never reset, and it stores the set of ``final'' valuations of registers of $\cC_i$ (that is, the valuations obtained when reaching final states), and $\confset_{\cC_i}$ stores the set of newly discovered (not necessarily final) ``configurations'' of $\cC_i$.
+% %, and $\confset_{\cC_i}$ stores those that have been discovered before. 
+% Note that the solution searching algorithm in Step 2.5 is incremental because when the value of $len$ is incremented, the searching continues from $\confset_{\cC_i}$'s, not from scratch.
 %, whose values are not reset.
 %Furthermore, for each $i \in [n]$, we can remove the redundancy of characters/vectors in $\cC_i$. 
 
