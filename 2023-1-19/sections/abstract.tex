@@ -5,20 +5,20 @@
 
 Regular expressions (regex for short) and string-length function are widely used in string-manipulating programs. 
 %Solving string constraints involving regular membership and string-length function has been widely investigated. 
-Counting is a frequently used feature of regexes that count the number of matchings of sub-patterns. The state-of-the-art string solvers are incapable of solving string constraints with regex-counting and string-length efficiently, especially when the counting bounds are large. In this work, we propose an automata-theoretic approach for solving such class of string constraints efficiently. 
+Counting is a frequently used feature in regexes that counts the number of sub-patterns matchings. The state-of-the-art string solvers are incapable of solving string constraints with regex-counting and string-length efficiently, especially when the counting bounds are large. In this work, we propose an automata-theoretic approach for solving such a class of string constraints. 
 %
-The main idea is to model the counting operators symbolically by registers in automata, instead of unfolding them explicitly, thus alleviating the state explosion problem resulted from the unfolding.  
+The main idea is to model the counting operators symbolically by registers in automata instead of unfolding them explicitly, thus alleviating the state explosion problem.  
 %
-Moreover, we model the string lengths by registers as well. 
+Moreover, the string-length function is modeled by register as well. 
 %Since Parikh images of automata can be defined by linear integer arithmetic formulas, 
-As a result, the satisfiability of string constraints with regex-counting and string-length is reduced to the satisfiability of linear integer arithmetic, which can then be solved by off-the-shelf SMT solvers. 
+As a result, the satisfiability of string constraints with regex-counting and string-length is reduced to the satisfiability of linear integer arithmetic, which off-the-shelf SMT solvers can then solve. 
 %
 %we extract linear integer arithmetic formulas from automata, which encode the constraints on the values of registers, and utilize the off-the-shelf SMT solvers to solve the linear integer arithmetic constraints. 
 %
 To improve the performance further, we propose techniques to reduce automata sizes.
 % we propose state reduction techniques and under-approximation to improve the performance further. 
-We implement the algorithms and validate our approach on 48,834 benchmark instances. The experimental results show that 
-our approach can solve more instances than the other solvers, at a comparable or faster speed.
+We implement the algorithms and validate our approach on 48,843 benchmark instances. The experimental results show that 
+our approach can solve more instances than other solvers at a comparable or faster speed.
 % performance of this approach compared against the state-of-the-art string solvers.
 
 

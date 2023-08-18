@@ -2,19 +2,16 @@
 
 %\zhilin{to be made consistent with section 6.}
 
-In this section, we utilize the string constraint in Equation~(\ref{eqn-running}) to illustrate the approach in this work.
+In this section, we utilize the string constraint in Equation~(\ref{eqn-running}) to illustrate the approach in our work.
 
 %$x \in (\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}} \wedge x \in \Sigma^* c^+ \wedge |x| > 120$.
 
-We first construct an automaton for the regular expression $(\Sigma \setminus a)^{\{1, 60\}} (\Sigma \setminus b)^{\{1, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$. We introduce three registers, say $r_1, r_2, r_3$, to represent the three counting operators.  
+First, we construct an CEFA for the regular expression $(\Sigma \setminus a)^{\{1, 60\}} (\Sigma \setminus b)^{\{1, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$. Three registers are introduced, say $r_1, r_2, r_3$, to represent the three counting operators;  
 %Moreover, we introduce another register, say $r_0$, to denote the length of strings. 
-Then we construct a nondeterministic finite automaton (NFA) for $(\Sigma \setminus a)^* (\Sigma \setminus b)^* (\Sigma \setminus c)^*$, and add the updates of registers (e.g. $r_1++$ for incrementing $r_1$) to transitions, resulting in a so-called cost-enriched finite automaton (CEFA, see Section~\ref{sec:automaton} for the definition) $\aut_1$,  as illustrated in Figure~\ref{fig:overview}(a). 
+the nondeterministic finite automaton (NFA) for $(\Sigma \setminus a)^* (\Sigma \setminus b)^* (\Sigma \setminus c)^*$ is constructed; the updates of registers is added to the transitions of the NFA; the counting bounds are specified by the accepting condition $1 \le r_1 \le 60 \wedge 1 \le r_2 \le 60 \wedge 0 \le r_3 \le 60$, resulting in a CEFA $\aut_1$ illustrated in Figure~\ref{fig:overview}(a). $r_1++$ means that we increment the value of $r_1$ by one after running the transition.
 %Then we obtain a cost-enriched finite automaton (CEFA) $\aut_1$ that is illustrated in Figure~\ref{fig:overview}(a), where the self-loops around $p_0, p_1, p_2$ represent the first, second, and third counting operator respectively, in which $r_1, r_2, r_3$ are incremented. 
 %Moreover, $r_0$ is incremented in all the three self-loops. 
-Furthermore, the counting bounds are specified by the accepting condition $1 \le r_1 \le 60 \wedge 1 \le r_2 \le 60 \wedge 0 \le r_3 \le 60$. 
-A string $w$ is accepted by $\aut_1$ if, when reading the characters in $w$, $\aut_1$ applies the transitions to update the state and the values of registers, and reaches a final state $q$ in the end, moreover, the resulting values of the three registers, say $v_1, v_2, v_3$, satisfy the accepting condition. 
-Note that we represent the counting operators symbolically by registers, instead of unfolding them explicitly. 
-Moreover, we construct another CEFA $\aut_2$ for $\Sigma^* c^+$ (see Figure~\ref{fig:overview}(b)), which is actually an NFA, since $\Sigma^* c^+$ contains no counting operators (Kleene plus is not seen as a counting operator here). Finally, we construct the third CEFA $\aut_3$ (see Figure~\ref{fig:overview}(c)), where a register $r_4$ is used to denote the length of strings and the accepting condition is $\ltrue$. (See Section~\ref{subsec:regex2cefa} for more details about the construction of CEFA.)
+A string $w$ is accepted by $\aut_1$ if, when reading the characters in $w$, $\aut_1$ applies the transitions to update the state and the values of registers, reaching a final state $q$ in the end, and the resulting values of the three registers, say $v_1,v_2,v_3$, satisfy the accepting condition. In addition, we construct other two CEFAs $\aut_2$ for $\Sigma^* c^+$ (see Figure~\ref{fig:overview}(b)) and $\aut_3$ for string length function (see Figure~\ref{fig:overview}(c)). In $\aut_3$, a register $r_4$ is used to denote the length of strings and the accepting condition is $\ltrue$ (See Section~\ref{subsec:regex2cefa} for more details about the construction of CEFA.) Note that we represent the counting operators symbolically by registers instead of unfolding them explicitly. 
 %where the register $r_0$ is used to record the length of strings. 
 
 % the register $r_1$ is incremented in the two transitions from $q_0$ to $q_0$ and $q_1$ respectively,  the register $r_2$ is incremented in the two transitions from $q_1$ to $q_1$ and $q_2$ respectively, and the register $r_3$ is incremented in the transition from $q_2$ to $q_2$ itself. Moreover, the register $r_4$ is incremented in each transition.  
@@ -31,10 +28,10 @@ Moreover, we construct another CEFA $\aut_2$ for $\Sigma^* c^+$ (see Figure~\ref
 
 Next, 
 %we remove the $\varepsilon$-transitions of $\aut_1$, resulting into $\aut'_1$, 
-we construct $\aut_1 \cap \aut_2 \cap \aut_3$, that is, the intersection (aka product) of $\aut_1$, $\aut_2$, and $\aut_3$, as illustrated in Figure~\ref{fig:overview:product}(a), where the states from which no final states are reachable are removed. 
+we construct $\aut_1 \cap \aut_2 \cap \aut_3$, that is, the intersection (aka product) of $\aut_1$, $\aut_2$, and $\aut_3$, as illustrated in Figure~\ref{fig:overview:product}(a), where the states can not reach the final states are removed. 
 %Furthermore, we add one special register, say $r_0$, to record the length of strings. Note that $r_0$ is incremented in all transitions. 
 %In $\aut_1 \cap \aut_2 \cap \aut_3$, the accepting condition $1 \le r_1 \le 60 \wedge 1 \le r_2 \le 60 \wedge 0 \le r_3 \le 60 \wedge r_0 > 120$ is attached to both $(p_0,q_1)$ and $(p_1,q_1)$, where $r_0 > 120$ is added as a conjunct to express $|x| > 120$.  
-For technical convenience, we also think of the updates on the values of registers in transitions as vectors $(v_1, v_2, v_3, v_4)$, where $v_i \in \Int$ is the update on the register $r_{i}$ for each $i \in [4]$. For instance, the transitions corresponding to the self-loop around $(p_0, q_0, q'_0)$ are thought as $((p_0, q_0, q'_0), a', (p_0, q_0, q'_0), (1,0,0,1))$ with $a' \in \Sigma \setminus \{a\}$, since $r_1$ and $r_4$ are incremented in these transitions. With the updates thought of as vectors, the resulting CEFA is illustrated in Figure~\ref{fig:overview:product}(b).
+For technical convenience, we also think of the updates of registers in transitions as vectors $(u_1, u_2, u_3, u_4)$, where $u_i \in \Int$ is the update on the register $r_{i}$ for each $i \in [4]$. For instance, the transitions corresponding to the self-loop around $(p_0, q_0, q'_0)$ are thought as $((p_0, q_0, q'_0), a', (p_0, q_0, q'_0), (1,0,0,1))$ with $a' \in \Sigma \setminus \{a\}$, since $r_1$ and $r_4$ are incremented by one in these transitions. After considering the updates of registers as vectors, the CEFA is like Figure~\ref{fig:overview:product}(b).
 %the transitions corresponding to the self-loop is $(q, a', q', (1,1,0,0))$ with $a' \in \Sigma \setminus \{a\}$.  
 
 \begin{figure}[ht]
@@ -43,12 +40,12 @@ For technical convenience, we also think of the updates on the values of registe
   \includegraphics[width = 0.9\textwidth]{sections/overview-cefa-product.pdf}
   \caption{$\aut_1 \cap \aut_2 \cap \aut_3$: Intersection of $\aut_1$, $\aut_2$, and $\aut_3$}
   \label{fig:overview:product}
-\vspace{-6mm}
+\vspace{-3mm}
 \end{figure}
 
 %For instance, in the transition from $(p_0, q_1)$ to $(p_1, q_1)$, $r_0$ is incremented, and the values of the other registers is unchanged. Therefore, the vector for this transition is $(1, 0, 0, 0)$. 
-The satisfiability of the original string constraint is reduced to the nonemptiness of the CEFA $\aut_1 \cap \aut_2 \cap \aut_3$ with respect to the LIA formula $\varphi \equiv r_4 > 120$, that is, whether there exist $w \in \Sigma^*$ and $(v_1, v_2, v_3, v_4) \in \Int^4$ such that $w$ is accepted by $\aut_1 \cap \aut_2 \cap \aut_3$, producing a cost $(v_1, v_2, v_3, v_4)$ that satisfies $1 \le v_1 \le 60\wedge 1 \le v_2 \le 60 \wedge 0 \le v_3 \le 60$ and $v_4 > 120$. 
-It is not hard to observe that the nonemptiness of $\aut_1 \cap \aut_2 \cap \aut_3$ w.r.t. $\varphi \equiv r_4 > 120$ is independent of the characters of $\aut_1 \cap \aut_2 \cap \aut_3$.  Therefore, the characters in $\aut_1 \cap \aut_2 \cap \aut_3$ can be ignored, resulting into an NFA $\cB$ over the alphabet $\costset$ (see Figure~\ref{fig:overview:product:reduced}(a)), where $\costset$ is the set of vectors from $\Int^4$ occurring in the transitions of $\aut_1 \cap \aut_2 \cap \aut_3$. Then the nonemptiness of $\aut_1 \cap \aut_2 \cap \aut_3$ w.r.t. $\varphi \equiv r_4 > 120$ is reduced to the problem of deciding whether there exists $w' \in \costset^*$ such that it is accepted by $\cB$ and its Parikh image (i.e. numbers of occurrences of characters), say $\eta_{w'}: \costset \rightarrow \Nat$, satisfies that $1 \le v'_1 \le 60\wedge 1 \le v'_2 \le 60 \wedge 0 \le v'_3 \le 60$ and $v'_4 > 120$, where $\myvec{v'} = (v'_1, v'_2, v'_3, v'_4) =  \sum \limits_{\myvec{v} \in \costset} \eta_{w'}(\myvec{v}) \myvec{v}$. Intuitively, $\myvec{v'}$ here is a weighted sum of vectors $\myvec{v} \in \costset$, where the weight for $\myvec{v}$ is the number of occurrences of $\myvec{v}$ in $w'$. (See Section~\ref{subsec:cefadec} for more detailed arguments.)
+Finally, The satisfiability of the original string constraint is reduced to the nonemptiness of the CEFA $\aut\equiv \aut_1 \cap \aut_2 \cap \aut_3$ with respect to the LIA formula $\varphi \equiv r_4 > 120$, abbreviated as $\sf NE_{\varphi}(\aut)$. That is, whether there exist $w \in \Sigma^*$ and $(v_1, v_2, v_3, v_4) \in \Int^4$ such that $w$ is accepted by $\aut$, producing resulting registers values $(v_1, v_2, v_3, v_4)$ that satisfy $1 \le v_1 \le 60\wedge 1 \le v_2 \le 60 \wedge 0 \le v_3 \le 60$ and $\varphi$. 
+It is not hard to observe that $\sf NE_{\varphi}(\aut)$ is independent of the characters of $\aut$.  Therefore, the characters in $\aut$ can be ignored, resulting into an NFA $\cB$ over the alphabet $\costset$, where $\costset$ is the set of vectors from $\Int^4$ occurring in the transitions of $\aut$ (see Figure~\ref{fig:overview:product:reduced}(a)). Then $\sf NE_{\varphi}(\aut)$ is reduced to the problem of deciding whether there exists $w' \in \costset^*$ such that it is accepted by $\cB$ and its Parikh image (i.e., numbers of occurrences of characters), say $\eta_{w'}: \costset \rightarrow \Nat$, satisfies that $1 \le v'_1 \le 60\wedge 1 \le v'_2 \le 60 \wedge 0 \le v'_3 \le 60$ and $v'_4 > 120$, where $(v'_1, v'_2, v'_3, v'_4) =  \sum \limits_{\myvec{v} \in \costset} \eta_{w'}(\myvec{v}) \myvec{v}$ for each $\myvec{v}\in \costset$. Intuitively, $(v'_1, v'_2, v'_3, v'_4)$ is a weighted sum of vectors $\myvec{v} \in \costset$, where the weight is the number of occurrences of $\myvec{v}$ in $w'$. (See Section~\ref{subsec:cefadec} for more detailed arguments.)
 
 \begin{figure}[ht]
 \vspace{-3mm}
@@ -64,7 +61,7 @@ It is not hard to observe that the nonemptiness of $\aut_1 \cap \aut_2 \cap \aut
 %
 Let $\costset = \{\myvec{v_1}, \cdots, \myvec{v_m}\}$. 
 From the results in \cite{SSMH04,VSS05}, an existential LIA formula $\psi_\cB(\anivar_1, \cdots, \anivar_m)$ can be computed to define the Parikh image of strings that are accepted by $\cB$, where $\anivar_1, \cdots, \anivar_m$ are the integer variables to denote the number of occurrences of $\myvec{v_1}, \cdots, \myvec{v_m}$.
-Therefore, the satisfiability of the string constraint in~(\ref{eqn-running}) is reduced to the satisfiability of the following existential LIA formula
+Therefore, the satisfiability of the string constraint in~(\ref{eqn-running}) is reduced to the satisfiability of the following existential LIA formula,
 \begin{equation}\label{eqn-LIA}
 \begin{array}{l}
 \psi_\cB(\anivar_1, \cdots, \anivar_m) \wedge \bigwedge \limits_{1 \le j \le 4} r_j = \sum \limits_{1\le k \le m}  \anivar_k v_{k, j}\ \wedge \\
@@ -72,35 +69,21 @@ Therefore, the satisfiability of the string constraint in~(\ref{eqn-running}) is
 \end{array}
 \end{equation}
 %where for each $k \in [m]$, $v_k = (v_{k,1}, v_{k,2}, v_{k, 3}, v_{k, 4})$ is the vector of updates on the registers $r_0, r_1, r_2, r_3$ in the transition $\tau_k$, and $\alpha(r_0, r_1, r_2, r_3)$ is the accepting condition in $\aut_1 \times \aut_2$. 
-Finally, the satisfiability of the LIA formula in~(\ref{eqn-LIA}) can be solved by the off-the-shelf SMT solvers for LIA.
+which can be solved by the off-the-shelf SMT solvers.
 %Since the satisfiability of LIA formulas can be solved by the off-the-shelf SMT solvers for LIA, the satisfiability of the string constraint in~(\ref{eqn-running}) can thus be solved.
 
-Nevertheless, the algorithm illustrated above is insufficient to solve the string constraints with regex-counting and string-length efficiently, since the sizes of NFA obtained from CEFA can still be big, resulting  in  the LIA formulas of big sizes, while the satisfiability of existential LIA formulas is NP-complete (see e.g. \cite{Haase18}). 
-To tackle this issue, we propose techniques to reduce the sizes of NFA over the alphabet $\costset$.
+Nevertheless, the algorithm illustrated above is insufficient when regexes are complicated. The size of $\cB$ can still be big, causing the resulted existential LIA formulas are of big sizes and hard to be solved (NP-complete \cite{Haase18}). 
+To tackle this issue, we propose techniques to reduce the sizes of $\cB$ over the alphabet $\costset$.
 
 %the performance could be improved if the size of the formula in~(\ref{eqn-LIA}) can be reduced. Since the size of the formula in~(\ref{eqn-LIA}) depends on the size of $\aut_1 \times \aut_2$, that is, the number of states, transitions, and registers in $\aut_1 \times \aut_2$, we propose the techniques to reduce the size of the CEFA $\aut_1 \times \aut_2$.
 
 %Our main idea to reduce the size of the CEFA $\aut_1 \times \aut_2$ is to \emph{ignore the characters in transitions}, since the updates of the values of registers in transitions are independent of the characters therein and the satisfiability of the formula in~(\ref{eqn-LIA}) only concerns about the values of registers. After the characters in transitions are ignored, each transition in $\aut_1 \times \aut_2$ is of the form $(q, \myvec{v}, q')$, where $\myvec{v}$ is the vector denoting the updates on the values of registers. Let $\cB$ denote the resulting automaton. We then think \denghang{of} $\cB$ as an NFA, where the vectors $\myvec{v}$ are taken as the characters. 
 
-Specifically, to reduce the sizes of the NFA, we determinize $\cB$, apply the minimization algorithm to the resulting deterministic finite automaton (DFA), and obtain a DFA $\cC$, as illustrated in Figure~\ref{fig:overview:product:reduced}(b). 
+Specifically, to reduce the sizes of the $\cB$, we determinize $\cB$ and apply the minimization algorithm to the resulting deterministic finite automaton (DFA), obtaining a DFA $\cC$, as illustrated in Figure~\ref{fig:overview:product:reduced}(b).
 Note that $\cC$ contains only three states $q''_0, q''_1, q''_2$ and six transitions, while $\cB$ contains four states and eight transitions. 
-Although the determinization and minimization may not reduce the sizes of NFA in the worst case, the experiment results show us that they do reduce the sizes of NFA constructed from the regular expressions in practice. 
-%(See Table~\ref{tab:results_heuristics}, where adding the size-reduction techniques reduces the running time for 46.4\%.) 
-%thus containing much less number of transitions than $\aut_1 \times \aut_2$\footnote{This is the case even if we consider subsets of characters, e.g. $\{a\}, \{b\}, \{c\}, \Sigma \setminus \{a, b, c\}$, in the transitions of $\aut_1 \times \aut_2$.}.
-%Then we reinterpret $\cC$ as a CEFA with the acceptance condition $\alpha(r_0, r_1, r_2, r_3)$. 
-%Finally, we compute an LIA formula $\psi'(i_1, \cdots, i_6)$ from $\cC$ and reduce the satisfiability of the string constraint in~(\ref{eqn-running}) to the satisfiability of the following existential LIA formula
-%\begin{equation}\label{eqn-LIA-reduced}
-%\psi'(i_1, \cdots, i_6) \wedge \bigwedge \limits_{0 \le j \le 3} r_j = \sum \limits_{k \in [6]}  i_k v'_{k, j+1} \wedge \alpha(r_0, r_1, r_2, r_3),
-%\end{equation}
-%where $\myvec{v'_{k}}=(v'_{k,1}, v'_{k,2}, v'_{k,3}, v'_{k,4})$ is the vector of updates of registers of the transition $\tau'_k$ for $k \in [6]$.
+The evaluation in section \cite{sec} shows that we can solve 1503 more instances after utilizing simplification techniques, with \%54.8 less average time.
 
-%Furthermore, we can reduce the number of registers by merging several registers into one, if they are updated with the same value in every transition of $\aut_1 \times \aut_2$. 
-
-% At last, for the string constraints that are satisfied by a collection of strings whose lengths are small, computing LIA formulas from NFA and solving them by SMT solvers are still expensive.  
-% Therefore, we introduce a heuristic of searching for solutions based on \emph{under approximations}, before computing LIA formulas and solving them by SMT solvers. More precisely, we enforce a constant upper bound $B$ on the lengths of strings and search for a $B$-bounded satisfiable assignment, that is, a satisfiable assignment where the lengths of strings are bound by $B$. Initially, we set $\ell$, an integer variable to denote the lengths of strings, to $1$. If there does not exist an $\ell$-bounded satisfiable assignment, then we let $\ell:=\ell+1$ and continue the search, until finding a satisfiable assignment or reaching the bound $B$. For instance, if we remove $|x| > 120$ from the string constraint~(\ref{eqn-running}), then the resulting constraint is satisfiable. Setting the bound $B$ to $3$ is sufficient to find a solution for the string constraint in~(\ref{eqn-running}), which is witnessed by the following accepting run of $\cC$: $q^{\prime\prime}_0 \xrightarrow{(1,0,0,1)} q^{\prime\prime}_0 \xrightarrow{(0,1,0,1)} q^{\prime\prime}_1 \xrightarrow{(0,0,0,1)} q^{\prime\prime}_2$. Note that the accepting run produces $(1,1,0,3)$, a vector of register values,  which satisfies $1 \le r_1 \le 60 \wedge 1 \le r_2 \le 60 \wedge 0 \le r_3 \le 60$. (See Section~\ref{subsec:cefadec} for more details.)
-
-
-We implement all the aforementioned techniques on top of OSTRICH, resulting into a solver $\ostrichrecl$. It turns out that $\ostrichrecl$ is able to solve the string constraint in~(\ref{eqn-running}) within one second, while the state-of-the-art string solvers are incapable of solving it within 300 seconds. 
+We implement all the aforementioned techniques on the top of OSTRICH, resulting in a solver $\ostrichrecl$. It turns out that $\ostrichrecl$ is able to solve the string constraint in~(\ref{eqn-running}) within one second, while the state-of-the-art string solvers are incapable of solving it within 300 seconds. 
 
 
 %%%%%%%%%%%%%%%%%original texts by Denghang%%%%%%%%%%%%%%%

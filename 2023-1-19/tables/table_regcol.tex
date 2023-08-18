@@ -1,23 +1,26 @@
-\resizebox{.95\textwidth}{!}{\begin{tabular}{|c |c |c |c |c |c |c |c |}
-    \hline
-          solver                                                                   & CVC5       & Z3seq      & Z3-Trau & Z3str3     & Z3str3RE   & OSTRICH    & OSTRICH$^{\rm RECL}$ \\
-    \hline\hline
-    sat                                                                      & 24,006	& 24,079	& 8,224	& 21,149	& 24,507	& 19,140	& {\bf 24,621}         \\
-    \hline
-    unsat                                                                    & 12,623	& 14,362	& 11,815	& 9,173	& 14,933	& 15,877	& {\bf 15,901}        \\
-    \hline
-    \hline
-    unknown                                                                 &  8	& 98	& 19,103	& 6,526	& 98	& 5,060 &	{\bf 2}           \\
-    \hline
-    timeout                                                                  & 3,919	& 2,089	& 1,486	& 3,780	&1,090	& 551	& {\bf 104}           \\
-    \hline
-    soundness errors                                                         &  {\bf 0}	& 56	&1,815	& 44	& 44	&  {\bf 0}	& {\bf 0}           \\
-    \hline
-    program crashes                                                          &  {\bf 0}	&  {\bf 0}	& 6,681	&  {\bf 0}	&  {\bf 0}	&  {\bf 0}	&  {\bf 0}               \\
-    \hline
-    \hline
-    solved correctly                                                         & 36,629	 & 38,441	& 20,039	& 30,322	& 39,440	& 35,017	& {\bf 40,522}        \\
-    \hline
-    \begin{tabular}{c}average time \\ per instance \\ (seconds)\end{tabular} & 6.51 &	3.67	& 3.56	& 7.12	& {\bf 1.94}  & 3.94	& 3.02                 \\
-    \hline
-  \end{tabular}}
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.16}
+\resizebox{.95\textwidth}{!}{\begin{tabular}{|>{\centering\arraybackslash}m{1.45cm} |c |c |c |c |c |c |}
+            \hline
+                                                     & CVC5       & Z3str3RE      & Z3str3 & Z3seq & \textsc{Ostrich} & $\ostrichrecl$ \\
+            \hline
+            \hline
+
+            \rowcolor{grayshade} sat                 & 27813      & 28283         & 23126  & 27761 & 25975            & \textbf{28360} \\
+            \hline
+            \rowcolor{grayshade} unsat               & 16941      & 19312         & 12742  & 18651 & 20291            & \textbf{20302} \\
+            \hline
+            \hline
+
+            unknown                                  & \textbf{8} & 99           & 6990   & 98    & 160              & 28             \\
+            \hline
+            timeout                                  & 4081       & 1149          & 5985   & 2333  & 2417             & \textbf{153}   \\
+            \hline
+            soundness  error                         & \textbf{0} & 44            & 44     & 56    & \textbf{0}       & \textbf{0}     \\
+            \hline
+            \hline
+            \rowcolor{grayshade} Total\quad  correct & 44754      & 47551         & 35824  & 46356 & 46266            & \textbf{48662} \\
+            \hline
+            \rowcolor{grayshade} Average  time (s)   & 5.64       & \textbf{1.62} & 7.63   & 3.59  & 5.94             & 1.93           \\
+            \hline
+      \end{tabular}}

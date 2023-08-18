@@ -2,12 +2,13 @@
 %\documentclass{standalone}
 %\begin{document}
 
-We write $\Nat$ and $\Int$ for the sets of natural and integer numbers. For $n \in \Nat$ with $n \ge 1$, $[n]$ denotes $\{1, \ldots, n\}$; for $m,n \in \Nat$ with $m \le n$,  $[m, n]$ denotes $\{ i \in \Nat \mid m \le i \le n \}$. Throughout the paper, $\Sigma$ is a finite alphabet, ranged over by $a,b,\ldots$.  
+We write $\Nat$ and $\Int$ for the sets of natural and integer numbers. For $n \in \Nat$ with $n \ge 1$, $[n]$ denotes $\{1, \ldots, n\}$; for $m,n \in \Nat$ with $m \le n$,  $[m, n]$ denotes $\{ i \in \Nat \mid m \le i \le n \}$. Throughout the paper, $\Sigma$ is a finite alphabet, ranged over $a,b,\ldots$.  
 
-For a function $f$ from $X$ to $Y$ and $X' \subseteq X$, we use $\prj_{X'}(f)$ to denote the restriction (aka projection) of $f$ to $X'$, that is, $\prj_{X'}(f)$ is a function from $X'$ to $Y$, and $\prj_{X'}(f)(x') = f(x')$ for each $x' \in X'$.
+For a function $f$ from $X$ to $Y$ and $X' \subseteq X$, we use $\prj_{X'}(f)$ to denote the restriction (aka projection) of $f$ to $X'$, that is, $\prj_{X'}(f)$ is the function from $X'$ to $Y$, and $\prj_{X'}(f)(x') = f(x')$ for each $x' \in X'$.
 
 \medskip
-\noindent \emph{Strings and languages.}
+\noindent 
+\emph{Strings and languages.}
 %\paragraph*{Strings and languages.}
 A string over $\Sigma$ is a (possibly empty) sequence of elements from $\Sigma$,
 denoted by $u, v, w, \ldots$. An empty string is denoted by $\varepsilon$. We use $\Sigma_\varepsilon$ to denote $\Sigma \cup \{\varepsilon\}$. We write $\Sigma^*$ (resp., $\Sigma^+$) for the set of all (resp. nonempty) strings over $\Sigma$.
@@ -39,20 +40,22 @@ An NFA $\NFA$ is said to be \emph{deterministic} if $I$ is a singleton and, for 
 %
 
 It is well-known that finite automata capture regular languages. 
-Moreover, the class of regular languages is closed under union, intersection, concatenation, Kleene star, complement, and language difference \cite{HU79}. In the sequel, we recall the constructions of NFA corresponding to these language operations. Let $\NFA_1 = (Q_1, \Sigma, \delta_1, I_1, F_1)$ and $\NFA_2 = (Q_2, \Sigma, \delta_2, I_2, F_2)$ be two NFA such that $Q_1 \cap Q_2 = \emptyset$. 
-\begin{itemize}
-\item The union of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \cup \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q'= Q_1 \cup Q_2$, $\delta' = \delta_1 \cup \delta_2$, $I' = I_1 \cup I_2$, and $F'=F_1 \cup F_2$. 
-%
-\item The intersection of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \cap \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q' = Q_1 \times Q_2$, $I' = I_1 \times I_2$, $F' = F_1 \times F_2$, and $\delta' = \{((q_1, q_2), a, (q'_1, q'_2)) \mid (q_1, a, q'_1) \in \delta_1, (q_2, a, q'_2) \in \delta_2\}$.
-%
-\item The concatenation of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \concat \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q' = Q_1 \cup Q_2$, $I' = I_1$, $\delta' = \delta_1 \cup \delta_2 \cup \{(q_1, a, q_2) \mid q_1 \in F_1, \exists q' \in I_2.\ (q', a, q_2) \in \delta_2\}$, moreover, if $I_2 \cap F_2 \neq \emptyset$, then $F'= F_1 \cup F_2$, otherwise, $F'= F_2$.
-%
-\item The Kleene star of $\NFA_1$, denoted by $\NFA_1^*$, is defined as $(Q'_1, \Sigma, \delta'_1, I'_1, F'_1)$, where $Q'_1 = Q_1 \cup \{q_0\}$ with $q_0 \not \in Q_1$, $I'_1 = \{q_0\}$, $F'_1= F_1 \cup \{q_0\}$, $\delta'_1 = \delta_1 \cup \{(q_0, a, q'_1)  \mid \exists q'_0 \in I_1.\ (q'_0, a, q'_1) \in \delta_1\} \cup \{(q_1, a, q'_1) \mid q_1 \in F_1, \exists q'_0 \in I_1.\ (q'_0, a, q'_1) \in \delta_1\}$.
-%
-\item The complement of $\NFA_1$, denoted by $\overline{\NFA_1}$, is defined as $(Q'_1, \Sigma, \delta'_1, q'_0, Q'_1 \setminus F'_1)$, where  $(Q'_1, \Sigma, \delta'_1, q'_0, F'_1)$ is the DFA obtained from $\NFA_1$ by subset construction.  
-%
-\item The language difference of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \setminus \NFA_2$, is defined as $\NFA_1 \cap \overline{\NFA_2}$.
-\end{itemize}
+Moreover, the class of regular languages is closed under union, intersection, concatenation, Kleene star, complement, and language difference \cite{HU79}. The constructions of NFA corresponding to these language operations are list in \ref{appendix:cefa}
+% In the sequel, we recall the constructions of NFA corresponding to these language operations. 
+% Let $\NFA_1 = (Q_1, \Sigma, \delta_1, I_1, F_1)$ and $\NFA_2 = (Q_2, \Sigma, \delta_2, I_2, F_2)$ be two NFA such that $Q_1 \cap Q_2 = \emptyset$. 
+% \begin{itemize}
+% \item The union of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \cup \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q'= Q_1 \cup Q_2$, $\delta' = \delta_1 \cup \delta_2$, $I' = I_1 \cup I_2$, and $F'=F_1 \cup F_2$. 
+% %
+% \item The intersection of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \cap \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q' = Q_1 \times Q_2$, $I' = I_1 \times I_2$, $F' = F_1 \times F_2$, and $\delta' = \{((q_1, q_2), a, (q'_1, q'_2)) \mid (q_1, a, q'_1) \in \delta_1, (q_2, a, q'_2) \in \delta_2\}$.
+% %
+% \item The concatenation of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \concat \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q' = Q_1 \cup Q_2$, $I' = I_1$, $\delta' = \delta_1 \cup \delta_2 \cup \{(q_1, a, q_2) \mid q_1 \in F_1, \exists q' \in I_2.\ (q', a, q_2) \in \delta_2\}$, moreover, if $I_2 \cap F_2 \neq \emptyset$, then $F'= F_1 \cup F_2$, otherwise, $F'= F_2$.
+% %
+% \item The Kleene star of $\NFA_1$, denoted by $\NFA_1^*$, is defined as $(Q'_1, \Sigma, \delta'_1, I'_1, F'_1)$, where $Q'_1 = Q_1 \cup \{q_0\}$ with $q_0 \not \in Q_1$, $I'_1 = \{q_0\}$, $F'_1= F_1 \cup \{q_0\}$, $\delta'_1 = \delta_1 \cup \{(q_0, a, q'_1)  \mid \exists q'_0 \in I_1.\ (q'_0, a, q'_1) \in \delta_1\} \cup \{(q_1, a, q'_1) \mid q_1 \in F_1, \exists q'_0 \in I_1.\ (q'_0, a, q'_1) \in \delta_1\}$.
+% %
+% \item The complement of $\NFA_1$, denoted by $\overline{\NFA_1}$, is defined as $(Q'_1, \Sigma, \delta'_1, q'_0, Q'_1 \setminus F'_1)$, where  $(Q'_1, \Sigma, \delta'_1, q'_0, F'_1)$ is the DFA obtained from $\NFA_1$ by subset construction.  
+% %
+% \item The language difference of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \setminus \NFA_2$, is defined as $\NFA_1 \cap \overline{\NFA_2}$.
+% \end{itemize}
 
 Let $w \in \Sigma^*$. The \emph{Parikh image} of $w$, denoted by $\parikh(w)$, is defined as the function $\eta: \Sigma \rightarrow \Nat$ such that $\eta(a) = |w|_a$ for each $a \in \Sigma$. The \emph{Parikh image} of an NFA $\NFA$, denoted by $\parikh(\NFA)$, is defined as $\{\parikh(w) \mid w \in \Lang(\NFA)\}$.
 
@@ -68,23 +71,22 @@ Let $w \in \Sigma^*$. The \emph{Parikh image} of $w$, denoted by $\parikh(w)$, i
 \medskip
 \noindent 
 \emph{Linear integer arithmetic and Parikh images.}
-We will also use standard quantifier-free/existential \emph{linear integer arithmetic} (LIA) formulas, which typically range over by $\phi, \varphi$. 
-For a set $\mathfrak{X}$ of variables, we use $\Phi(\mathfrak{X})$ to denote the set of quantifier-free LIA formulas whose free variables are from $\mathfrak{X}$. 
-For convenience, we use $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ to denote an LIA formula $\varphi$ whose free variables are from $\{\anivar_1, \cdots, \anivar_k\}$. For an LIA formula $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ and $\myvec{t} = (t_1, \cdots, t_k)$ be a tuple of integer terms, we use $\varphi[\myvec{t}/\myvec{\anivar}]$ to denote the formula obtained by replacing (simultaneously) $\anivar_i$ with $t_i$ for every $i \in [k]$.
+We use standard existential \emph{linear integer arithmetic} (LIA) formulas, which
+ typically range over $\psi, \varphi, \Phi, \alpha$. 
+For a set $\mathfrak{X}$ of variables, we use $\psi/\varphi/\Phi/\alpha(\mathfrak{X})$ to denote the set of existential LIA formulas whose free variables are from $\mathfrak{X}$. 
+For example, we use $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ to denote an LIA formula $\varphi$ whose free variables are from $\{\anivar_1, \cdots, \anivar_k\}$. For an LIA formula $\varphi(\vec{\anivar})$, we use $\varphi[\myvec{t}/\myvec{\anivar}]$ to denote the formula obtained by replacing (simultaneously) $\anivar_i$ with $t_i$ for every $i \in [k]$ where $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ and $\myvec{t} = (t_1, \cdots, t_k)$ are tuples of integer terms.
 %For convenience, we assume a set $X$ of variables is a vector. 
 %, which is essentially Presburger 
 
-At last, we recall a result about Parikh images of NFA. 
+At last, we recall the result about Parikh images of NFA. 
 For each $a \in \Sigma$, let $\anivarz_a$ be an integer variable. Let $\fZ_\Sigma$ denote the set of integer variables $\anivarz_a$ for $a \in \Sigma$. 
 Let $\NFA$ be an NFA over the alphabet $\Sigma$. Then 
-we say that an LIA formula $\varphi(\fZ_\Sigma)$ defines the Parikh image of $\NFA$, if $\{\eta: \Sigma \rightarrow \Nat \mid \varphi[(\eta(a) /\anivarz_a)_{a \in \Sigma}] \mbox{ is true}\} = \parikh(\NFA)$. 
+we say that an LIA formula $\psi(\fZ_\Sigma)$ defines the Parikh image of $\NFA$, if $\{\eta: \Sigma \rightarrow \Nat \mid \psi[(\eta(a) /\anivarz_a)_{a \in \Sigma}] \mbox{ is true}\} = \parikh(\NFA)$. 
 
 \begin{theorem}[\cite{SSMH04}]\label{thm-nfa-parikh}
-Given an NFA $\NFA$,  an existential LIA formula $\varphi_\NFA(\fZ_\Sigma)$ can be computed in linear time that defines the Parikh image of $\NFA$.
+Given an NFA $\NFA$,  an existential LIA formula $\psi_\NFA(\fZ_\Sigma)$ can be computed in linear time that defines the Parikh image of $\NFA$.
 \end{theorem}
-
-
-
+\vspace{-3mm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \hide{
