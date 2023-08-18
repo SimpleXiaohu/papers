@@ -81,7 +81,7 @@ To tackle this issue, we propose techniques to reduce the sizes of $\cB$ over th
 
 Specifically, to reduce the sizes of the $\cB$, we determinize $\cB$ and apply the minimization algorithm to the resulting deterministic finite automaton (DFA), obtaining a DFA $\cC$, as illustrated in Figure~\ref{fig:overview:product:reduced}(b).
 Note that $\cC$ contains only three states $q''_0, q''_1, q''_2$ and six transitions, while $\cB$ contains four states and eight transitions. 
-The evaluation in section \cite{sec} shows that we can solve 1503 more instances after utilizing simplification techniques, with \%54.8 less average time.
+The evaluation in Table~\ref{tab:results_simp} shows that we can solve 1503 more instances after utilizing simplification techniques, with \%54.8 less average time.
 
 We implement all the aforementioned techniques on the top of OSTRICH, resulting in a solver $\ostrichrecl$. It turns out that $\ostrichrecl$ is able to solve the string constraint in~(\ref{eqn-running}) within one second, while the state-of-the-art string solvers are incapable of solving it within 300 seconds. 
 

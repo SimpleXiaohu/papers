@@ -1,37 +1,9 @@
 %!TEX root = ../main.tex
 
-%\documentclass{standalone}
-%\begin{document}
-
-Regular expressions (regex for short) and string-length function are widely used in string-manipulating programs. 
-%Solving string constraints involving regular membership and string-length function has been widely investigated. 
-Counting is a frequently used feature in regexes that counts the number of sub-patterns matchings. The state-of-the-art string solvers are incapable of solving string constraints with regex-counting and string-length efficiently, especially when the counting bounds are large. In this work, we propose an automata-theoretic approach for solving such a class of string constraints. 
-%
-The main idea is to model the counting operators symbolically by registers in automata instead of unfolding them explicitly, thus alleviating the state explosion problem.  
-%
-Moreover, the string-length function is modeled by register as well. 
-%Since Parikh images of automata can be defined by linear integer arithmetic formulas, 
-As a result, the satisfiability of string constraints with regex-counting and string-length is reduced to the satisfiability of linear integer arithmetic, which off-the-shelf SMT solvers can then solve. 
-%
-%we extract linear integer arithmetic formulas from automata, which encode the constraints on the values of registers, and utilize the off-the-shelf SMT solvers to solve the linear integer arithmetic constraints. 
-%
-To improve the performance further, we propose techniques to reduce automata sizes.
-% we propose state reduction techniques and under-approximation to improve the performance further. 
-We implement the algorithms and validate our approach on 48,843 benchmark instances. The experimental results show that 
-our approach can solve more instances than other solvers at a comparable or faster speed.
-% performance of this approach compared against the state-of-the-art string solvers.
-
-
-%Regular expression with repetition frequently appears in the real world, such as $(ab)\{1, 100\}$. However, state-of-art string
-%solvers can not efficiently solve string constraints with repetition bounds,
-%especially when the repetition bounds are large. This paper focuses on
-%string logic containing regular membership predicate with repetition
-%and linear integer constraints on string length. Repetition is captured
-%by cost-enriched finite automaton(CEFA), whose transitions have symbolic updates of integers limited by linear arithmetic. We propose a new systematic algorithm based on CEFA, and heuristic ways
-%like under-approximation and symbolic-aware simplification are used to
-%accelerate. We implement a powerful string solver OstrichCEA and
-%evaluate it on instances from the real world and other typical benchmarks.
-%The experiment result shows superiority.
-
-%\keywords{Rgular Expressions, Counting, Length, Automata, Registers, Linear Integer Arithmetic}
-%\end{document}
+Regular expressions (regex for short) and string-length function are widely used in string-manipulating programs. Counting is a frequently used feature in regexes that counts the number of matchings of sub-patterns. 
+The state-of-the-art string solvers are incapable of solving string constraints with regex-counting and string-length eﬀiciently, especially when the counting and length bounds are large. 
+In this work, we propose an automata-theoretic approach for solving such a class of string constraints. 
+The main idea is to model the counting operators symbolically by registers in automata instead of unfolding them explicitly, thus alleviating the state explosion problem. Moreover, the string-length function is modeled by a register as well. 
+As a result, the satisfiability of string constraints with regex-counting and string-length is reduced to the satisfiability of linear integer arithmetic, which the off-the-shelf SMT solvers can then solve. 
+To improve the performance further, we propose techniques to reduce automata sizes. We implement the algorithms and validate our approach on 48,843 benchmark instances. 
+The experimental results show that our approach can solve more instances than the other solvers, at a comparable or faster speed, especially when the counting and length bounds are large.
