@@ -1,5 +1,3 @@
-%!TEX root = ../main.tex
-
 Regular expressions (regex for short) and string-length function are widely used in string-manipulating programs. Counting is a frequently used feature in regexes that counts the number of matchings of sub-patterns. 
 The state-of-the-art string solvers are incapable of solving string constraints with regex-counting and string-length eﬀiciently, especially when the counting and length bounds are large. 
 In this work, we propose an automata-theoretic approach for solving such a class of string constraints. 
@@ -7,3 +5,6 @@ The main idea is to model the counting operators symbolically by registers in au
 As a result, the satisfiability of string constraints with regex-counting and string-length is reduced to the satisfiability of linear integer arithmetic, which the off-the-shelf SMT solvers can then solve. 
 To improve the performance further, we propose techniques to reduce automata sizes. We implement the algorithms and validate our approach on 48,843 benchmark instances. 
 The experimental results show that our approach can solve more instances than the other solvers, at a comparable or faster speed, especially when the counting and length bounds are large.
+
+%\keywords{Rgular Expressions, Counting, Length, Automata, Registers, Linear Integer Arithmetic}
+%\end{document}

@@ -3,7 +3,7 @@
 %\begin{document}
 
 We implement the algorithms in Section~\ref{sec:algorithm} on top of OSTRICH~\cite{Ostrich,atva2020}, resulting in a version of OSTRICH called $\ostrichrecl$.
-Then we do experiments on two benchmark suites to evaluate the performance of $\ostrichrecl$, and carry out detailed experiments including evaluation of size-reduction techniques and the experiment of large-counting benchmark. In the sequel, we first describe the two benchmark suites, then present the settings and results of the experiments.
+Then we do experiments on two benchmark suites to evaluate the performance of $\ostrichrecl$, and carry out detailed experiments, including the evaluation of size-reduction techniques and the experiment of large-counting benchmark. In the sequel, we first describe the two benchmark suites, then present the settings and results of the experiments.
 
 %This section presents the empirical evaluation of OstrichCEA, which is our implementation of the decision procedure introduced in Section \ref{sec:algorithm}. Our objective is to validate the effectiveness of the proposed techniques by evaluating our tool's correctness and efficiency compared to other solvers. Furthermore, we assess the efficacy of our heuristics by testing different configurations of the tool. We have implemented our encoding for counting with two heuristic algorithms on Ostrich+ \cite{atva2020}. The pre-image computation for concatenation, \verb|indexOf|, \verb|substring|, \verb|replaceAll|, \verb|reverse| and finite transducer remain unchanged. OstrichCEA is written in Scala and based on the SMT solver Princess\cite{princess}.
 
@@ -24,8 +24,8 @@ where $\overline{\Sigma^*(<+ >+'+''+\&)\Sigma^*}$ is a regular expression that s
 \noindent
 \emph{AutomatArk benchmark suite.}
 The AutomatArk benchmark suite is adapted from the AutomatArk suite in \cite{z3str3re} by filtering out the string constraints that contain no occurrences of counting operators and adding the length constraint $|x| > 10$ (where $x$ is a string variable). There are 8,215 instances in the AutomatArk suite here.
-Note that the original AutomatArk benchmark suite in \cite{z3str3re} includes 19,979 instances in total, conjunctions of regular membership queries generated out of regular expressions from \cite{automatark}.
-%Only 8,751 ones that contain counting operators out of 19,979 instances. 
+Note that the original AutomatArk benchmark suite in \cite{z3str3re} includes 19,979 instances, conjunctions of regular membership queries generated out of regular expressions from \cite{automatark}.
+%Only 8,751 contain counting operators out of 19,979 instances. 
 Moreover, only 5\% of them include non-register-representable regexes among the 48,843 instances.
 %%%%%%%%%%%%%%%%%% the benchmark suite written by Denghang %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% the benchmark suite written by Denghang %%%%%%%%%%%
@@ -76,15 +76,16 @@ We evaluate the performance of $\ostrichrecl$ against the state-of-the-art strin
   \begin{subtable}{0.513\textwidth}
       \centering
       \import{tables}{table_regcol.tex}
-      \caption{Overall experiment results,\\ with timeout = 60 seconds}
+      \caption{Overall experiment results,\\ with timeout = 60 seconds.}
       \label{tab:results_regcol}
   \end{subtable}
   \begin{subtable}{0.477\textwidth}
       \centering
       \import{tables}{table_simp.tex}
-      \caption{Simplification technique evaluation, with timeout = 60 seconds}
+      \caption{Simplification technique evaluation, with timeout = 60 seconds.}
       \label{tab:results_simp}
   \end{subtable}
+  \vspace{-6mm}
   \caption{Experiments on RegCoL and AutomatArk benchmark suites}
 \end{table}
 \vspace{-9mm}
@@ -98,18 +99,18 @@ We evaluate the performance of $\ostrichrecl$ against the state-of-the-art strin
 %   \vspace{-9mm}
 % \end{table}
 
-The overall experiment results are in Table~\ref{tab:results_regcol}. Note that we take the result of CVC5 as the ground truth\footnote{At first we used the majority vote between all results of the solvers as the ground truth, but solvers of z3 family outputed some wrong results(verified by us manually), causing the ground truth to be incorrect.} and the soundness error also be counted as unknown. We can see that $\ostrichrecl$ solves almost all 48,843 instances, except 182 of them, that is, it solves \textbf{48,662} instances correctly. The number is %3,994/2,272/24,577/12,832/1,091/7,092 
+The overall experiment results are in Table~\ref{tab:results_regcol}. Note that we take the result of CVC5 as the ground truth\footnote{At first we used the majority vote between all results of the solvers as the ground truth, but solvers of z3 family output some wrong results(verified by us manually), causing the ground truth to be incorrect.}. We can see that $\ostrichrecl$ solves almost all 48,843 instances, except 182 of them, that is, it solves \textbf{48,662} instances correctly. The number is %3,994/2,272/24,577/12,832/1,091/7,092 
 \textbf{3,908/1,111/12,838/2,306/2,396 more} than the number of instances solved by CVC5/Z3str3RE/Z3str3/Z3seq/OSTRICH respectively.
 %      
 %A soundness error is reported if the result of a solver for an instance is different from CVC5. 
 % their results on some instances are inconsistent with the results of the other three solvers, i.e. CVC5, OSTRICH, and OSTRICH$^{\rm RECL}$.
 %
-Moreover, our solver $\ostrichrecl$ is the second fastest solver and its average time on each instance is closed to the fastest solver Z3str3RE (\textbf{1.93}/1.62 s).
+Moreover, our solver $\ostrichrecl$ is the second fastest solver, and its average time on each instance is close to the fastest solver Z3str3RE (\textbf{1.93}/1.62 s).
 \vspace{-3mm}
 \subsection{Evaluation of Simplification Techniques}
 \vspace{-2mm}
 
-We evaluate the simplification techniques by comparing the performance of $\ostrichrecl$ with and without the simplification techniques. Moreover, we also encode the $\cefadec$ problem to infinite state transition system and solve it using \textsc{nuXmv}\cite{nuxmv}. 
+We evaluate the simplification techniques by comparing the performance of $\ostrichrecl$ with and without the simplification techniques. Moreover, we also encode the $\cefadec$ problem to an infinite state transition system and solve it using \textsc{nuXmv}\cite{nuxmv}. 
 % \begin{table}[ht]
 %   \vspace{-5mm}
 %   \begin{center}
@@ -120,11 +121,11 @@ We evaluate the simplification techniques by comparing the performance of $\ostr
 %   \vspace{-9mm}
 % \end{table}
 
-The evaluation results of simplification techniques are in Table~\ref*{tab:results_simp}. We can see that compared to $\ostrichrecl$ without simplification techniques, $\ostrichrecl$ with simplification techniques solves \textbf{1,503 more} instances and is \textbf{2.21$\times$} faster. Moreover, compared with the techniques using \textsc{nuxmv}, $\ostrichrecl$ with simplification techniques solves \textbf{1,798 more} instances and is \textbf{3.13$\times$} faster. 
+The evaluation results of simplification techniques are in Table~\ref*{tab:results_simp}. Compared to $\ostrichrecl$ without simplification techniques, $\ostrichrecl$ with simplification techniques solves \textbf{1,503 more} instances and is \textbf{2.21$\times$} faster. Moreover, compared with the techniques using \textsc{nuxmv}, $\ostrichrecl$ with simplification techniques solves \textbf{1,798 more} instances and is \textbf{3.13$\times$} faster. 
 
 \vspace{-3mm}
 \subsection{Large-Counting Experiment Results}
-The distribution of upper bound in RegCoL and AutomatArk suites is showed in Fig~\ref{fig:count_distri}, whose horizontal axis is the value of upper bound and vertical axis is the number of occurrences of it. The upper bound is the number $n$ of regex $e^{\{m,n\}}, e^{\{n,n\}}$ and $e^{\{n,\infty\}}$ (which is equivalent to $e^{\{n,n\}}e^*$). Although the upper bounds of most counting operators are less than 50, there are still about two thousands of them are greater than 50. We extract these instances with counting upper bound greater than 50 (1,969 instances in total). Moreover, We change the length constraint to $|x| > 200$ (which is $|x| > 10$ in overall experiment), to make the number of $sat$ result more closed to that of $unsat$.
+The distribution of upper bounds of counting in RegCoL and AutomatArk suites is shown in Fig~\ref{fig:count_distri}, whose horizontal axis is the value of the upper bound and vertical axis is the number of occurrences. The upper bound is the number $n$ of regex $e^{\{m,n\}}, e^{\{n,n\}}$ and $e^{\{n,\infty\}}$ (which is equivalent to $e^{\{n,n\}}e^*$). Although most upper bounds of counting operators are less than 50, about two thousand are still greater than 50. We extract instances with upper bounds greater than 50 and generate a \emph{`large-counting'} benchmark suite (1,969 instances in total). Moreover, We change the length constraint of each instance to $|x| > 200$ (which is $|x| > 10$ in the overall experiment), to make the suite more balanced.
 \vspace{-5mm}
 \begin{figure}[ht]
   \centering
@@ -139,12 +140,13 @@ The distribution of upper bound in RegCoL and AutomatArk suites is showed in Fig
     \centering\vskip 0pt
     \import{tables}{table_large_count.tex}
     \vspace{4.5mm}
-    \caption{Large-counting experiment, \\with timeout = 60 seconds}
+    \caption{Large-counting experiment, \\with timeout = 60 seconds.}
     \label{fig:table_large_count}
   \end{subfigure}
-  \caption{Analysis of dataset and large-counting experiment}
+  \vspace{-2mm}
+  \caption{Analysis of dataset and large-counting experiment.}
 \end{figure}
-\vspace{-7mm}
+\vspace{-5mm}
 
 % \begin{table}[ht]
 %   \vspace{-5mm}
