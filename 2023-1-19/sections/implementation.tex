@@ -97,7 +97,7 @@ Moreover, $\ostrichrecl$ is the second fastest solver, whose average time on eac
 
 %
 \begin{table}
-  \vspace{-3mm}
+  \vspace{-4mm}
   \centering
   \begin{subtable}{0.513\textwidth}
       \centering
@@ -108,12 +108,12 @@ Moreover, $\ostrichrecl$ is the second fastest solver, whose average time on eac
   \begin{subtable}{0.477\textwidth}
       \centering
       \import{tables}{table_simp.tex}
-      \caption{Evaluation of the simplification techniques, with timeout = 60 seconds.}
+      \caption{Evaluation of the automata size-reduction techniques, with timeout = 60 seconds.}
       \label{tab:results_simp}
   \end{subtable}
   \vspace{-2mm}
   \caption{Experiment results}
-  \vspace{-6mm}
+  \vspace{-8mm}
 \end{table}
 % \begin{table}[ht]
 %   \vspace{-5mm}
@@ -171,13 +171,13 @@ The experiment results are put in Fig~\ref{fig:table_large_count}. From the resu
 
 \medskip
 \noindent 
-\emph{Evaluation of the effectiveness of the simplification techniques.}
-We also do experiments to evaluate the effectiveness of the simplification techniques, that is, Step 2 in Section~\ref{subsec:cefadec}. 
-Let us use $\ostrichrecl_{\rm -SIMP}$ to denote $\ostrichrecl$ with the simplification techniques removed. 
+\emph{Evaluation of the effectiveness of the automata size-reduction techniques.}
+We also do experiments to evaluate the effectiveness of the automata size-reduction techniques, that is, Step 2 in Section~\ref{subsec:cefadec}. 
+Let us use $\ostrichrecl_{\rm -SIMP}$ to denote $\ostrichrecl$ with the size-reduction techniques removed. 
 Meanwhile, we compare $\ostrichrecl$ and $\ostrichrecl_{\rm -SIMP}$ against $\ostrichrecl_{\rm NUXMV}$, where the $\cefadec$ problem is solved by the \textsc{nuXmv} model checker \cite{nuxmv}, instead of the procedure in Section~\ref{subsec:cefadec}. 
 The experiment results are put in Table~\ref{tab:results_simp}. 
 %$\ostrichrecl_{\rm -SIMP}$ is the tool without simplification techniques. $\ostrichrecl_{\rm NUXMV}$ is the tool using \textsc{nuXmv}-based techniques. 
-From the results, $\ostrichrecl$ solves \textbf{1,503 more} instances and is \textbf{2.21} times faster than $\ostrichrecl_{\rm -SIMP}$, which shows that the simplification techniques indeed play a vital role in the performance improvement. Moreover, $\ostrichrecl$ solves \textbf{1,798 more} instances and is \textbf{3.13} times faster than $\ostrichrecl_{\rm NUXMV}$. 
+From the results, $\ostrichrecl$ solves \textbf{1,503 more} instances and is \textbf{2.21} times faster than $\ostrichrecl_{\rm -SIMP}$, which shows that the size-reduction techniques indeed play a vital role in the performance improvement. Moreover, $\ostrichrecl$ solves \textbf{1,798 more} instances and is \textbf{3.13} times faster than $\ostrichrecl_{\rm NUXMV}$. 
 
 %Moreover, we encode the $\cefadec$ problem to an infinite state transition system and use \textsc{nuXmv}\cite{nuxmv} to solve it. We also compare the simplification techniques to the \textsc{nuXmv}-based techniques.
 %$\ostrichrecl_{\rm NUXMV}$ is the tool using \textsc{nuXmv}-based techniques.
