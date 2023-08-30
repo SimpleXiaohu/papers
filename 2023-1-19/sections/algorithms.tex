@@ -71,7 +71,8 @@ Then we have $\aut_{e'} = \aut_{e'_1} \concat \aut_{e'_2}$, $\aut_{e'} = \aut_{e
 %\end{example}
 
 For non-register-representable regular expressions, we first transform them into register-representable regular expressions by unfolding all the non-register-representable occurrences of counting operators. After that, we utilize the aforementioned procedure to construct CEFA. For instance, $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa+aaaa) \concat b^*)^{\{2, \infty\}}$. 
-The unfoldings of the inner counting operators of non-register-representable regexes incur an exponential blow-up in the worst case. Nevertheless, those regexes occupy only 5\% of the 48,843 regexes that are collected from the practice (see Section~\ref{sec:bench}). Moreover, the unfoldings are partial in the sense that the outmost counting operators are not unfolded. It turns out that we can solve almost all of them except 181.   
+The unfoldings of the inner counting operators of non-register-representable regexes incur an exponential blow-up in the worst case. Nevertheless, those regexes occupy only 5\% of the 48,843 regexes that are collected from the practice (see Section~\ref{sec:bench}). Moreover, the unfoldings are partial in the sense that the outmost counting operators are not unfolded. 
+It turns out that our approach can solve almost all the RECL constraints involving these 48,843 regexes, except 181 of them (See Table~\ref{tab:results_regcol}). 
 %$(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa + aaaa) \concat b^*) \setminus (a+b)(a+b)(a+b)(a+b)(a+b)^*$.
 
 For each $i \in [n]$, let $x_i \in e_{i, 1}, \cdots, x_i \in e_{i, l_i}$ be an enumeration of the regular membership constraints for $x_i$ in $\varphi_1$.  Then we can construct CEFA $\aut_{i, j}$ from $e_{i, j}$ for each $i \in [n]$ and $j \in [l_i]$. Moreover, we construct another CEFA $\aut_{i, 0}$ for each $i \in [n]$ to model the length of $x_i$. Specifically, $\aut_{i,0}$ is constructed as $((r_{i,0}), \{q_{i,0}\}, \Sigma, \delta_{i,0}, \{q_{i,0}\}, \{q_{i,0}\}, \ltrue)$ where $r_{i,0}$ is a fresh register and $\delta_{i,0} = \{(q_{i,0}, a, q_{i,0}, (1)) \mid a \in \Sigma\}$. 
@@ -247,7 +248,7 @@ The procedure comprises three steps.
 
 \medskip
 \noindent
-\emph{Step 1.} For each $i \in [n]$, compute a CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$, and let $\Lambda'_{x_i} := \{\cB_i\}$. \hfill{$\blacksquare$}
+\emph{Step 1.} For each $i \in [n]$, compute a CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$, and let $\Lambda'_{x_i} := \{\cB_i\}$. \qed
 
 %At first, we compute CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$ for each $i \in [n]$. For each $i \in [n]$, let $\Lambda'_{x_i} = \{\cB_i\}$. Evidently, $R_{\cB_i}= \bigcup \limits_{j \in [l_i]} R_{\aut_{i, j}}$ for each $i \in [n]$.
 After Step 1, the nonemptiness of CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$ is reduced to the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$. 
@@ -326,22 +327,22 @@ Therefore, to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda
 Intuitively, the integer variables $\anivarz_{i, \myvec{v}}$ represent the number of occurrences of $\myvec{v}$ in the strings accepted by $\cU_{\cB_i}$.
 %where $\anivarz_{\myvec{v}}$'s are integer variables to represent the number of occurrences of $\myvec{v}$. 
 
-Because the sizes of the LIA formulas $\psi_{\cU_{\cB_1}}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cU_{\cB_n}}(\fZ_{\costset_{\cB_n}})$ are proportional to the sizes (more precisely, the alphabet size, the number of states and transitions) of NFA $\cU_{\cB_1}, \cdots, \cU_{\cB_n}$, and the satisfiability of existential LIA formulas is expensive (NP-complete) to solve, we have to reduce the sizes of these NFA.
+Because the sizes of the LIA formulas $\psi_{\cU_{\cB_1}}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cU_{\cB_n}}(\fZ_{\costset_{\cB_n}})$ are proportional to the sizes (more precisely, the alphabet size, the number of states and transitions) of NFA $\cU_{\cB_1}, \cdots, \cU_{\cB_n}$, and the satisfiability of existential LIA formulas is NP-complete, it is vital to reduce the sizes of these NFA to improve the performance.
 
-Actually, we find that 
-$\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v} = \sum \limits_{\myvec{v} \in \costset(\cB_i) \setminus \{\myvec{0}\}} \eta(\myvec{v}) \myvec{v}$ for each $i \in [n]$ and $\eta \in \parikh(\cU_{\cB_i})$, i.e.,
-the $\myvec{0}$-labeled transitions in $\cU_{\cB_i}$ do not contribute to the final output $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v}$. Therefore, we can remove these transitions in step 2. 
+Since
+$\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v} = \sum \limits_{\myvec{v} \in \costset(\cB_i) \setminus \{\myvec{0}\}} \eta(\myvec{v}) \myvec{v}$ for each $i \in [n]$ and $\eta \in \parikh(\cU_{\cB_i})$, it turns out that 
+the $\myvec{0}$-labeled transitions in $\cU_{\cB_i}$ do not contribute to the final output $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v}$. Therefore, we propose the following simplification technique for the NFA $\cU_{\cB_i}$'s. 
 
 \medskip
 \noindent
-\emph{Step 2.} For each $i \in [n]$, we view the transitions $(q, \myvec{0}, q')$ in $\cU_{\cB_i}$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, and remove the $\varepsilon$-transitions from $\cU_{\cB_i}$. Then we determinize and minimize the resulting NFA.  \hfill{$\blacksquare$}
+\emph{Step 2.} For each $i \in [n]$, we view the transitions $(q, \myvec{0}, q')$ in $\cU_{\cB_i}$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, and remove the $\varepsilon$-transitions from $\cU_{\cB_i}$. Then we determinize and minimize the resulting NFA.   \qed
 
 For $i \in [n]$, let  $\cC_i$ denote the DFA obtained from $\cU_{\cB_i}$ by executing Step 2 and $\costset_{\cC_i} := \costset_{\cB_i} \setminus \{\myvec{0}\}$. From the construction, we know that $\parikh(\cC_i) = \prj_{\costset_{\cC_i}}(\parikh(\cU_{\cB_i}))$ for each $i \in [n]$.
 Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cU_{\cB_i}$'s, to represent the Parikh images. 
 
 \medskip
 \noindent
-\emph{Step 3.} For each $i \in [n]$, we compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then we solve the satisfiability of the following formula.$\blacksquare$
+\emph{Step 3.} For each $i \in [n]$, we compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then we solve the satisfiability of the following formula,
 %
 \vspace{-1mm}
 \[
@@ -351,7 +352,7 @@ Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cU_{\cB_i}$'s, t
 \end{array}
 \]
 \vspace{-1mm}
-
+\qed
 %\[
 %\bigwedge \limits_{i \in [n]} \psi_{\cC_i}(\fZ_{\costset_{\cB_i}}) \wedge 
 %\varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cB_1}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cB_n}} \anivarz_{\myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
