@@ -10,7 +10,7 @@ Symbolic execution of string manipulating programs has motivated the highly acti
 Z3seq~\cite{z3seq}, CVC4/5~\cite{cvc4}, Z3str/2/3/4~\cite{Z3-str,Z3-str2,Z3-str3,BerzishMurphy2021}, Z3str3RE~\cite{BD+23}, 
 Z3-Trau~\cite{Z3-trau}, OSTRICH~\cite{CHL+19}, Slent~\cite{WC+18}, among many others. 
 
-Regular expressions (abbreviated as regex) and string-length function are widely used in string-manipulating programs. According to the statistics from \cite{CS16,DCSL18,WS18}, regular expressions are used in about 30–40\% of Java, JavaScript, and Python software projects. 
+Regular expressions (regex for short) and string-length function are widely used in string-manipulating programs. According to the statistics from \cite{CS16,DCSL18,WS18}, regular expressions are used in about 30–40\% of Java, JavaScript, and Python software projects. 
 Moreover, string-length occupies 78\% of the occurrences of string operations in 18 Javascript applications, according to the statistics from \cite{malware_detection_3_kudzu}. 
 %Operations like \verb|length| that take string inputs and return an integer frequently appear in real-world JavaScript applications (78\% of string operations in 18 applications)
 As a result, most of the aforementioned string constraint solvers support both regular expressions and string-length function. Moreover, specialized algorithms have been proposed to solve such string constraints efficiently. \cite{LTR+15,BD+23}. 
