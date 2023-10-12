@@ -72,7 +72,7 @@ Therefore, the satisfiability of the string constraint in~(\ref{eqn-running}) is
 which can be solved by the off-the-shelf SMT solvers.
 %Since the satisfiability of LIA formulas can be solved by the off-the-shelf SMT solvers for LIA, the satisfiability of the string constraint in~(\ref{eqn-running}) can thus be solved.
 
-Nevertheless, when the original regexes are complicated (e.g. contains the occurrences of negation or intersection operators), the sizes of the NFA $\cB$ can still be big and the sizes of the LIA formulas defining the Parikh image of $\cB$ are also big. Since the satisfiability of LIA formulas is an NP-complete problem \cite{Haase18}, big sizes of LIA formulas would be a bottleneck of the efficiency. 
+Nevertheless, when the original regexes are complicated (e.g. contains the occurrences of negation or intersection operators), the sizes of the NFA $\cB$ can still be big and the sizes of the LIA formulas defining the Parikh image of $\cB$ are also big. Since the satisfiability of LIA formulas is an NP-complete problem \cite{Haase18}, big sizes of LIA formulas would be a bottleneck of the performance. 
 To tackle this issue, we propose techniques to reduce the sizes of the NFA $\cB$.
 %over the alphabet $\costset$.
 
