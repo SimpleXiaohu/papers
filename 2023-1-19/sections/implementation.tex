@@ -87,7 +87,7 @@ We evaluate the performance of $\ostrichrecl$ against the state-of-the-art strin
 \medskip
 \noindent
 \emph{Overall evaluation.} 
-The experiment results can be found in Table~\ref{tab:results_regcol}. Note that we take the result of CVC5 as the ground truth\footnote{Initially,  we used the majority vote of the results of the solvers as the ground truth. Nevertheless, on some problem instances, all the results of the three solvers in the Z3 family are wrong (after manual inspection), thus failing this approach on these instances.}. We can see that $\ostrichrecl$ solves almost all 48,843 instances, except 182 of them, that is, it solves \textbf{48,662} instances correctly. The number is %3,994/2,272/24,577/12,832/1,091/7,092 
+The experiment results can be found in Table~\ref{tab:results_regcol}. Note that we take the result of CVC5 as the ground truth\footnote{Initially,  we used the majority vote of the results of the solvers as the ground truth. Nevertheless, on some problem instances, all the results of the three solvers in the Z3 family are wrong (after manual inspection), thus failing this approach on these instances.}, \denghang{and the results distinct to the ground truth are called soundness errors.} We can see that $\ostrichrecl$ solves almost all 48,843 instances, except 182 of them, that is, it solves \textbf{48,662} instances correctly. The number is %3,994/2,272/24,577/12,832/1,091/7,092 
 \textbf{3,908/1,111/12,838/2,306/2,396 more} than the number of instances solved by CVC5/Z3str3RE/Z3str3/Z3seq/OSTRICH respectively.
 %      
 %A soundness error is reported if the result of a solver for an instance is different from CVC5. 
