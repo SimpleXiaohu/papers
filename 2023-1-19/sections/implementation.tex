@@ -3,9 +3,10 @@
 %\begin{document}
 In this section, we list our experimental results. We first present the overall experiment results on RegCoL and AutomatArk benchmark suites. Then we present experiment results of the large-counting part and evaluate the simplification techniques. \denghang{The goal of our experiments is to answer the following questions:
 \begin{itemize}
-  \item [Q1:] Are our decision procedure more efficient than the state-of-the-art string constraint solvers on RECL constraints?
-  \item [Q2:] Why our decision procedure is more efficient?
-  \item [Q3:] Are the size-reduction techniques helpful to improve the performance?
+  \item [Q1:] Are our decision procedure more efficient than the state-of-the-art string constraint solvers on RECL constraints? (Sec \ref{subsec:overall_eval})
+  \item [Q2:] Why our decision procedure is more efficient?(Sec \ref{subsec:large_bounds_eval})
+  \item [Q3:] Are the size-reduction techniques practical?(Sec \ref{subsec:size_reduction_eval})
+  \item [Q4:] How effective is the algorithm for solving the nonemptiness problem compared to the case that uses the nuXmv model checker? (Sec \ref{subsec:size_reduction_eval})
 \end{itemize}
 }
 
@@ -15,7 +16,7 @@ In this section, we list our experimental results. We first present the overall 
 \subsection{Benchmark Suites and Experiment Setup}\label{sec:bench}
 \vspace{-1mm}
 
-Our experiments utilize two benchmark suites, namely, \emph{RegCoL} and \emph{AutomatArk}. There are 48,843 instances in total, and all benchmark instances are in the SMTLIB2 format.
+Our experiments utilize two benchmark suites, namely, \emph{RegCoL} and \emph{AutomatArk}. \denghang{Other industrial benchmarks suites are not utilized because they contains no counting operator.} There are 48,843 instances in total, and all benchmark instances are in the SMTLIB2 format.
 Moreover, it turns out that only 5\% of regexes among the 48,843 instances are non-register-representable (see Section~\ref{subsec:regex2cefa}).
 
 \medskip
@@ -32,8 +33,14 @@ The expression $e_{sani}$ is introduced in view of the fact that these character
 \emph{AutomatArk benchmark suite.}
 This benchmark suite is adapted from the AutomatArk suite \cite{z3str3re} by picking out the string constraints containing counting operators. We also add the length constraint $|x| > 10$ for each string variable $x$. There are 8,215 instances in the AutomatArk suite.
 Note that the original AutomatArk benchmark suite \cite{z3str3re} includes 19,979 instances, which are conjunctions of regular membership queries generated out of regular expressions in \cite{automatark}.
-%Only 8,751 contain counting operators out of 19,979 instances. 
 
+\medskip
+\noindent
+\denghang{
+\emph{Large-Bounds part.} This benchmark suite is composed of 1,969 problem instances with large counting bounds (greater than or equal to $50$) from RegCoL and AutomatArk benchmark suites.  
+%regex with upper bound greater than 50 and generate a \emph{`large-counting'} benchmark suite (1,969 instances in total). 
+Moreover, in order to test the performance of the solvers on string constraints with large length bounds as well, we increase the length bound to $200$, that is, $|x| > 200$.
+}
 %%%%%%%%%%%%%%%%%% the benchmark suite written by Denghang %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% the benchmark suite written by Denghang %%%%%%%%%%%
 
@@ -72,7 +79,7 @@ All experiments are conducted on CentOS Stream release 8 with 4 Intel(R) Xeon(R)
 %%%%%%%%%%%%%%%%%% the benchmark suite written by Denghang %%%%%%%%%%%
 
 \vspace{-2mm}
-\subsection{Experiment Results}
+\subsection{Overall Evaluation}\label{subsec:overall_eval}
 \vspace{-1mm}
 
 We evaluate the performance of $\ostrichrecl$ against the state-of-the-art string constraint solvers, including CVC5
@@ -90,16 +97,16 @@ We evaluate the performance of $\ostrichrecl$ against the state-of-the-art strin
 %\item[Q2] Do the simplification and under-approximation techniques proposed in Section~\ref{sec:algorithm} indeed improve the performance ?
 %\end{description}
 
-\medskip
-\noindent
-\emph{Overall evaluation.} 
+% \medskip
+% \noindent
+% \emph{Overall evaluation.} 
 The experiment results can be found in Table~\ref{tab:results_regcol}. Note that we take the result of CVC5 as the ground truth\footnote{Initially,  we used the majority vote of the results of the solvers as the ground truth. Nevertheless, on some problem instances, all the results of the three solvers in the Z3 family are wrong (after manual inspection), thus failing this approach on these instances.}, \denghang{and the results distinct to the ground truth are called \emph{soundness errors} in the result table.} We can see that $\ostrichrecl$ solves almost all 48,843 instances, except 182 of them, that is, it solves \textbf{48,662} instances correctly. The number is %3,994/2,272/24,577/12,832/1,091/7,092 
 \textbf{3,908/1,111/12,838/2,306/2,396 more} than the number of instances solved by CVC5/Z3str3RE/Z3str3/Z3seq/OSTRICH respectively.
 %      
 %A soundness error is reported if the result of a solver for an instance is different from CVC5. 
 % their results on some instances are inconsistent with the results of the other three solvers, i.e. CVC5, OSTRICH, and OSTRICH$^{\rm RECL}$.
 %
-Moreover, $\ostrichrecl$ is the second fastest solver, whose average time on each instance is close to the fastest solver Z3str3RE (\textbf{1.93s}/1.62s).
+Moreover, $\ostrichrecl$ is the second fastest solver, whose average time on each instance is close to the fastest solver Z3str3RE (\textbf{1.93s}/1.62s). \denghang{To answer \textbf{Q1}, \textbf{$\ostrichrecl$ is the second fastest solver on these benchmark suites, and it solves the most number of instances}.}
 
 %
 \begin{table}
@@ -114,11 +121,11 @@ Moreover, $\ostrichrecl$ is the second fastest solver, whose average time on eac
   \begin{subtable}{0.477\textwidth}
       \centering
       \import{tables}{table_simp.tex}
-      \caption{Evaluation of the automata size-reduction techniques, with timeout = 60 seconds.}
+      \caption{Evaluation of the size-reduction techniques, with timeout = 60 seconds.}
       \label{tab:results_simp}
   \end{subtable}
   \vspace{-2mm}
-  \caption{Experiment results}
+  \caption{Overall evaluation and the evaluation of the size-reduction techniques}
   \vspace{-8mm}
 \end{table}
 % \begin{table}[ht]
@@ -131,14 +138,14 @@ Moreover, $\ostrichrecl$ is the second fastest solver, whose average time on eac
 %   \vspace{-9mm}
 % \end{table}
 
-
-\smallskip
-\noindent
-\emph{Evaluation on problem instances with large bounds.}
+\subsection{Evaluation on problem instances with large bounds}\label{subsec:large_bounds_eval}
+% \smallskip
+% \noindent
+% \emph{Evaluation on problem instances with large bounds.}
 %
-We extract the 1,969 problem instances with large counting bounds (greater than or equal to $50$) from the RegCoL and AutomatArk benchmark suites.  
+\sout{We extract the 1,969 problem instances with large counting bounds (greater than or equal to $50$) from the RegCoL and AutomatArk benchmark suites.  
 %regex with upper bound greater than 50 and generate a \emph{`large-counting'} benchmark suite (1,969 instances in total). 
-Moreover, in order to test the performance of the solvers on string constraints with large length bounds as well, we increase the length bound to $200$, that is, $|x| > 200$.
+Moreover, in order to test the performance of the solvers on string constraints with large length bounds as well, we increase the length bound to $200$, that is, $|x| > 200$.}
 %
 \begin{figure}[ht]
   \centering
@@ -153,7 +160,7 @@ Moreover, in order to test the performance of the solvers on string constraints 
     \centering\vskip 0pt
     \import{tables}{table_large_count.tex}
     \vspace{4.5mm}
-    \caption{Experiment results for large bounds, \\with timeout = 60 seconds.}
+    \caption{Experiment results on Large-Bounds part, with timeout = 60 seconds.}
     \label{fig:table_large_count}
   \end{subfigure}
   \vspace{-2mm}
@@ -172,18 +179,19 @@ Moreover, in order to test the performance of the solvers on string constraints 
 %   \vspace{-9mm}
 % \end{table}
 
-We then evaluate the performance of $\ostrichrecl$ on these 1,969 instances. 
-The experiment results are put in Fig~\ref{fig:table_large_count}. From the results, $\ostrichrecl$ solves \textbf{1,873} instances correctly, which is \textbf{947/278/563/637/523 more} than that solved by CVC5/Z3str3RE/Z3str3/Z3seq/OSTRICH respectively. Moreover, $\ostrichrecl$ is \textbf{ 6.79/2.88/2.61/5.27/3.95} times faster than CVC5/ Z3str3RE/Z3str3/Z3seq/OSTRICH respectively.
+We evaluate the performance of $\ostrichrecl$ on 1,969 instances of the Large-Bounds part. 
+The experiment results are put in Fig~\ref{fig:table_large_count}. From the results, $\ostrichrecl$ solves \textbf{1,873} instances correctly, which is \textbf{947/278/563/637/523 more} than that solved by CVC5/Z3str3RE/Z3str3/Z3seq/OSTRICH respectively. Moreover, $\ostrichrecl$ is \textbf{ 6.79/2.88/2.61/5.27/3.95} times faster than CVC5/ Z3str3RE/Z3str3/Z3seq/OSTRICH respectively. \denghang{To answer \textbf{Q2}, we can see that $\ostrichrecl$ is far more efficient than the other solvers on problem instances with large bounds. \textbf{It is because the complexity in our decision procedure is irrelevant to counting bounds}, while the complexity of other solvers is linear or even exponential to counting bounds.}
 
-\medskip
-\noindent 
-\emph{Evaluation of the effectiveness of the automata size-reduction techniques.}
+\subsection{Evaluation of the effectiveness of size-reduction techniques}\label{subsec:size_reduction_eval}
+% \medskip
+% \noindent 
+% \emph{Evaluation of the effectiveness of the automata size-reduction techniques.}
 We also do experiments to evaluate the effectiveness of the automata size-reduction techniques, that is, Step 2 in Section~\ref{subsec:cefadec}. 
 Let us use $\ostrichrecl_{\rm -SIMP}$ to denote $\ostrichrecl$ with the size-reduction techniques removed. 
 Meanwhile, we compare $\ostrichrecl$ and $\ostrichrecl_{\rm -SIMP}$ against $\ostrichrecl_{\rm NUXMV}$, where the $\cefadec$ problem is solved by the \textsc{nuXmv} model checker \cite{nuxmv}, instead of the procedure in Section~\ref{subsec:cefadec}. 
 The experiment results are put in Table~\ref{tab:results_simp}. 
 %$\ostrichrecl_{\rm -SIMP}$ is the tool without simplification techniques. $\ostrichrecl_{\rm NUXMV}$ is the tool using \textsc{nuXmv}-based techniques. 
-From the results, $\ostrichrecl$ solves \textbf{1,503 more} instances and is \textbf{2.21} times faster than $\ostrichrecl_{\rm -SIMP}$, which shows that the size-reduction techniques indeed play a vital role in the performance improvement. Moreover, $\ostrichrecl$ solves \textbf{1,798 more} instances and is \textbf{3.13} times faster than $\ostrichrecl_{\rm NUXMV}$. 
+From the results, $\ostrichrecl$ solves \textbf{1,503 more} instances and is \textbf{2.21} times faster than $\ostrichrecl_{\rm -SIMP}$. \denghang{To answer \textbf{Q3}, \textbf{the size-reduction techniques indeed play a vital role in the performance improvement}}. Moreover, $\ostrichrecl$ solves \textbf{1,798 more} instances and is \textbf{3.13} times faster than $\ostrichrecl_{\rm NUXMV}$. \denghang{To answer \textbf{Q4}, \textbf{our algorithm for solving the nonemptiness problem is much better than the \textsc{nuXmv}-based techniques}}.
 
 %Moreover, we encode the $\cefadec$ problem to an infinite state transition system and use \textsc{nuXmv}\cite{nuxmv} to solve it. We also compare the simplification techniques to the \textsc{nuXmv}-based techniques.
 %$\ostrichrecl_{\rm NUXMV}$ is the tool using \textsc{nuXmv}-based techniques.

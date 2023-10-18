@@ -39,7 +39,7 @@ Let us start with register-representable regular expressions defined in the sequ
 
 Let us fix an alphabet $\Sigma$.
 
-Let $e$ be a regular expression over $\Sigma$. Then an occurrence of counting operators in $e$, say $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$), is said to be \emph{register-representable} if $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$) is not in the scope of a Kleene star, another counting operator, complement, or language difference in $e$. We say that $e$ is \emph{register-representable} if all occurrences of counting operators in $e$ are register-representable. For instance, $(a^{\{2, 6\}} \concat b^*) \cap (a + b)^{\{4, \infty\}}$ is register-representable, while $(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ and $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ are not since $a^{\{2,6\}}$ is in the scope of language difference and the counter operator $\{2, \infty\}$ respectively.  
+Let $e$ be a regular expression over $\Sigma$. Then an occurrence of counting operators in $e$, say $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$), is said to be \emph{register-representable} if $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$) is not in the scope of a Kleene star, another counting operator, complement, or language difference in $e$. We say that $e$ is \emph{register-representable} if all occurrences of counting operators in $e$ are register-representable. For instance, $a^{\{2, 6\}} \cap a^{\{4, \infty\}}$ is register-representable, while $\overline{a^{\{2, 6\}}}$ and $(a^{\{2, 6\}})^{\{4,\infty\}}$ are not since $a^{\{2,6\}}$ is in the scope of complement and the counter operator $\{2, \infty\}$ respectively.  
 
 Let $e$ be a register-representable regular expression over $\Sigma$. By the following procedure, we will construct a CEFA out of $e$, denoted by $\aut_e$. 
 \vspace{-1mm}
@@ -71,7 +71,7 @@ Then we have $\aut_{e'} = \aut_{e'_1} \concat \aut_{e'_2}$, $\aut_{e'} = \aut_{e
 %\end{example}
 
 For non-register-representable regular expressions, we first transform them into register-representable regular expressions by unfolding all the non-register-representable occurrences of counting operators. After that, we utilize the aforementioned procedure to construct CEFA. For instance, $(a^{\{2, 6\}} \concat b^*)^{\{2,\infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa+aaaa) \concat b^*)^{\{2, \infty\}}$. 
-The unfoldings of the inner counting operators of non-register-representable regexes incur an exponential blow-up in the worst case. Nevertheless, those regexes occupy only 5\% of the 48,843 regexes that are collected from the practice (see Section~\ref{sec:bench}). Moreover, the unfoldings are partial in the sense that the outmost counting operators are not unfolded. 
+The unfoldings of the inner counting operators of non-register-representable regexes incur an exponential blowup in the worst case. Nevertheless, those regexes occupy only 5\% of the 48,843 regexes that are collected from the practice (see Section~\ref{sec:bench}). Moreover, the unfoldings are partial in the sense that the outmost counting operators are not unfolded. 
 It turns out that our approach can solve almost all the RECL constraints involving these 48,843 regexes, except 181 of them (See Table~\ref{tab:results_regcol}). 
 %$(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa + aaaa) \concat b^*) \setminus (a+b)(a+b)(a+b)(a+b)(a+b)^*$.
 
