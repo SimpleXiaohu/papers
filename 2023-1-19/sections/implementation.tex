@@ -4,9 +4,9 @@
 In this section, we list our experimental results. We first present the overall experiment results on RegCoL and AutomatArk benchmark suites. Then we present experiment results of the large-counting part and evaluate the simplification techniques. \denghang{The goal of our experiments is to answer the following questions:
 \begin{itemize}
   \item [Q1:] Are our decision procedure more efficient than the state-of-the-art string constraint solvers on RECL constraints? (Sec \ref{subsec:overall_eval})
-  \item [Q2:] Why our decision procedure is more efficient?(Sec \ref{subsec:large_bounds_eval})
-  \item [Q3:] Are the size-reduction techniques practical?(Sec \ref{subsec:size_reduction_eval})
-  \item [Q4:] How effective is the algorithm for solving the nonemptiness problem compared to the case that uses the nuXmv model checker? (Sec \ref{subsec:size_reduction_eval})
+  \item [Q2:] Why is our decision procedure more efficient? (Sec \ref{subsec:large_bounds_eval})
+  \item [Q3:] Are the size-reduction techniques practical? (Sec \ref{subsec:size_reduction_eval})
+  \item [Q4:] How effective is the algorithm for solving the nonemptiness problem compared to the case that uses the nuXmv model checker~\cite{atva2020}? (Sec \ref{subsec:size_reduction_eval})
 \end{itemize}
 }
 
@@ -16,7 +16,7 @@ In this section, we list our experimental results. We first present the overall 
 \subsection{Benchmark Suites and Experiment Setup}\label{sec:bench}
 \vspace{-1mm}
 
-Our experiments utilize two benchmark suites, namely, \emph{RegCoL} and \emph{AutomatArk}. \denghang{Other industrial benchmarks suites are not utilized because they contains no counting operator.} There are 48,843 instances in total, and all benchmark instances are in the SMTLIB2 format.
+Our experiments utilize two benchmark suites, namely, \emph{RegCoL} and \emph{AutomatArk}. \denghang{Other industrial benchmarks suites are not utilized because they contains no counting operators.} There are 48,843 instances in total, and all benchmark instances are in the SMTLIB2 format.
 Moreover, it turns out that only 5\% of regexes among the 48,843 instances are non-register-representable (see Section~\ref{subsec:regex2cefa}).
 
 \medskip
@@ -100,7 +100,7 @@ We evaluate the performance of $\ostrichrecl$ against the state-of-the-art strin
 % \medskip
 % \noindent
 % \emph{Overall evaluation.} 
-The experiment results can be found in Table~\ref{tab:results_regcol}. Note that we take the result of CVC5 as the ground truth\footnote{Initially,  we used the majority vote of the results of the solvers as the ground truth. Nevertheless, on some problem instances, all the results of the three solvers in the Z3 family are wrong (after manual inspection), thus failing this approach on these instances.}, \denghang{and the results distinct to the ground truth are called \emph{soundness errors} in the result table.} We can see that $\ostrichrecl$ solves almost all 48,843 instances, except 182 of them, that is, it solves \textbf{48,662} instances correctly. The number is %3,994/2,272/24,577/12,832/1,091/7,092 
+The experiment results can be found in Table~\ref{tab:results_regcol}. Note that we take the result of CVC5 as the ground truth\footnote{Initially,  we used the majority vote of the results of the solvers as the ground truth. Nevertheless, on some problem instances, all the results of the three solvers in the Z3 family are wrong (after manual inspection), thus failing this approach on these instances.}, \denghang{and the results distinct to the ground truth are called \emph{soundness errors}.} We can see that $\ostrichrecl$ solves almost all 48,843 instances, except 182 of them, that is, it solves \textbf{48,662} instances correctly. The number is %3,994/2,272/24,577/12,832/1,091/7,092 
 \textbf{3,908/1,111/12,838/2,306/2,396 more} than the number of instances solved by CVC5/Z3str3RE/Z3str3/Z3seq/OSTRICH respectively.
 %      
 %A soundness error is reported if the result of a solver for an instance is different from CVC5. 
