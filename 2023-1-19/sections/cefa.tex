@@ -27,7 +27,7 @@ In the sequel, we define three CEFA operations: union, intersection, and concate
 Let $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1, \alpha_1)$ and  $\aut_2 = (R_2, Q_2, \Sigma, \delta_2, q_{2,0}, F_2, \alpha_2)$ be two CEFA that share the alphabet. 
 Moreover, suppose that $R_1 \cap R_2 = \emptyset$ and $Q_1 \cap Q_2 = \emptyset$. 
 
-The \emph{union} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cup \aut_2$ is defined in a slightly more involved manner than NFA, as a result of the technical choice that the accepting conditions of CEFA do not distinguish final states. Two fresh auxiliary registers say $r'_1,r'_2 \not \in R_1 \cup R_2$, are introduced so that the accepting condition knows whether a run is from $\aut_1$ (or $\aut_2$). Specifically, $\aut_1 \cup \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$ where 
+The \emph{union} of $\aut_1$ and $\aut_2$ is denoted by $\aut_1 \cup \aut_2$. Two fresh auxiliary registers say $r'_1,r'_2 \not \in R_1 \cup R_2$, are introduced so that the accepting condition knows whether a run is from $\aut_1$ (or $\aut_2$). Specifically, $\aut_1 \cup \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$ where 
 \begin{itemize}
 \item $R' = R_1 \cup R_2 \cup \{r'_1, r'_2\}$, $Q' = Q_1 \cup Q_2 \cup \{q'_0\}$ with $q'_0 \not \in Q_1 \cup Q_2$, $I' = \{q'_0\}$, 
 %
