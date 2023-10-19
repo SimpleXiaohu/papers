@@ -7,15 +7,15 @@ Symbolic execution of string manipulating programs has motivated the highly acti
 Z3seq~\cite{z3seq}, CVC4/5~\cite{cvc4}, Z3str/2/3/4~\cite{Z3-str,Z3-str2,Z3-str3,BerzishMurphy2021}, Z3str3RE~\cite{BD+23}, 
 Z3-Trau~\cite{Z3-trau}\cite{z3trau}, OSTRICH~\cite{CHL+19}, Slent~\cite{WC+18}, among many others. 
 
-Regular expressions (regex for short) and the string-length function are widely used in string-manipulating programs. According to the statistics from \cite{CS16,DCSL18,WS18}, regular expressions are used in about 30–40\% of Java, JavaScript, and Python software projects. 
+Regular expressions (regex for short) and the string-length function are widely used in string-manipulating programs. According to the statistics from \cite{CS16,DCSL18,WS18}, regexes are used in about 30–40\% of Java, JavaScript, and Python software projects. 
 Moreover, string-length occupies 78\% of the occurrences of string operations in 18 Javascript applications, according to the statistics from \cite{malware_detection_3_kudzu}. 
-As a result, most of the aforementioned string constraint solvers support both regular expressions and string-length function. Moreover, specialized algorithms have been proposed to solve such string constraints efficiently. \cite{LTR+15,BD+23}. 
+As a result, most of the aforementioned string constraint solvers support both regexes and string-length function. Moreover, specialized algorithms have been proposed to solve such string constraints efficiently (see e.g. \cite{LTR+15,BD+23}). 
 
-Counting (aka repetition) is a convenient feature in regular expressions that count the number of matchings of sub-patterns. For instance, $a^{\{2, 4\}}$ specifies that $a$ occurs at least twice and at most four times, and $a^{\{2, \infty\}}$ specifies that $a$ occurs at least twice. 
+Counting (aka repetition) is a convenient feature in regexes that count the number of matchings of sub-patterns. For instance, $a^{\{2, 4\}}$ specifies that $a$ occurs at least twice and at most four times, and $a^{\{2, \infty\}}$ specifies that $a$ occurs at least twice. 
 Note that the Kleene star and the Kleene plus operator are special cases of counting. For instance, $a^*$ is equivalent to $a^{\{0,\infty\}}$ and $a^+$ are equivalent to $a^{\{1,\infty\}}$.
-Counting is a frequently used feature of regular expressions. According to the statistics from \cite{CS16}, Kleene star/plus occur in more than 70\% of 1,204 Python projects, while other forms of counting occur in more than 20\% of them. Therefore, an efficient analysis of string manipulating programs requires efficient solvers for string constraints containing regular expressions with counting\footnote{In the rest of this paper, for clarity, we use counting to denote expressions of the form $e^{\{m, n\}}$ and  $e^{\{m, \infty\}}$, but not $e^*$ or $e^+$.} and string-length function at least. 
+Counting is a frequently used feature of regexes. According to the statistics from \cite{CS16}, Kleene star/plus occur in more than 70\% of 1,204 Python projects, while other forms of counting occur in more than 20\% of them. Therefore, an efficient analysis of string manipulating programs requires efficient solvers for string constraints containing regexes with counting\footnote{In the rest of this paper, for clarity, we use counting to denote expressions of the form $e^{\{m, n\}}$ and  $e^{\{m, \infty\}}$, but not $e^*$ or $e^+$.} and string-length function at least. 
 
-Nevertheless, the aforementioned state-of-the-art string constraint solvers still suffer from such string constraints, especially when the counting and length bounds are large. For instance, none of the string solvers CVC5, Z3seq, Z3-Trau, Z3str3, Z3str3RE, and OSTRICH is capable of solving the following constraint within 120 seconds.
+Nevertheless, the aforementioned state-of-the-art string constraint solvers still suffer from such string constraints, especially when the counting and length bounds are large. For instance, none of the string solvers CVC5, Z3seq, Z3-Trau, Z3str3, Z3str3RE, and OSTRICH is capable of solving the following constraint within 120 seconds,
 %, and Z3 can not solve it within 120 seconds.
 %
 \begin{equation}\label{eqn-running}
@@ -41,9 +41,25 @@ Thus, the nonemptiness of CEFA w.r.t. LIA formulas can be reduced to the satisfi
 \medskip
 \noindent
 \emph{Related work.} 
-We discuss more related work about regexes with counting in programming languages.  
-The determinism of regexes with counting was investigated in~\cite{GGM12,CL15}. Counting-set automata were proposed in~\cite{redos_lenka,HS+23} to quickly match a subclass of regexes with counting. Moreover, a variant of nondeterministic counter automata, called bit vector automata, was proposed recently in \cite{GKM23} to enable fast matching of a more expressive class of regexes with counting.   Nevertheless, the nonemptiness problem of these automata was not considered, and it is unclear whether these automata models can be used for solving string constraints with regex-counting and string-length. For the automata model, the definition of registers of CEFAs resembles the counters of the counter automata class~\cite{GGM12,redos_lenka,HS+23,GKM23}, but CEFAs contain no guards in each transition. Register automata~\cite{ra} and symbolic register automata~\cite{sra} utilize registers to store input variables (i.e., the letters of the alphabet), on which only equality and inequality are permitted. In contrast, CEFAs utilize registers to store integers constrained by linear arithmetic formulae.
-Real-world regexes in programming languages include features beyond classical regular expressions, e.g., the greedy/lazy Kleene star, capturing groups, and back references. Real-world regexes have been addressed in symbolic execution of Javascript programs~\cite{LMK19} and string constraint solving~\cite{CF+22}. Nevertheless, the counting operators are still unfolded explicitly in~\cite{CF+22}. Except for the string solvers mentioned before, some related works about string constraints with the length function exist. Trau~\cite{z3trau} relies on a Counter-Example Guided Abstraction Refinement (CEGAR) framework in which the under- and over-approximation of the automata are iteratively refined to solve length and regex constraints. Slent~\cite{WC+18} transfers the string and length constraints to length-encoded automata, and leverages a symbolic model checker as an engine for the emptiness checking of automata. However, both Trau and Slent do not support counting operators.
+We discuss more related work about regexes with counting, string-length function, and automata with registers/counters.  
+%
+The determinism of regexes with counting was investigated in~\cite{GGM12,CL15}. 
+%
+Real-world regexes in programming languages include features beyond classical regexes, e.g., the greedy/lazy Kleene star, capturing groups, and back references. Real-world regexes have been addressed in symbolic execution of Javascript programs~\cite{LMK19} and string constraint solving~\cite{CF+22}. 
+Nevertheless, the counting operators are still unfolded explicitly in~\cite{CF+22}. 
+%
+Trau focuses on string constraints involving flat regular languages and string-length function and solves them by computing LIA formulas that define the Parikh images of flat regular languages~\cite{z3trau}. Slent solves string constraints involving string-length function by encoding the string constraints into so called length-encoded automata, and solving their nonemptiness problem by symbolic model checkers~\cite{WC+18}. However, neither Trau nor Slent supports counting operators. In other words, counting operators in regexes should be unfolded before solved by them.
+%
+The cost registers in CEFAs are different from registers in (symbolic) register automata~\cite{ra,sra}, where registers are used to store input values and they can only be compared for equality/inequality. In contrast, registers in CEFAs are used to store integer-valued costs and they can be updated by adding/subtracting integer constants and constrained by the accepting conditions which are LIA formulas.
+%
+\zhilin{stopped here}
+Intuitively speaking, CEFAs can be adapted from classical counter automata \cite{xxx},  by removing the transition guards and adding the accepting conditions. 
+%
+For the automata model, the definition of registers of CEFAs resembles the counters of the counter automata class~\cite{GGM12,redos_lenka,HS+23,GKM23}, but CEFAs contain no guards in each transition. 
+%
+Counting-set automata were proposed in~\cite{redos_lenka,HS+23} to quickly match a subclass of regexes with counting. Moreover, a variant of nondeterministic counter automata, called bit vector automata, was proposed recently in \cite{GKM23} to enable fast matching of a more expressive class of regexes with counting.   Nevertheless, the nonemptiness problem of these automata was not considered, and it is unclear whether these automata models can be used for solving string constraints with regex-counting and string-length. 
+
+%Except for the string solvers mentioned before, some related works about string constraints with the length function exist. 
 
 \smallskip
 \noindent
