@@ -248,7 +248,7 @@ The procedure comprises three steps.
 
 \medskip
 \noindent
-\emph{Step 1.} For each $i \in [n]$, compute a CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$, and let $\Lambda'_{x_i} := \{\cB_i\}$. \qed
+\emph{Step 1.\denghang{(Intersection)}} For each $i \in [n]$, compute a CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$, and let $\Lambda'_{x_i} := \{\cB_i\}$. \qed
 
 %At first, we compute CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$ for each $i \in [n]$. For each $i \in [n]$, let $\Lambda'_{x_i} = \{\cB_i\}$. Evidently, $R_{\cB_i}= \bigcup \limits_{j \in [l_i]} R_{\aut_{i, j}}$ for each $i \in [n]$.
 After Step 1, the nonemptiness of CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$ is reduced to the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$. 
@@ -331,18 +331,18 @@ Because the sizes of the LIA formulas $\psi_{\cU_{\cB_1}}(\fZ_{\costset_{\cB_1}}
 
 Since
 $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v} = \sum \limits_{\myvec{v} \in \costset(\cB_i) \setminus \{\myvec{0}\}} \eta(\myvec{v}) \myvec{v}$ for each $i \in [n]$ and $\eta \in \parikh(\cU_{\cB_i})$, it turns out that 
-the $\myvec{0}$-labeled transitions in $\cU_{\cB_i}$ do not contribute to the final output $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v}$. Therefore, we propose the following size-reduction technique for the NFA $\cU_{\cB_i}$'s. 
+the $\myvec{0}$-labeled transitions in $\cU_{\cB_i}$ do not contribute to the final output $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v}$. \sout{Therefore, we propose the following size-reduction technique for the NFA $\cU_{\cB_i}$'s.} \denghang{Regardless of alphabet, we take register updates as new alphabet symbols and $\myvec{0}$ as $\epsilon$ symbol. Then we are capable of using standard minimization to reduce the automata size.}
 
 \medskip
 \noindent
-\emph{Step 2.} For each $i \in [n]$, we view the transitions $(q, \myvec{0}, q')$ in $\cU_{\cB_i}$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, and remove the $\varepsilon$-transitions from $\cU_{\cB_i}$. Then we determinize and minimize the resulting NFA.   \qed
+\emph{Step 2.\denghang{(Automata size reduction)}} For each $i \in [n]$, we view the transitions $(q, \myvec{0}, q')$ in $\cU_{\cB_i}$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, and remove the $\varepsilon$-transitions from $\cU_{\cB_i}$. Then we determinize and minimize the resulting NFA.   \qed
 
 For $i \in [n]$, let  $\cC_i$ denote the DFA obtained from $\cU_{\cB_i}$ by executing Step 2 and $\costset_{\cC_i} := \costset_{\cB_i} \setminus \{\myvec{0}\}$. From the construction, we know that $\parikh(\cC_i) = \prj_{\costset_{\cC_i}}(\parikh(\cU_{\cB_i}))$ for each $i \in [n]$.
 Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cU_{\cB_i}$'s, to represent the Parikh images. 
 
 \medskip
 \noindent
-\emph{Step 3.} For each $i \in [n]$, we compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then we solve the satisfiability of the following formula,
+\emph{Step 3.\denghang{(Parikh image)}} For each $i \in [n]$, we compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then we solve the satisfiability of the following formula,
 %
 \vspace{-1mm}
 \[

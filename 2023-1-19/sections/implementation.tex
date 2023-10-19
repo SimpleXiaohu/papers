@@ -3,10 +3,9 @@
 %\begin{document}
 In this section, we list our experimental results. We first present the overall experiment results on RegCoL and AutomatArk benchmark suites. Then we present experiment results of the large-counting part and evaluate the simplification techniques. \denghang{The goal of our experiments is to answer the following questions:
 \begin{itemize}
-  \item [Q1:] Are our decision procedure more efficient than the state-of-the-art string constraint solvers on RECL constraints? (Sec \ref{subsec:overall_eval})
-  \item [Q2:] Why is our decision procedure more efficient? (Sec \ref{subsec:large_bounds_eval})
-  \item [Q3:] Are the size-reduction techniques practical? (Sec \ref{subsec:size_reduction_eval})
-  \item [Q4:] How effective is the algorithm for solving the nonemptiness problem compared to the case that uses the nuXmv model checker~\cite{atva2020}? (Sec \ref{subsec:size_reduction_eval})
+  \item [Q1:] Does the decision procedure perform well~(Sec \ref{subsec:overall_eval}), especially when the counting bounds are large?~(Sec \ref{subsec:large_bounds_eval})
+  \item [Q2:] Are the size-reduction techniques practical?~(Sec \ref{subsec:size_reduction_eval})
+  \item [Q3:] How effective is the algorithm for solving the nonemptiness problem compared to the case that uses the nuXmv model checker~\cite{atva2020}?~(Sec \ref{subsec:size_reduction_eval})
 \end{itemize}
 }
 
@@ -180,7 +179,7 @@ Moreover, in order to test the performance of the solvers on string constraints 
 % \end{table}
 
 We evaluate the performance of $\ostrichrecl$ on 1,969 instances of the Large-Bounds part. 
-The experiment results are put in Fig~\ref{fig:table_large_count}. From the results, $\ostrichrecl$ solves \textbf{1,873} instances correctly, which is \textbf{947/278/563/637/523 more} than that solved by CVC5/Z3str3RE/Z3str3/Z3seq/OSTRICH respectively. Moreover, $\ostrichrecl$ is \textbf{ 6.79/2.88/2.61/5.27/3.95} times faster than CVC5/ Z3str3RE/Z3str3/Z3seq/OSTRICH respectively. \denghang{To answer \textbf{Q2}, we can see that $\ostrichrecl$ is far more efficient than the other solvers on problem instances with large bounds. \textbf{It is because the complexity in our decision procedure is irrelevant to counting bounds}, while the complexity of other solvers is linear or even exponential to counting bounds.}
+The experiment results are put in Fig~\ref{fig:table_large_count}. From the results, $\ostrichrecl$ solves \textbf{1,873} instances correctly, which is \textbf{947/278/563/637/523 more} than that solved by CVC5/Z3str3RE/Z3str3/Z3seq/OSTRICH respectively. Moreover, $\ostrichrecl$ is \textbf{ 6.79/2.88/2.61/5.27/3.95} times faster than CVC5/ Z3str3RE/Z3str3/Z3seq/OSTRICH respectively. \denghang{To answer \textbf{Q1}, we can see that $\ostrichrecl$ \textbf{is far more efficient than the other solvers on problem instances with large bounds.}}
 
 \subsection{Evaluation of the effectiveness of size-reduction techniques}\label{subsec:size_reduction_eval}
 % \medskip
@@ -191,7 +190,7 @@ Let us use $\ostrichrecl_{\rm -SIMP}$ to denote $\ostrichrecl$ with the size-red
 Meanwhile, we compare $\ostrichrecl$ and $\ostrichrecl_{\rm -SIMP}$ against $\ostrichrecl_{\rm NUXMV}$, where the $\cefadec$ problem is solved by the \textsc{nuXmv} model checker \cite{nuxmv}, instead of the procedure in Section~\ref{subsec:cefadec}. 
 The experiment results are put in Table~\ref{tab:results_simp}. 
 %$\ostrichrecl_{\rm -SIMP}$ is the tool without simplification techniques. $\ostrichrecl_{\rm NUXMV}$ is the tool using \textsc{nuXmv}-based techniques. 
-From the results, $\ostrichrecl$ solves \textbf{1,503 more} instances and is \textbf{2.21} times faster than $\ostrichrecl_{\rm -SIMP}$. \denghang{To answer \textbf{Q3}, \textbf{the size-reduction techniques indeed play a vital role in the performance improvement}}. Moreover, $\ostrichrecl$ solves \textbf{1,798 more} instances and is \textbf{3.13} times faster than $\ostrichrecl_{\rm NUXMV}$. \denghang{To answer \textbf{Q4}, \textbf{our algorithm for solving the nonemptiness problem is much better than the \textsc{nuXmv}-based techniques}}.
+From the results, $\ostrichrecl$ solves \textbf{1,503 more} instances and is \textbf{2.21} times faster than $\ostrichrecl_{\rm -SIMP}$. \denghang{To answer \textbf{Q2}, \textbf{the size-reduction techniques indeed play a vital role in the performance improvement}}. Moreover, $\ostrichrecl$ solves \textbf{1,798 more} instances and is \textbf{3.13} times faster than $\ostrichrecl_{\rm NUXMV}$. \denghang{To answer \textbf{Q3}, \textbf{our algorithm for solving the nonemptiness problem is much better than the \textsc{nuXmv}-based techniques}}.
 
 %Moreover, we encode the $\cefadec$ problem to an infinite state transition system and use \textsc{nuXmv}\cite{nuxmv} to solve it. We also compare the simplification techniques to the \textsc{nuXmv}-based techniques.
 %$\ostrichrecl_{\rm NUXMV}$ is the tool using \textsc{nuXmv}-based techniques.
