@@ -1,20 +1,20 @@
 %!TEX root = ../main.tex
 
-This section aims to show how to solve RECL constraints by utilizing CEFA. 
-At first, we reduce the satisfiability of RECL constraints to a decision problem defined in the following section. Then we propose an decision procedure to solve the problem. 
+The goal of this section is to show how to solve RECL constraints by utilizing CEFA. 
+At first, we reduce the satisfiability of RECL constraints to a decision problem defined in the sequel. Then we propose a decision procedure for this problem. 
 
 \begin{definition}[Nonemptiness of CEFA w.r.t. an LIA formula
 , abbreviated as $\cefadec$]
 Suppose that $x_1, \cdots, x_n$ are string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$, and the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{1, l_1}}, \cdots, R_{\aut_{n, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, moreover, $\varphi$ is an LIA formula whose free variables are from $ \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. Then  the CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are said to be nonempty w.r.t. $\varphi$ if there are assignments $\theta: \{x_1, \cdots, x_n\} \rightarrow \Sigma^*$ and vectors $\myvec{v_{i,j}}$
 such that $(\theta(x_i); \myvec{v_{i,j}}) \in \Lang(\aut_{i, j})$ and  $\varphi[(\myvec{v_{i,j}}/R_{\aut_{i,j}})]$ is true, for every $i \in [n], j \in [l_i]$.
 \end{definition}
-\begin{proposition}\label{prop-cefadec}
+\begin{proposition}[\cite{atva2020}]\label{prop-cefadec}
 $\cefadec$ is PSPACE-complete. 
 \end{proposition}
-\begin{proof}
-  The lower bound follows from the fact that the nonemptiness problem of the intersection of NFAs is PSPACE-complete \cite{pspace_int}. For the upper bound, \cite{atva2020} showed that $\cefadec$ is in PSPACE by reducing it to monotonic counter machines.
-\end{proof}
-Note that the decision procedure in \cite{atva2020} was only used to prove the upper bound in Proposition~\ref{prop-cefadec} and not implemented as a matter of fact. Instead, the symbolic model checker nuXmv was used to solve $\cefadec$. We do not rely on nuXmv in this work and shall propose a new algorithm for solving $\cefadec$ in Section~\ref{subsec:cefadec}. 
+%\begin{proof}
+%  The lower bound follows from the fact that the nonemptiness problem of the intersection of NFAs is PSPACE-complete \cite{pspace_int}. For the upper bound, \cite{atva2020} showed that $\cefadec$ is in PSPACE by reducing it to monotonic counter machines.
+%\end{proof}
+Note that the decision procedure in \cite{atva2020} was only used to prove the upper bound in Proposition~\ref{prop-cefadec} and not implemented as a matter of fact. Instead, the symbolic model checker nuXmv~\cite{nuxmv} was used to solve $\cefadec$. We do not rely on nuXmv in this work and shall propose a new algorithm for solving $\cefadec$ in Section~\ref{subsec:cefadec}. 
 
 \subsection{From $\reclsat$ to $\cefadec$} \label{subsec:regex2cefa}
 
@@ -58,6 +58,9 @@ It turns out that our approach can solve almost all the RECL constraints involvi
 For each $i \in [n]$, let $x_i \in e_{i, 1}, \cdots, x_i \in e_{i, l_i}$ be an enumeration of the regular membership constraints for $x_i$ in $\varphi_1$.  Then we can construct CEFA $\aut_{i, j}$ from $e_{i, j}$ for each $i \in [n]$ and $j \in [l_i]$. Moreover, we construct another CEFA $\aut_{i, 0}$ for each $i \in [n]$ to model the length of $x_i$. Specifically, $\aut_{i,0}$ is constructed as $((r_{i,0}), \{q_{i,0}\}, \Sigma, \delta_{i,0}, \{q_{i,0}\}, \{q_{i,0}\}, \ltrue)$ where $r_{i,0}$ is a fresh register and $\delta_{i,0} = \{(q_{i,0}, a, q_{i,0}, (1)) \mid a \in \Sigma\}$. 
 Let $\Lambda_{x_i} = \{\aut_{i,0}, \aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for each $i \in [n]$, and $\varphi'_2 \equiv \varphi_2[r_{1,0}/|x_1|, \cdots, r_{n,0}/|x_n|]$. Then the satisfiability of $\varphi$ is reduced to the nonemptiness of CEFAs in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi'_2$.
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Solving $\cefadec$} \label{subsec:cefadec}
 
 In this section, we present a procedure to solve the $\cefadec$ problem: Suppose that $x_1, \cdots, x_n$ are mutually distinct string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are nonempty sets of CEFA over the same alphabet $\Sigma$ where $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$. Moreover, the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, and $\varphi$ is a LIA formula whose free variables are from $\bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. 
@@ -65,11 +68,12 @@ The procedure comprises three steps.
 
 \medskip
 \noindent
-\emph{Step 1.(Intersection)} For each $i \in [n]$, compute a CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$, and let $\Lambda'_{x_i} := \{\cB_i\}$. \qed
+\emph{Step 1 (Computing intersection automata).} For each $i \in [n]$, compute a CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$, and let $\Lambda'_{x_i} := \{\cB_i\}$. \qed
 
-After Step 1, the nonemptiness of CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$ is reduced to the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$. 
+After Step 1, the nonemptiness of CEFAs in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$ is reduced to the nonemptiness of CEFAs in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$. 
 
-In the following steps, we reduce the non-emptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$ to the satisfiability of an LIA formula. The reduction relies on two observations: The first observation follows that $\Lambda'_{x_i}$ for each $i \in [n]$ contains exactly one CEFA, and the second observation follows that the non-emptiness of exactly one CEFA w.r.t LIA formulae is entirely unrelated to the alphabet.
+In the following steps, we reduce the non-emptiness of CEFAs in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$ to the satisfiability of an LIA formula. The reduction relies on the following two observations. 
+%The first observation follows from the fact that $\Lambda'_{x_i}$ for each $i \in [n]$ contains exactly one CEFA, and the second observation follows from the fact that the non-emptiness of exactly one CEFA w.r.t an LIA formula is entirely unrelated to the alphabet.
 
 \begin{observation}\label{obs-cefa-output}
 CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are nonempty w.r.t. $\varphi$ iff there are $\myvec{v_{1}} \in \cefaout(\cB_1), \cdots, \myvec{v_{n}} \in \cefaout(\cB_n)$ such that $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true.
@@ -83,7 +87,7 @@ Moreover, let $\cU_\aut = (Q, \costset_\aut, \delta', I, F)$ be an NFA over the 
 \begin{observation}\label{obs-cefa-nfa}
 For each CEFA $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$, 
 %
-$$\cefaout(\aut) = \left\{\sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v} \  \big{|}\ \eta \in \parikh(\cU_\aut) \mbox{ and }  \alpha\left[ \sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v} \big{/} R \right] \mbox{ is true}\right\}.$$
+$$\cefaout(\aut) = \left\{\sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v} \left \vert\ \eta \in \parikh(\cU_\aut) \mbox{ and }  \alpha\left[  \sum \limits_{\myvec{v} \in \costset_\aut} \eta(\myvec{v}) \myvec{v} \big{/}  R \right] \mbox{ is true}\right.\right\}.$$
 %
 \end{observation}
 
@@ -110,22 +114,23 @@ Therefore, to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda
 \]
 Intuitively, the integer variables $\anivarz_{i, \myvec{v}}$ represent the number of occurrences of $\myvec{v}$ in the strings accepted by $\cU_{\cB_i}$.
 
-Because the sizes of the LIA formulas $\psi_{\cU_{\cB_1}}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cU_{\cB_n}}(\fZ_{\costset_{\cB_n}})$ are proportional to the sizes (more precisely, the alphabet size, the number of states and transitions) of NFA $\cU_{\cB_1}, \cdots, \cU_{\cB_n}$, and the satisfiability of existential LIA formulas is NP-complete, it is vital to reduce the sizes of these NFA to improve the performance.
+Because the sizes of the LIA formulas $\psi_{\cU_{\cB_1}}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cU_{\cB_n}}(\fZ_{\costset_{\cB_n}})$ are proportional to the sizes (more precisely, the alphabet size, the number of states and transitions) of NFA $\cU_{\cB_1}, \cdots, \cU_{\cB_n}$, and the satisfiability of existential LIA formulas is NP-complete, it is vital to reduce the sizes of these NFAs to improve the performance.
 
 Since
 $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v} = \sum \limits_{\myvec{v} \in \costset(\cB_i) \setminus \{\myvec{0}\}} \eta(\myvec{v}) \myvec{v}$ for each $i \in [n]$ and $\eta \in \parikh(\cU_{\cB_i})$, it turns out that 
-the $\myvec{0}$-labeled transitions in $\cU_{\cB_i}$ do not contribute to the final output $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v}$. Regardless of alphabet, we take register updates as new alphabet symbols and $\myvec{0}$ as $\epsilon$ symbol. Then we are capable of using standard minimization to reduce the automata size.
+the $\myvec{0}$-labeled transitions in $\cU_{\cB_i}$ do not contribute to the final output $\sum \limits_{\myvec{v} \in \costset(\cB_i)} \eta(\myvec{v}) \myvec{v}$. Therefore, we can apply the following size-reduction technique for $\cU_{\cB_i}$'s.
+%Regardless of alphabet, we take register updates as new alphabet symbols and $\myvec{0}$ as $\epsilon$ symbol. Then we are capable of using standard minimization to reduce the automata size.
 
 \medskip
 \noindent
-\emph{Step 2.(Automata size reduction)} For each $i \in [n]$, we view the transitions $(q, \myvec{0}, q')$ in $\cU_{\cB_i}$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, and remove the $\varepsilon$-transitions from $\cU_{\cB_i}$. Then we determinize and minimize the resulting NFA.   \qed
+\emph{Step 2 (Reducing automata sizes).} For each $i \in [n]$, we view the transitions $(q, \myvec{0}, q')$ in $\cU_{\cB_i}$ as $\varepsilon$-transitions $(q, \varepsilon, q')$, and remove the $\varepsilon$-transitions from $\cU_{\cB_i}$. Then we determinize and minimize the resulting NFA.   \qed
 
 For $i \in [n]$, let  $\cC_i$ denote the DFA obtained from $\cU_{\cB_i}$ by executing Step 2 and $\costset_{\cC_i} := \costset_{\cB_i} \setminus \{\myvec{0}\}$. From the construction, we know that $\parikh(\cC_i) = \prj_{\costset_{\cC_i}}(\parikh(\cU_{\cB_i}))$ for each $i \in [n]$.
 Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cU_{\cB_i}$'s, to represent the Parikh images. 
 
 \medskip
 \noindent
-\emph{Step 3.(Parikh image)} For each $i \in [n]$, we compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then we solve the satisfiability of the following formula,
+\emph{Step 3 (Computing Parikh images).} For each $i \in [n]$, we compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then we solve the satisfiability of the following formula,
 %
 \[
 \begin{array}{l}
@@ -133,4 +138,4 @@ Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cU_{\cB_i}$'s, t
 \ \ \varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cC_1}} \anivarz_{1, \myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cC_n}} \anivarz_{n, \myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
 \end{array}
 \]
-\qed
+%\qed

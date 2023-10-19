@@ -1,5 +1,5 @@
 %!TEX root = ../main.tex
-In this section, we define the cost-enriched finite state automata (CEFA), which was introduced in \cite{atva2020} and will be used to solve the satisfiability problem of RECL later on. 
+In this section, we define cost-enriched finite state automata (CEFA), which was introduced in \cite{atva2020} and will be used to solve the satisfiability problem of RECL later on. 
 %
 Intuitively, CEFA adds write-only cost registers to finite state automata. ``write-only'' means that the cost registers can only be written/updated but cannot be read, i.e., they cannot be used to guard the transitions. 
 %
@@ -22,7 +22,8 @@ We define the semantics of a CEFA $\aut$, denoted by $\Lang(\aut)$, as $\{(w; \m
 We want to remark that the definition of CEFA above is slightly different from that of \cite{atva2020}, where CEFA did not include accepting conditions.
 Moreover, the accepting conditions $\alpha$ in CEFA are defined in a \emph{global} fashion because the accepting condition does not distinguish final states. This technical choice is made so that the determinization and minimization of NFA can be utilized to reduce the size of CEFA in the next section. 
 
-In the sequel, we define three CEFA operations: union, intersection, and concatenation. The following section will use these three operations to solve RECL constraints. Note that the union, intersection, and concatenation operations are defined in a slightly more involved manner than register automata~\cite{ra} and counter automata~\cite{GGM12}, as a result of the technical choice that the accepting condition is attached to each automaton, not each final state.
+In the sequel, we define three CEFA operations: union, intersection, and concatenation. The following section will use these three operations to solve RECL constraints. Note that the union, intersection, and concatenation operations are defined in a slightly more involved manner than register automata~\cite{ra} and counter automata~\cite{GGM12}, as a result of the (additional) accepting conditions. 
+%the technical choice that the accepting condition is attached to each automaton, not to each final state.
 
 Let $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1, \alpha_1)$ and  $\aut_2 = (R_2, Q_2, \Sigma, \delta_2, q_{2,0}, F_2, \alpha_2)$ be two CEFA that share the alphabet. 
 Moreover, suppose that $R_1 \cap R_2 = \emptyset$ and $Q_1 \cap Q_2 = \emptyset$. 
