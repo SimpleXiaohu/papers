@@ -1,20 +1,10 @@
 %!TEX root = ../main.tex
 
-%\zhilin{to be made consistent with section 6.}
-
 In this section, we utilize the string constraint in Equation~(\ref{eqn-running}) to illustrate the approach in our work.
 
-%$x \in (\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}} \wedge x \in \Sigma^* c^+ \wedge |x| > 120$.
-
 First, we construct an CEFA for the regular expression $(\Sigma \setminus a)^{\{1, 60\}} (\Sigma \setminus b)^{\{1, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$. Three registers are introduced, say $r_1, r_2, r_3$, to represent the three counting operators;  
-%Moreover, we introduce another register, say $r_0$, to denote the length of strings. 
 the nondeterministic finite automaton (NFA) for $(\Sigma \setminus a)^* (\Sigma \setminus b)^* (\Sigma \setminus c)^*$ is constructed; the updates of registers are added to the transitions of the NFA; the counting bounds are specified by the accepting condition $1 \le r_1 \le 60 \wedge 1 \le r_2 \le 60 \wedge 0 \le r_3 \le 60$, resulting in a CEFA $\aut_1$ illustrated in Figure~\ref{fig:overview}(a). $r_1++$ means that we increment the value of $r_1$ by one after running the transition.
-%Then we obtain a cost-enriched finite automaton (CEFA) $\aut_1$ that is illustrated in Figure~\ref{fig:overview}(a), where the self-loops around $p_0, p_1, p_2$ represent the first, second, and third counting operator respectively, in which $r_1, r_2, r_3$ are incremented. 
-%Moreover, $r_0$ is incremented in all the three self-loops. 
 A string $w$ is accepted by $\aut_1$ if, when reading the characters in $w$, $\aut_1$ applies the transitions to update the state and the values of registers, reaching a final state $q$ in the end, and the resulting values of the three registers, say $v_1,v_2,v_3$, satisfy the accepting condition. In addition, we construct other two CEFAs $\aut_2$ for $\Sigma^* c^+$ (see Figure~\ref{fig:overview}(b)) and $\aut_3$ for string length function (see Figure~\ref{fig:overview}(c)). In $\aut_3$, a register $r_4$ is used to denote the length of strings and the accepting condition is $\ltrue$ (See Section~\ref{subsec:regex2cefa} for more details about the construction of CEFA.) Note that we represent the counting operators symbolically by registers instead of unfolding them explicitly. 
-%where the register $r_0$ is used to record the length of strings. 
-
-% the register $r_1$ is incremented in the two transitions from $q_0$ to $q_0$ and $q_1$ respectively,  the register $r_2$ is incremented in the two transitions from $q_1$ to $q_1$ and $q_2$ respectively, and the register $r_3$ is incremented in the transition from $q_2$ to $q_2$ itself. Moreover, the register $r_4$ is incremented in each transition.  
 
 
 \begin{figure}[ht]
@@ -27,12 +17,8 @@ A string $w$ is accepted by $\aut_1$ if, when reading the characters in $w$, $\a
 \end{figure}
 
 Next, 
-%we remove the $\varepsilon$-transitions of $\aut_1$, resulting into $\aut'_1$, 
 we construct $\aut_1 \cap \aut_2 \cap \aut_3$, that is, the intersection (aka product) of $\aut_1$, $\aut_2$, and $\aut_3$, as illustrated in Figure~\ref{fig:overview:product}(a), where the states can not reach the final states are removed. 
-%Furthermore, we add one special register, say $r_0$, to record the length of strings. Note that $r_0$ is incremented in all transitions. 
-%In $\aut_1 \cap \aut_2 \cap \aut_3$, the accepting condition $1 \le r_1 \le 60 \wedge 1 \le r_2 \le 60 \wedge 0 \le r_3 \le 60 \wedge r_0 > 120$ is attached to both $(p_0,q_1)$ and $(p_1,q_1)$, where $r_0 > 120$ is added as a conjunct to express $|x| > 120$.  
 For technical convenience, we also think of the updates of registers in transitions as vectors $(u_1, u_2, u_3, u_4)$, where $u_i \in \Int$ is the update on the register $r_{i}$ for each $i \in [4]$. For instance, the transitions corresponding to the self-loop around $(p_0, q_0, q'_0)$ are thought as $((p_0, q_0, q'_0), a', (p_0, q_0, q'_0), (1,0,0,1))$ with $a' \in \Sigma \setminus \{a\}$, since $r_1$ and $r_4$ are incremented by one in these transitions. After considering the updates of registers as vectors, the CEFA is like Figure~\ref{fig:overview:product}(b).
-%the transitions corresponding to the self-loop is $(q, a', q', (1,1,0,0))$ with $a' \in \Sigma \setminus \{a\}$.  
 
 \begin{figure}[ht]
 \vspace{-3mm}
@@ -43,7 +29,6 @@ For technical convenience, we also think of the updates of registers in transiti
 \vspace{-3mm}
 \end{figure}
 
-%For instance, in the transition from $(p_0, q_1)$ to $(p_1, q_1)$, $r_0$ is incremented, and the values of the other registers is unchanged. Therefore, the vector for this transition is $(1, 0, 0, 0)$. 
 Finally, the satisfiability of the original string constraint is reduced to the nonemptiness of the CEFA $\aut\equiv \aut_1 \cap \aut_2 \cap \aut_3$ with respect to the LIA formula $\varphi \equiv r_4 > 120$, that is, whether there exist $w \in \Sigma^*$ and $(v_1, v_2, v_3, v_4) \in \Int^4$ such that $w$ is accepted by $\aut$, so that the resulting registers values $(v_1, v_2, v_3, v_4)$ satisfy both $1 \le v_1 \le 60\wedge 1 \le v_2 \le 60 \wedge 0 \le v_3 \le 60$ and $\varphi$. 
 It is not hard to observe that the nonemptiness of $\aut$ with respect to $\varphi$ is independent of the characters of $\aut$.  Therefore, the characters in $\aut$ can be ignored, resulting into an NFA $\cB$ over the alphabet $\costset$, where $\costset$ is the set of vectors from $\Int^4$ occurring in the transitions of $\aut$ (see Figure~\ref{fig:overview:product:reduced}(a)). Then the original problem is reduced to the problem of deciding whether there exists a string $w' \in \costset^*$ that is accepted by $\cB$ and its Parikh image (i.e., numbers of occurrences of characters), say $\eta_{w'}: \costset \rightarrow \Nat$, satisfies $1 \le v'_1 \le 60\wedge 1 \le v'_2 \le 60 \wedge 0 \le v'_3 \le 60 \wedge v'_4 > 120$, where $(v'_1, v'_2, v'_3, v'_4) =  \sum \limits_{\myvec{v} \in \costset} \eta_{w'}(\myvec{v}) \myvec{v}$ for each $\myvec{v}\in \costset$. Intuitively, $(v'_1, v'_2, v'_3, v'_4)$ is a weighted sum of vectors $\myvec{v} \in \costset$, where the weight is the number of occurrences of $\myvec{v}$ in $w'$. (See Section~\ref{subsec:cefadec} for more detailed arguments.)
 
@@ -55,9 +40,6 @@ It is not hard to observe that the nonemptiness of $\aut$ with respect to $\varp
   \label{fig:overview:product:reduced}
 \vspace{-3mm}
 \end{figure}
-
-%Let $\tau_1, \cdots, \tau_m$ be an enumeration of the transitions of $\aut_1 \cap \aut_2 \cap \aut_3$ and $\myvec{v_1}, \cdots, \myvec{v_m}$ be the vectors of updates on the registers in these transitions. 
-
 %
 Let $\costset = \{\myvec{v_1}, \cdots, \myvec{v_m}\}$. 
 From the results in \cite{SSMH04,VSS05}, an existential LIA formula $\psi_\cB(\anivar_1, \cdots, \anivar_m)$ can be computed to define the Parikh image of strings that are accepted by $\cB$, where $\anivar_1, \cdots, \anivar_m$ are the integer variables to denote the number of occurrences of $\myvec{v_1}, \cdots, \myvec{v_m}$.
@@ -68,178 +50,12 @@ Therefore, the satisfiability of the string constraint in~(\ref{eqn-running}) is
 1 \le r_1 \le 60 \wedge 1 \le r_2 \le 60 \wedge 0 \le r_3 \le 60 \wedge r_4 > 120.
 \end{array}
 \end{equation}
-%where for each $k \in [m]$, $v_k = (v_{k,1}, v_{k,2}, v_{k, 3}, v_{k, 4})$ is the vector of updates on the registers $r_0, r_1, r_2, r_3$ in the transition $\tau_k$, and $\alpha(r_0, r_1, r_2, r_3)$ is the accepting condition in $\aut_1 \times \aut_2$. 
 which can be solved by the off-the-shelf SMT solvers.
-%Since the satisfiability of LIA formulas can be solved by the off-the-shelf SMT solvers for LIA, the satisfiability of the string constraint in~(\ref{eqn-running}) can thus be solved.
 
 Nevertheless, when the original regexes are complicated (e.g. contain occurrences of negation or intersection operators), the sizes of the NFA $\cB$ can still be big and the sizes of the LIA formulas defining the Parikh image of $\cB$ are also big. Since the satisfiability of LIA formulas is an NP-complete problem \cite{Haase18}, big sizes of LIA formulas would be a bottleneck of the performance. 
 To tackle this issue, we propose techniques to reduce the sizes of the NFA $\cB$.
-%over the alphabet $\costset$.
-
-%the performance could be improved if the size of the formula in~(\ref{eqn-LIA}) can be reduced. Since the size of the formula in~(\ref{eqn-LIA}) depends on the size of $\aut_1 \times \aut_2$, that is, the number of states, transitions, and registers in $\aut_1 \times \aut_2$, we propose the techniques to reduce the size of the CEFA $\aut_1 \times \aut_2$.
-
-%Our main idea to reduce the size of the CEFA $\aut_1 \times \aut_2$ is to \emph{ignore the characters in transitions}, since the updates of the values of registers in transitions are independent of the characters therein and the satisfiability of the formula in~(\ref{eqn-LIA}) only concerns about the values of registers. After the characters in transitions are ignored, each transition in $\aut_1 \times \aut_2$ is of the form $(q, \myvec{v}, q')$, where $\myvec{v}$ is the vector denoting the updates on the values of registers. Let $\cB$ denote the resulting automaton. We then think \denghang{of} $\cB$ as an NFA, where the vectors $\myvec{v}$ are taken as the characters. 
 
 Specifically, to reduce the sizes of $\cB$, we determinize $\cB$, and apply the minimization algorithm to the resulting deterministic finite automaton (DFA), resulting in a DFA $\cC$, as illustrated in Figure~\ref{fig:overview:product:reduced}(b). 
 Note that $\cC$ contains only three states $q''_0, q''_1, q''_2$ and six transitions, while $\cB$ contains four states and eight transitions. Furthermore, if $\cB$ contains $\vec{0}$-labeled transitions, then we can take these transitions as $\epsilon$-transitions and potentially reduce the sizes of automata further. 
-%The evaluation in Table~\ref{tab:results_simp} shows that we can solve 1503 more instances after utilizing simplification techniques, with \%54.8 less average time.
 
 We implement all the aforementioned techniques on the top of OSTRICH, resulting in a solver $\ostrichrecl$. It turns out that $\ostrichrecl$ is able to solve the string constraint in~(\ref{eqn-running}) within one second, while the state-of-the-art string solvers are incapable of solving it within 120 seconds. 
-
-
-%%%%%%%%%%%%%%%%%original texts by Denghang%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%original texts by Denghang%%%%%%%%%%%%%%%
-\hide{
-\begin{figure}[ht]
-  \centering
-  \import{figures}{overview_example.tex}
-  \caption{The CEFA handling the difficult string constraints}
-  \label{fig:overview:orgin}
-\end{figure}
-
-
-Recalling the string constraint listed in Section \ref{sec:intro}, DPLL(T)- and automata- based string solvers can not solve it. For DPLL(T)-based string solvers, the unsatisfiability is hard to discover since it is highly related to the length and the counting, which independent derivation rules for regex and length can not conclude. For automata-based string solvers, the counting operators result in the big-size automaton, whose length abstraction is too complex to solve. To address these issues, we use automaton to encode the semantics of the counting operator, but in a smarter way by storing counting information to registers rather than unwinding it directly. The automaton model we used is called cost-enriched finite automaton(abbreviated as regex). It is carefully discussed in Section \ref{subsec:cefa}, so we briefly introduce it in this section. A CEFA can be seen as an extension of an NFA by appending symbolic updates of integers on each transition, linear integer arithmetic to constrain the integer values on each accepting state, and registers to store integer values. The main idea is based on the observation that the occurrences of exact transitions can trace the counting times, and the length can be seen as the sum of occurrences of all transitions in the accepting run. For example, the counting times in $(\Sigma \setminus a)^{\{5, 60\}}$ can be traced by the occurrences of transitions in sub-regex $\Sigma \setminus a$. To detail, we use one register to store counting, and symbolically add 1 when running one of the transitions in $\Sigma \setminus a$, tracing the counting times. Similarly, we use another register to store the length and symbolically add 1 to it when running any transition. The automaton model of string constraints \ref{eqn-running} is illustrated in Figure \ref{fig:overview}. Register $r_1$ stores the counting times of the sub-regex $\Sigma \setminus a$, register $r_2$ stores the counting times of the sub-regex $\Sigma \setminus b$, register $r_3$ stores the counting times of the sub-regex $\Sigma \setminus c$, and register $r_4$ stores the length of the string. The label $\Sigma \setminus a:(1,0,0,1)$ means that when running the transition, the counting times of $\Sigma \setminus a$ (i.e., the value of $r_1$) plus 1, and the length (i.e., the value of $r_4$) plus 1. The accepting state $q_3$ is accepting by the linear integer arithmetic $5\leq r_1\leq 60\wedge 5\leq r_2\leq 60\wedge 0\leq r_3\leq 60\wedge 120 < r_4$. $5\leq r_1\leq 40$ ensure the counting times of $\Sigma \setminus a$ is in the range $[5, 60]$, $5\leq r_2\leq 60$ ensure the counting times of $\Sigma \setminus b$ is in the range $[5, 60]$, $0\leq r_3\leq 60$ ensure the counting times of $\Sigma \setminus c$ is in the range $[0, 60]$, and $120 < r_4$ ensure the length of the string is greater than $120$. The satisfiability of the CEFA can then be reduced to the satisfiability of linear integer arithmetic, which other off-the-shelf SMT solvers solve. \newline
-However, even when we use CEFA to encode counting in the string constraints, the linear integer arithmetic reduced from the CEFA still needs to be simplified to solve. The reason is that the linear integer arithmetic is solved in exponential time of the number of variables, which is linear to the sum of transitions number and states number in the CEFA. To address this issue, we use symbolic-aware simplification to reduce the number of transitions and states in the CEFA. Simply illustrating our idea, consider a simple NFA rather than a CEFA. We assume the NFA consisted of three states $q_1, q_2, q_3$, where $q_1$ is the initial state, $q_2$ and $q_3$ are the accepting states. Assume we have three transitions from $q_1$ to $q_2$ with different characters, and three transitions from $q_1$ to $q_3$. Actually, we only need to attempt some of the six transitions to get the reachable result. We run any of the transitions, and the reachability is known. So this NFA can be simplified to two states $q_1', q_2'$ where $q_1'$ is the initial state, $q_2'$ is the accepting state, and one transition from $q_1'$ to $q_2'$ with abbreviated character. The size of NFA is sharply reduced. The simplification can be done by treating the character on each transition as the same character, then applying the minimization algorithm to the NFA. CEFA can be simplified similarly, except we need to consider the counting information, i.e., symbolic updates, on each transition. For example, $a:(1)$ and $b:(1)$ are treated as the same label but $a:(1)$ and $b:(0)$ are not. Then we can apply the minimization algorithm as NFA. Recalling the CEFA (Fig. \ref{fig:overview:orgin}) handling the string constraints \ref{eqn-running}, its transitions number between $q_1$ and $q_2$ are decided by the size of alphabet $\Sigma$. We apply symbolic-aware simplification on it, then a much smaller CEFA (Fig. \ref{fig:overview:simplified}) is obtained, whose alphabet is unary so that the number of the transition between $q_1$ and $q_2$ decreases to $1$. The state number does not decrease because these three states are not mutually equivalent. 
-
-Sometimes the string constraints are satisfiable, and the strings in the solution have a short length. Such a solution may be quickly explored by derivation rules in DPLL(T)-based string solvers but slowly explored by our approach. To improve efficiency on satisfiable string constraints, we propose a light-way heuristic that tries to find a solution in the under-approximation of the string constraints. The main idea is to explore paths within an exact length and manually compute the registers' values, rather than reduce CEFA to heavy linear integer arithmetic. For example, consider the string constraints $x \in (\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}} \wedge x \in \Sigma^* c$, we can explore paths within length 10 and get a satisfiable solution $x = cccccccccc$. 
-\begin{figure}[ht]
-  \centering
-  \import{figures}{overview_example.tex}
-  \caption{The CEFA handling the difficult string constraints}
-  \label{fig:overview:orgin}
-\end{figure}
-\begin{figure}[ht]
-  \centering
-  \import{figures}{overview_example_simplified.tex}
-  \caption{The simplified CEFA handling the difficult string constraints}
-  \label{fig:overview:simplified}
-\end{figure}
-}
-%%%%%%%%%%%%%%%%%original texts by Denghang%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%original texts by Denghang%%%%%%%%%%%%%%%
-
-% The main idea is to use CEFAs (see Subsection \ref{subsec:cefa}) to simulate the semantics of length operations and regular memberships with bounded repetitions. As mentioned, the ESL formula contains regular literals and linear literals. The regular literal $x\in \regex$ directly results in one CEFA recognizing it (see Subsection \ref{subsec:regex2cefa}). The linear literals $\alpha_1 \leq \alpha_2$ with no length operation remain unchanged. For each linear literal $\alpha_1 \leq \alpha_2$ with length operation $|x|$, we generate a fresh variable $i$ to replace all occurrences of $|x|$ and propagate new formula $i=|x|$. Then we generate the pre-image $\aut_{i}$ whose accepting words are strings with length $i$ (see Example \ref{eg:pre_len}). After the process above, the satisfiability problem of string constraints becomes an $SAT_{CL}$ problem, which has a decision procedure to check (see Subsection \ref{subsec:emptiness}). Example \ref{example:overview} illustrate it. \newline
-% \begin{example} \label{example:overview}
-%   \begin{align*}
-%     \varphi\equiv x\in (ab)\{1,100\}\wedge y\in ab\wedge |x| > |y|
-%   \end{align*}
-%   ESL conjunction $\varphi$ is made up of regular literals $x\in (ab)\{1,100\}$ and $y\in ab$, linear literals $|x| > |y|$. The linear literal is translated to $i = |x|\wedge j = |y| \wedge i > j$. Our algorithm solves the formula in four steps. First, we construct CEFAs for regular memberships $x\in (ab)\{1,100\}$ and $y\in ab$ (Fig.\ref{subfig:aut_ab1-100} and Fig.\ref{subfig:aut_ab}). Second, we compute the pre-images of length operations $i=|x|$ and $j=|y|$ (Fig.\ref{subfig:preimage_x} and Fig.\ref{subfig:preimage_y}). Then we intersect pre-images to automata corresponding to the regular memberships for each string variable (Fig.\ref{subfig:aut_x} and Fig.\ref{subfig:aut_y}). We translate the satisfiability problem of $\varphi$ to the emptiness checking problem of automata (Fig.\ref{subfig:preimage_x} and Fig.\ref{subfig:preimage_y}) under linear arithmetic constants $i > y$, which could be solved by the decision procedure illustrated in section \ref{sec:algorithm}.
-
-  % \begin{figure}[h]
-  %   \begin{subfigure}[b]{0.49\textwidth}
-  %     \centering
-  %     \begin{tikzpicture}[
-  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-  %       initial text=, every state/.style={minimum size = 0.001cm},
-  %       accepting text=$1\leq r_1\leq 100$, accepting/.style=accepting by arrow,
-  %       accepting where=above
-  %       ]
-
-  %       \node[state,initial]            (q_0)                      {};
-  %       \node[state]                    (q_1) [right=of q_0]       {};
-  %       \node[state,accepting]          (q_2) [right=of q_1]       {};
-
-  %       \path[->] (q_0) edge              node      [above]           {$a$/(1)} (q_1)
-  %       (q_1) edge              node      [above]           {$b$/(0)} (q_2)
-  %       (q_2) edge [bend left]  node      [below]           {$a$/(1)} (q_1);
-  %     \end{tikzpicture}
-  %     \caption{The CEFA recognizing $(ab)\{1,100\}$}
-  %     \label{subfig:aut_ab1-100}
-  %   \end{subfigure}
-  %   \begin{subfigure}[b]{0.49\textwidth}
-  %     \centering
-  %     \begin{tikzpicture}[
-  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-  %       initial text=, every state/.style={minimum size = 0.001cm},
-  %       accepting text=$\top$, accepting/.style=accepting by arrow,
-  %       accepting where=above
-  %       ]
-
-  %       \node[state,initial]            (q_0)                      {};
-  %       \node[state]                    (q_1) [right=of q_0]       {};
-  %       \node[state, accepting]         (q_2) [right=of q_1]       {};
-
-  %       \path[->] (q_0) edge              node      [above]           {$a$/()} (q_1)
-  %       (q_1) edge              node      [above]           {$b$/()} (q_2);
-  %     \end{tikzpicture}
-  %     \caption{The CEFA recognizing $ab$}
-  %     \label{subfig:aut_ab}
-  %   \end{subfigure}
-  %   \begin{subfigure}[b]{0.49\textwidth}
-  %     \centering
-  %     \begin{tikzpicture}[
-  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-  %       initial text=, every state/.style={minimum size = 0.001cm},
-  %       accepting text=${r_2 = i}$, accepting/.style=accepting by arrow,
-  %       ]
-
-  %       \node[state,initial,accepting]            (q_0)       {};
-
-  %       \path[->] (q_0) edge [loop below] node{$\Sigma$/(1)} ();
-  %     \end{tikzpicture}
-  %     \caption{The pre-image of $i = |x|$}
-  %     \label{subfig:preimage_x}
-  %   \end{subfigure}
-  %   \begin{subfigure}[b]{0.49\textwidth}
-  %     \centering
-  %     \begin{tikzpicture}[
-  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-  %       initial text=, every state/.style={minimum size = 0.001cm},
-  %       accepting text=${r_3 = j}$, accepting/.style=accepting by arrow,
-  %       ]
-
-  %       \node[state,initial,accepting]            (q_0)       {};
-
-  %       \path[->] (q_0) edge [loop below] node{$\Sigma$/(1)} (1);
-  %     \end{tikzpicture}
-  %     \caption{The pre-image of $j = |y|$}
-  %     \label{subfig:preimage_y}
-  %   \end{subfigure}
-  %   \begin{subfigure}[b]{0.49\textwidth}
-  %     \centering
-  %     \begin{tikzpicture}[
-  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-  %       initial text=, every state/.style={minimum size = 0.001cm},
-  %       accepting text=${r_2 = i\wedge 1\leq r_1 \leq 100}$, accepting/.style=accepting by arrow,
-  %       accepting where=above
-  %       ]
-
-  %       \node[state,initial]            (q_0)                      {};
-  %       \node[state]                    (q_1) [right=of q_0]       {};
-  %       \node[state,accepting]          (q_2) [right=of q_1]       {};
-
-  %       \path[->] (q_0) edge node [above]  {$a$/(1,1)} (q_1)
-  %       (q_1) edge           node [above]  {$b$/(0,1)} (q_2)
-  %       (q_2) edge [bend left]  node      [below]           {$a$/(1,1)} (q_1);
-  %     \end{tikzpicture}
-  %     \caption{The final automaton of $x$}
-  %     \label{subfig:aut_x}
-  %   \end{subfigure}
-  %   \begin{subfigure}[b]{0.49\textwidth}
-  %     \centering
-  %     \begin{tikzpicture}[
-  %       shorten >=1pt,node distance=2cm,on grid,>={Stealth[round]},
-  %       initial text=, every state/.style={minimum size = 0.001cm},
-  %       accepting text=${r_3=j}$, accepting/.style=accepting by arrow,
-  %       accepting where=above
-  %       ]
-
-  %       \node[state,initial]            (q_0)                      {};
-  %       \node[state]                    (q_1) [right=of q_0]       {};
-  %       \node[state, accepting]         (q_2) [right=of q_1]       {};
-
-  %       \path[->] (q_0) edge    node      [above]           {$a$/(1)} (q_1)
-  %       (q_1) edge              node      [above]           {$b$/(1)} (q_2);
-  %     \end{tikzpicture}
-  %     \caption{The final automaton of $y$}
-  %     \label{subfig:aut_y}
-  %   \end{subfigure}
-  %   \caption{All automata used in the example \ref{example:overview}}
-  % \end{figure}
-
-
-% \end{example}
-
-% \pagebreak
-
-%The wrong encoding of the backslash causes the soundness errors of z3str3re. Two backslashes are seen as two characters in the Smtlib2.6 standard, but z3str3re encodes them as one.

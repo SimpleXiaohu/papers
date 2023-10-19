@@ -1,6 +1,4 @@
 %!TEX root = ../main.tex
-%\documentclass{standalone}
-%\begin{document}
 
 We write $\Nat$ and $\Int$ for the sets of natural and integer numbers. For $n \in \Nat$ with $n \ge 1$, $[n]$ denotes $\{1, \ldots, n\}$; for $m,n \in \Nat$ with $m \le n$,  $[m, n]$ denotes $\{ i \in \Nat \mid m \le i \le n \}$. Throughout the paper, $\Sigma$ is a finite alphabet, ranged over $a,b,\ldots$.  
 
@@ -9,28 +7,25 @@ For a function $f$ from $X$ to $Y$ and $X' \subseteq X$, we use $\prj_{X'}(f)$ t
 \medskip
 \noindent 
 \emph{Strings and languages.}
-%\paragraph*{Strings and languages.}
 A string over $\Sigma$ is a (possibly empty) sequence of elements from $\Sigma$,
 denoted by $u, v, w, \ldots$. An empty string is denoted by $\varepsilon$. We use $\Sigma_\varepsilon$ to denote $\Sigma \cup \{\varepsilon\}$. We write $\Sigma^*$ (resp., $\Sigma^+$) for the set of all (resp. nonempty) strings over $\Sigma$.
 %Let 
 For a string $u$, we use $|u|$ to denote the number of letters in $u$. In particular, $|\varepsilon|=0$. 
 Moreover, for $a \in \Sigma$, let $|u|_a$ denote the number of occurrences of $a$ in $u$. 
-Assume that $u=a_1\cdots a_{n}$ is nonempty and $1\leq i<j \leq n$. %Then a \emph{position} of $u$ is a number $i \in [|u|]$ (Note that the first position is $1$, instead of  0). In addition, 
-We let $u[i]$ denote $a_i$ and $u[i,j]$ for the substring %of $u$ starting from $i$ and ending with $j$ (i.e., 
+Assume that $u=a_1\cdots a_{n}$ is nonempty and $1\leq i<j \leq n$. 
+We let $u[i]$ denote $a_i$ and $u[i,j]$ for the substring 
 $a_i\cdots a_j$. 
-%\tl{check later for consistency}\zhilin{the indices start from 0, to be consistent with the semantics of substring and indexof}\zhilin{i do use it in section 4}
 %
 Let $u, v$ be two strings. We use $u \cdot v$ to denote the \emph{concatenation} of $u$ and $v$. A language $L$ over $\Sigma$ is a subset of strings.  
 Let $L_1, L_2$ be two languages. Then the concatenation of $L_1$ and $L_2$, denoted by $L_1 \cdot L_2$,  is defined as $\{u \cdot v \mid u \in L_1, v \in L_2\}$. The union (resp. intersection) of $L_1$ and $L_2$, denoted by $L_1 \cup L_2$  (resp. $L_1 \cap L_2$), is defined as $\{u \mid u \in L_1 \mbox{ or } u \in L_2\}$ (resp. $\{u \mid u \in L_1 \mbox{ and } u \in L_2\}$). The complement of $L_1$, denoted by $\overline{L_1}$, is defined as $\{u \mid u \in \Sigma^*, u \not \in L_1\}$. 
 The difference of $L_1$ and $L_2$, denoted by $L_1 \setminus L_2$, is defined as $L_1 \cap \overline{L_2}$. 
 For a language $L$ and $n \in \Nat$, we define $L^n$ inductively as follows: $L^0= \{\varepsilon\}$, $L^{n+1} = L \cdot L^n$ for every $n \in \Nat$. 
 Finally, define $L^* = \bigcup \limits_{n \in \Nat} L^n$.
-%, that is, the string $w$ such that $|w|= |u| + |v|$ and for each $i \in [0, |u|-1]$, $w[i]= u[i]$, and for each $i \in [0,|v|-1]$, $w[|u|+i]=v[i]$. 
 
 \medskip
 \noindent 
 \emph{Finite automata.} 
-A \emph{(nondeterministic) finite automaton} (NFA)  is a tuple $\NFA=(Q, \Sigma, \delta, I, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, $I \subseteq Q$ is the set of initial states, and $F \subseteq Q$ is the set of final states. For readability, we write a transition $(q, a, q') \in \delta$ as $q \xrightarrow[\delta]{a} q'$ (or simply $q \xrightarrow{a} q'$). \denghang{Note that one initial state is sufficient. A set of initial states is a technical choice to simplify the defination of union operation in Sec \ref{sec:automaton}.}%Moreover, when $\delta$ is clear from context, we omit $\delta$ in $q \xrightarrow[\delta]{a} q'$ and write $q \xrightarrow{a} q'$. 
+A \emph{(nondeterministic) finite automaton} (NFA)  is a tuple $\NFA=(Q, \Sigma, \delta, I, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, $I \subseteq Q$ is the set of initial states, and $F \subseteq Q$ is the set of final states. For readability, we write a transition $(q, a, q') \in \delta$ as $q \xrightarrow[\delta]{a} q'$ (or simply $q \xrightarrow{a} q'$). \denghang{Note that one initial state is sufficient. A set of initial states is a technical choice to simplify the defination of union operation in Sec \ref{sec:automaton}.}
 The \emph{size} of an NFA $\NFA$, denoted by $|\NFA|$, is defined as the number of transitions of $\NFA$.
 %
 A \emph{run} of $\NFA$ on a string $w = a_1 \cdots a_n$ is a sequence of transitions $q_0 \xrightarrow{a_1} q_1 \cdots q_{n-1} \xrightarrow{a_n} q_n$ such that $q_0 \in I$. The run is \emph{accepting} if $q_n \in F$.
@@ -41,32 +36,8 @@ An NFA $\NFA$ is said to be \emph{deterministic} if $I$ is a singleton and, for 
 
 It is well-known that finite automata capture regular languages. 
 Moreover, the class of regular languages is closed under union, intersection, concatenation, Kleene star, complement, and language difference \cite{HU79}. \sout{The constructions of NFA corresponding to these language operations are list in \ref{appendix:cefa}}
-% In the sequel, we recall the constructions of NFA corresponding to these language operations. 
-% Let $\NFA_1 = (Q_1, \Sigma, \delta_1, I_1, F_1)$ and $\NFA_2 = (Q_2, \Sigma, \delta_2, I_2, F_2)$ be two NFA such that $Q_1 \cap Q_2 = \emptyset$. 
-% \begin{itemize}
-% \item The union of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \cup \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q'= Q_1 \cup Q_2$, $\delta' = \delta_1 \cup \delta_2$, $I' = I_1 \cup I_2$, and $F'=F_1 \cup F_2$. 
-% %
-% \item The intersection of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \cap \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q' = Q_1 \times Q_2$, $I' = I_1 \times I_2$, $F' = F_1 \times F_2$, and $\delta' = \{((q_1, q_2), a, (q'_1, q'_2)) \mid (q_1, a, q'_1) \in \delta_1, (q_2, a, q'_2) \in \delta_2\}$.
-% %
-% \item The concatenation of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \concat \NFA_2$, is defined as the tuple $(Q', \Sigma, \delta', I', F')$, where $Q' = Q_1 \cup Q_2$, $I' = I_1$, $\delta' = \delta_1 \cup \delta_2 \cup \{(q_1, a, q_2) \mid q_1 \in F_1, \exists q' \in I_2.\ (q', a, q_2) \in \delta_2\}$, moreover, if $I_2 \cap F_2 \neq \emptyset$, then $F'= F_1 \cup F_2$, otherwise, $F'= F_2$.
-% %
-% \item The Kleene star of $\NFA_1$, denoted by $\NFA_1^*$, is defined as $(Q'_1, \Sigma, \delta'_1, I'_1, F'_1)$, where $Q'_1 = Q_1 \cup \{q_0\}$ with $q_0 \not \in Q_1$, $I'_1 = \{q_0\}$, $F'_1= F_1 \cup \{q_0\}$, $\delta'_1 = \delta_1 \cup \{(q_0, a, q'_1)  \mid \exists q'_0 \in I_1.\ (q'_0, a, q'_1) \in \delta_1\} \cup \{(q_1, a, q'_1) \mid q_1 \in F_1, \exists q'_0 \in I_1.\ (q'_0, a, q'_1) \in \delta_1\}$.
-% %
-% \item The complement of $\NFA_1$, denoted by $\overline{\NFA_1}$, is defined as $(Q'_1, \Sigma, \delta'_1, q'_0, Q'_1 \setminus F'_1)$, where  $(Q'_1, \Sigma, \delta'_1, q'_0, F'_1)$ is the DFA obtained from $\NFA_1$ by subset construction.  
-% %
-% \item The language difference of $\NFA_1$ and $\NFA_2$, denoted by $\NFA_1 \setminus \NFA_2$, is defined as $\NFA_1 \cap \overline{\NFA_2}$.
-% \end{itemize}
 
 Let $w \in \Sigma^*$. The \emph{Parikh image} of $w$, denoted by $\parikh(w)$, is defined as the function $\eta: \Sigma \rightarrow \Nat$ such that $\eta(a) = |w|_a$ for each $a \in \Sigma$. The \emph{Parikh image} of an NFA $\NFA$, denoted by $\parikh(\NFA)$, is defined as $\{\parikh(w) \mid w \in \Lang(\NFA)\}$.
-
-
-%\tl{to put in a different place later} Note that our decision procedure also applies to general transducers. However, the EXPSPACE complexity bound is not because the distributive property $f^{-1}(L_1\cap L_2)= f^{-1}(L_1)\cap f^{-1}(L_2)$ for regular languages $L_1, L_2$ only holds for functional transducers $f$.  
-
-%We remark that an FT usually defines a relation.
-
-%\smallskip
-
-%In this paper, we consider logic involving two data types, i.e., the string and integer data types. We will use $u, v, \dots$ to denote string constants,  $c, d,\dots$ to denote integer constants, $x, y, \dots$ to denote string variables, and $i, j, \dots$ to denote integer variables.
 
 \medskip
 \noindent 
@@ -75,8 +46,6 @@ We use standard existential \emph{linear integer arithmetic} (LIA) formulas, whi
  typically range over $\psi, \varphi, \Phi, \alpha$. 
 For a set $\mathfrak{X}$ of variables, we use $\psi/\varphi/\Phi/\alpha(\mathfrak{X})$ to denote the set of existential LIA formulas whose free variables are from $\mathfrak{X}$. 
 For example, we use $\varphi(\vec{\anivar})$ with $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ to denote an LIA formula $\varphi$ whose free variables are from $\{\anivar_1, \cdots, \anivar_k\}$. For an LIA formula $\varphi(\vec{\anivar})$, we use $\varphi[\myvec{t}/\myvec{\anivar}]$ to denote the formula obtained by replacing (simultaneously) $\anivar_i$ with $t_i$ for every $i \in [k]$ where $\myvec{\anivar} = (\anivar_1, \cdots, \anivar_k)$ and $\myvec{t} = (t_1, \cdots, t_k)$ are tuples of integer terms.
-%For convenience, we assume a set $X$ of variables is a vector. 
-%, which is essentially Presburger 
 
 At last, we recall the result about Parikh images of NFA. 
 For each $a \in \Sigma$, let $\anivarz_a$ be an integer variable. Let $\fZ_\Sigma$ denote the set of integer variables $\anivarz_a$ for $a \in \Sigma$. 
@@ -87,12 +56,4 @@ we say that an LIA formula $\psi(\fZ_\Sigma)$ defines the Parikh image of $\NFA$
 Given an NFA $\NFA$,  an existential LIA formula $\psi_\NFA(\fZ_\Sigma)$ can be computed in linear time that defines the Parikh image of $\NFA$.
 \end{theorem}
 \vspace{-3mm}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\hide{
-A finite \emph{alphabet} $\Sigma$ is the set of all \emph{letters}. A
-\emph{string} (or \emph{word}) is a finite sequence of letters from $\Sigma$. $\Sigma^*$ is the set of strings over $\Sigma$. $\epsilon$ is the empty string. $L$ is grammar. A language $\lan(L)$ is a set of words generated by $L$. $\mathbb{N}$ is the set of natural numbers and $\mathbb{Z}$ is the set of integer numbers. We use $a,
-  b,\cdots$ to denote the constant letters in $\Sigma$, $u, v,\cdots$ to denote constant
-string, $x, y,\cdots$ to denote variable string, $m,n,\cdots$ to
-denote integer constant, and $i,j\cdots$ to denote integer variable. For vector, we use $\myvec{v}$ to denote the vector of integer constant, $m_n$ to denote the vector $(m,\cdots, m)$ with length $n$, $\myvec{v}[i]$ to denote the integer value of $\myvec{v}$ at position $i$, $\myvec{v_1}\cdot\myvec{v_2}$ to denote the concatenation of $\myvec{v_1}$ and $\myvec{v_2}$, $R$ to denote the vector of registers, $R_1 \cap R_2$ to denote the same registers in $R_1$ and $R_2$, and $|\myvec{v}|$ or $|R|$ to denote the length of the vector.
-}
+

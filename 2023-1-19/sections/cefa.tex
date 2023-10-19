@@ -1,51 +1,33 @@
 %!TEX root = ../main.tex
-%\documentclass{standalone}
-%\begin{document}
-
 In this section, we define the cost-enriched finite state automata (CEFA), which was introduced in \cite{atva2020} and will be used to solve the satisfiability problem of RECL later on. 
 %
 Intuitively, CEFA adds write-only cost registers to finite state automata. ``write-only'' means that the cost registers can only be written/updated but cannot be read, i.e., they cannot be used to guard the transitions. 
-
 %
-%In~\cite{atva2020}, the cost function is defined as a function $\eta: \Sigma \rightarrow \mathbb{N}$. In this paper, we define the cost function as an integer vector whose elements are the incremental value of registers. Furthermore, we add a new linear integer arithmetic constraint $\theta$ to each final state of the CEFA, which restricts the value of registers. Two types of definitions have the same expressive ability on the $SAT_{CL}$ problem.
 \vspace{-0.5mm}
 \begin{definition}[Cost-Enriched Finite Automaton]
   A cost-enriched finite automaton $\aut$ is a tuple $(R, Q, \Sigma, \delta, I, F, \alpha)$ where
   \begin{itemize}
   \item $R = \{r_1, \cdots, r_k\}$ is a finite set of registers, 
     \item $Q, \Sigma, I, F$ are as in the definition of NFA,
-%    \item $R = (r_1\cdots r_n)$ is a vector of mutually distinct cost registers,
     \item $\delta \subseteq Q \times \Sigma \times Q \times \Int^R$ is a transition relation, where $\Int^R$ denotes the updates on the values of registers.
-%  set whose elements are tuples $(q, c, q', \myvec{v})$ where $q, q'$ are states of $Q$, $c$ is a letter in alphabet $\Sigma\cup\{\epsilon\}$ and $\myvec{v}$ is the cost update function for registers, which is an integer vector whose $i$-th element is the incremental value of register $r_i$.  $(q, a, q', \myvec{v})$ is written as $q\xrightarrow[\myvec{v}]{a} q'$ for readability.
     \item $\alpha \in \Phi(R)$ is an LIA formula specifying an accepting condition.
-%    a linear integer arithmetic constraint function on final states. $\theta$ is called \emph{accepting condition}.
   \end{itemize}
 \end{definition}
 \vspace{-0.5mm}
 
 For convenience, we use $R_\aut$ to denote the set of registers of $\aut$. We assume a linear order on $R$ and write $R$ as a vector $(r_1, \cdots, r_k)$. Accordingly, we write an element of $\Int^R$ as a vector $(v_1, \cdots, v_k)$, where $v_i$ is the update of $r_i$ for each $i \in [k]$. We also write a transition $(q, a, q', \vec{v}) \in \delta$ as $q \xrightarrow[\vec{v}]{a} q'$.
-%The definition of CEFA above is slightly different from the definition in~\cite{atva2020} in the sense that accepting conditions on register values
-%are attached to final states. 
 
 The semantics of CEFA is defined as follows. Let $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$ be a CEFA. 
-%A \emph{configuration} of $\aut$ is a pair $(q, \vec{v})$ where $q \in Q$ and $\vec{v}$ is a vector denoting the values of registers.  
-%An \emph{initial configuration} of $\aut$ is $(q_0, \vec{0})$ with $q_0 \in I$, where the value of each register is zero. 
 A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ is a sequence $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ such that $q_0 \in I$ and $q_{i-1} \xrightarrow[\myvec{v_i}]{a_i} q_i$ for each $i \in [n]$. A run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ is \emph{accepting} if $q_n \in F$ and $\alpha(\myvec{v'}/R)$ is true, where $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v_j}$. The vector $\myvec{v'}= \sum \limits_{j \in [n]} \myvec{v_j}$ is called the \emph{cost} of an accepting run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$. Note that the values of all registers are initiated to zero and updated to $\sum \limits_{j \in [n]} \myvec{v_j}$ after all the transitions in the run are executed. We use $\myvec{v'} \in \aut(w)$ to denote the fact that there is an accepting run of $\aut$ on $w$ whose cost is $\myvec{v'}$.  
 We define the semantics of a CEFA $\aut$, denoted by $\Lang(\aut)$, as $\{(w; \myvec{v'}) \mid  \myvec{v'} \in \aut(w)\}$.  In particular, if $I \cap F \neq \emptyset$ and $\alpha[\myvec{0}/R]$ is true, then $(\varepsilon; \myvec{0}) \in \Lang(\aut)$. Moreover, we define the \emph{output} of a CEFA $\aut$, denoted by $\cefaout(\aut)$, as $\{\myvec{v'} \mid  \exists w.\ \myvec{v'} \in \aut(w)\}$.
 
 We want to remark that the definition of CEFA above is slightly different from that of \cite{atva2020}, where CEFA did not include accepting conditions.
 Moreover, the accepting conditions $\alpha$ in CEFA are defined in a \emph{global} fashion because the accepting condition does not distinguish final states. This technical choice is made so that the determinization and minimization of NFA can be utilized to reduce the size of CEFA in the next section. 
 
-%
-%and $\alpha(q_n)[\myvec{\myvec{v'}/\myvec{r}]$ is true, where $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v_j}}$. Note here \denghang{that} we assume that the initial values of all registers are zero and $\sum \limits_{j \in [n]} \myvec{v_j}$ is the vector of register values after all the transitions in the run are executed. A string $w$ is \emph{accepted} by $\aut$ if there is an accepting run of $\aut$ on $w$. The language defined by $\aut$, denoted by $\Lang(\aut)$, is the set of strings accepted by $\aut$. 
-
-%Finally, we define the product of two CEFA. 
-
 In the sequel, we define three CEFA operations: union, intersection, and concatenation. The following section will use these three operations to solve RECL constraints. \denghang{Note that the union, intersection, and concatenation operations are defined in a slightly more involved manner than register automata~\cite{ra} and counter automata~\cite{GGM12}, as a result of the technical choice that the accepting condition is attached to each automaton, not each final state.}
 
 Let $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1, \alpha_1)$ and  $\aut_2 = (R_2, Q_2, \Sigma, \delta_2, q_{2,0}, F_2, \alpha_2)$ be two CEFA that share the alphabet. 
 Moreover, suppose that $R_1 \cap R_2 = \emptyset$ and $Q_1 \cap Q_2 = \emptyset$. 
-%We define two operations of CEFA, namely, the product and union, as follows. 
 
 The \emph{union} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cup \aut_2$ \sout{is defined in a slightly more involved manner than NFA, as a result of the technical choice that the accepting conditions of CEFA do not distinguish final states}. Two fresh auxiliary registers say $r'_1,r'_2 \not \in R_1 \cup R_2$, are introduced so that the accepting condition knows whether a run is from $\aut_1$ (or $\aut_2$). Specifically, $\aut_1 \cup \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$ where 
 \begin{itemize}
@@ -63,9 +45,6 @@ The \emph{union} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cup \aut_2$ \sout
 \item $F'$ and $\alpha'$ are defined as follows, 
 \begin{itemize}
 \item if $(\epsilon; \myvec{0})$ belongs to $\lan(\aut_1)$ or $\lan(\aut_2)$, i.e., one of the two automata accepts the empty string $\epsilon$, then $F' = F_1 \cup F_2 \cup \{q'_0\}$ and $\alpha' = (r'_1 = 0 \wedge r'_2 = 0) \vee (r'_1=1 \wedge \alpha_1) \vee (r'_2=1 \wedge \alpha_2)$, 
-%
-%\item otherwise, if $I_2 \cap F_2 \neq \emptyset$, then $F' = F_1 \cup F_2 \cup \{q'_0\}$ and $\alpha' = (r'_1 = 0 \wedge r'_2 = 0 \wedge \alpha_2) \vee (r'_1=1 \wedge \alpha_1) \vee (r'_2=1 \wedge \alpha_2)$, 
-%
 \item otherwise, $F'=F_1 \cup F_2$ and $\alpha' = (r'_1=1 \wedge \alpha_1) \vee (r'_2=1 \wedge \alpha_2)$.
 \end{itemize}
 \end{itemize}
@@ -88,11 +67,7 @@ The \emph{intersection} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cap \aut_2
 \vspace{-0.5mm}
 \begin{itemize}
 \item $R' = R_1 \cup R_2$, $Q' = Q_1 \times Q_2$, $I' = I_1 \times I_2$, $F' = F_1 \times F_2$, $\alpha' = \alpha_1 \wedge \alpha_2$, 
-%
-%\item $\alpha'((q_1, q_2)) = \alpha_1(q_1) \wedge \alpha_2(q_2)$ for each $(q_1, q_2) \in F'$, 
-%
 \item $\delta'$ comprises the tuples $((q_1, q_2), a, (q'_1, q'_2), (\myvec{v_1}, \myvec{v_2}))$ such that $(q_1,a, q'_1, \myvec{v_1}) \in \delta_1$ and $(q_2,a, q'_2, \myvec{v_2}) \in \delta_2$.
-%, where $\myvec{v} \in \Int^{R'}$, $\prj_{R_1}(\myvec{v}))$ (resp. $\prj_{R_2}(\myvec{v}))$) is the restriction of $\myvec{v}$ to the domain $R_1$ (resp. $R_2$). 
 \end{itemize}
 \vspace{-0.5mm}
 From the construction, 
@@ -105,55 +80,3 @@ The \emph{concatenation} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \concat \a
 $$\Lang(\aut_1 \concat \aut_2) = \{(w_1w_2; \myvec{v}) \mid (w_1; \prj_{R_1}(\myvec{v})) \in \Lang(\aut_1) \mbox{ and }(w_2; \prj_{R_2}(\myvec{v})) \in \Lang(\aut_2)\}.$$
 
 Furthermore, the union, intersection, and concatenation operations can be extended naturally to multiple CEFA, that is, $\aut_1 \cup \cdots \cup \aut_n$, $\aut_1 \cap \cdots \cap \aut_n$, $\aut_1 \concat \cdots \concat \aut_n$. For instance, $\aut_1 \cup \aut_2 \cup \aut_3 = (\aut_1 \cup \aut_2) \cup \aut_3$, $\aut_1 \cap \aut_2 \cap \aut_3 = (\aut_1 \cap \aut_2) \cap \aut_3$, and $\aut_1 \concat \aut_2 \concat \aut_3 = (\aut_1 \concat \aut_2) \concat \aut_3$.
-
-%Let $((\aut_1,\cdots, \aut_n), \varphi)$ be a tuple such that $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1)$, $\cdots$, $\aut_n = (R_n, Q_n, \Sigma, \delta_n, q_{n, 0}, F_n)$ are CEFA, and $\varphi(R_1, \cdots, R_n)$ is an LIA formula. Then the \emph{relation} defined by $((\aut_1, \cdots, \aut_n), \varphi)$, denoted by $\srel((\aut_1, \cdots, \aut_n), \varphi)$, is $\{(w, \myvec{v'_1}, \cdots, \myvec{v'_n}) \mid \varphi(\myvec{v'_1}/R_1, \cdots, \myvec{v'_n}/R_n)\equiv \ltrue, \forall i \in [n].\ (w, \myvec{v'_i}) \in \Lang(\aut_i)\}$.
-
-%the intersection of $\Lang(\aut_1)$ and $\Lang(\aut_2)$.
-
-%The value of each register $r_i$ in $R$ is written as $\mathcal{V}(r_i)$ and is initiated to 0 at the initial state. A \emph{run} of $\aut$ on string $a_1\cdots a_m$ is a transition sequence $q_I\xrightarrow[\myvec{v_1}]{a_1}q_1\cdots q_{m-1}\xrightarrow[\myvec{v_m}]{a_m}q_m$  and $\mathcal{V}(r_i) = \displaystyle\sum_{j=1}^m \myvec{v_j}[i], i\in [1,n]$ is the value of $r_i$ after the run. $\theta[R/\mathcal{V}(R)](q_m)$ is obtained from $\theta(q_m)$ by replacing each register $r_i$ to its value $\mathcal{V}(r_i)$. The run is \emph{accepting} if $q_m\in F$ and $\theta[R/\mathcal{V}(R)](q_m)$ is satisfiable. $\top$ is the valid formula that is always satisfiable. A string $w$ is accepted by $\aut$ if it has an accepting run of $\aut$. The language of $\aut$ is the set of strings accepted by $\aut$, denoted by $\lan(\aut)$.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\hide{
-\zhilin{this example should be modified to match the running example}
-\begin{example} \label{eg:1}
-  Fig.\ref{fig:counting} illustrates the CEFA recognizing $(ab)\{1,100\}$. The register vector is $(r_1)$, and the linear arithmetic constraint on $q_2$ is $1\leq r_1\leq 100$. Intuitively, the transition $q_0 \xrightarrow[(1)]{a} q_1$ accept the char $a$ and increase 1 on the value of $r_1$. The transition $q_1 \xrightarrow[(0)]{b} q_2$ accepts the char $b$ and does not change the value. The transition $q_2 \xrightarrow[(0)]{\epsilon} q_2$ is a nondeterministic choice back to initial state $q_0$. Because of the linear arithmetic constraint $1\leq r_1\leq 100$, the value of $r_1$ in the accepting run must be $[1,100]$. $\mathcal{V}(r_1)$ equal to the occurrence number of the transition $q_0 \xrightarrow[(1)]{a} q_1$, so that the accepted string is $ab\cdots ab$ in which $a$ appears at least once and at most 100 times. That is, the language of the automaton is $(ab)\{1,100\}$.
-  \begin{figure}[h]
-    \centering
-    \input{figures/cefa_example.tex}
-    \caption{An automaton recognizing the language of $(\Sigma \setminus a)^{\{5, 60\}} (\Sigma \setminus b)^{\{5, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$}
-    \label{fig:counting}
-  \end{figure}
-\end{example}
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Parikh's theorem \cite{parikh_theorem}\cite{parikh_anthony}\cite{parikh_compute} states that the Parikh image of a context-free language is semilinear so that it can be written as Presburger formula. Following the version for context-free grammar \cite{parikh_compute} and the version for regular expression \cite{parikh_for_nfa}, we define the Parikh image of language of an CEFA $\aut = (Q, \Sigma, \delta, q_I, F, R, \theta)$  as follows:
-% \begin{table}[h]
-%   \begin{tabular}{l l r}
-%     $\psi(\aut)\equiv$& $\bigwedge\limits_{q\in Q}(\text{$f_q$ if $q\in F$ otherwise 0}) + \sum\limits_{(q,a,q',\myvec{v})\in\delta} t_{q,a,q',\myvec{v}} = $ & \\
-%     & \quad \ \ (1 if $q = q_I$ otherwise 0) + $\sum\limits_{(q',a,q,\myvec{v})\in\delta} t_{q',a,q, \myvec{v}} $ & \\ 
-%     & $\bigwedge\limits_{(q,a,q',\myvec{v})\in\delta} t_{q,a,q',\myvec{v}}\geq 0$ & (consistent formula)\\
-%     & & \\
-%     & $\bigwedge\limits_{(q,a,q',\myvec{v})\in\delta} t_{q,a,q',\myvec{v}}>0\rightarrow z_{q'} > 0$ & \\
-%     & $\bigwedge\limits_{q\in F} z_q > 0\rightarrow f_q = 1$ & \\ 
-%     & $\bigwedge\limits_{q\in Q} z_q > 0\rightarrow \bigvee\limits_{(q,a,q',\myvec{v})\in\delta} z_q = z_{q'} + 1\wedge t_{q,a,q',\myvec{v}}\geq 0 \wedge z_{q'} > 0$& (connected formula)\\
-%     & & \\
-%     &$\bigwedge\limits_{r_i\in R} r_i = \sum\limits_{(q,a,q',\myvec{v})\in \delta} t_{q,a,q',\myvec{v}}*\myvec{v}[i]$ & (register value formula)\\
-%     & & \\
-%     &$\bigwedge\limits_{q\in F} f_q > 0 \rightarrow \theta(q)$ & (accepting condition) 
-%   \end{tabular}
-% \end{table}
-% $z_q$ is the distance of state $q$ from $q_f\in F$ in a spanning tree. $t_{q,a,q',\myvec{v}}$ represents the using times of transition $(q,a,q',\myvec{v})$ in the accepting run. $f_q$ stands for whether an accepting state $q\in F$ is the final state of a run. The Parikh image of $\aut$ is a Presburger formula $\psi(\aut)$, which is consistent and connected. The register value formula ensures \denghang{that} the register values are correctly updated regarding the accepting run. 
-% \begin{example} \label{exapmle:parikh}
-%   Suppose that we have a CEFA $\aut$ shown in Fig. \ref{subfig:aut_x}. Using $t_1, t_2, t_3$ to record the times of transitions in the accepting run of $\aut$, the Parikh image $\psi(\aut)$ is the quantifier-free Presburger formula $\psi_{cons}\wedge \psi_{conn} \wedge \psi_{val} \wedge \psi_{aut}$ where:
-%   \begin{itemize}
-%     \item $\psi_{cons} \equiv 1 = t_1 \wedge t_1 + t_3 = t_2 \wedge t_2 = t_3 + 1 \bigwedge\limits_{i\in[1,3]} t_i\geq 0$ is the consistent formula.
-%     \item $\psi_{conn} \equiv \top $ is the connectivity formula because all transitions in $\aut$ are connected.
-%     \item $\psi_{val} \equiv r_1=t_1 + t_3\wedge r_2 = t_1+t_2+t_3$ is the formula deciding the value of $r_1$ and $r_2$ after a run.
-%     \item $\psi_{aut} \equiv r_2 = i\wedge 1 \leq r_1 \leq 100$ is the accepting condition of $\aut$.
-%   \end{itemize}
-%   $\psi(\aut)$ can be simplified to $t_3\geq 0 \wedge t_1=1\wedge r_1 = t_3 + 1\wedge r_2 = 2*t_3+2\wedge r_2=i\wedge 1\leq r_1\leq 100$. A possible solution is $t_1 =1, t_3 = 0, r_1=1, r_2=2$ and the corresponding accepted string $ab$. It is obvious that $r_1$ is the repeat times of $ab$ and $r_2$ is the length of $ab$.
-% \end{example}
-%\end{document}

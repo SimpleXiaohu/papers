@@ -1,12 +1,4 @@
 %!TEX root = ../main.tex
-%\documentclass{standalone}
-%\begin{document}
 
 This work proposes an efficient automata-theoretical approach for solving string constraints with regex-counting and string-length. The approach is based on encoding counting operators in regular expressions by cost registers symbolically instead of unfolding them explicitly. Moreover, this paper proposes automata-size reduction techniques to improve performance further. Finally, we use two benchmark suites comprising 48,843 instances in total to evaluate the performance of our approach. The experimental results show that our approach can solve more instances than the state-of-the-art best solvers, at a comparable or faster speed, especially when the counting and length bounds are large. 
 For the future work, we plan to investigate how the symbolic approach can be extended to reason about nested counting operators. 
-
-%This paper aims to efficiently solve the string constraints with bounded repetition and linear integer constraints on string length. The bounded repetition is encoded by an automaton model CEFA whose size is linear to the bound. Moreover, we extend the algorithm in the paper \cite{atva2020} with heuristics such as under-approximation and symbolic-aware simplification. The implementation of the algorithm is done on string solver OstrichCEA. The extensive empirical comparison against state-of-art string solvers over a large and diverse benchmark shows the power of our encoding for bounded repetition and heuristic ways. In the future, we plan to explore how to solve nested repetition and use CEFA to solve more string operations.
-
-
-
-%\end{document}
