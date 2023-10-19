@@ -8,12 +8,10 @@ A string $w$ is accepted by $\aut_1$ if, when reading the characters in $w$, $\a
 
 
 \begin{figure}[ht]
-\vspace{-3mm}
   \centering
   \includegraphics[width = 0.9\textwidth]{sections/overview-cefa.pdf}
   \caption{CEFA for $(\Sigma \setminus a)^{\{1, 60\}} (\Sigma \setminus b)^{\{1, 60\}} (\Sigma \setminus c)^{\{0, 60\}}$, $\Sigma^* c^+$, and $|x|$}
   \label{fig:overview}
-\vspace{-5mm}
 \end{figure}
 
 Next, 
@@ -21,24 +19,20 @@ we construct $\aut_1 \cap \aut_2 \cap \aut_3$, that is, the intersection (aka pr
 For technical convenience, we also think of the updates of registers in transitions as vectors $(u_1, u_2, u_3, u_4)$, where $u_i \in \Int$ is the update on the register $r_{i}$ for each $i \in [4]$. For instance, the transitions corresponding to the self-loop around $(p_0, q_0, q'_0)$ are thought as $((p_0, q_0, q'_0), a', (p_0, q_0, q'_0), (1,0,0,1))$ with $a' \in \Sigma \setminus \{a\}$, since $r_1$ and $r_4$ are incremented by one in these transitions. After considering the updates of registers as vectors, the CEFA is like Figure~\ref{fig:overview:product}(b).
 
 \begin{figure}[ht]
-\vspace{-3mm}
   \centering
   \includegraphics[width = 0.9\textwidth]{sections/overview-cefa-product.pdf}
   \caption{$\aut_1 \cap \aut_2 \cap \aut_3$: Intersection of $\aut_1$, $\aut_2$, and $\aut_3$}
   \label{fig:overview:product}
-\vspace{-3mm}
 \end{figure}
 
 Finally, the satisfiability of the original string constraint is reduced to the nonemptiness of the CEFA $\aut\equiv \aut_1 \cap \aut_2 \cap \aut_3$ with respect to the LIA formula $\varphi \equiv r_4 > 120$, that is, whether there exist $w \in \Sigma^*$ and $(v_1, v_2, v_3, v_4) \in \Int^4$ such that $w$ is accepted by $\aut$, so that the resulting registers values $(v_1, v_2, v_3, v_4)$ satisfy both $1 \le v_1 \le 60\wedge 1 \le v_2 \le 60 \wedge 0 \le v_3 \le 60$ and $\varphi$. 
 It is not hard to observe that the nonemptiness of $\aut$ with respect to $\varphi$ is independent of the characters of $\aut$.  Therefore, the characters in $\aut$ can be ignored, resulting into an NFA $\cB$ over the alphabet $\costset$, where $\costset$ is the set of vectors from $\Int^4$ occurring in the transitions of $\aut$ (see Figure~\ref{fig:overview:product:reduced}(a)). Then the original problem is reduced to the problem of deciding whether there exists a string $w' \in \costset^*$ that is accepted by $\cB$ and its Parikh image (i.e., numbers of occurrences of characters), say $\eta_{w'}: \costset \rightarrow \Nat$, satisfies $1 \le v'_1 \le 60\wedge 1 \le v'_2 \le 60 \wedge 0 \le v'_3 \le 60 \wedge v'_4 > 120$, where $(v'_1, v'_2, v'_3, v'_4) =  \sum \limits_{\myvec{v} \in \costset} \eta_{w'}(\myvec{v}) \myvec{v}$ for each $\myvec{v}\in \costset$. Intuitively, $(v'_1, v'_2, v'_3, v'_4)$ is a weighted sum of vectors $\myvec{v} \in \costset$, where the weight is the number of occurrences of $\myvec{v}$ in $w'$. (See Section~\ref{subsec:cefadec} for more detailed arguments.)
 
 \begin{figure}[ht]
-\vspace{-3mm}
   \centering
   \includegraphics[width = 0.8\textwidth]{sections/overview-cefa-reduced.pdf}
   \caption{Reduced automaton $\cB$ and $\cC$}
   \label{fig:overview:product:reduced}
-\vspace{-3mm}
 \end{figure}
 %
 Let $\costset = \{\myvec{v_1}, \cdots, \myvec{v_m}\}$. 

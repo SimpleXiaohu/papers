@@ -3,7 +3,6 @@ In this section, we define the cost-enriched finite state automata (CEFA), which
 %
 Intuitively, CEFA adds write-only cost registers to finite state automata. ``write-only'' means that the cost registers can only be written/updated but cannot be read, i.e., they cannot be used to guard the transitions. 
 %
-\vspace{-0.5mm}
 \begin{definition}[Cost-Enriched Finite Automaton]
   A cost-enriched finite automaton $\aut$ is a tuple $(R, Q, \Sigma, \delta, I, F, \alpha)$ where
   \begin{itemize}
@@ -13,7 +12,6 @@ Intuitively, CEFA adds write-only cost registers to finite state automata. ``wri
     \item $\alpha \in \Phi(R)$ is an LIA formula specifying an accepting condition.
   \end{itemize}
 \end{definition}
-\vspace{-0.5mm}
 
 For convenience, we use $R_\aut$ to denote the set of registers of $\aut$. We assume a linear order on $R$ and write $R$ as a vector $(r_1, \cdots, r_k)$. Accordingly, we write an element of $\Int^R$ as a vector $(v_1, \cdots, v_k)$, where $v_i$ is the update of $r_i$ for each $i \in [k]$. We also write a transition $(q, a, q', \vec{v}) \in \delta$ as $q \xrightarrow[\vec{v}]{a} q'$.
 
@@ -64,16 +62,12 @@ $$
 Intuitively, $\aut_1 \cup \aut_2$ accepts the words that are accepted by one of the $\aut_1$ and $\aut_2$ and outputs the costs of the corresponding automaton.
 
 The \emph{intersection} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cap \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$, is defined in the sequel. 
-\vspace{-0.5mm}
 \begin{itemize}
 \item $R' = R_1 \cup R_2$, $Q' = Q_1 \times Q_2$, $I' = I_1 \times I_2$, $F' = F_1 \times F_2$, $\alpha' = \alpha_1 \wedge \alpha_2$, 
 \item $\delta'$ comprises the tuples $((q_1, q_2), a, (q'_1, q'_2), (\myvec{v_1}, \myvec{v_2}))$ such that $(q_1,a, q'_1, \myvec{v_1}) \in \delta_1$ and $(q_2,a, q'_2, \myvec{v_2}) \in \delta_2$.
 \end{itemize}
-\vspace{-0.5mm}
 From the construction, 
-\vspace{-0.5mm}
 $$\Lang(\aut_1 \cap \aut_2) = \{(w; \myvec{v}) \mid (w; \prj_{R_1}(\myvec{v})) \in \Lang(\aut_1) \mbox{ and } (w; \prj_{R_2}(\myvec{v})) \in \Lang(\aut_2)\}.$$
-\vspace{-0.5mm}
 Intuitively, $\aut_1 \cap \aut_2$ accepts the words that are accepted by both $\aut_1$ and $\aut_2$ and outputs the costs of $\aut_1$ and $\aut_2$.  
 
 The \emph{concatenation} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \concat \aut_2$, is defined similarly as that of NFA, that is, a tuple $(Q', \Sigma, \delta', I', F', \alpha')$, where $Q' = Q_1 \cup Q_2$, $I' = I_1$, $\alpha' = \alpha_1 \wedge \alpha_2$, $\delta' = \{(q_1, a, q'_1, (\myvec{v_1}, \myvec{0})) \mid (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\} \cup \{(q_2, a, q'_2, (\myvec{0}, \myvec{v_2})) \mid (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\} \cup \{(q_1, a, q_2, (\myvec{0}, \vec{v_2})) \mid q_1 \in F_1, \exists q' \in I_2.\ (q', a, q_2, \vec{v_2}) \in \delta_2\}$, moreover, if $I_2 \cap F_2 \neq \emptyset$, then $F'= F_1 \cup F_2$, otherwise, $F'= F_2$. From the construction, 

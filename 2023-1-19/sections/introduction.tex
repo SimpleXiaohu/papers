@@ -28,7 +28,6 @@ A typical way for string constraint solvers to deal with regular expressions wit
 \medskip
 \noindent 
 \emph{Contribution.} In this work, we focus on the class of string constraints with regular membership and string-length function, where the counting operators may occur (called RECL for brevity). We make the following contributions.
-\vspace{-0.5mm}
 \begin{itemize}
   \item We propose an automata-theoretical approach for solving RECL constraints. 
   Our main idea is to represent the counting operators by cost registers in cost-enriched finite automata (CEFA, see Section~\ref{sec:automaton} for the definition), instead of unfolding them explicitly. The string-length function is modeled by cost registers as well. The satisfiability of RECL constraints is reduced to the nonemptiness problem of CEFA w.r.t. a linear integer arithmetic (LIA) formula. According to the results from~\cite{atva2020}, an LIA formula can be computed to represent the potential values of registers in CEFA.
@@ -38,7 +37,6 @@ Thus, the nonemptiness of CEFA w.r.t. LIA formulas can be reduced to the satisfi
  %
   \item Finally, we utilize a collection of benchmark suites comprising 48,843 instances in total to evaluate the performance of $\ostrichrecl$. The experiment results show that $\ostrichrecl$ solves the RECL constraints more efficiently than the state-of-the-art string solvers, especially when the counting and length bounds are large (see Table~\ref{tab:results_regcol} and Figure~\ref{fig:table_large_count}). For instance, on 1,873 benchmark instances where the counting bounds are greater than or equal to $50$ and the string lengths are required to be beyond $200$, $\ostrichrecl$ solves at least $278$ more instances than the other solvers, while spending only half or less time per instance on average. 
 \end{itemize}
-\vspace{-0.5mm}
 
 \medskip
 \noindent
