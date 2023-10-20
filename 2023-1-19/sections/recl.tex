@@ -6,6 +6,7 @@ $t_1$ and $t_2$ are integer terms, and $\op \in \{=, \neq, \le, \ge, <, >\}$. At
 A regular expression $\regex$ is built from $\emptyset$, the empty string $\epsilon$, and the character $a$ by using concatenation  $\cdot$, union $+$, Kleene star $^*$, intersection $\cap$, complement $\bar{\mbox{ }}$, difference $\setminus$, counting $^{\{m,n\}}$ or $^{\{m,\infty\}}$. An integer term is built from constants $n$, variables $\anivar$, and string lengths $|x|$ by operators $+$ and $-$.
 % 
 \begin{figure}[h]
+\vspace{-2mm}
   \centering
 $ \begin{array}{l l l r}
     \varphi & ::= & x\in \regex \mid t_1\  \op\ t_2 \mid  \varphi \wedge \varphi                                              & \mbox{formulas}            \\
@@ -14,7 +15,9 @@ $ \begin{array}{l l l r}
     \end{array}
   $
   \caption{Syntax of RECL }\label{fig:syntax}
+\vspace{-2mm}
 \end{figure}
+
 Moreover, for $S \subseteq \Sigma$ with $S = \{a_1, \cdots, a_k\}$, we use $S$ as an abbreviation of $a_1 + \cdots + a_k$.
 
 For each regular expression $e$, the language defined by $e$, denoted by $\Lang(e)$, is defined recursively. For instance, $\Lang(\emptyset) = \emptyset$, $\Lang(\varepsilon) = \{\varepsilon\}$, $\Lang(a) = \{a\}$, and $\Lang(e_1 \cdot e_2) = \Lang(e_1) \cdot \Lang(e_2)$, $\Lang(e_1 + e_2) = \Lang(e_1) \cup \Lang(e_2)$, and so on. 
