@@ -25,7 +25,8 @@ Finally, define $L^* = \bigcup \limits_{n \in \Nat} L^n$.
 \medskip
 \noindent 
 \emph{Finite automata.} 
-A \emph{(nondeterministic) finite automaton} (NFA)  is a tuple $\NFA=(Q, \Sigma, \delta, I, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, $I \subseteq Q$ is the set of initial states, and $F \subseteq Q$ is the set of final states. For readability, we write a transition $(q, a, q') \in \delta$ as $q \xrightarrow[\delta]{a} q'$ (or simply $q \xrightarrow{a} q'$). Note that one initial state is sufficient. A set of initial states is a technical choice to simplify the defination of union operation in Sec \ref{sec:automaton}.
+A \emph{(nondeterministic) finite automaton} (NFA)  is a tuple $\NFA=(Q, \Sigma, \delta, I, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, $I \subseteq Q$ is the set of initial states, and $F \subseteq Q$ is the set of final states. For readability, we write a transition $(q, a, q') \in \delta$ as $q \xrightarrow[\delta]{a} q'$ (or simply $q \xrightarrow{a} q'$). 
+%Note that one initial state is sufficient. A set of initial states is a technical choice to simplify the definition of union operation in Sec \ref{sec:automaton}.
 The \emph{size} of an NFA $\NFA$, denoted by $|\NFA|$, is defined as the number of transitions of $\NFA$.
 %
 A \emph{run} of $\NFA$ on a string $w = a_1 \cdots a_n$ is a sequence of transitions $q_0 \xrightarrow{a_1} q_1 \cdots q_{n-1} \xrightarrow{a_n} q_n$ such that $q_0 \in I$. The run is \emph{accepting} if $q_n \in F$.

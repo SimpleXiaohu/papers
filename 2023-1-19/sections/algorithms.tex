@@ -33,7 +33,7 @@ Let $e$ be a register-representable regex over $\Sigma$. By the following proced
 %
 \item For each sub-expression $(e')^{\{m,n\}}$ with $m \le n$ (resp. $(e')^{\{m, \infty\}}$) of $e$, we construct a CEFA $\aut_{(e')^{\{m,n\}}}$ (resp. $\aut_{(e')^{\{m, \infty\}}}$). Let $\aut_{e'} = (Q, \Sigma, \delta, I, F)$.  
 %
-At first, $\aut_{(e')^{\{m,n\}}} = ((r'), Q', \Sigma, \delta'', I', F', \alpha')$, where $r'$ is a new register, $Q' = Q \cup \{q_0\}$ with $q_0 \not \in Q$, $I' = \{q_0\}$, $F'= F \cup \{q_0\}$, and 
+Then $\aut_{(e')^{\{m,n\}}} = ((r'), Q', \Sigma, \delta'', I', F', \alpha')$, where $r'$ is a new register, $Q' = Q \cup \{q_0\}$ with $q_0 \not \in Q$, $I' = \{q_0\}$, $F'= F \cup \{q_0\}$, and 
 %
 $$
 \begin{array}{l c l}
@@ -43,7 +43,7 @@ $$
 \end{array}
 $$ 
 %
-moreover, $\alpha' = m \le r' \le n$ if $I \cap F = \emptyset$, otherwise $\alpha' = r' \le n$ .  (Intuitively, if $\varepsilon$ is accepted by $\aut_{e'}$, then the value of $r'$ can be less than $m$.) Finally, $\aut_{(e')^{\{m, \infty\}}}$ is constructed by adapting $\alpha'$ in $\aut_{(e')^{\{m,n\}}}$ as follows: $\alpha' = m \le r'$ if $I \cap F = \emptyset$ and $\alpha' = \ltrue$ otherwise. 
+moreover, $\alpha' = m \le r' \le n$ if $I \cap F = \emptyset$, otherwise $\alpha' = r' \le n$ .  (Intuitively, if $\varepsilon$ is accepted by $\aut_{e'}$, then the value of $r'$ can be less than $m$.) Moreover, $\aut_{(e')^{\{m, \infty\}}}$ is constructed by adapting $\alpha'$ in $\aut_{(e')^{\{m,n\}}}$ as follows: $\alpha' = m \le r'$ if $I \cap F = \emptyset$ and $\alpha' = \ltrue$ otherwise. 
 %
 
 \item For each sub-expression $e'$ of $e$ such that $e'$ contains occurrences of counting operators but $e'$ itself is not of the form $(e'_1)^{\{m,n\}}$ or $(e'_1)^{\{m,\infty\}}$, from the assumption that $e$ is register-representable, we know that $e'$ is of the form $e'_1 \concat e'_2$, $e'_1 + e'_2$, $e'_1 \cap e'_2$, or $(e'_1)$. For $e' = (e'_1)$, we have $\aut_{e'} = \aut_{e'_1}$. For $e' = e'_1 \concat e'_2$, $e' = e'_1 + e'_2$, or $e' = e'_1 \cap e'_2$, suppose that CEFA $\aut_{e'_1}$ and $\aut_{e'_2}$ have been constructed. 
