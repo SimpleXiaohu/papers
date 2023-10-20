@@ -33,7 +33,7 @@ Finally, the satisfiability of the original string constraint is reduced to the 
 It is not hard to observe that the nonemptiness of $\aut$ with respect to $\varphi$ is independent of the characters of $\aut$.  Therefore, the characters in $\aut$ can be ignored, resulting into an NFA $\cB$ over the alphabet $\costset$, where $\costset$ is the set of vectors from $\Int^4$ occurring in the transitions of $\aut$ (see Figure~\ref{fig:overview:product:reduced}(a)). Then the original problem is reduced to the problem of deciding whether there exists a string $w' \in \costset^*$ that is accepted by $\cB$ and its Parikh image (i.e., numbers of occurrences of characters), say $\eta_{w'}: \costset \rightarrow \Nat$, satisfies $1 \le v'_1 \le 60\wedge 1 \le v'_2 \le 60 \wedge 0 \le v'_3 \le 60 \wedge v'_4 > 120$, where $(v'_1, v'_2, v'_3, v'_4) =  \sum \limits_{\myvec{v} \in \costset} \eta_{w'}(\myvec{v}) \myvec{v}$ for each $\myvec{v}\in \costset$. Intuitively, $(v'_1, v'_2, v'_3, v'_4)$ is a weighted sum of vectors $\myvec{v} \in \costset$, where the weight is the number of occurrences of $\myvec{v}$ in $w'$. (See Section~\ref{subsec:cefadec} for more detailed arguments.)
 
 \begin{figure}[ht]
-\vspace{-4mm}
+\vspace{-2mm}
   \centering
   \includegraphics[width = 0.8\textwidth]{sections/overview-cefa-reduced.pdf}
   \caption{Reduced automaton $\cB$ and $\cC$}
