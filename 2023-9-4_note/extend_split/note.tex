@@ -9,11 +9,12 @@
 \usepackage{tikz}
 
 \newcommand*{\aut}{\mathcal{A}}
+\newcommand*{\transducer}{\mathcal{T}}
 \newcommand*{\Int}{\mathbb{Z}}
 \newcommand*{\myvec}[1]{\vec{#1}}
 \newcommand{\cefaout}{\mathcal{O}}
 \newcommand{\Lang}{\mathcal{L}}
-\newcommand{\arrconcat}{\sharp}
+\newcommand{\arrseparator}{\sharp}
 \newcommand{\denghang}[1]{{\color{teal}\textbf{DH:} #1 \textbf{:HD}\color{black}}}
 \newcommand{\comment}[1]{{\color{blue}\textbf{MARK:} #1 \textbf{:KRAM}\color{black}}}
 \newcommand{\todo}[1]{{\color{orange}\textbf{TODO:} #1 \textbf{:ODOT}\color{black}}}
@@ -30,7 +31,7 @@
 \theoremstyle{remark}
 \newtheorem{definition}{Definition}[section]
 
-\title{A Note for Solving String Constraints with Split Function}
+\title{A Note for Solving String Constraints with Array Type}
 \author{Denghang Hu}
 \begin{document}
 \maketitle
@@ -74,26 +75,26 @@ We define the semantics of a CEFA $\aut$, denoted by $\Lang(\aut)$, as $\{(w; \m
 \hide{
     \subsection{Special CEFA for String Array}
     %%
-    We define a special CEFA for string array. The CEFA uses a preserved character $``\arrconcat"$ as $array$ elements separator (note that $\arrconcat\not\in\Sigma$). The speciality of $\aut_s$ rely on  its construction.
+    We define a special CEFA for string array. The CEFA uses a preserved character $``\arrseparator"$ as $array$ elements separator (note that $\arrseparator\not\in\Sigma$). The speciality of $\aut_s$ rely on  its construction.
     %%
-    \paragraph{Array of fixed length and constant index} Considering an $array$ $A$ with fixed length $m$, we assume that each array element $A[i]$ $(i\in[1,m])$ is constrained by a CEFA $\aut_i\equiv (R_i, Q_i, \Sigma, \delta_i, I_i, F_i, \alpha_i)$. Note that the index of the array starts from 1.  Then we can construct the CEFA of the array $A$ as $\aut_s\equiv (R_s, Q_s, \Sigma\cup\{\arrconcat\}, \delta_s, I_s, F_s, \alpha_s)$, where:
+    \paragraph{Array of fixed length and constant index} Considering an $array$ $A$ with fixed length $m$, we assume that each array element $A[i]$ $(i\in[1,m])$ is constrained by a CEFA $\aut_i\equiv (R_i, Q_i, \Sigma, \delta_i, I_i, F_i, \alpha_i)$. Note that the index of the array starts from 1.  Then we can construct the CEFA of the array $A$ as $\aut_s\equiv (R_s, Q_s, \Sigma\cup\{\arrseparator\}, \delta_s, I_s, F_s, \alpha_s)$, where:
     \begin{itemize}
         % \item $R_s = \bigcup\limits_{1\leq i \leq m} R_i$,
         \item $R_s = \bigcup\limits_{1\leq i \leq m} R_i\cup \myset{r}$ for a fresh register r,
         \item $Q_s = \bigcup\limits_{1\leq i \leq m} Q_i\cup \myset{q_0, q_f}$ for fresh states $q_0$ and $q_f$,
         \item $\delta_s$ is composed of four transitions set
               \begin{itemize}
-                  \item  $\{(q_0, \arrconcat, q_1, (\myvec{0}, 1))\mid q_1\in I_1\}$,
+                  \item  $\{(q_0, \arrseparator, q_1, (\myvec{0}, 1))\mid q_1\in I_1\}$,
                   \item  $\myset{(q_m, \sharp, q_f, (\myvec{0}, 0))\mid q_m\in F_m}$,
-                  \item  $\{(q, \arrconcat, q', (\myvec{0}, 1)) \mid q\in F_i, q'\in I_{i+1}, i\in[1,m]\}$ where $ I_{m+1}=\emptyset$,
+                  \item  $\{(q, \arrseparator, q', (\myvec{0}, 1)) \mid q\in F_i, q'\in I_{i+1}, i\in[1,m]\}$ where $ I_{m+1}=\emptyset$,
                   \item  and $\{(q, a, q', (\myvec{0},\myvec{v_i},\myvec{0}))\mid (q, a, q', \myvec{v_i})\in \aut_i, i\in[1,m]\}$,
               \end{itemize}
               where $(\myvec{0}, 1)$ is a vector that increases the value of $r$ by 1 and remains other registers unchanged, and $(\myvec{0},\myvec{v_i},\myvec{0})$ is a vector that updates the value of $R_i$ by $\myvec{v_i}$ and remains other registers unchanged. Similarly for $(\myvec{0}, 0)$ and so on.
         \item $I_s = \myset{q_0}$, $F_s = \myset{q_f},$ and $\alpha_s = \bigwedge\limits_{1\leq i \leq m} \alpha_i$.
               % and $\alpha_s = \bigwedge\limits_{1\leq i \leq m} \alpha_i$.
     \end{itemize}
-    The resulting CEFA is shown in fig \ref{fig:fixed_len_cons_idx}, where $q_i\in I_i$ and $q_i'\in F_i$ for each $i\in [1,m]$. The main idea of the construction above is using $\arrconcat$ to separate each element of the array and one register to record the index of each element. We introduce two fresh states $q_0$ and $q_f$ to ensure each element is started and ended with at least one $\arrconcat $, which is beneficial to the construction of pre-images of string constraints (see \ref*{sec:pre_image} for more details). The accepting condition $\alpha_s$ is the conjunction of accepting conditions of each element.
-    % It is obviously that the accepting word $w$ of $\aut_s$ is in language $\mathcal{L}(\aut_1)\arrconcat\mathcal{L}(\aut_2)\ ... \ \arrconcat \mathcal{L}(\aut_{m}) $.
+    The resulting CEFA is shown in fig \ref{fig:fixed_len_cons_idx}, where $q_i\in I_i$ and $q_i'\in F_i$ for each $i\in [1,m]$. The main idea of the construction above is using $\arrseparator$ to separate each element of the array and one register to record the index of each element. We introduce two fresh states $q_0$ and $q_f$ to ensure each element is started and ended with at least one $\arrseparator $, which is beneficial to the construction of pre-images of string constraints (see \ref*{sec:pre_image} for more details). The accepting condition $\alpha_s$ is the conjunction of accepting conditions of each element.
+    % It is obviously that the accepting word $w$ of $\aut_s$ is in language $\mathcal{L}(\aut_1)\arrseparator\mathcal{L}(\aut_2)\ ... \ \arrseparator \mathcal{L}(\aut_{m}) $.
     \begin{figure}[H]
         \centering
         \usetikzlibrary {automata, positioning, fit}
@@ -114,13 +115,13 @@ We define the semantics of a CEFA $\aut$, denoted by $\Lang(\aut)$, as $\{(w; \m
             \node[draw, fit=(q_m) (q_m'), inner sep=0.5em, label=above:$\aut_m$] [dashed] {};
             
             \path[->]
-            (q_0) edge [above] node {$\scriptstyle \arrconcat$} (q_1)
+            (q_0) edge [above] node {$\scriptstyle \arrseparator$} (q_1)
             (q_0) edge [below] node {${\scriptstyle r++}$} (q_1)
-            (q_1') edge [above] node {$\scriptstyle \arrconcat$} (omit)
+            (q_1') edge [above] node {$\scriptstyle \arrseparator$} (omit)
             (q_1') edge [below] node {${\scriptstyle r++}$} (omit)
-            (omit) edge [above] node {$\scriptstyle \arrconcat$} (q_m)
+            (omit) edge [above] node {$\scriptstyle \arrseparator$} (q_m)
             (omit) edge [below] node {${\scriptstyle r++}$} (q_m)
-            (q_m') edge [above] node {$\scriptstyle \arrconcat$} (q_f)
+            (q_m') edge [above] node {$\scriptstyle \arrseparator$} (q_f)
             (q_m') edge [below] node {${\scriptstyle r}$} (q_f);
             
         \end{tikzpicture}
@@ -128,7 +129,7 @@ We define the semantics of a CEFA $\aut$, denoted by $\Lang(\aut)$, as $\{(w; \m
         \label{fig:fixed_len_cons_idx}
     \end{figure}
     The construction of $\aut_s$ can be used to formalize the array containing constant string. For example, for a 2-length array $A$ constrained by $``a" = \myread(A, 1)\wedge ``b" = \myread(A, 2) \wedge \mylen(A) = 2$ , where $\myread(A, m)$ read the  element of $A$ at constant index $m$ and $\mylen(A)$ is the length of $A$, we can construct the automaton of $A$ as following: \\
-    $(\emptyset, \{q_0,q_1,q_1',q_2,q_2'\}, \{a,b,\arrconcat\}, \{q_0\xrightarrow[(1)]{\arrconcat}q_1, q_1\xrightarrow[(0)]{a}q_1', q_1'\xrightarrow[(1)]{\arrconcat}q_2, q_2\xrightarrow[(0)]{b}q_2'\}, \{q_0\}, \{q_2'\}, \top)$. 
+    $(\emptyset, \{q_0,q_1,q_1',q_2,q_2'\}, \{a,b,\arrseparator\}, \{q_0\xrightarrow[(1)]{\arrseparator}q_1, q_1\xrightarrow[(0)]{a}q_1', q_1'\xrightarrow[(1)]{\arrseparator}q_2, q_2\xrightarrow[(0)]{b}q_2'\}, \{q_0\}, \{q_2'\}, \top)$. 
     %%
     \paragraph{Array of varible length and index} \todo{TODO}
 }%% write by denghang ==================================================================
@@ -137,21 +138,21 @@ We define the semantics of a CEFA $\aut$, denoted by $\Lang(\aut)$, as $\{(w; \m
 
 
 \section{String Theory with Integer and Array $\arraylogic $}\label{sec:SL}
-We defined a theory $\arraylogic$ with three sorts: \textbf{string}, \textbf{integer} and \textbf{array}. The \textit{elements} of \textbf{array} are in \textbf{string} sort, and the $index$ of \textbf{array} is in \textbf{Integer} sort. The syntax of $\arraylogic$ is defined in table \ref{tab:syntax}. A $\arraylogic$ formula $\varphi$ is a conjunction of the integer atomic formulas $t_1\circ t_2$, or the string atomic formulas $x = \myread(A,m)$, $A = \mywrite(B, x, m)$, $x=\myjoin(A,u)$, $A=\mysplit(x,e)$, $x=y\cdot z$ and $x\in e$. Moreover, $t$ is a integer term built from the constant $m$, the varible $i$, the size of array $\mylen(A)$ and the length of string $\mylen(x)$ by operators $+$ and $-$; $\circ \in \{=,\not=, <, \leq, >, \geq \}$ is the set of arithmatic binary predicates on integer terms $t_1$ and $t_2$; $e$ is a regular expression; $\myread(A, m)$ returns the $m$-th element of $A$; $\mywrite(B, x ,m)$ returns the array $B$ after $x$ is written to $m$-th position of $B$; $\myjoin(A,u)$ joins all of the elements in $A$ by string $u$; $\mysplit(x,e)$ splits $x$ into an ordered string array by regex $e$; $y\cdot z$ is the concatenation of $y$ and $z$.
+We define a theory $\arraylogic$ with three sorts: \textbf{string}, \textbf{integer} and \textbf{array}. The \textit{elements} of \textbf{array} are in \textbf{string} sort, and the $index$ of \textbf{array} is in \textbf{Integer} sort. The syntax of $\arraylogic$ is defined in table \ref{tab:syntax}. A $\arraylogic$ formula $\varphi$ is a conjunction of formulas of the form $t_1\circ t_2$, $A = B[m:n]$, $A = \transducer(B)$, $x = \myread(A,m)$, $A = \mywrite(B, x, m)$, $x=\myjoin(A,u)$, $A=\mysplit(x,e)$, $x = \transducer(y)$, $x=y\cdot z$ or $x\in e$. Definitely, $t$ is a integer term built from the constant $m$, the varible $i$, the size of array $\mylen(A)$ and the length of string $\mylen(x)$ by operators $+$ and $-$; $\circ \in \{=,\not=, <, \leq, >, \geq \}$ is the set of arithmatic binary predicates on integer terms $t_1$ and $t_2$; $e$ is a regular expression; $B[m:n]$ is the sub-array of $B$ containing elements between $m$ and $n$; $\transducer(B)$ modifies the elements of $B$ by transducer $\transducer$ and returns the result; $\myread(A, m)$ returns the $m$-th element of $A$; $\mywrite(B, x ,m)$ returns the array $B$ after $x$ is written to $m$-th position of $B$; $\myjoin(A,u)$ joins all of the elements in $A$ by string $u$; $\mysplit(x,e)$ splits $x$ into an ordered string array by regex $e$; $\transducer(y)$ returns the output of the transducer $\transducer$ running on $y$; $y\cdot z$ is the concatenation of $y$ and $z$.
 %  For technical convenience, we assume that all assignments in F are \textit{Static Singly Assignment (SSA)} form.
 \begin{table}
     \renewcommand{\arraystretch}{1.5}
     \begin{tabular}{l l l r}
-        $x,y$ & $\cdots$ &                                                                       & String varibles          \\
-        $m,n$ & $\cdots$ &                                                                       & Integer constants        \\
-        $i,j$ & $\cdots$ &                                                                       & Integer varibles         \\
-        $A,B$ & $\cdots$ &                                                                       & Array varibles           \\
-        $t$   & $::=$    & $m \mid i \mid t+t \mid t-t \mid \mylen(A)\mid \mylen(x) $            & Integer term             \\
-        $SC$  & $::=$    & $x=\myread(A, m) \mid A = \mywrite(B, x ,m) \mid x=\myjoin(A,u) \mid$ &                          \\
-              &          & $A = \mysplit(x, e) \mid x= y\cdot z\mid x\in e$                      & String constraints       \\
-        $\varphi$   & $::=$    & $t\circ t \mid SC \mid \varphi\wedge \varphi $                                    & Formula of $\arraylogic $
+        $x,y$     & $\cdots$ &                                                                          & String varibles           \\
+        $m,n$     & $\cdots$ &                                                                          & Integer constants         \\
+        $i,j$     & $\cdots$ &                                                                          & Integer varibles          \\
+        $A,B$     & $\cdots$ &                                                                          & Array varibles            \\
+        $t$       & $::=$    & $m \mid i \mid t+t \mid t-t \mid \mylen(A)\mid \mylen(x) $               & Integer term              \\
+        $SC$      & $::=$    & $A = B[m: n] \mid A = \transducer(B) \mid x=\myread(A, m) \mid$          &                           \\
+                  &          & $A = \mywrite(B, x ,m) \mid x=\myjoin(A,u) \mid A = \mysplit(x, e) \mid$ &                           \\
+                  &          & $x= y\cdot z \mid x = \transducer(y)\mid x\in e$                         & String constraints        \\
+        $\varphi$ & $::=$    & $t\circ t \mid SC \mid \varphi\wedge \varphi $                           & Formula of $\arraylogic $
 
-        
     \end{tabular}
     \caption{Syntax of $\arraylogic$}
     \label{tab:syntax}
@@ -160,8 +161,8 @@ We defined a theory $\arraylogic$ with three sorts: \textbf{string}, \textbf{int
 \begin{definition}[Relational constraints ]
     Relational constraints $\phi$ are defined by the following rules:
     \begin{align*}
-        \phi \ ::= \  & x=y\cdot z \mid x=\myjoin(A,u) \mid A = \mysplit(x,e) \mid         \\
-                      & x=\myread(A, m) \mid A = \mywrite(B, x ,m) \mid \phi \wedge \phi 
+        \phi \ ::= \  & A = B[m:n] \mid A = \transducer(B) \mid x=\myjoin(A,u) \mid A = \mysplit(x,e) \mid         \\
+                      & x=\myread(A, m) \mid A = \mywrite(B, x ,m) \mid x = \transducer(y) \mid x=y\cdot z \mid \phi \wedge \phi 
     \end{align*}
 \end{definition}
 \begin{definition}[Straight-line relational constraints]
@@ -176,38 +177,48 @@ We defined a theory $\arraylogic$ with three sorts: \textbf{string}, \textbf{int
 \end{definition}
 
 \section{Pre-images of String Constraints}\label{sec:pre_image}
-In this section, we define the pre-images of string constraint formulae.
-\paragraph{- $i = \mylen(A)$:} The pre-image for the array length function is a CEFA $\aut_{arrlen}=(R, Q, \Sigma\cup\{\arrconcat\}, \delta, I, F, \alpha)$, where
+
+In this section, we define the pre-images of string constraint formulae. 
+\pagebreak
+
+We let $\aut_{n}$ be the automaton accepting all arrays with length $n$, that is, $\aut_{n} = q_0\xrightarrow{\arrseparator}q_1\cdots\xrightarrow{\arrseparator}q_{n}$ with $q_i\xrightarrow{\Sigma}q_i$ for $0\leq i \leq n-1$. $\aut_*$ is the automaton accepting all arrays with arbitrary length. Then the pre-images of operations are defined as follow.
+
+\paragraph{- $i = \mylen(x)$:} As \cite{atva2020}.
+
+\paragraph{- $x = y\cdot z$:} As \cite{ostrich}.
+
+\paragraph{- $x = \transducer(y)$:} As \cite{ostrich}.
+
+\paragraph{- $i = \mylen(A)$:} The pre-image for the array length function is the CEFA $\aut_{arrlen}=(R, Q, \Sigma\cup\{\arrseparator\}, \delta, I, F, \alpha)$, where
 \begin{itemize}
-    \item $R = \{r\}$ for a fresh register $r$, $Q = \{q_0, q_f\}$, $\delta = \myset{q_0\xrightarrow[(0)]{\Sigma}q_0, q_0\xrightarrow[(1)]{\sharp}q_0, q_0\xrightarrow[(0)]{\arrconcat}q_f }$, $I = \myset{q_0}$, $F = \myset{q_f}$, and $\alpha \equiv r = i$.
+    \item $R = \{r\}$ for a fresh register $r$, $Q = \{q_0, q_f\}$, $\delta = \myset{q_0\xrightarrow[(0)]{\Sigma}q_0, q_0\xrightarrow[(1)]{\sharp}q_0,  q_0\xrightarrow{\sharp}q_1} $, $I = \myset{q_0}$, $F = \myset{q_1}$, and $\alpha \equiv r = i$.
 \end{itemize}
 
-\paragraph{- $i = \mylen(x)$:} As the pre-image of length function in \cite{atva2020}.
+\paragraph{- $A = B[m:n]$:} Suppose that $A$ is constrained by $\aut_A=(R_A, Q_A, \Sigma\cup\{\arrseparator\}, \delta_A, I_A, F_A, \alpha_A)$, the pre-image of sub-array operation is defined as $\aut_m\cdot (\aut_A\cap \aut_{m-n})\cdot \aut_{*}$.
 
-\todo{Rewrite the pre-images of array read and write function.}
-\paragraph{- $x = \myread(A, m)$:} Suppose that $x$ is constrained by the CEFA $\aut_x=(R_x, Q_x, \Sigma, \delta_x, I_x, F_x, \alpha_x)$, then the pre-image for the array read function is a CEFA $\aut_{read}=(R, Q, \Sigma\cup\{\arrconcat\}, \delta, I, F, \alpha)$, where
+\paragraph{- $A = \transducer(B)$:} We consider $A$ and $B$ as string varibles and apply the pre-image computation in \cite{ostrich} directly.
+
+\paragraph{- $x = \myread(A, m)$:} Suppose that $x$ is constrained by the CEFA $\aut_x=(R_x, Q_x, \Sigma, \delta_x, I_x, F_x, \alpha_x)$, the pre-image for the array read function is the CEFA $\aut_{read}=(R, Q, \Sigma\cup\{\arrseparator\}, \delta, I, F, \alpha)$ where
 \begin{itemize}
     \item $R = R_x$,
     \item $Q = Q_x\cup\myset{q_0, q_1, \cdots, q_{m}}$,
-    \item $\delta$ is the union of six transitions set:
+    \item $\delta$ is the union of the following transitions set:
           \begin{itemize}
-              \item $\myset{q_i\xrightarrow[(\myvec{0})]{\Sigma}q_i\mid i\in [1,m-1]}$,
-              \item $\myset{q_i\xrightarrow[(\myvec{0})]{\arrconcat}q_{i+1}\mid i\in[0,m-2]}$,
-              \item $\myset{q_{m-1}\xrightarrow[(\myvec{0})]{\arrconcat}q_0^x \mid q_0^x\in I_x}$,
-              \item $\myset{q_f^x\xrightarrow[(\myvec{0})]{\arrconcat}q_m \mid q_f^x\in F_x}$,
-              \item $\myset{q_m\xrightarrow[(\myvec{0})]{\arrconcat}q_m}$,
-              \item $\myset{q\xrightarrow[(\myvec{v})]{a}q'\mid q\xrightarrow[\myvec{v}]{a}q'\in \delta_x}$.
+              \item $\myset{q_i\xrightarrow[\myvec{0}]{\Sigma}q_i\mid i\in [0, m-1]}$,
+              \item $\myset{q_i\xrightarrow[\myvec{0}]{\arrseparator}q_{i+1}\mid i\in[0,m-2]}$,
+              \item $\myset{q_{m-1}\xrightarrow[\myvec{0}]{\arrseparator}q_0^x \mid q_0^x\in I_x}$,
+              \item $\myset{q\xrightarrow[\myvec{v}]{a}q'\mid q\xrightarrow[\myvec{v}]{a}q'\in \delta_x}$,
+              \item $\myset{q_f^x\xrightarrow[\myvec{0}]{\arrseparator}q_m \mid q_f^x\in F_x}$,
+              \item $\myset{q_m\xrightarrow[\myvec{0}]{\Sigma\cup\arrseparator} q_m}$,
           \end{itemize}
     \item $I = \myset{q_0}$, $F = \myset{q_m}$, and $\alpha = \alpha_x$.
 \end{itemize}
 
-\paragraph{- $A = \mywrite(B, x, m)$:} Suppose that $A$ is constrained by $\aut_A=(R_A, Q_A, \Sigma\cup\{\arrconcat\}, \delta_A, I_A, F_A, \alpha_A)$, we firstly consider $A$ as a \emph{string varible} in the formula $A = x_1\arrconcat x_2\arrconcat x_3$. The pre-image of the formula is a set of tuple $(\aut_1, \aut_2, \aut_3)$ in which $x_1\in \aut_1, x_2\in \aut_2, x_3\in \aut_3$. There is at least one tuple with both $\aut_1$ and $\aut_3$ to be non-empty, as we ensure that each element of array is started and ended with at least one $\arrconcat$. Then the pre-image of $A = \mywrite(B, x, m)$ is a set of tuple $(\aut_B, \aut_x)$ where
-\begin{itemize}
-    \item $\aut_B = \aut_1'\arrconcat\Sigma^*\arrconcat\aut_3$, $\aut_1'$ add a new register $r$ to $\aut_1$ to record the occurence times of $\arrconcat$ in $\aut_1$ and add the constraint $r = m$ for the occurence times,
-    \item $\aut_x = \aut_2$.
-\end{itemize}
+\paragraph{- $A = \mywrite(B, x, m)$:} Suppose that $A$ is constrained by $\aut_A=(R_A, Q_A, \Sigma\cup\{\arrseparator\}, \delta_A, I_A, F_A, \alpha_A)$ and $\aut_A = \aut_{pre}\cdot\aut_{ele}\cdot\aut_{post}$. Then there are $O(|\aut_A|)$ possible concatenation portfolios $(\aut_{pre},\aut_{ele}$, $\aut_{post})$, and for each portfolio satisfying $\aut_{pre}\cap\aut_{m-1}\not=\emptyset$ and $\aut_{ele}\cap\aut_1\not=\emptyset$, we obtain a tuple $((\aut_{pre}\cap\aut_{m-1})\cdot\aut_1\cdot\aut_{post}, \aut_{ele}\cap\aut_1)$ which is one of the pre-image for array write function. The final pre-image is a list of these tuples.
 
-\paragraph{- $x = \myjoin(A,u)$:} Suppose that $x$ is constrained by $\aut_x=(R_x, Q_x, \Sigma, \delta_x, I_x, F_x, \alpha_x)$, then the pre-image is a CEFA
+\paragraph{- $x = \myjoin(A,u)$:} Suppose that $x$ is constrained by $\aut_x=(R_x, Q_x, \Sigma, \delta_x, I_x, F_x, \alpha_x)$ and $u=a_1a_2\cdots a_n$, the pre-image for array join function, $\aut_{join}=(R_x, Q_x\cup\myset{q_f}, \Sigma, \delta, I_x, \myset{q_f}, \alpha_x)$, is generated from $\aut_x$ by adding the transition $q\xrightarrow{\arrseparator}q'$ for each $q\xrightarrow{u}q'\in\aut_x$ and $q_f^x\xrightarrow{\arrseparator}q_f$ for each $q_f^x\in F_x$. For $q\xrightarrow{u}q'\in \aut_x$, we mean the state of $\aut_x$ transfer from $q$ to $q'$ after reading the word $u$, that is, there is a path $q\xrightarrow{a_1}q_1\cdots q_{n-1}\xrightarrow{a_n}q'$ in $\aut_x$. 
+
+\paragraph{- $A = \mysplit(x, e)$:} Consider $A$ as string, the semantic of this operation is equal to $A = replaceAll(x, e, \arrseparator)$. We can apply the computation of pre-image of replaceAll function in \cite{ostrich} directly.
 
 \bibliographystyle{abbrv}
 \bibliography{ref}
