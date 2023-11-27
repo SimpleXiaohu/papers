@@ -1,0 +1,26 @@
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.16}
+\resizebox{.8\textwidth}{!}{\begin{tabular}{|>{\centering\arraybackslash}m{1.45cm} |c |c |c |c |c |c |}
+            \hline
+                                                     & CVC5       & Z3str3RE      & Z3str3 & Z3seq & \textsc{Ostrich} & $\ostrichrecl$ \\
+            \hline
+            \hline
+
+            \rowcolor{grayshade} sat                 & 27813      & 28283         & 23126  & 27761 & 25975            & \textbf{28360} \\
+            \hline
+            \rowcolor{grayshade} unsat               & 16941      & 19312         & 12742  & 18651 & 20291            & \textbf{20302} \\
+            \hline
+            \hline
+
+            unknown                                  & \textbf{8} & 99           & 6990   & 98    & 160              & 28             \\
+            \hline
+            timeout                                  & 4081       & 1149          & 5985   & 2333  & 2417             & \textbf{153}   \\
+            \hline
+            soundness  error                         & \textbf{0} & 44            & 44     & 56    & \textbf{0}       & \textbf{0}     \\
+            \hline
+            \hline
+            \rowcolor{grayshade} solved\quad  correctly & 44754      & 47551         & 35824  & 46356 & 46266            & \textbf{48662} \\
+            \hline
+            \rowcolor{grayshade} average  time (s)   & 5.64       & \textbf{1.62} & 7.63   & 3.59  & 5.94             & 1.93           \\
+            \hline
+      \end{tabular}}
