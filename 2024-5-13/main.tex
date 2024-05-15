@@ -1,0 +1,182 @@
+\documentclass[runningheads]{llncs}
+
+\usepackage{standalone}
+\usepackage{import}
+\usepackage{pgfplots}
+% \usepackage{color}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.16}
+\usetikzlibrary {arrows.meta, automata, positioning, fit}
+\usepackage{url}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsfonts}
+\usepackage{amsmath, amssymb}
+\usepackage{float, subcaption, graphics}
+\usepackage{mathbbol}
+\usepackage{colortbl}
+\definecolor{grayshade}{gray}{0.9}
+\usepackage{array} % Required for custom column formatting
+\usepackage[normalem]{ulem}
+% set algorithmicx
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}  % Use Input in the format of Algorithm  
+\renewcommand{\algorithmicensure}{\textbf{Output:}} % Use Output in the format of Algorithm 
+
+\newcommand*{\Int}{\mathbb{Z}}
+\newcommand*{\Nat}{\mathbb{N}}
+\newcommand*{\NFA}{\mathcal{A}}
+\newcommand{\Lang}{\mathcal{L}}
+\newcommand{\cefaout}{\mathcal{O}}
+\newcommand*{\op}{o}
+\newcommand*{\svars}{{\sf SVars}}
+\newcommand*{\ivars}{{\sf IVars}}
+
+\newcommand{\anivar}{\mathfrak{x}}
+\newcommand{\anivary}{\mathfrak{y}}
+\newcommand{\anivarz}{\mathfrak{z}}
+
+\newtheorem{observation}{Observation}
+
+\newcommand*{\prj}{{\sf prj}}
+
+\newcommand*{\red}[1]{\textcolor{red}{#1}}
+
+\newcommand{\costset}{\mathbb{C}}
+\newcommand{\confset}{\mathsf{Conf}}
+
+\newcommand*{\myvec}[1]{\vec{#1}}
+\newcommand*{\regex}{e}
+\newcommand*{\strsort}{\verb|Str|}
+\newcommand*{\intsort}{\verb|Int|}
+\newcommand*{\lan}{\mathcal{L}}
+\newcommand*{\highlight}[1]{\textbf{\textit{#1}}}
+\newcommand*{\aut}{\mathcal{A}}
+\newcommand*{\algfun}[1]{\texttt{#1}}
+\newcommand*{\strlen}[1]{\texttt{len}(#1)}
+\newcommand*{\myemph}[1]{\textcolor{red}{#1}}
+\newcommand*{\mult}[1]{$\times$}
+\newcommand*{\ostrichrecl}{\rm OSTRICH^{RECL}}
+\newcommand*{\emptinessprob}{$SAT_{CEFA}[LIA]$ problem}
+
+\newcommand{\srel}{\mathsf{Rel}}
+
+\newcommand{\ltrue}{\mathtt{true}}
+\newcommand{\lfalse}{\mathtt{false}}
+%%
+\newcommand{\hide}[1]{ }
+
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\fZ}{\mathfrak{Z}}
+
+\newcommand{\concat}{\cdot}
+
+\newcommand{\reclsat}{{\sf SAT_{RECL}}}
+\newcommand{\cefadec}{{\sf NE_{LIA}(CEFA)}}
+
+\newcommand{\parikh}{\mathsf{parikh}}
+
+%%%%% comments commands
+\newcommand{\zhilin}[1]{\color{orange}\textbf{ZL:} #1 \textbf{:LZ}\color{black}}
+\newcommand{\denghang}[1]{{\color{teal}\textbf{DH:} #1 \textbf{:HD}\color{black}}}
+
+%% end of the preamble, start of the body of the document source.
+\begin{document}
+%%
+%% The "title" command has an optional parameter,
+%% allowing the author to define a "short title" to be used in page headers.
+\title{An Efficient String Solver for String Constraints with Complex Regex-Counting and String-Length}
+
+%%
+\author{Denghang Hu\inst{1,2} \and
+  Zhilin Wu\inst{1,2}\orcidID{0000-0003-0899-628X}}
+\authorrunning{Denghang Hu \and Zhilin Wu}
+\titlerunning{String Constraints with Counting and Length Solved More Efficiently}
+% \authornote{Both authors contributed equally to this research.}
+
+\institute{
+State Key Laboratory of Computer Science, \\
+Institute of Software, Chinese Academy of Sciences, Beijing, China
+\and
+University of Chinese Academy of Sciences, Beijing, China \\
+\email{\{hudh,wuzl\}@ios.ac.cn}
+}
+
+
+%\institute{State Key Laboratory of Computer Science, \\Institute of Software, Chinese Academy of Sciences\\
+%  }
+
+\maketitle
+
+%% The abstract is a summary of the work to be presented in the
+%% article.
+%\vspace{-6mm}
+\begin{abstract}
+\subimport{sections/}{abstract.tex}
+\end{abstract}
+
+%\zhilin{18 pages, excluding references}\newline
+%\denghang{deadline: May 11, 2023 (AoE), 20 hours later than Beijing time (possibly extended:))}
+
+%\vspace{-8mm}
+\section{Introduction} \label{sec:intro}
+%\vspace{-2mm}
+\input{sections/introduction.tex}
+
+%\vspace{-2mm}
+\section{Overview} \label{sec:overview}
+%\vspace{-2mm}
+\input{sections/overview.tex}
+
+%\vspace{-2mm}
+\section{Preliminaries} \label{sec:pre}
+%\vspace{-2mm}
+\input{sections/preliminaries.tex}
+
+%\vspace{-2mm}
+\section{String constraints with regex-counting and string-length}\label{sec:recl}
+%\vspace{-2mm}
+\input{sections/recl.tex}
+
+%\vspace{-2mm}
+\section{Cost-enriched finite automata} \label{sec:automaton}
+%\vspace{-2mm}
+\input{sections/cefa.tex}
+
+%\vspace{-2mm}
+\section{Solving RECL constraints} \label{sec:algorithm}
+%\vspace{-2mm}
+\input{sections/algorithms.tex}
+
+\section{Heuristics for Solving Complex RECL Constraints} \label{appendix:heuristic}
+\input{sections/heuristic.tex}
+
+%\vspace{-2mm}
+\section{Experiments} \label{sec:implementation}
+%\vspace{-2mm}
+\input{sections/implementation.tex}
+
+%\vspace{-2mm}
+\section{Conclusion} \label{sec:conclu}
+%\vspace{-2mm}
+\input{sections/conclusion.tex}
+
+\newpage
+
+%%
+%% The next two lines define the bibliography style to be used, and
+%% the bibliography file.
+\bibliographystyle{splncs04}
+\bibliography{ref}
+
+%\appendix
+%\input{sections/appendix.tex}
+
+\end{document}
+
+%%
+%% End of file `sample-sigconf.tex'.

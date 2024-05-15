@@ -1,0 +1,35 @@
+\documentclass[11pt]{standalone}
+\usepackage{color}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.16}
+\begin{document}
+
+\resizebox{.95\textwidth}{!}{\begin{tabular}{|c |c |c |c |c |c |c |c |}
+  \hline
+  &CVC5&OstrichCEA&Ostrich&Z3str3&Z3seq&Z3str3RE&Z3-Trau\\ 
+    \hline\hline 
+  sat &15591&\textbf{16722}&15348&14809&16517&16638&4372\\ 
+   \hline
+  unsat &17111&\textbf{20561}&20442&13797&18990&18983&14701\\ 
+   \hline
+  \hline 
+   unknown &8&\textbf{4}&62&5809&80&80&17105\\ 
+   \hline
+  timeout &4671&\textbf{94}&1529&2966&1794&1680&1203\\ 
+   \hline
+  soundness error &\textbf{0}&\textbf{0}&\textbf{0}&38&51&39&543\\ 
+   \hline
+  program crashes &\textbf{0}&\textbf{0}&\textbf{0}&\textbf{0}&\textbf{0}&\textbf{0}&5472\\ 
+   \hline
+  \hline 
+   Total correct &32702&\textbf{37283}&35790&28568&35456&35582&18530\\ 
+   \hline
+  Time (ms) &333527822&\textbf{83701003}&220283623&183398875&133243751&107467557&123151569\\ 
+   \hline
+  Time w/o timeouts (ms) &53267561&78061003&128543623&\textbf{5438875}&25603751&6667557&50971569\\ 
+   \hline
+  \end{tabular}}
+
+\end{document}
