@@ -1,0 +1,34 @@
+\documentclass[11pt]{standalone}
+\usepackage{color}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.16}
+\begin{document}
+\resizebox{.95\textwidth}{!}{\begin{tabular}{|c |c |c |c |c |c |c |}
+\hline
+&CVC5&$\ostrichrecl_{\rm -ALL}$&$\ostrichrecl_{\rm -COMP}$&$\ostrichrecl_{\rm -NEST}$&$\ostrichrecl_{\rm -FIND}$&$\ostrichrecl$\\ 
+  \hline\hline 
+sat &28282&28488&28714&29007&28735&29084\\ 
+ \hline
+unsat &16809&20536&20536&20554&20554&20554\\ 
+ \hline
+\hline 
+ unknown &8&86&13&32&13&14\\ 
+ \hline
+timeout &4744&733&580&250&541&191\\ 
+ \hline
+soundness error &0&0&0&0&0&0\\ 
+ \hline
+program crashes &0&0&0&0&0&0\\ 
+ \hline
+\hline 
+ Total correct &45091&49024&49250&49561&49289&49638\\ 
+ \hline
+Time (s) &6.43&3.19&3.39&3.25&3.57&2.88\\ 
+ \hline
+Time w/o timeouts (s) &0.79&2.34&2.72&2.96&2.95&2.66\\ 
+ \hline
+\end{tabular}}
+
+\end{document}
