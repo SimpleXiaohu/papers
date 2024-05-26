@@ -111,7 +111,7 @@ $$ \sum \limits_{(q, a, q', \myvec{v})\in \delta} \eta((q, a, q', \myvec{v}))\my
 
 After computing the transitions times visited by the accepted string, we prune the search tree of the CEFA based on the transitions times. The idea is that we only visit transitions whose visited times are greater than $0$. Other transitions are deleted from the CEFA so that we can reduce the search space. Note that the transitions times is updated during the search process so the search space is reduced dynamically. The presudo code is presented in Algorithm~\ref{alg:findword}.
 
-\begin{algorithm}[t]
+\begin{algorithm}[H]
   \caption{Find a word in the language of a CEFA}\label{alg:findword}
   \begin{algorithmic}[1]
   \Procedure{findmodel}{$\aut,tmap$}\Comment{$tmap$ maps transition to its visited times}

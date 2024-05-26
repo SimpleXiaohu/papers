@@ -2,25 +2,25 @@
 \pgfplotsset{compat=1.16}
 \resizebox{.95\textwidth}{!}{\begin{tabular}{|>{\centering\arraybackslash}m{1.45cm} |c |c |c |c |c |c |}
             \hline
-                                                     & CVC5       & Z3str3RE      & Z3str3 & Z3seq & \textsc{Ostrich} & $\ostrichrecl$ \\
+                                                   & CVC5       & Z3str3RE                   & Z3str3                     & Z3seq                  & \textsc{Ostrich}       & $\ostrichrecl$ \\
             \hline
             \hline
 
-            \rowcolor{grayshade} sat                 & 27813      & 28283         & 23126  & 27761 & 25975            & \textbf{28360} \\
+            \rowcolor{grayshade} sat               & 28282      & \mycomment{28283+166}28449 & \mycomment{23126+196}23322 & \mycomment{27761+451}28212  & \mycomment{25975}25975      & \textbf{29084} \\
             \hline
-            \rowcolor{grayshade} unsat               & 16941      & 19312         & 12742  & 18651 & 20291            & \textbf{20302} \\
+            \rowcolor{grayshade} unsat             & 16809      & \mycomment{19312+4}19316   & \mycomment{12742}12742     & \mycomment{18651+67}18718   & \mycomment{20291+238}20529  & \textbf{20554} \\
             \hline
             \hline
 
-            unknown                                  & \textbf{8} & 99           & 6990   & 98    & 160              & 28             \\
+            unknown                                & \textbf{8} & \mycomment{99+35}134       & \mycomment{6990+31}7021    & \mycomment{98+105}203     & \mycomment{160+2}162      & 14             \\
             \hline
-            timeout                                  & 4081       & 1149          & 5985   & 2333  & 2417             & \textbf{153}   \\
+            timeout                                & 4744       & \mycomment{1149+795}1944   & \mycomment{5985+773}6758   & \mycomment{2333+377}2710   & \mycomment{2417+760}3177   & \textbf{191}   \\
             \hline
-            soundness  error                         & \textbf{0} & 44            & 44     & 56    & \textbf{0}       & \textbf{0}     \\
+            error                                  & \textbf{0} & 44                         & 44                         & 56                     & \textbf{0}             & \textbf{0}     \\
             \hline
             \hline
-            \rowcolor{grayshade} solved\quad  correctly & 44754      & 47551         & 35824  & 46356 & 46266            & \textbf{48662} \\
+            \rowcolor{grayshade} solved            & 45091      & \mycomment{47551+170}47721 & \mycomment{35824+196}36020 & \mycomment{46356+518}46874  & \mycomment{46266+238}46504  & \textbf{49638} \\
             \hline
-            \rowcolor{grayshade} average  time (s)   & 5.64       & \textbf{1.62} & 7.63   & 3.59  & 5.94             & 1.93           \\
+            \rowcolor{grayshade} average  time (s) & 6.43       & \mycomment{1.62+20.09}\textbf{1.99} & \mycomment{7.63+50.06}8.48 & \mycomment{3.59+26.13}4.04 & \mycomment{5.94+46.11}6.75 & 2.88           \\
             \hline
       \end{tabular}}
