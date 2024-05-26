@@ -2647,21 +2647,22 @@ isbn="978-3-540-78800-3"
   year = 1967
 }
 
-@inproceedings{Denghang2023,
-author = {Hu, Denghang and Wu, Zhilin},
-title = {String Constraints with Regex-Counting and String-Length Solved More Efficiently},
-year = {2023},
-isbn = {978-981-99-8663-7},
-publisher = {Springer-Verlag},
-address = {Berlin, Heidelberg},
-url = {https://doi.org/10.1007/978-981-99-8664-4_1},
-doi = {10.1007/978-981-99-8664-4_1},
-abstract = {Regular expressions (regex for short) and string-length function are widely used in string-manipulating programs. Counting is a frequently used feature in regexes that counts the number of matchings of sub-patterns. The state-of-the-art string solvers are incapable of solving string constraints with regex-counting and string-length efficiently, especially when the counting and length bounds are large. In this work, we propose an automata-theoretic approach for solving such class of string constraints. The main idea is to symbolically model the counting operators by registers in automata instead of unfolding them explicitly, thus alleviating the state explosion problem. Moreover, the string-length function is modeled by a register as well. As a result, the satisfiability of string constraints with regex-counting and string-length is reduced to the satisfiability of linear integer arithmetic, which the off-the-shelf SMT solvers can then solve. To improve the performance further, we also propose techniques to reduce the sizes of automata. We implement the algorithms and validate our approach on 48,843 benchmark instances. The experimental results show that our approach can solve more instances than the state-of-the-art solvers, at a comparable or faster speed, especially when the counting and length bounds are large.},
-booktitle = {Dependable Software Engineering. Theories, Tools, and Applications: 9th International Symposium, SETTA 2023, Nanjing, China, November 27–29, 2023, Proceedings},
-pages = {1–20},
-numpages = {20},
-location = {<conf-loc content-type="InPerson">Nanjing, China</conf-loc>}
+@InProceedings{Denghang2023,
+author="Hu, Denghang
+and Wu, Zhilin",
+editor="Hermanns, Holger
+and Sun, Jun
+and Bu, Lei",
+title="String Constraints with Regex-Counting and String-Length Solved More Efficiently",
+booktitle="Dependable Software Engineering. Theories, Tools, and Applications",
+year="2024",
+publisher="Springer Nature Singapore",
+address="Singapore",
+pages="1--20",
+abstract="Regular expressions (regex for short) and string-length function are widely used in string-manipulating programs. Counting is a frequently used feature in regexes that counts the number of matchings of sub-patterns. The state-of-the-art string solvers are incapable of solving string constraints with regex-counting and string-length efficiently, especially when the counting and length bounds are large. In this work, we propose an automata-theoretic approach for solving such class of string constraints. The main idea is to symbolically model the counting operators by registers in automata instead of unfolding them explicitly, thus alleviating the state explosion problem. Moreover, the string-length function is modeled by a register as well. As a result, the satisfiability of string constraints with regex-counting and string-length is reduced to the satisfiability of linear integer arithmetic, which the off-the-shelf SMT solvers can then solve. To improve the performance further, we also propose techniques to reduce the sizes of automata. We implement the algorithms and validate our approach on 48,843 benchmark instances. The experimental results show that our approach can solve more instances than the state-of-the-art solvers, at a comparable or faster speed, especially when the counting and length bounds are large.",
+isbn="978-981-99-8664-4"
 }
+
 
 @article{Thompson1968,
 author = {Thompson, Ken},
