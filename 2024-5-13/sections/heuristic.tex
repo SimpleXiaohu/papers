@@ -72,15 +72,15 @@ Given a CEFA $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$, the over-approximate
   \item $s$ and $f$ are two new states not in $Q$.
   \item $\delta'$ is a transitions set containing all transitions in $\delta$ and transitions from each state $q$ in $Q$ to $s$ with label $a$ if there is no transitions from $q$ to any state with label $a$ in $\aut$. To be more detailed, $\delta'$ is the union of four sets:
   \begin{itemize}
-    \item $\{(q, a, q',(\vec{v}, \vec{0})) \mid (q, a, q', \vec{v})\in \delta\}$
-    \item $\{(q, a, s,(\vec{0}, \vec{0})) \mid \forall q'\in Q,\vec{v}. (q, a, q', \vec{v})\not\in \delta\}$
-    \item $\{(q, a, f,(\vec{v}, \vec{1})) \mid \exists q'\in F, (q, a, q', \vec{v})\in \delta\}$
-    \item $\{(s, \Sigma, s, (\vec{0}, \vec{0}))\}$
+    \item $\{(q, a, q',(\vec{v}, 0)) \mid (q, a, q', \vec{v})\in \delta\}$
+    \item $\{(q, a, s,(\vec{0}, 0)) \mid \forall q'\in Q,\vec{v}. (q, a, q', \vec{v})\not\in \delta\}$
+    \item $\{(q, a, f,(\vec{v}, 1)) \mid \exists q'\in F, (q, a, q', \vec{v})\in \delta\}$
+    \item $\{(s, \Sigma, s, (\vec{0}, 0))\}$
   \end{itemize}
   \item $\alpha'$ is $r \not= 1\vee \neg \alpha$
 \end{itemize}
 
-$r$ is the register used to check whether the accepted state is also accepted in the original CEFA. $s$ is the self loop state accepting all string that is not accepted by the original CEFA. $f$ is the merged accepted state of original CEFA. If there is a transition $(q, a, q', \vec{v})$ teminates at the accepted state $q'$ in the original CEFA, we add a corresponding transition $(q, a, f, (\vec{v}, \vec{1}))$ in the over-approximated complement. From the definition of $\delta'$, we can see that only the transitions goto $f$ increase the value of regesiter $r$. The value of $r$ is $1$ if and only if the accepted state is also accepted in the original CEFA. With above construction, the meaning of the accepting condition $\alpha'$ is obvious: If the string teminates at the accepting state in the original CEFA, then the accepting condition $\alpha$ is false.
+$r$ is the register used to check whether the accepted state is also accepted in the original CEFA. $s$ is the self loop state accepting all string that is not accepted by the original CEFA. $f$ is the merged accepted state of original CEFA. If there is a transition $(q, a, q', \vec{v})$ teminates at the accepted state $q'$ in the original CEFA, we add a corresponding transition $(q, a, f, (\vec{v}, 1))$ in the over-approximated complement. From the definition of $\delta'$, we can see that only the transitions goto $f$ increase the value of regesiter $r$. The value of $r$ is $1$ if and only if the accepted state is also accepted in the original CEFA. With above construction, the meaning of the accepting condition $\alpha'$ is obvious: If the string teminates at the accepting state in the original CEFA, then the accepting condition $\alpha$ is false.
 
 \begin{theorem}
   The language of over-approximated complement of CEFA is a superset of the language of exact complement.
