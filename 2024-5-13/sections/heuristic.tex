@@ -12,7 +12,7 @@ For a regex $\regex$, we can approximate the number of states $size(\regex)$ gen
   \item If $\regex = \emptyset$ or $\regex = \epsilon$, then $size(\regex) = 0$. 
   \item If $\regex = \regex_1 \cdot \regex_2$ or $\regex = \regex_1 + \regex_2$, then $size(\regex) = size(\regex_1) + size(\regex_2)$.
   \item If $\regex = \regex_1^*$, then $size(\regex) = size(\regex_1)$.
-  \item If $\regex = \regex_1 \cap \regex_2$, then $size(\regex) = min(size(\regex_1), size(\regex_2))$.
+  \item If $\regex = \regex_1 \cap \regex_2$, then $size(\regex) = size(\regex_1)*size(\regex_2)$.
   \item If $\regex = \overline{\regex_1}$, then $size(\regex) = 2^{size(\regex_1)} + 1$.
   \item $\regex = \regex_1 \backslash \regex_2$ can be transfered to $\regex = \regex_1 \cap \overline{\regex_2}$ and then the size can be computed by the formula of $\cap$ and $\bar{}$.
   \item For $\regex = \regex_1^{\{n,m\}}$ or $\regex = \regex_1^{\{m,\infty\}}$, $size(\regex)$ is equal to $m*size(\regex_1)$ if it is unwinded, and $size(\regex_1)$ otherwise.
