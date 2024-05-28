@@ -109,32 +109,29 @@ $$ \sum \limits_{(q, a, q', \myvec{v})\in \delta} \eta((q, a, q', \myvec{v}))\my
 \noindent
 \emph{Step 2. (Prune the search tree early by the transitions times during the search process).}
 
-After computing the transitions times visited by the accepted string, we prune the search tree of the CEFA based on the transitions times. The idea is that we only visit transitions whose visited times are greater than $0$. Other transitions are deleted from the CEFA so that we can reduce the search space. Note that the transitions times is updated during the search process so the search space is reduced dynamically. The presudo code is presented in Algorithm~\ref{alg:findword}.
+After computing the transitions times visited by the accepted string, we prune the search tree of the CEFA based on the transitions times. The idea is that we only visit the state which is able to reach all transitions need to be visited. Other states are deleted from the CEFA so that we can reduce the search space.
+Note that the transitions times is updated during the search process so the search space is reduced dynamically. The presudo code is presented in Algorithm~\ref{alg:findword}.
 
 \begin{algorithm}[H]
   \caption{Find a word in the language of a CEFA}\label{alg:findword}
   \begin{algorithmic}[1]
-  \Procedure{findmodel}{$\aut,tmap$}\Comment{$tmap$ maps transition to its visited times}
-      \State $todo \gets Stack(\aut_{init}, tmap, '''')$\Comment{todo is a stack of 3-tuple (state, tmap, word)}
-      \State $visited \gets \emptyset$\Comment{visited is a set of 2-tuple (state, tmap)}
+  \Procedure{findmodel}{$\aut,tmap$}
+  % \State \Comment{$tmap$ maps transition to its remaining visited times}
+      \State $todo \gets Stack(\aut_{init}, tmap, '''')$
+      \State $visited \gets \emptyset$
+      % \State \Comment{a stack of state, remaining visited times and word}
       \While{$todo$ is not empty}
         \State $(q, tmap, w) \gets todo.pop()$
-        \If{$q\in \aut_{final}$ and all times of transitions in $tmap$ are $0$}
+        \If{$q\in \aut_{final}$ and $tmap.values = \myvec{0}$}
           \State \Return $w$
         \EndIf
-        \For{$(q, a, q', \myvec{v})\in \delta$}
+        
+        \For{each transition $(q, a, q', \myvec{v})$ where $tmap[(q, a, q', \myvec{v})]>0$}
           \State $tmap'[(q, a, q', \myvec{v})] \gets tmap[(q, a, q', \myvec{v})] - 1$
-          \If{$tmap'[(q, a, q', \myvec{v})] < 0$}
-            \State \textbf{continue}\Comment{Prune}
+          \If{$(q', tmap')\not\in visited$ \textbf{and} \textsc{isReachable}($\aut, q', tmap'$)}
+            \State $todo.push((q', tmap', w\cdot a))$
+            \State $visited.add((q', tmap'))$
           \EndIf
-          \If{$(q', tmap')\in visited$}
-            \State \textbf{continue}\Comment{Prune}
-          \EndIf
-          \If{there exisits $t$ with $tmap[t]>0$ not reachable from $q'$}
-            \State \textbf{continue}\Comment{Prune}
-          \EndIf
-          \State $todo.push((q', tmap', w+a))$
-          \State $visited.add((q', tmap'))$
         \EndFor
       \EndWhile
       \State \Return $\emptyset$ 
@@ -142,4 +139,34 @@ After computing the transitions times visited by the accepted string, we prune t
   \end{algorithmic}
   \end{algorithm}
 
-  The procedure \textsc{findmodel} takes a CEFA $\aut$ and a map $tmap$ as input. The map $tmap$ maps each transition to its visited times. Stack $todo$ is used to store the state need to be visited and its corresponding map and word. The procedure uses a set $visited$ to store the state and its corresponding map that have been visited. In the while loop from line 4 to line 23, the procedure depth-first search the CEFA. If the state is an accepting state and all transitions are visited with correct times, the procedure returns the word (line 7). During the search process, the procedure prunes the search space by the transitions times. If the visited times of a transition is less than $0$, the procedure does not visit it (line 11). If the state and its corresponding map have been visited, the procedure does not visit it (line 14). If there is a transition with visited times greater than $0$ not reachable from the current state, the procedure does not visit it(line 18). In practice, the pruning in line 18 make a great contribution to the efficiency of the search process.
+  The procedure \textsc{findmodel} takes a CEFA $\aut$ and a transitions-times map $tmap$ as input. $tmap$ maps each transition to its remaining visited times. Stack $todo$ contains states need to be visited, their corresponding transitions-times maps and current word. Set $visited$ is used to store the visited state with corresponding map. $todo$ is initialized with the initial state of the CEFA, the input map $tmap$ and an empty word (line 2). $visited$ is initialized as an empty set (line 3).
+  In the while loop from line 4 to line 16, the state combined with its transitions-times map is searched by the depth-first search algorithm. During the search process, the procedure returns the word if the state is an accepting state and all remaining times of transitions are $0$ (line 7). For each transition $(q, a, q', \myvec{v})$ whose remaining times are greater than $0$, the procedure decreases the remaining times by $1$ (line 10) and checks whether $(q', tmap')$ is not visited and $tmap'$ is reachable from $q'$ (line 11). We say that \textit{$tmap'$ is reachable from $q'$} if each transition $t$ with $tmap'(t)> 0$ are reachable from the state $q'$. The reachability check (Algorithm~\ref{alg:isReachable}) is vital to prune the search space and reduce the search time . If the state $q'$ is not visited and $tmap'$ is reachable from $q'$, then we push $(q', tmap', w\cdot a)$ to $todo$ and add $(q', tmap')$ to $visited$ to continue the search(line 12-13). If the while loop terminates without finding an accepting word, the procedure returns $\emptyset$ (line 17).  
+  
+  \begin{algorithm}[H]
+    \caption{Check whether the map is reachable from the state}\label{alg:isReachable}
+    \begin{algorithmic}[1]
+      \Procedure{isReachable}{$\aut, q, tmap$}
+      \State $todo \gets Stack(q)$
+      \State $visited \gets \emptyset$
+      \State $qreach \gets \emptyset$
+      \While{$todo$ is not empty}
+        \State $q \gets todo.pop()$
+        \State $visited.add(q)$
+        \For{each transition $t=(q,a,q',\myvec{v})$ where $tmap(t)>0$}
+          \State $qreach.add(t)$
+          \If{$q'\not\in visited$}
+            \State $todo.push(q')$
+          \EndIf
+        \EndFor
+      \EndWhile
+      \State Select all transitions $t$ where $tmap(t)>0$ to set $T$
+      \If{$T\subseteq qreach$}
+        \State \Return \textit{true}  
+      \Else 
+        \State \Return \textit{false}
+      \EndIf
+      \EndProcedure
+    \end{algorithmic}
+  \end{algorithm}
+
+  In Algorithm~\ref{alg:isReachable}, all transitions reachable from the state $q'$ is computed and saved to $qreach$. If $qreach$ covers all transitions with positive times in the input map $tmap$, then we say that $tmap$ is reachable from $q'$ and the procedure \textsc{isReachable} returns true, otherwise it returns false.  
