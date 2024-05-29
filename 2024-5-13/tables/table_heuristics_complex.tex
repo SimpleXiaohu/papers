@@ -1,0 +1,26 @@
+
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.16}
+\resizebox{.95\textwidth}{!}{\begin{tabular}{|>{\centering\arraybackslash}m{1.45cm} |c |c |c |c |}
+    \hline
+                                         & ${\rm -NEST}$ & ${\rm -COMP}$ & ${\rm -FIND}$ & $\ostrichrecl$ \\
+    \hline\hline
+    \rowcolor{grayshade}sat              & 553           & 296           & 309           & \textbf{635}   \\
+    \hline
+    \rowcolor{grayshade}unsat            & \textbf{238}  & \textbf{238}  & \textbf{238}  & \textbf{238}   \\
+    \hline
+    \hline
+    unknown                              & 27            & 8             & \textbf{2}    & 6              \\
+    \hline
+    timeout                              & 182           & 458           & 451           & \textbf{121}   \\
+    \hline
+    error                                & 0             & 0             & 0             & 0              \\
+    \hline
+    program crashes                      & 0             & 0             & 0             & 0              \\
+    \hline
+    \hline
+    \rowcolor{grayshade}solved           & 791           & 534           & 547           & \textbf{873}   \\
+    \hline
+    \rowcolor{grayshade}average time (s) & 19.95         & 37.49         & 31.44         & \textbf{19.49} \\
+    \hline
+  \end{tabular}}
