@@ -29,7 +29,7 @@ A typical way for string constraint solvers to deal with regular expressions wit
 \noindent 
 \emph{Contribution.} In this work, we focus on the class of string constraints with regular membership and string-length function, where the counting operators may occur (called RECL for brevity). We make the following contributions.
 \begin{itemize}
-  \item We propose an automata-theoretical approach for solving RECL constraints. 
+  \item We propose an automata-theoretical approach for solving RECL constraints. \zhilin{update this paragraph later}
   Our main idea is to represent the counting operators by cost registers in cost-enriched finite automata (CEFA, see Section~\ref{sec:automaton} for the definition), instead of unfolding them explicitly. The string-length function is modeled by cost registers as well. The satisfiability of RECL constraints is reduced to the nonemptiness problem of CEFA w.r.t. a linear integer arithmetic (LIA) formula. According to the results from~\cite{atva2020}, an LIA formula can be computed to represent the potential values of registers in CEFA.
 Thus, the nonemptiness of CEFA w.r.t. LIA formulas can be reduced to the satisfiability of LIA formulas, which is then tackled by off-the-shelf SMT solvers.
   \item We propose techniques to reduce the sizes (i.e. the number of states and transitions) of CEFA, in order to achieve better performance.

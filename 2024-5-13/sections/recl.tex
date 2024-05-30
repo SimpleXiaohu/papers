@@ -10,7 +10,8 @@ A regular expression $\regex$ is built from $\emptyset$, the empty string $\epsi
   \centering
 $ \begin{array}{l l l r}
     \varphi & ::= & x\in \regex \mid t_1\  \op\ t_2 \mid  \varphi \wedge \varphi                                              & \mbox{formulas}            \\
-    \regex &::= & \emptyset \mid \epsilon \mid a \mid \regex\cdot \regex \mid \regex+\regex \mid \regex^* \mid \regex \cap \regex \mid \overline{\regex} \mid \regex \setminus \regex \mid \regex^{\{m,n\}} \mid \regex^{\{m,\infty\}} \mid (e) & \mbox{regexes} \\
+    \regex &::= & \emptyset \mid \epsilon \mid a \mid \regex\cdot \regex \mid  \regex+\regex \mid \regex^* \mid \regex \cap \regex \mid \\
+    & & \ \ \overline{\regex} \mid \regex \setminus \regex \mid \regex^{\{m,n\}} \mid \regex^{\{m,\infty\}} \mid (e) & \mbox{regexes} \\
     t &::= & n \mid \anivar \mid  |x| \mid t - t \mid t + t                                                                    & \mbox{integer terms}
     \end{array}
   $
