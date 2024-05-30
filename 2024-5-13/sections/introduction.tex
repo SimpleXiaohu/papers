@@ -62,7 +62,12 @@ Counting-set automata were proposed in~\cite{redos_lenka,HS+23} to quickly match
 
 \smallskip
 \noindent
-\emph{Organization.} 
+\emph{Structure.} 
 The rest of this paper is structured as follows: Section~\ref{sec:overview} gives an overview of the approach in this paper. Section~\ref{sec:pre} introduces the preliminaries. 
 Section~\ref{sec:recl} presents the syntax and semantics of RECL. 
-Section~\ref{sec:automaton} defines CEFA. Section~\ref{sec:algorithm} introduces the algorithm to solve RECL constraints. Section~\ref{sec:implementation} shows the experiment results. Section~\ref{sec:conclu} concludes this paper.
+Section~\ref{sec:automaton} defines CEFA. Section~\ref{sec:algorithm} introduces the algorithm to solve RECL constraints. 
+Section~\ref{sec:heuristic} presents some heuristics for improving the performance of solving RECL constraints where the counting operators are inside the scope of some other counting operators or complement operators. \zhilin{double check later}
+Section~\ref{sec:implementation} shows the experiment results. Section~\ref{sec:conclu} concludes this paper.
+
+A preliminary version of this paper has appeared in the proceedings of SETTA 2023~\cite{Denghang2023}. This paper extends the SETTA paper in the following two aspects: (i) To improve the performance of complex RECL constraints where the counting operators are nested with some other counting operators or nested with the complement operators, various heuristics are proposed, (ii) moreover, to evaluate the performance of these heuristics, the benchmarks as well as the experiments are extended.   \zhilin{double check later}
+ 
