@@ -92,21 +92,23 @@ Moreover, $\ostrichrecl$ is the second fastest solver, whose average time on eac
 % \end{table}
 
 \subsection{Empirical justification of the technical choices and heuristics}\label{subsec:size_reduction_eval}
-We also do experiments to evaluate the effectiveness of the automata size-reduction techniques, that is, Step 2 of Section~\ref{subsec:cefadec}. We practically answer why we choose LIA formula to solve the nonemptiness problem instead of using the nuXmv model checker like \cite{atva2020}. Finally, we carry out experiment on the ComplexCounting benchmarks to justify the heuristics of Section~\ref{sec:heuristic}.
+We also do experiments to evaluate the effectiveness of the automata size-reduction techniques for register-representable regexes, that is, Step 2 of Section~\ref{subsec:cefadec}. We practically answer why we choose LIA formula to solve the nonemptiness problem instead of using the nuXmv model checker like \cite{atva2020}. Finally, we carry out experiment on the ComplexCounting benchmarks to justify the heuristics of Section~\ref{sec:heuristic} for non-register-representable regexes.
 \subsubsection{Empirical justification of the technical choices}
 %We also do experiments to evaluate the effectiveness of the automata size-reduction techniques, that is, Step 2 in Section~\ref{subsec:cefadec}. 
 %Let us use $\ostrichrecl_{\rm -SIMP}$ to denote $\ostrichrecl$ with the size-reduction techniques removed. 
-We compare $\ostrichrecl$ with its variants ${\rm -ASR}$ and ${\rm +NUXMV}$. ${\rm -ASR}$ is obtained from $\ostrichrecl$ by removing the automata size-reduction technique (i.e. Step 2 of Section~\ref{subsec:cefadec}). ${\rm +NUXMV}$ uses the nuXmv model checker to solve the nonemptiness of $\cefadec$. 
+We compare $\ostrichrecl$ with its variant  ${\rm +NUXMV}$. ${\rm +NUXMV}$  is obtained from $\ostrichrecl$ by using the nuXmv model checker to solve the nonemptiness of $\cefadec$. 
 
-The experiment results can be found in Table~\ref{tab:results_heuristic}.
-We can see that $\ostrichrecl$ solves 1,083 more instances and is 1.65 times faster than ${\rm -ASR}$. Therefore,  the automata size-reduction technique indeed plays an essential role in the performance improvement.
-We can see that $\ostrichrecl$ solves 2,532 more instances and is 2.38 times faster than ${\rm +NUXMV}$. Therefore, the decision procedure in Section~\ref{subsec:cefadec} is more efficient to solve the $\cefadec$ problem than nuXmv. 
+The experiment results can be found in Table~\ref{tab:results_heuristic}. We can see that $\ostrichrecl$ solves 2,532 more instances and is 2.38 times faster than ${\rm +NUXMV}$. Therefore, the decision procedure in Section~\ref{subsec:cefadec} is more efficient to solve the $\cefadec$ problem than nuXmv. 
 \begin{table}
   \import{tables}{table_heuristics.tex}
   \caption{Empirical justification of the technical choices and heuristics}\label{tab:results_heuristic}
 \end{table}
 
-\subsubsection{Empirical justification of the heuristics} 
+\subsubsection{Empirical justification of the size-reduction technique for register-representable regexes}
+We compare $\ostrichrecl$ with its variant ${\rm -ASR}$.  ${\rm -ASR}$ is obtained from $\ostrichrecl$ by removing the automata size-reduction technique (i.e. Step 2 of Section~\ref{subsec:cefadec}). 
+The experiment results can be found in Table~\ref{tab:results_heuristic}. We can see that $\ostrichrecl$ solves 1,083 more instances and is 1.65 times faster than ${\rm -ASR}$. Therefore,  the automata size-reduction technique indeed plays an essential role in the performance improvement.
+
+\subsubsection{Empirical justification of the heuristics for non-regesiter-representable regexes} 
 We also compare the performance of $\ostrichrecl$ with its variants ${\rm -NEST}$, ${\rm -COMP}$, ${\rm -FIND}$. ${\rm -NEST}$ is obtained from $\ostrichrecl$ by removing the heuristic for nested counting. ${\rm -COMP}$ is obtained by removing the heuristic for complement on counting operators. ${\rm -FIND}$ is obtained by removing the heuristic for finding the accepted word of the automaton.
 
 The overall experiment results can be found in Table~\ref{tab:results_heuristic}. We can see that $\ostrichrecl$ solves 77/388/349 more instances and is 1.13/1.18/1.24 times faster than ${\rm -NEST}$/${\rm -COMP}$/${\rm -FIND}$ respectively. 
