@@ -13,14 +13,38 @@ The optimization is designed for the special case that the nesting depth of coun
 
 The main idea of the optimization is illustrated by the constraint $x \in (a^{\{1,1000\}})^{\{1,2\}}$. If we apply the naive unfolding in Section~\ref{sec:algorithm}, we will unfold  $a^{\{1,1000\}}$ and obtain the constraint $x \in (a(\varepsilon + a + aa + \cdots + \underbrace{a\cdots a}_{999}))^{\{1,2\}}$. It is easy to observe that a smarter way is to unfold  $^{\{1,2\}}$, instead of $^{\{1, 1000\}}$.  If we do this, then we get a constraint $x \in (a^{\{1,1000\}})(\varepsilon + a^{\{1,1000\}})$, whose size is much smaller, compared to $x \in (a(\varepsilon + a + aa + \cdots + \underbrace{a\cdots a}_{999}))^{\{1,2\}}$. (Recall that we assume a binary encoding of the integer constants in counting operators.)
 
-Let us describe the optimization more precisely. For a regular expression $x \in (e_1)^{\{m,n\}}$ where $e_1$ contains counting operators (but does not contain the nesting of counting operators), we can unfold the counting operators in the following ways to obtain a register-representable RECL constraint, (i) unfold the counting operators in $e_1$, (ii) unfold the counting operator $^{\{m,n\}}$. Let $e', e''$ denote the resulting constraints. We estimate the sizes of the two CEFAs constructed from $e', e''$ respectively, say $N'$ and $N''$. If $N' \le N''$, then we choose to unfold the counting operators in $e_1$. Otherwise, we choose to unfold the counting operator $^{\{m,n\}}$. Note that when we estimate the sizes of the CEFAs, we do not really need unfold the counting operators. We can simply compute the estimations of the CEFA sizes, without any unfolding.  
+Let us describe the optimization more precisely. 
+\begin{itemize}
+\item For a regular expression $x \in (e_1)^{\{m,n\}}$ where $e_1$ contains counting operators (but does not contain the nesting of counting operators), we can unfold the counting operators in the following ways to obtain a register-representable RECL constraint: (i) unfold the counting operators in $e_1$, (ii) unfold the counting operator $^{\{m,n\}}$. 
+%
+Let $e', e''$ denote the resulting constraints. 
+
+\item We estimate the sizes of the two CEFAs $\aut', \aut''$ constructed from $e', e''$ respectively as pairs $(s', r')$ and $(s'', r'')$, where $s'$ and $r'$ are the estimates of the number of states and registers in $\aut'$, similarly for $s''$ and $r''$. 
+%
+\item From the construction in Section~\ref{sec:algorithm}, 
+two NFAs $\cU_{\aut'}, \cU_{\aut''}$ are constructed from $\aut', \aut''$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut'}, \cU_{\aut''}$ are the set of integer vectors  $\myvec{v}$ occurring in the transitions of $\aut', \aut''$ respectively. The integer vectors of  $\aut'$ are of form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{r'-i-1})$, where $i \in [r']$. Consequently, the size of the alphabet of $\cU_{\aut'}$ is bounded by $r'$. Similarly for $\cU_{\aut''}$. 
+Finally, we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut'}, \cU_{\aut''}$ as $sz' = (s')^2 r'$ and $sz''= (s'')^2 r''$ respectively.
+%
+\item If $sz' \le sz''$, then we choose to unfold the counting operators in $e_1$. Otherwise, we choose to unfold the counting operator $^{\{m,n\}}$. 
+\end{itemize}
+
+In the sequel, we show how we estimate the sizes of CEFAs constructed from register-representable regular expressions. 
+
+Let $\regex$ be a register-representable regular expression. Then we compute $(s_\regex, r_\regex) \in \Nat \times \Nat$, i.e. the pair (estimate of the number of states, estimate of the number of registers), as follows. 
+\begin{itemize}
+  \item If $\regex = \emptyset$ or $\regex = \epsilon$, then $s_{\regex} = 0$ and $r_\regex = 0$. 
+  \item If $\regex = \regex_1 \concat \regex_2$, then $s_{\regex} = s_{\regex_1} + s_{\regex_2}$ and $r_{\regex} = r_{\regex_1} + r_{\regex_2}$.
+  \item If $\regex = \regex_1 + \regex_2$, then $s_{\regex} = s_{\regex_1} + s_{\regex_2}$ and $r_{\regex} = r_{\regex_1} + r_{\regex_2}+1$. 
+  \item If $\regex = \regex_1 \cap \regex_2$, then $size(\regex) = size(\regex_1)*size(\regex_2)$ and $r_{\regex} = r_{\regex_1} + r_{\regex_2}$.
+  \item If $\regex = \overline{\regex_1}$, then $s_\regex = 2^{s_{\regex_1}}$ (since the determinization is needed for the complement) and $r_\regex = 0$.
+  \item If $\regex = \regex_1^*$, then $s_{\regex} = s_{\regex_1}$ and $r_{\regex} = 0$.
+%  \item $\regex = \regex_1 \backslash \regex_2$ can be transferred to $\regex = \regex_1 \cap \overline{\regex_2}$ and then the size can be computed by the formula of $\cap$ and $\bar{}$.
+  \item For $\regex = \regex_1^{\{m, n\}}$ or $\regex = \regex_1^{\{n,\infty\}}$, $s_{\regex} = s_{\regex_1}$ and $r_{\regex} = 1$.
+\end{itemize}
 
 \zhilin{stopped here}
 
-In the sequel, we show how we estimate the sizes of CEFAs of the register-representable 
-
-
-The naive approach for nested counting in the paper \cite{Denghang2023} is to unwind all inner counting operators. This approach may generate a large number of states, which is linear to the product of the counting bounds in regex and exponential to the length of the regex. For example, naive unwinding regex $(a^{\{1,1000\}})^{\{1,2\}}$ generate a CEFA containing 1000 states. But if we only unwind the outer counting operator of the regex, not inner, we obtain a CEFA containing only 2 states. The side effect is that we need two registers to store the information of conuting in the inner regex (unwinding of outer counting operator repeat the inner regex, which also repeat the registers of the inner regex).We present a heuristic to reduce the number of states generated by the unwinding process. The idea is to unwind the counting operator with less bound and less side effect firstly. We present the heuristic in the following algorithm.
+%The naive approach for nested counting in the paper \cite{Denghang2023} is to unwind all inner counting operators. This approach may generate a large number of states, which is linear to the product of the counting bounds in regex and exponential to the length of the regex. For example, naive unwinding regex $(a^{\{1,1000\}})^{\{1,2\}}$ generate a CEFA containing 1000 states. But if we only unwind the outer counting operator of the regex, not inner, we obtain a CEFA containing only 2 states. The side effect is that we need two registers to store the information of conuting in the inner regex (unwinding of outer counting operator repeat the inner regex, which also repeat the registers of the inner regex).We present a heuristic to reduce the number of states generated by the unwinding process. The idea is to unwind the counting operator with less bound and less side effect firstly. We present the heuristic in the following algorithm.
 
 \medskip
 \noindent
@@ -36,6 +60,8 @@ For a regex $\regex$, we can approximate the number of states $size(\regex)$ gen
   \item $\regex = \regex_1 \backslash \regex_2$ can be transfered to $\regex = \regex_1 \cap \overline{\regex_2}$ and then the size can be computed by the formula of $\cap$ and $\bar{}$.
   \item For $\regex = \regex_1^{\{n,m\}}$ or $\regex = \regex_1^{\{m,\infty\}}$, $size(\regex)$ is equal to $m*size(\regex_1)$ if it is unwinded, and $size(\regex_1)$ otherwise.
 \end{itemize}
+
+
 
 For each counting operator $^{\{n,m\}}$ or $^{\{m,\infty\}}$ with $\regex$ as its subregex, the number of states generated by it is $m*size(\regex)$ if we unwind it.
 
