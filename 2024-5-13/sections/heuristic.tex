@@ -15,37 +15,91 @@ The main idea of the optimization is illustrated by the constraint $x \in (a^{\{
 
 Let us describe the optimization more precisely. 
 \begin{itemize}
-\item For a regular expression $x \in (e_1)^{\{m,n\}}$ where $e_1$ contains counting operators (but does not contain the nesting of counting operators), we can unfold the counting operators in the following ways to obtain a register-representable RECL constraint: (i) unfold the counting operators in $e_1$, (ii) unfold the counting operator $^{\{m,n\}}$. 
+\item For a regular expression $e = (e_1)^{\{m,n\}}$ where $e_1$ is a register-representable regular expression, we can unfold the counting operators in the following ways to obtain a register-representable RECL constraint: (i) unfold the counting operators in $e_1$, (ii) unfold the counting operator $^{\{m,n\}}$. 
 %
-Let $e', e''$ denote the resulting constraints. 
+Let $\ufld_1(e)$ and $\ufld_2(e)$ denote the resulting regular expressions. 
 
-\item We estimate the sizes of the two CEFAs $\aut', \aut''$ constructed from $e', e''$ respectively as pairs $(s', r')$ and $(s'', r'')$, where $s'$ and $r'$ are the estimates of the number of states and registers in $\aut'$, similarly for $s''$ and $r''$. 
+\item We estimate the sizes of the two CEFAs $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ constructed from $\ufld_1(e), \ufld_2(e)$ respectively as pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$, where $\snum_1(e)$ and $\rnum_1(e)$ are the estimates of the number of states and registers in $\aut_{\ufld_1(e)}$, similarly for $(\snum_2(e)$ and $\rnum_2(e))$. 
 %
 \item From the construction in Section~\ref{sec:algorithm}, 
-two NFAs $\cU_{\aut'}, \cU_{\aut''}$ are constructed from $\aut', \aut''$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut'}, \cU_{\aut''}$ are the set of integer vectors  $\myvec{v}$ occurring in the transitions of $\aut', \aut''$ respectively. The integer vectors of  $\aut'$ are of form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{r'-i-1})$, where $i \in [r']$. Consequently, the size of the alphabet of $\cU_{\aut'}$ is bounded by $r'$. Similarly for $\cU_{\aut''}$. 
-Finally, we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut'}, \cU_{\aut''}$ as $sz' = (s')^2 r'$ and $sz''= (s'')^2 r''$ respectively.
+two NFAs $\cU_{\aut_{\ufld_2(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are constructed from $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut_{\ufld_2(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are the set of integer vectors  $\myvec{v}$ occurring in the transitions of $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ respectively. The integer vectors of  $\aut_{\ufld_1(e)}$ are of form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{r'-i-1})$, where $i \in [r']$. Consequently, the size of the alphabet of $\cU_{\aut_{\ufld_1(e)}}$ is bounded by $\rnum_1(e)$. Similarly for $\cU_{\aut_{\ufld_1(e)}}$. 
+Finally, we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut_{\ufld_1(e)}}, \cU_{\aut_{\ufld_2(e)}}$ as $sz_1 = (\snum_1(e))^2 \cdot \rnum_1(e)$ and $sz_2 = (\snum_2(e))^2 \cdot \rnum_2(e)$ respectively.
 %
-\item If $sz' \le sz''$, then we choose to unfold the counting operators in $e_1$. Otherwise, we choose to unfold the counting operator $^{\{m,n\}}$. 
+\item If $sz_1 \le sz_2$, then we choose to unfold the counting operators in $e_1$. Otherwise, we choose to unfold the counting operator $^{\{m,n\}}$. 
 \end{itemize}
 
-In the sequel, we show how we estimate the sizes of CEFAs constructed from register-representable regular expressions. 
+%In the sequel, we show how we estimate the sizes of CEFAs constructed from register-representable regular expressions. 
 
-Let $\regex$ be a register-representable regular expression. Then we compute $(s_\regex, r_\regex) \in \Nat \times \Nat$, i.e. the pair (estimate of the number of states, estimate of the number of registers), as follows. 
+It remains to show how to compute the pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$ from $e=(e_1)^{\{m,n\}}$. Let $e=(e_1)^{\{m,n\}}$ be a regular expression where $e_1$ is a register-representable regular expression. Then we compute $\snum'_1(e_1)$ and $(\snum'_2(e_1), \rnum'_2(e_1))$ by a structural induction on $e_1$. Finally, let $(\snum_1(e), \rnum_1(e)) = (\snum'_1(e_1), 1)$ and $(\snum_2(e), \rnum_2(e)) = (\snum'_2(e_1), \rnum'_2(e_1))$.
 \begin{itemize}
-  \item If $\regex = \emptyset$ or $\regex = \epsilon$, then $s_{\regex} = 0$ and $r_\regex = 0$. 
-  \item If $\regex = \regex_1 \concat \regex_2$, then $s_{\regex} = s_{\regex_1} + s_{\regex_2}$ and $r_{\regex} = r_{\regex_1} + r_{\regex_2}$.
-  \item If $\regex = \regex_1 + \regex_2$, then $s_{\regex} = s_{\regex_1} + s_{\regex_2}$ and $r_{\regex} = r_{\regex_1} + r_{\regex_2}+1$. 
-  \item If $\regex = \regex_1 \cap \regex_2$, then $size(\regex) = size(\regex_1)*size(\regex_2)$ and $r_{\regex} = r_{\regex_1} + r_{\regex_2}$.
-  \item If $\regex = \overline{\regex_1}$, then $s_\regex = 2^{s_{\regex_1}}$ (since the determinization is needed for the complement) and $r_\regex = 0$.
-  \item If $\regex = \regex_1^*$, then $s_{\regex} = s_{\regex_1}$ and $r_{\regex} = 0$.
+  \item If $e_1 = \emptyset$ or $e_1 = \epsilon$, then $\snum'_1(e_1)  = 0$ and $(\snum'_2(e_1), \rnum'_2(e_1))  = (0, 0)$. 
+%
+ %
+  \item If $e_1 = e_2 \concat e_3$, then $\snum'_1(e_1) = \snum'_1(e_2) + \snum'_1(e_3)$ and 
+%
+  $$
+  \begin{array}{l }
+  (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
+  \ \ \ \ (n(\snum'_2(e_2) + \snum'_2(e_3)), n(\rnum'_2(e_2) + \rnum'_2(e_3))).
+ \end{array}
+  $$
+%
+ \item If $e_1 = e_2 + e_3$, then $\snum'_1(e_1) = \snum'_1(e_2) + \snum'_1(e_3)$ and 
+%
+  $$
+  \begin{array}{l }
+  (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
+  \ \ \ \ (n(\snum'_2(e_2) + \snum'_2(e_3)), n(\rnum'_2(e_2) + \rnum'_2(e_3)+1)).
+ \end{array}
+  $$
+  (Recall that the construction of $\aut_1 \cup \aut_2$ introduces one additional register.)
+%
+ \item If $e_1 = e_2 \cap e_3$, then $\snum'_1(e_1) = \snum'_1(e_2) \times \snum'_1(e_3)$ and 
+%
+  $$
+  \begin{array}{l }
+  (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
+  \ \ \ \ (n(\snum'_2(e_2) \times \snum'_2(e_3)), n(\rnum'_2(e_2) + \rnum'_2(e_3))).
+ \end{array}
+  $$
+%
+ \item If $e_1 = \overline{e_2}$, then $\snum'_1(e_1) = 2^{\snum'_1(e_2)}$ and 
+%
+  $
+%  \begin{array}{l }
+  (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \cdot 2^{\snum'_2(e_2)}, 0).
+% \end{array}
+  $
+ (The exponential blow-up is explained by the fact that the determinization is needed for the complementation.) 
+%
+%  \item If $\regex = \overline{\regex_1}$, then $s_\regex = 2^{s_{\regex_1}}$ (since the determinization is needed for the complement) and $r_\regex = 0$.
+%
+ \item If $e_1 = (e_2)^*$, then $\snum'_1(e_1) = \snum'_1(e_2)$ and 
+%
+  $
+%  \begin{array}{l }
+  (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \snum'_2(e_2), 0).
+% \end{array}
+  $
+%  \item If $\regex = \regex_1^*$, then $s_{\regex} = s_{\regex_1}$ and $r_{\regex} = 0$.
 %  \item $\regex = \regex_1 \backslash \regex_2$ can be transferred to $\regex = \regex_1 \cap \overline{\regex_2}$ and then the size can be computed by the formula of $\cap$ and $\bar{}$.
-  \item For $\regex = \regex_1^{\{m, n\}}$ or $\regex = \regex_1^{\{n,\infty\}}$, $s_{\regex} = s_{\regex_1}$ and $r_{\regex} = 1$.
+ \item If $e_1 = (e_2)^{\{m', n'\}}$ or $e_1 = (e_2)^{\{n', \infty\}}$, then $\snum'_1(e_1) = n' \snum'_1(e_2)$ and 
+%
+  $
+%  \begin{array}{l }
+  (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \snum'_2(e_2), n).
+% \end{array}
+  $
+%  \item For $\regex = \regex_1^{\{m, n\}}$ or $\regex = \regex_1^{\{n,\infty\}}$, $s_{\regex} = s_{\regex_1}$ and $r_{\regex} = 1$.
 \end{itemize}
 
 \zhilin{stopped here}
 
 %The naive approach for nested counting in the paper \cite{Denghang2023} is to unwind all inner counting operators. This approach may generate a large number of states, which is linear to the product of the counting bounds in regex and exponential to the length of the regex. For example, naive unwinding regex $(a^{\{1,1000\}})^{\{1,2\}}$ generate a CEFA containing 1000 states. But if we only unwind the outer counting operator of the regex, not inner, we obtain a CEFA containing only 2 states. The side effect is that we need two registers to store the information of conuting in the inner regex (unwinding of outer counting operator repeat the inner regex, which also repeat the registers of the inner regex).We present a heuristic to reduce the number of states generated by the unwinding process. The idea is to unwind the counting operator with less bound and less side effect firstly. We present the heuristic in the following algorithm.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hide{
 \medskip
 \noindent
 \emph{Step 1. (Compute the number of states generated by each counting operator if we unwind it).}
@@ -60,8 +114,6 @@ For a regex $\regex$, we can approximate the number of states $size(\regex)$ gen
   \item $\regex = \regex_1 \backslash \regex_2$ can be transfered to $\regex = \regex_1 \cap \overline{\regex_2}$ and then the size can be computed by the formula of $\cap$ and $\bar{}$.
   \item For $\regex = \regex_1^{\{n,m\}}$ or $\regex = \regex_1^{\{m,\infty\}}$, $size(\regex)$ is equal to $m*size(\regex_1)$ if it is unwinded, and $size(\regex_1)$ otherwise.
 \end{itemize}
-
-
 
 For each counting operator $^{\{n,m\}}$ or $^{\{m,\infty\}}$ with $\regex$ as its subregex, the number of states generated by it is $m*size(\regex)$ if we unwind it.
 
@@ -95,6 +147,9 @@ The reason why we use product to combine the two factors is that the hardness of
 \begin{example}
   Consider the regex $(a^{\{1,1000\}})^{\{1,2\}}$. The score of $^{\{1,1000\}}$ is $1000*(0+1) = 1000$ and the score of $^{\{1,2\}}$ is $2*(2+1) = 6$. We unwind the outer counting operator first and obtain a CEFA containing only 2 states.  
 \end{example}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Optimizations for the nesting of a counting operator and a complement operator}
 As we mentioned in the above section \ref{heuristic:nested}, the unwinding process of the complement operator is exponential to the counting bounds in the worst case. We present a heuristic to reduce the number of states generated by the unwinding process. The idea is to under-approximate and over-approximate the language of the regex first, so that we can avoid unwinding counting operators in complement. We present the heuristic in the following algorithm.
