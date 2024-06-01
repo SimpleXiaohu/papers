@@ -237,9 +237,26 @@ $r$ is the register used to check whether the accepted state is also accepted in
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Optimizations for model generation}\label{sec-opt-sol-gen}
+
+Recall that in Section~\ref{sec:algorithm}, the satisfiability of the original RECL constraint is reduced to the satisfiability of the existential LIA formula
+\[
+\begin{array}{l}
+\bigwedge \limits_{i \in [n]} \left(\psi_{\cC_i}(\fZ_{\costset_{\cC_i}}) \wedge \alpha_i\left[\sum\limits_{\myvec{v} \in \costset_{\cC_i}} \anivarz_{i, \myvec{v}} \myvec{v} \big{/}R_{\cB_i}  \right] \right) \ \wedge \\
+\ \ \varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cC_1}} \anivarz_{1, \myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cC_n}} \anivarz_{n, \myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
+\end{array}
+\]
+Let us use $\theta$ to denote this formula. 
+Then we utilize some SMT solver, say Z3, to solve the satisfiability of $\theta$. If Z3 reports ``sat'', then it also returns a model, namely, an assignment $\amodel$ of natural numbers to the free integer variables in $\theta$. Then we utilize $\amodel$ to generate a model $\amodel'$ of the original RECL constraint $\varphi$, i.e. an assignment of strings to the string variables so that $\varphi$ is evaluated to true under $\amodel'$. 
+
+Note that for each $i \in [n]$, the free variables $\fZ_{\costset_{\cC_i}}$ in $\theta$ correspond to the number of occurrences of characters in $\costset_{\cC_i}$, i.e. the alphabet of the NFA $\cC_i$. Moreover, recall that in $\cC_i$, the characters are just the integer vectors and the characters in the original CEFAs $\cB_i$ used to construct $\cC_i$ are ignored. 
+When we utilize $\amodel$ and the CEFAs $\cB_i$ to generate $\amodel'$, for each $i \in [n]$, we record the remaining occurrences of vectors $\myvec{v}$ in the transitions of the CEFAs $\cB_i$ as a number $\nvec_{i, \myvec{v}}$ and
+each time when a transition $(q, a, q', \myvec{v})$ in $\cB_i$ is traversed, $\nvec_{i, \myvec{v}}$ is decremented. Note that initially $\nvec_{i, \myvec{v}}$ is set to $\amodel(\anivarz_{i, \myvec{v}})$. The searching process terminates when $\nvec_{i, \myvec{v}}$ becomes $0$ for every $\myvec{v}$. We record the characters in the traversed transitions and obtain a string for the string variable $x_i$ when the searching process terminates. As a result, we obtain a model of $\varphi$ in the end. 
+
+It turns out that this model generation process is inefficient, mainly due to the fact that the information about the occurrences of vectors $\myvec{v}$ in $\cB_i$ in the searching process is too coarse. In the sequel, we would like to refine this process by using the LIA formulas to obtain the information about the number of occurrences of transitions, instead of just the integer vectors, and utilize this information to guide the searching process. Moreover, some additional tricks are introduced to prune the searching space further.  
+
 \zhilin{stopped here}
 
-\subsection{Heuristic for Finding an Accepted Word}
 In the section \ref{sec:algorithm}, we present an algorithm to solve the $\cefadec$ problem. The algorithm computes existential LIA formulas and then uses SMT solver to solve it. However, this procedure only anwser the question whether the language of the regex is empty or not. If the language is not empty, we need to find a word in the language in practice. In our preivous paper \cite{Denghang2023}, we do not explicitly present the algorithm to find a word in the language because of the space limitation. We have used a naive approach which randomly searching the CEFAs by the depth-first search, based on the regesiters values obtained from solving the existential LIA formula. However, this approach is not efficient when the regexes is non-regesiter-representable. Suppose that there are $n$ registers whose values are $r_1,\cdots, r_n$ respectively in the CEFA, we may visit each transition $O(r_1*r_2\cdots *r_n)$ times during the search. To relieve this problem, we present a heuristic to find a word in the language as follows.
 
 \medskip
