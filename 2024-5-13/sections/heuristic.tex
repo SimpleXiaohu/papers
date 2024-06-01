@@ -3,7 +3,7 @@
 In Section~\ref{sec:algorithm}, to deal with the non-register-representable RECL constraints, we unfold all the non-register-representable occurrences of counting operators. Nevertheless, 
 the naive unfolding incurs an exponential blow-up over the formula sizes, especially when the counting bounds are large. 
 Recall that an occurrence of counting operators is said to be non-register-representable if it is in the scope of some Kleene star, another counting operator, complement, or language difference. Since Kleene star can be seen as a special case of the counting operators, and language difference $e_1 \setminus e_2$ can be rewritten as $e_1 \cap \overline{e_2}$, without loss of generality, we can assume that a non-register representable occurrence of a  counting operator is in the scope of another counting operator or some complement operator. 
-In the sequel, to alleviate the formula-size blow-up problem resulted from the naive unfolding, we present various optimizations, for the nesting of counting operators and the nesting of  counting operators and a complement operator respectively. 
+In the sequel, to alleviate the formula-size blow-up problem resulted from the naive unfolding, we present various optimizations, for the nesting of counting operators and the nesting of counting operators and a complement operator respectively. 
 % two situations that a counting operator is in the scope of another counting operator and in the scope of a complement operator respectively. 
 
 \subsection{Optimizations for the nesting of counting operators}\label{heuristic:nested}
@@ -19,7 +19,7 @@ Let us describe the optimization more precisely.
 %
 Let $\ufld_1(e)$ and $\ufld_2(e)$ denote the resulting regular expressions. 
 
-\item We estimate the sizes of the two CEFAs $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ constructed from $\ufld_1(e), \ufld_2(e)$ respectively as pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$, where $\snum_1(e)$ and $\rnum_1(e)$ are the estimates of the number of states and registers in $\aut_{\ufld_1(e)}$, similarly for $(\snum_2(e)$ and $\rnum_2(e))$. 
+\item We estimate the sizes of the two CEFAs $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ constructed from $\ufld_1(e), \ufld_2(e)$ respectively as pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$, where $\snum_1(e)$ and $\rnum_1(e)$ are the estimates of the number of states and registers in $\aut_{\ufld_1(e)}$, similarly for $\snum_2(e)$ and $\rnum_2(e)$. 
 %
 \item From the construction in Section~\ref{sec:algorithm}, 
 two NFAs $\cU_{\aut_{\ufld_2(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are constructed from $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut_{\ufld_2(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are the set of integer vectors  $\myvec{v}$ occurring in the transitions of $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ respectively. The integer vectors of  $\aut_{\ufld_1(e)}$ are of form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{r'-i-1})$, where $i \in [r']$. Consequently, the size of the alphabet of $\cU_{\aut_{\ufld_1(e)}}$ is bounded by $\rnum_1(e)$. Similarly for $\cU_{\aut_{\ufld_1(e)}}$. 
