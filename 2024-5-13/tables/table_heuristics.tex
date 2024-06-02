@@ -1,24 +1,26 @@
+%!TEX root = ../main.tex
+
 \usepgfplotslibrary{fillbetween}
 \pgfplotsset{compat=1.16}
-\resizebox{.95\textwidth}{!}{\begin{tabular}{|>{\centering\arraybackslash}m{1.45cm} | c| c |c |c |c |c |}
+\resizebox{.95\textwidth}{!}{\begin{tabular}{|>{\centering\arraybackslash}m{1.45cm} | c| |c |c |c |}
     \hline
-                                          & ${\rm -ASR}$ & ${\rm +NUXMV}$ & ${\rm -NEST}$  & ${\rm -COMP}$ & ${\rm -FIND}$  & $\ostrichrecl$ \\
+                                          &  ${\rm -NEST}$  & ${\rm -COMP}$ & ${\rm -FIND}$  & $\ostrichrecl$ \\
     \hline\hline
-    \rowcolor{grayshade} sat              & 27295        & 26607          & 29007          & 28714         & 28735          & \textbf{29084} \\
+    \rowcolor{grayshade} sat              &  29007          & 28714         & 28735          & \textbf{29084} \\
     \hline
-    \rowcolor{grayshade} unsat            & 20513        & 20499          & \textbf{20554} & 20536         & \textbf{20554} & \textbf{20554} \\
-    \hline
-    \hline
-    unknown                               & 68           & 45             & 32             & \textbf{13}   & \textbf{13}    & 14             \\
-    \hline
-    timeout                               & 1968         & 2693           & 250            & 580           & 541            & \textbf{191}   \\
-    \hline
-    error                                 & \textbf{0}   & \textbf{0}     & \textbf{0}     & \textbf{0}    & \textbf{0}     & \textbf{0}     \\
+    \rowcolor{grayshade} unsat            &  \textbf{20554} & 20536         & \textbf{20554} & \textbf{20554} \\
     \hline
     \hline
+    unknown                               & 68        &   \textbf{13}   & \textbf{13}    & 14             \\
     \hline
-    \rowcolor{grayshade} solved           & 47808        & 47106          & 49561          & 49250         & 49289          & \textbf{49638} \\
+    timeout                               & 1968         & 580           & 541            & \textbf{191}   \\
     \hline
-    \rowcolor{grayshade} average time (s) & 4.76         & 6.86           & 3.25           & 3.39          & 3.57           & \textbf{2.88}  \\
+    error                                 & \textbf{0}      & \textbf{0}    & \textbf{0}     & \textbf{0}     \\
+    \hline
+    \hline
+    \hline
+    \rowcolor{grayshade} solved           & 47808            & 49250         & 49289          & \textbf{49638} \\
+    \hline
+    \rowcolor{grayshade} average time (s) & 4.76            & 3.39          & 3.57           & \textbf{2.88}  \\
     \hline
   \end{tabular}}
