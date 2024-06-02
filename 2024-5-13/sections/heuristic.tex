@@ -2,7 +2,7 @@
 
 In Section~\ref{sec:algorithm}, to deal with the non-register-representable RECL constraints, we unfold all the non-register-representable occurrences of counting operators. Nevertheless, 
 the naive unfolding incurs an exponential blow-up over the formula sizes, especially when the counting bounds are large. 
-Recall that an occurrence of counting operators is said to be non-register-representable if it is in the scope of some Kleene star, another counting operator, complement, or language difference. Since Kleene star can be seen as a special case of the counting operators, and language difference $e_1 \setminus e_2$ can be rewritten as $e_1 \cap \overline{e_2}$, without loss of generality, we can assume that a non-register representable occurrence of a  counting operator is in the scope of another counting operator or some complement operator. 
+Recall that an occurrence of counting operators is said to be non-register-representable if it is in the scope of some Kleene star, another counting operator, complement, or language difference. Since Kleene star can be seen as a special case of the counting operators, and language difference $e_1 \setminus e_2$ can be rewritten as $e_1 \cap \overline{e_2}$, without loss of generality, we can assume that a non-register representable occurrence of a counting operator is in the scope of another counting operator or some complement operator. 
 In the sequel, to alleviate the formula-size blow-up problem resulted from the naive unfolding, we present various optimizations, for the nesting of counting operators and the nesting of counting operators and a complement operator respectively. 
 % two situations that a counting operator is in the scope of another counting operator and in the scope of a complement operator respectively. 
 
@@ -11,7 +11,7 @@ In the sequel, to alleviate the formula-size blow-up problem resulted from the n
 In the sequel, we propose an optimization for the nesting of counting operators. 
 The optimization is designed for the special case that the nesting depth of counting operators is one. For a RECL constraint whose nesting depth of counting operators is greater than two, we can apply the optimization for the inner-most nesting of counting operators and decrement the nesting depth, then apply the optimization again to the resulting constraint, and continue this process, until obtaining a register-representable RECL constraint.  
 
-The main idea of the optimization is illustrated by the constraint $x \in (a^{\{1,1000\}})^{\{1,2\}}$. If we apply the naive unfolding in Section~\ref{sec:algorithm}, we will unfold  $a^{\{1,1000\}}$ and obtain the constraint $x \in (a(\varepsilon + a + aa + \cdots + \underbrace{a\cdots a}_{999}))^{\{1,2\}}$. It is easy to observe that a smarter way is to unfold  $^{\{1,2\}}$, instead of $^{\{1, 1000\}}$.  If we do this, then we get a constraint $x \in (a^{\{1,1000\}})(\varepsilon + a^{\{1,1000\}})$, whose size is much smaller, compared to $x \in (a(\varepsilon + a + aa + \cdots + \underbrace{a\cdots a}_{999}))^{\{1,2\}}$. (Recall that we assume a binary encoding of the integer constants in counting operators.)
+The main idea of the optimization is illustrated by the constraint $x \in (a^{\{1,1000\}})^{\{1,2\}}$. If we apply the naive unfolding in Section~\ref{sec:algorithm}, we will unfold  $a^{\{1,1000\}}$ and obtain the constraint $x \in (a(\varepsilon + a + aa + \cdots + \underbrace{a\cdots a}_{999}))^{\{1,2\}}$. It is easy to observe that a smarter way is to unfold  $^{\{1,2\}}$, instead of $^{\{1, 1000\}}$. If we do this, then we get a constraint $x \in (a^{\{1,1000\}})(\varepsilon + a^{\{1,1000\}})$, whose size is much smaller, compared to $x \in (a(\varepsilon + a + aa + \cdots + \underbrace{a\cdots a}_{999}))^{\{1,2\}}$. (Recall that we assume a binary encoding of the integer constants in counting operators.)
 
 Let us describe the optimization more precisely. 
 \begin{itemize}
@@ -39,7 +39,7 @@ It remains to show how to compute the pairs $(\snum_1(e), \rnum_1(e))$ and $(\sn
 %
   $$
   \begin{array}{l }
-  (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
+ (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
   \ \ \ \ (n(\snum'_2(e_2) + \snum'_2(e_3)), n(\rnum'_2(e_2) + \rnum'_2(e_3))).
  \end{array}
   $$
@@ -48,17 +48,17 @@ It remains to show how to compute the pairs $(\snum_1(e), \rnum_1(e))$ and $(\sn
 %
   $$
   \begin{array}{l }
-  (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
+ (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
   \ \ \ \ (n(\snum'_2(e_2) + \snum'_2(e_3)), n(\rnum'_2(e_2) + \rnum'_2(e_3)+1)).
  \end{array}
   $$
-  (Recall that the construction of $\aut_1 \cup \aut_2$ introduces one additional register.)
+ (Recall that the construction of $\aut_1 \cup \aut_2$ introduces one additional register.)
 %
  \item If $e_1 = e_2 \cap e_3$, then $\snum'_1(e_1) = \snum'_1(e_2) \times \snum'_1(e_3)$ and 
 %
   $$
   \begin{array}{l }
-  (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
+ (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
   \ \ \ \ (n(\snum'_2(e_2) \times \snum'_2(e_3)), n(\rnum'_2(e_2) + \rnum'_2(e_3))).
  \end{array}
   $$
@@ -67,7 +67,7 @@ It remains to show how to compute the pairs $(\snum_1(e), \rnum_1(e))$ and $(\sn
 %
   $
 %  \begin{array}{l }
-  (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \cdot 2^{\snum'_2(e_2)}, 0).
+ (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \cdot 2^{\snum'_2(e_2)}, 0).
 % \end{array}
   $
  (The exponential blow-up is explained by the fact that the determinization is needed for the complementation.) 
@@ -78,7 +78,7 @@ It remains to show how to compute the pairs $(\snum_1(e), \rnum_1(e))$ and $(\sn
 %
   $
 %  \begin{array}{l }
-  (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \snum'_2(e_2), 0).
+ (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \snum'_2(e_2), 0).
 % \end{array}
   $
 %  \item If $\regex = \regex_1^*$, then $s_{\regex} = s_{\regex_1}$ and $r_{\regex} = 0$.
@@ -87,13 +87,13 @@ It remains to show how to compute the pairs $(\snum_1(e), \rnum_1(e))$ and $(\sn
 %
   $
 %  \begin{array}{l }
-  (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \snum'_2(e_2), n).
+ (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \snum'_2(e_2), n).
 % \end{array}
   $
 %  \item For $\regex = \regex_1^{\{m, n\}}$ or $\regex = \regex_1^{\{n,\infty\}}$, $s_{\regex} = s_{\regex_1}$ and $r_{\regex} = 1$.
 \end{itemize}
 
-%The naive approach for nested counting in the paper \cite{Denghang2023} is to unwind all inner counting operators. This approach may generate a large number of states, which is linear to the product of the counting bounds in regex and exponential to the length of the regex. For example, naive unwinding regex $(a^{\{1,1000\}})^{\{1,2\}}$ generate a CEFA containing 1000 states. But if we only unwind the outer counting operator of the regex, not inner, we obtain a CEFA containing only 2 states. The side effect is that we need two registers to store the information of conuting in the inner regex (unwinding of outer counting operator repeat the inner regex, which also repeat the registers of the inner regex).We present a heuristic to reduce the number of states generated by the unwinding process. The idea is to unwind the counting operator with less bound and less side effect firstly. We present the heuristic in the following algorithm.
+%The naive approach for nested counting in the paper \cite{Denghang2023} is to unwind all inner counting operators. This approach may generate a large number of states, which is linear to the product of the counting bounds in regex and exponential to the length of the regex. For example, naive unwinding regex $(a^{\{1,1000\}})^{\{1,2\}}$ generate a CEFA containing 1000 states. But if we only unwind the outer counting operator of the regex, not the inner, we obtain a CEFA containing only 2 states. The side effect is that we need two registers to store the information of counting in the inner regex (unwinding of the outer counting operator repeats the inner regex, which also repeats the registers of the inner regex). We present a heuristic to reduce the number of states generated by the unwinding process. The idea is to unwind the counting operator with less bound and fewer side effects firstly. We present the heuristic in the following algorithm.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,7 +109,7 @@ For a regex $\regex$, we can approximate the number of states $size(\regex)$ gen
   \item If $\regex = \regex_1^*$, then $size(\regex) = size(\regex_1)$.
   \item If $\regex = \regex_1 \cap \regex_2$, then $size(\regex) = size(\regex_1)*size(\regex_2)$.
   \item If $\regex = \overline{\regex_1}$, then $size(\regex) = 2^{size(\regex_1)} + 1$.
-  \item $\regex = \regex_1 \backslash \regex_2$ can be transfered to $\regex = \regex_1 \cap \overline{\regex_2}$ and then the size can be computed by the formula of $\cap$ and $\bar{}$.
+  \item $\regex = \regex_1 \backslash \regex_2$ can be transferred to $\regex = \regex_1 \cap \overline{\regex_2}$ and then the size can be computed by the formula of $\cap$ and $\bar{}$.
   \item For $\regex = \regex_1^{\{n,m\}}$ or $\regex = \regex_1^{\{m,\infty\}}$, $size(\regex)$ is equal to $m*size(\regex_1)$ if it is unwinded, and $size(\regex_1)$ otherwise.
 \end{itemize}
 
@@ -126,7 +126,7 @@ We unwind the counting operator with less bound first. The reason is that the nu
   \item If $\regex = \emptyset$, $\regex = \epsilon$, $\regex = \regex_1^*$ or $\regex = \overline{\regex_1}$, then $reg(\regex) = 0$.
   \item If $\regex = \regex_1\cdot \regex_2$ or $\regex = \regex_1 \cap \regex_2$, then $reg(\regex) = reg(\regex_1) + reg(\regex_2)$.
   \item If $\regex = \regex_1 + \regex_2$, then $reg(\regex) = reg(\regex_1) + reg(\regex_2) + 1$.
-  \item $\regex = \regex_1 \backslash \regex_2$ can be transfered to $\regex = \regex_1 \cap \overline{\regex_2}$ and then the number of registers can be computed by the formula of $\cap$ and $\bar{}$.
+  \item $\regex = \regex_1 \backslash \regex_2$ can be transferred to $\regex = \regex_1 \cap \overline{\regex_2}$ and then the number of registers can be computed by the formula of $\cap$ and $\bar{}$.
   \item For $\regex = \regex_1^{\{n,m\}}$ or $\regex = \regex^{\{m, \infty\}}$, $reg(\regex)$ is equal to $m*reg(\regex_1)$ if it is unwinded, and $1$ otherwise.
 \end{itemize}
 
@@ -134,16 +134,16 @@ For each counting operator $^{\{n,m\}}$ or $^{\{m,\infty\}}$ with $\regex$ as it
 
 \medskip
 \noindent
-\emph{Step 3. (Unwind the counting operator with less bound and less registers first).}
+\emph{Step 3. (Unwind the counting operator with less bound and fewer registers first).}
 
-In the above two steps, we compute the number of states and registers generated by each counting operator. In some cases, we can unwind the counting operator with less bound and less registers directly. But in most cases, there are multiple counting operators where one counting operator has less bound and another counting operator has less registers. To consider the number of states and registers at the same time, we can compute the score of each counting operator by the following formula:
+In the above two steps, we compute the number of states and registers generated by each counting operator. In some cases, we can unwind the counting operator with less bound and fewer registers directly. But in most cases, there are multiple counting operators where one counting operator has less bound and another counting operator has fewer registers. To consider the number of states and registers at the same time, we can compute the score of each counting operator by the following formula:
 \begin{itemize}
   \item $score(\regex) = size(\regex) * (reg(\regex)+1)$.
 \end{itemize} 
-The reason why we use product to combine the two factors is that the hardness of the $\cefadec$ problem is highly relevant to the number of variables in the final existential LIA formula, which is linear to the product of the number of states and the number of registers. Use $reg(\regex) + 1$ not $reg(\regex)$ is because the registers number may be $0$.We unwind the counting operator with the smallest score first. 
+The reason why we use the product to combine the two factors is that the hardness of the $\cefadec$ problem is highly relevant to the number of variables in the final existential LIA formula, which is linear to the product of the number of states and the number of registers. Using $reg(\regex) + 1$ not $reg(\regex)$ is because the number of registers may be $0$.We unwind the counting operator with the smallest score first. 
 
 \begin{example}
-  Consider the regex $(a^{\{1,1000\}})^{\{1,2\}}$. The score of $^{\{1,1000\}}$ is $1000*(0+1) = 1000$ and the score of $^{\{1,2\}}$ is $2*(2+1) = 6$. We unwind the outer counting operator first and obtain a CEFA containing only 2 states.  
+ Consider the regex $(a^{\{1,1000\}})^{\{1,2\}}$. The score of $^{\{1,1000\}}$ is $1000*(0+1) = 1000$ and the score of $^{\{1,2\}}$ is $2*(2+1) = 6$. We unwind the outer counting operator first and obtain a CEFA containing only two states.  
 \end{example}
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,15 +153,15 @@ The reason why we use product to combine the two factors is that the hardness of
 
 \subsection{Optimizations for the nesting of counting operators and a complement operator}
 
-As mentioned in Section~\ref{sec:algorithm}, if some counting operators are in the scope of a complement operator, it is necessary to unfold these counting operators before the complement operation. The exponential blow-up in the unfolding combined with the blow-up in the complement operation will produce huge number of states.  To alleviate this problem, we propose two approximations of the complement operation, i.e. an under-approximation and an over-approximation, and combine them into a procedure that achieves a nice balance between efficiency and precision. 
+As mentioned in Section~\ref{sec:algorithm}, if some counting operators are in the scope of a complement operator, it is necessary to unfold these counting operators before the complement operation. The exponential blow-up in the unfolding combined with the blow-up in the complement operation will produce a huge number of states. To alleviate this problem, we propose two approximations of the complement operation, i.e., an under-approximation and an over-approximation, and combine them into a procedure that achieves a nice balance between efficiency and precision. 
 
 Let $e = \overline{e_1}$ be a regular expression, where $e_1$ is a register-representable regular expression. 
 
 \paragraph*{Under-approximation}
 %
-One way of doing the complement operation is to transform $e_1$ into a regular expression that does not contain counting operators. We compute an under-approximation of $e$ by replacing each occurrence of the counting operators in $e_1$, say $(e_2)^{\{m,n\}}$ or $(e_2^{\{n, \infty\}})$, by $e_2^*$. Let us use $e'_1$ denote the resulting regular expression. Note that $e'_1$ does not contain counting operators. Moreover, it is easy to observe that $\Lang(e_1) \subseteq \Lang(e'_1)$. As a result, we have $\Lang(\overline{e'_1}) \subseteq \Lang(\overline{e_1})$. That is, $\overline{e'_1}$ is an under-approximation of $\overline{e_1}$. 
+One way of doing the complement operation is to transform $e_1$ into a regular expression that does not contain counting operators. We compute an under-approximation of $e$ by replacing each occurrence of the counting operators in $e_1$, say $(e_2)^{\{m,n\}}$ or $(e_2^{\{n, \infty\}})$, by $e_2^*$. Let us use $e'_1$ to denote the resulting regular expression. Note that $e'_1$ does not contain counting operators. Moreover, it is easy to observe that $\Lang(e_1) \subseteq \Lang(e'_1)$. As a result, we have $\Lang(\overline{e'_1}) \subseteq \Lang(\overline{e_1})$. That is, $\overline{e'_1}$ is an under-approximation of $\overline{e_1}$. 
 
-%The under-approximation is replacing each counting operator in the subregex of complement with a Kleene star operator. The language of the subregex is a superset of the language of it after under-approximation. In sequential, the complement of the subregex is a subset of origin. Note that this approach only works for non-nested complement, which means there is no other complement operators in the complement. For nested complement,  we naively handle the inner complement operators as paper \cite{Denghang2023} and then under-approximate the outer complement operator.
+%The under-approximation is replacing each counting operator in the subregex of complement with a Kleene star operator. The language of the subregex is a superset of the language of it after under-approximation. In sequential, the complement of the subregex is a subset of the origin. Note that this approach only works for non-nested complement, which means there is no other complement operators in the complement. For nested complement,  we naively handle the inner complement operators as paper \cite{Denghang2023} and then under-approximate the outer complement operator.
 
 \paragraph*{Over-approximation}
 For $e = \overline{e_1}$, we utilize the CEFA constructed from $e_1$, say $\aut_{e_1}$, to construct a CEFA $\cB$ of $e$ so that $\Lang(\cB)$ is an over-approximation of $\Lang(e)$. 
@@ -184,7 +184,7 @@ Then we define $\cB= (R \cup \{r'\}, Q \cup \{q_s\}, \Sigma, \delta', I, Q \cup 
   \end{itemize}
   \item $\alpha'$ is defined as $r' = 1 \rightarrow \neg \alpha$.
 \end{itemize}
-Intuitively, $q_s$ is a sink state that deals with the situations that there are no runs and $r'$ is a register newly introduced so that the different cases of the non-accepting runs of $\aut_{e_1}$ can be captured by a single accepting condition $\alpha'$. 
+Intuitively, $q_s$ is a sink state that deals with the situations where there are no runs, and $r'$ is a register newly introduced so that the different cases of the non-accepting runs of $\aut_{e_1}$ can be captured by a single accepting condition $\alpha'$. 
 
 Note that $\cB$ is a strict over-approximation of $e = \overline{e_1}$ since $\aut_{e_1}$ may be nondeterministic. For instance, if there are two runs of $\aut_{e_1}$ on a string $w$, say one run that ends at a non-final state and another run that ends at a final state and satisfies accepting condition $\alpha$. Then $w \in \Lang(\aut_{e_1})$, thus $w \not \in \Lang(\overline{\aut_{e_1}})$. Nevertheless, according to the construction, $w$ is accepted by $\cB$, witnessed by the run of $\aut_{e_1}$ that ends at a non-final state. 
 
@@ -197,7 +197,7 @@ Note that $\cB$ is a strict over-approximation of $e = \overline{e_1}$ since $\a
 \noindent
 \emph{Step 1. (Under-approximate the language of the regex with complement operators).}
 
-The under-approximation is replacing each counting operator in the subregex of complement with a Kleene star operator. The language of the subregex is a superset of the language of it after under-approximation. In sequential, the complement of the subregex is a subset of origin. Note that this approach only works for non-nested complement, which means there is no other complement operators in the complement. For nested complement,  we naively handle the inner complement operators as paper \cite{Denghang2023} and then under-approximate the outer complement operator.
+The under-approximation is replacing each counting operator in the subregex of complement with a Kleene star operator. The language of the subregex is a superset of the language of it after under-approximation. In sequential, the complement of the subregex is a subset of the origin. Note that this approach only works for non-nested complement, which means there is no other complement operators in the complement. For nested complement,  we naively handle the inner complement operators as paper \cite{Denghang2023} and then under-approximate the outer complement operator.
 
 \medskip
 \noindent
@@ -219,19 +219,19 @@ Given a CEFA $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$, the over-approximate
   \item $\alpha'$ is $r \not= 1\vee \neg \alpha$
 \end{itemize}
 
-$r$ is the register used to check whether the accepted state is also accepted in the original CEFA. $s$ is the self loop state accepting all string that is not accepted by the original CEFA. $f$ is the merged accepted state of original CEFA. If there is a transition $(q, a, q', \vec{v})$ teminates at the accepted state $q'$ in the original CEFA, we add a corresponding transition $(q, a, f, (\vec{v}, 1))$ in the over-approximated complement. From the definition of $\delta'$, we can see that only the transitions goto $f$ increase the value of regesiter $r$. The value of $r$ is $1$ if and only if the accepted state is also accepted in the original CEFA. With above construction, the meaning of the accepting condition $\alpha'$ is obvious: If the string teminates at the accepting state in the original CEFA, then the accepting condition $\alpha$ is false.
+$r$ is the register used to check whether the accepted state is also accepted in the original CEFA. $s$ is the self-loop state accepting all strings that are not accepted by the original CEFA. $f$ is the merged accepted state of the original CEFA. If there is a transition $(q, a, q', \vec{v})$ terminating at the accepted state $q'$ in the original CEFA, we add a corresponding transition $(q, a, f, (\vec{v}, 1))$ in the over-approximated complement. From the definition of $\delta'$, we can see that only the transitions goto $f$ increase the value of register $r$. The value of $r$ is $1$ if and only if the accepted state is also accepted in the original CEFA. With the above construction, the meaning of the accepting condition $\alpha'$ is obvious: If the string terminates at the accepting state in the original CEFA, then the accepting condition $\alpha$ is false.
 
 \begin{theorem}
-  The language of over-approximated complement of CEFA is a superset of the language of exact complement.
+ The language of over-approximated complement of CEFA is a superset of the language of exact complement.
 \end{theorem}
 \begin{proof}
-   Suppose that the original CEFA is $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$, the over-approximated complement of it is $\overline{\aut}_{over} = (R\cup\{r\}, Q\cup\{s,f\}, \Sigma, \delta', I, (Q\cup\{s,f\})\backslash F, \alpha')$, and the exact complement of it is $\overline{\aut}$. To prove the theorem, we only need to show that if a string is accepted by $\overline{\aut}$, then it is accepted by $\overline{\aut}_{over}$. In other words, we need to show that if a string is not accepted by $\overline{\aut}_{over}$, then it is not accepted by $\overline{\aut}$, which means it is accepted by $\aut$. We prove it by construction.
+ Suppose that the original CEFA is $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$, the over-approximated complement of it is $\overline{\aut}_{over} = (R\cup\{r\}, Q\cup\{s,f\}, \Sigma, \delta', I, (Q\cup\{s,f\})\backslash F, \alpha')$, and the exact complement of it is $\overline{\aut}$. To prove the theorem, we only need to show that if a string is accepted by $\overline{\aut}$, then it is accepted by $\overline{\aut}_{over}$. In other words, we need to show that if a string is not accepted by $\overline{\aut}_{over}$, then it is not accepted by $\overline{\aut}$, which means it is accepted by $\aut$. We prove it by construction.
    
-   In the definition of CEFA in section \ref{sec:automaton}, a run $q_0 \xrightarrow[\myvec{\overline{v}_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{\overline{v}_n}]{a_n} q_n$ is \emph{accepting} by $\overline{\aut}_{over}$ if $q_n \in (Q\cup\{s,f\})\backslash F$ and $\alpha'(\myvec{\overline{v}'}/(R\cup\{r\}))$ is true, where $\myvec{\overline{v}'} = \sum \limits_{j \in [n]} \myvec{\overline{v}_j}$. If a string is not accepted by $\overline{\aut}_{over}$, then each run of the string is not accepting run, which means the run teminates at state $q\in F$ or the accepting condition $\alpha'(\myvec{\overline{v}'}/(R\cup\{r\}))$ is $false$. 
+ In the definition of CEFA in section \ref{sec:automaton}, a run $q_0 \xrightarrow[\myvec{\overline{v}_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{\overline{v}_n}]{a_n} q_n$ is \emph{accepting} by $\overline{\aut}_{over}$ if $q_n \in (Q\cup\{s,f\})\backslash F$ and $\alpha'(\myvec{\overline{v}'}/(R\cup\{r\}))$ is true, where $\myvec{\overline{v}'} = \sum \limits_{j \in [n]} \myvec{\overline{v}_j}$. If a string is not accepted by $\overline{\aut}_{over}$, then each run of the string is not accepting run, which means the run terminates at state $q\in F$ or the accepting condition $\alpha'(\myvec{\overline{v}'}/(R\cup\{r\}))$ is $false$. 
    
-   If each run teminates at state $q_f\in F$, suppose that each is of form $q_0\xrightarrow[(\myvec{v_1},\myvec{0})]{a_1}q_1\cdots q_{n-1}\xrightarrow[(\myvec{v_n},\myvec{0})]{a_n}q_f$, where $\myvec{\overline{v}_i}$ is $(\myvec{v_i}, \myvec{0})$ or $(\myvec{v_i}, \myvec{1})$ for $1\leq i\leq n$. Then there is a transition $(q_{n-1}, a_n, q_f, \myvec{v_n})$ in $\delta$ because there is a transition $(q_{n-1}, a_n, q_f, (\myvec{v_n}, \myvec{0}))$ in $\delta'$. So there is a transition $(q_{n-1}, a_n, f, (\myvec{v_n}, \myvec{1}))$ in $\delta'$ based on our construction for $\delta'$. The run $q_0\xrightarrow[(\myvec{v_1},\myvec{0})]{a_1}q_1\cdots q_{n-1}\xrightarrow[(\myvec{v_n},\myvec{1})]{a_n}f$ teminates at the accepting state $f$, contridicting the assumption. 
+ If each run teminates at state $q_f\in F$, suppose that each is of form $q_0\xrightarrow[(\myvec{v_1},\myvec{0})]{a_1}q_1\cdots q_{n-1}\xrightarrow[(\myvec{v_n},\myvec{0})]{a_n}q_f$, where $\myvec{\overline{v}_i}$ is $(\myvec{v_i}, \myvec{0})$ or $(\myvec{v_i}, \myvec{1})$ for $1\leq i\leq n$. Then there is a transition $(q_{n-1}, a_n, q_f, \myvec{v_n})$ in $\delta$ because there is a transition $(q_{n-1}, a_n, q_f, (\myvec{v_n}, \myvec{0}))$ in $\delta'$. So there is a transition $(q_{n-1}, a_n, f, (\myvec{v_n}, \myvec{1}))$ in $\delta'$ based on our construction for $\delta'$. The run $q_0\xrightarrow[(\myvec{v_1},\myvec{0})]{a_1}q_1\cdots q_{n-1}\xrightarrow[(\myvec{v_n},\myvec{1})]{a_n}f$ teminates at the accepting state $f$, contridicting the assumption. 
    
-   If each run makes the accepting condition $\alpha'(\myvec{\overline{v}'}/(R\cup\{r\}))$ false, then the negation of the accepting condition $\neg\alpha'(\myvec{\overline{v}'}/(R\cup\{r\}))$ is true. The negation can be rewriten to $(r=1\wedge \alpha)(\myvec{\overline{v}'}/(R\cup\{r\})) = (r=1)(\myvec{\overline{v}'}/(R\cup\{r\}))\wedge \alpha(\myvec{\overline{v}'}/(R\cup\{r\}))$. In our construction, only the transitions teminate at $f$ increase one to the value of $r$, so that the run must end at $f$ to make $r=1$ be true. $\alpha(\myvec{\overline{v}'}/(R\cup\{r\})) = \alpha(\myvec{v'}/R)$ is also need to be true, implying that the run is an accepting run of $\aut$.
+ If each run makes the accepting condition $\alpha'(\myvec{\overline{v}'}/(R\cup\{r\}))$ false, then the negation of the accepting condition $\neg\alpha'(\myvec{\overline{v}'}/(R\cup\{r\}))$ is true. The negation can be rewriten to $(r=1\wedge \alpha)(\myvec{\overline{v}'}/(R\cup\{r\})) = (r=1)(\myvec{\overline{v}'}/(R\cup\{r\}))\wedge \alpha(\myvec{\overline{v}'}/(R\cup\{r\}))$. In our construction, only the transitions terminate at $f$ increase one to the value of $r$, so that the run must end at $f$ to make $r=1$ be true. $\alpha(\myvec{\overline{v}'}/(R\cup\{r\})) = \alpha(\myvec{v'}/R)$ is also need to be true, implying that the run is an accepting run of $\aut$.
 \end{proof}
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,7 +247,7 @@ Recall that in Section~\ref{sec:algorithm}, the satisfiability of the original R
 \end{array}
 \]
 Let us use $\theta$ to denote this formula. 
-Then we utilize some SMT solver, say Z3, to solve the satisfiability of $\theta$. If Z3 reports ``sat'', then it also returns a model, namely, an assignment $\amodel$ of natural numbers to the free integer variables in $\theta$. Then we utilize $\amodel$ to generate a model $\amodel'$ of the original RECL constraint $\varphi$, i.e. an assignment of strings to the string variables so that $\varphi$ is evaluated to true under $\amodel'$. 
+Then we utilize some SMT solver, say Z3, to solve the satisfiability of $\theta$. If Z3 reports ``sat'', then it also returns a model, namely, an assignment $\amodel$ of natural numbers to the free integer variables in $\theta$. Then we utilize $\amodel$ to generate a model $\amodel'$ of the original RECL constraint $\varphi$, i.e., an assignment of strings to the string variables so that $\varphi$ is evaluated to true under $\amodel'$. 
 
 Note that for each $i \in [n]$, the free variables $\fZ_{\costset_{\cC_i}}$ in $\theta$ correspond to the number of occurrences of characters in $\costset_{\cC_i}$, i.e. the alphabet of the NFA $\cC_i$. Moreover, recall that in $\cC_i$, the characters are just the integer vectors and the characters in the original CEFAs $\cB_i$ used to construct $\cC_i$ are ignored. 
 When we utilize $\amodel$ and the CEFAs $\cB_i$ to generate $\amodel'$, for each $i \in [n]$, we record the remaining occurrences of vectors $\myvec{v}$ in the transitions of the CEFAs $\cB_i$ as a number $\nvec_{i, \myvec{v}}$ and
@@ -262,33 +262,33 @@ Specifically, for each $i \in [n]$ and each transition $(q, a, q', \myvec{v})$ i
 \ \ \bigwedge \limits_{i \in [n]} \bigwedge \limits_{\myvec{v} \in \costset_{\cC_i}} \anivarz_{i, \myvec{v}} = \sum \limits_{(q, a, q', \myvec{v}) \mbox{ occurs in } \cB_i} \anivarz_{i, (q, a, q', \myvec{v})}.
 \end{array}
 \]
-If an SMT solver reports that the aforementioned formula is satisfiable, then the solver can also returns a model, which assigns to each variable $\anivarz_{i, (q, a, q', \myvec{v})}$ a natural number. 
+If an SMT solver reports that the aforementioned formula is satisfiable, then the solver can also return a model, which assigns to each variable $\anivarz_{i, (q, a, q', \myvec{v})}$ a natural number. 
 %For each $i \in [n]$ and each transition $(q, a, q', \myvec{v})$ in $\cB_i$, let us use $nt_{i, (q, a, q', \myvec{v})}$ to denote the value of $\anivarz_{i, (q, a, q', \myvec{v})}$ in the model.
 Then we utilize these values to generate a model (an assignment of strings to string variables) of $\varphi$. 
 Let $i \in [n]$. We use a function $\lambda_i$ to record the number of occurrences of the transitions in $\cB_i$. During the search process for $\cB_i$, each time when a transition $(q, a, q', \myvec{v})$ is traversed, $\lambda_i$ is updated by decrementing $\lambda_i((q, a, q', \myvec{v}))$, moreover, $a$ is also recorded. Initially, for each $i \in [n]$ and each transition $(q, a, q', \myvec{v})$ in $\cB_i$, $\lambda_i((q, a, q', \myvec{v}))$ is set to be the value of $\anivarz_{i, (q, a, q', \myvec{v})}$ in the model. When a final state of $\cB_i$ is reached and $\lambda_i((q, a, q', \myvec{v}))$ becomes zero for each transition $(q, a, q', \myvec{v})$ in $\cB_i$, then a desired string is generated for the string variable $x_i$. 
 
-Moreover, propose a method to prune the search space further. Let $i \in [n]$. Suppose that during the search process for $\cB_i$, let $q$ be the current state of $\cB_i$ and $\lambda_i$ record the remaining occurrences of transitions of $\cB_i$. We compute the set of transitions of $\cB_i$ that are reachable from the state $q$. Let $\cT_q$ denote this set. If $\{(q, a, q', \myvec{c}) \mid \lambda_i((q, a, q', \myvec{c})) > 0\} \not \subseteq \cT_q$, then we know that it is impossible to continue the search process so that a string accepted by $\cB_i$ will be found and meanwhile the constraint on the number of transitions enforced by $\lambda_i$ is satisfied. Therefore, in this case, the search process for $\cB_i$ in this direction halts and the search process is backtracked. 
+Moreover, propose a method to prune the search space further. Let $i \in [n]$. Suppose that during the search process for $\cB_i$, let $q$ be the current state of $\cB_i$ and $\lambda_i$ record the remaining occurrences of transitions of $\cB_i$. We compute the set of transitions of $\cB_i$ that are reachable from the state $q$. Let $\cT_q$ denote this set. If $\{(q, a, q', \myvec{c}) \mid \lambda_i((q, a, q', \myvec{c})) > 0\} \not \subseteq \cT_q$, then we know that it is impossible to continue the search process so that a string accepted by $\cB_i$ will be found and meanwhile the constraint on the number of transitions enforced by $\lambda_i$ is satisfied. Therefore, in this case, the search process for $\cB_i$ in this direction halts, and the search process is backtracked. 
 
 %\zhilin{stopped here}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \hide{
-In the section \ref{sec:algorithm}, we present an algorithm to solve the $\cefadec$ problem. The algorithm computes existential LIA formulas and then uses SMT solver to solve it. However, this procedure only anwser the question whether the language of the regex is empty or not. If the language is not empty, we need to find a word in the language in practice. In our preivous paper \cite{Denghang2023}, we do not explicitly present the algorithm to find a word in the language because of the space limitation. We have used a naive approach which randomly searching the CEFAs by the depth-first search, based on the regesiters values obtained from solving the existential LIA formula. However, this approach is not efficient when the regexes is non-regesiter-representable. Suppose that there are $n$ registers whose values are $r_1,\cdots, r_n$ respectively in the CEFA, we may visit each transition $O(r_1*r_2\cdots *r_n)$ times during the search. To relieve this problem, we present a heuristic to find a word in the language as follows.
+In the section \ref{sec:algorithm}, we present an algorithm to solve the $\cefadec$ problem. The algorithm computes existential LIA formulas and then uses an SMT solver to solve them. However, this procedure only answers the question of whether the language of the regex is empty or not. If the language is not empty, we need to find a word in the language in practice. In our previous paper \cite{Denghang2023}, we do not explicitly present the algorithm to find a word in the language because of space limitation. We used a naive approach, which randomly searched the CEFAs by the depth-first search based on the register values obtained from solving the existential LIA formula. However, this approach is not efficient when the regexes are non-register-representable. Suppose that there are $n$ registers whose values are $r_1,\cdots, r_n$ respectively in the CEFA. We may visit each transition $O(r_1*r_2\cdots *r_n)$ times during the search. To relieve this problem, we present a heuristic to find a word in the language as follows.
 
 \medskip
 \noindent
 \emph{Step 1. (Compute the transitions times visited by the accepted string of CEFAs).}
 
-For each CEFA $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$, we already know the values of its registers after solving the existential LIA formula. The values can be seen as a constant vector of length $|R|$. We use $\myvec{R}$ to denote the vector and use $\eta((q, a, q', \myvec{v}))$ to denote the parikh image of $\aut$. Then the transitions times visited by the accepted stirng is obtained from the following formula:
+For each CEFA $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$, we already know the values of its registers after solving the existential LIA formula. The values can be seen as a constant vector of length $|R|$. We use $\myvec{R}$ to denote the vector and use $\eta((q, a, q', \myvec{v}))$ to denote the parikh image of $\aut$. Then the transition times visited by the accepted string are obtained from the following formula:
 $$ \sum \limits_{(q, a, q', \myvec{v})\in \delta} \eta((q, a, q', \myvec{v}))\myvec{v} = \myvec{R}$$
 
 \medskip
 \noindent
-\emph{Step 2. (Prune the search tree early by the transitions times during the search process).}
+\emph{Step 2. (Prune the search tree early by the transition times during the search process).}
 
-After computing the transitions times visited by the accepted string, we prune the search tree of the CEFA based on the transitions times. The idea is that we only visit the state which is able to reach all transitions need to be visited. Other states are deleted from the CEFA so that we can reduce the search space.
-Note that the transitions times is updated during the search process so the search space is reduced dynamically. The presudo code is presented in Algorithm~\ref{alg:findword}.
+After computing the transition times visited by the accepted string, we prune the search tree of the CEFA based on the transition times. The idea is that we only visit the state which is able to reach all transitions need to be visited. Other states are deleted from the CEFA so that we can reduce the search space.
+Note that the transition times are updated during the search process, so the search space is reduced dynamically. The pseudo-code is presented in Algorithm~\ref{alg:findword}.
 
 \begin{algorithm}[H]
   \caption{Find a word in the language of a CEFA}\label{alg:findword}
@@ -317,8 +317,8 @@ Note that the transitions times is updated during the search process so the sear
   \end{algorithmic}
   \end{algorithm}
 
-  The procedure \textsc{findmodel} takes a CEFA $\aut$ and a transitions-times map $tmap$ as input. $tmap$ maps each transition to its remaining visited times. Stack $todo$ contains states need to be visited, their corresponding transitions-times maps and current word. Set $visited$ is used to store the visited state with corresponding map. $todo$ is initialized with the initial state of the CEFA, the input map $tmap$ and an empty word (line 2). $visited$ is initialized as an empty set (line 3).
-  In the while loop from line 4 to line 16, the state combined with its transitions-times map is searched by the depth-first search algorithm. During the search process, the procedure returns the word if the state is an accepting state and all remaining times of transitions are $0$ (line 7). For each transition $(q, a, q', \myvec{v})$ whose remaining times are greater than $0$, the procedure decreases the remaining times by $1$ (line 10) and checks whether $(q', tmap')$ is not visited and $tmap'$ is reachable from $q'$ (line 11). We say that \textit{$tmap'$ is reachable from $q'$} if each transition $t$ with $tmap'(t)> 0$ are reachable from the state $q'$. The reachability check (Algorithm~\ref{alg:isReachable}) is vital to prune the search space and reduce the search time . If the state $q'$ is not visited and $tmap'$ is reachable from $q'$, then we push $(q', tmap', w\cdot a)$ to $todo$ and add $(q', tmap')$ to $visited$ to continue the search(line 12-13). If the while loop terminates without finding an accepting word, the procedure returns $\emptyset$ (line 17).  
+ The procedure \textsc{findmodel} takes a CEFA $\aut$ and a transitions-times map $tmap$ as input. $tmap$ maps each transition to its remaining visited times. Stack $todo$ contains states need to be visited, their corresponding transitions-times maps and the current word. Set $visited$ is used to store the visited state with the corresponding map. $todo$ is initialized with the initial state of the CEFA, the input map $tmap$ and an empty word (line 2). $visited$ is initialized as an empty set (line 3).
+ In the while loop from line 4 to line 16, the state combined with its transitions-times map is searched by the depth-first search algorithm. During the search process, the procedure returns the word if the state is an accepting state and all remaining times of transitions are $0$ (line 7). For each transition $(q, a, q', \myvec{v})$ whose remaining times are greater than $0$, the procedure decreases the remaining times by $1$ (line 10) and checks whether $(q', tmap')$ is not visited and $tmap'$ is reachable from $q'$ (line 11). We say that \textit{$tmap'$ is reachable from $q'$} if each transition $t$ with $tmap'(t)> 0$ is reachable from the state $q'$. The reachability check (Algorithm~\ref{alg:isReachable}) is vital to prune the search space and reduce the search time. If the state $q'$ is not visited and $tmap'$ is reachable from $q'$, then we push $(q', tmap', w\cdot a)$ to $todo$ and add $(q', tmap')$ to $visited$ to continue the search(line 12-13). If the while loop terminates without finding an accepting word, the procedure returns $\emptyset$ (line 17).  
   
   \begin{algorithm}[H]
     \caption{Check whether the map is reachable from the state}\label{alg:isReachable}
@@ -347,7 +347,7 @@ Note that the transitions times is updated during the search process so the sear
     \end{algorithmic}
   \end{algorithm}
 
-  In Algorithm~\ref{alg:isReachable}, all transitions reachable from the state $q'$ is computed and saved to $qreach$. If $qreach$ covers all transitions with positive times in the input map $tmap$, then we say that $tmap$ is reachable from $q'$ and the procedure \textsc{isReachable} returns true, otherwise it returns false.  
+ In Algorithm~\ref{alg:isReachable}, all transitions reachable from the state $q'$ are computed and saved to $qreach$. If $qreach$ covers all transitions with positive times in the input map $tmap$, then we say that $tmap$ is reachable from $q'$ and the procedure \textsc{isReachable} returns true, otherwise it returns false.  
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
