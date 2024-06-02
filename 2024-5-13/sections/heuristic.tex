@@ -253,10 +253,27 @@ Note that for each $i \in [n]$, the free variables $\fZ_{\costset_{\cC_i}}$ in $
 When we utilize $\amodel$ and the CEFAs $\cB_i$ to generate $\amodel'$, for each $i \in [n]$, we record the remaining occurrences of vectors $\myvec{v}$ in the transitions of the CEFAs $\cB_i$ as a number $\nvec_{i, \myvec{v}}$ and
 each time when a transition $(q, a, q', \myvec{v})$ in $\cB_i$ is traversed, $\nvec_{i, \myvec{v}}$ is decremented. Note that initially $\nvec_{i, \myvec{v}}$ is set to $\amodel(\anivarz_{i, \myvec{v}})$. The searching process terminates when $\nvec_{i, \myvec{v}}$ becomes $0$ for every $\myvec{v}$. We record the characters in the traversed transitions and obtain a string for the string variable $x_i$ when the searching process terminates. As a result, we obtain a model of $\varphi$ in the end. 
 
-It turns out that this model generation process is inefficient, mainly due to the fact that the information about the occurrences of vectors $\myvec{v}$ in $\cB_i$ in the searching process is too coarse. In the sequel, we would like to refine this process by using the LIA formulas to obtain the information about the number of occurrences of transitions, instead of just the integer vectors, and utilize this information to guide the searching process. Moreover, some additional tricks are introduced to prune the searching space further.  
+It turns out that this model generation process is inefficient, mainly due to the fact that the information about the occurrences of vectors $\myvec{v}$ in $\cB_i$ in the searching process is too coarse. In the sequel, we would like to refine this process by using the LIA formulas to obtain the information about the number of occurrences of transitions, instead of just the occurrences of integer vectors, and utilize this information to guide the search process. 
+Specifically, for each $i \in [n]$ and each transition $(q, a, q', \myvec{v})$ in $\cB_i$, we introduce an integer variable $\anivarz_{i, (q, a, q', \myvec{v})}$ to denote the number of occurrences of the transition, and solve the satisfiability of the following formula,  
+\[
+\begin{array}{l}
+\bigwedge \limits_{i \in [n]} \left(\psi_{\cC_i}(\fZ_{\costset_{\cC_i}}) \wedge \alpha_i\left[\sum\limits_{\myvec{v} \in \costset_{\cC_i}} \anivarz_{i, \myvec{v}} \myvec{v} \big{/}R_{\cB_i}  \right] \right) \ \wedge \\
+\ \ \varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cC_1}} \anivarz_{1, \myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cC_n}} \anivarz_{n, \myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right]\ \wedge \\
+\ \ \bigwedge \limits_{i \in [n]} \bigwedge \limits_{\myvec{v} \in \costset_{\cC_i}} \anivarz_{i, \myvec{v}} = \sum \limits_{(q, a, q', \myvec{v}) \mbox{ occurs in } \cB_i} \anivarz_{i, (q, a, q', \myvec{v})}.
+\end{array}
+\]
+If an SMT solver reports that the aforementioned formula is satisfiable, then the solver can also returns a model, which assigns to each variable $\anivarz_{i, (q, a, q', \myvec{v})}$ a natural number. 
+%For each $i \in [n]$ and each transition $(q, a, q', \myvec{v})$ in $\cB_i$, let us use $nt_{i, (q, a, q', \myvec{v})}$ to denote the value of $\anivarz_{i, (q, a, q', \myvec{v})}$ in the model.
+Then we utilize these values to generate a model (an assignment of strings to string variables) of $\varphi$. 
+Let $i \in [n]$. We use a function $\lambda_i$ to record the number of occurrences of the transitions in $\cB_i$. During the search process for $\cB_i$, each time when a transition $(q, a, q', \myvec{v})$ is traversed, $\lambda_i$ is updated by decrementing $\lambda_i((q, a, q', \myvec{v}))$, moreover, $a$ is also recorded. Initially, for each $i \in [n]$ and each transition $(q, a, q', \myvec{v})$ in $\cB_i$, $\lambda_i((q, a, q', \myvec{v}))$ is set to be the value of $\anivarz_{i, (q, a, q', \myvec{v})}$ in the model. When a final state of $\cB_i$ is reached and $\lambda_i((q, a, q', \myvec{v}))$ becomes zero for each transition $(q, a, q', \myvec{v})$ in $\cB_i$, then a desired string is generated for the string variable $x_i$. 
 
-\zhilin{stopped here}
+Moreover, propose a method to prune the search space further. Let $i \in [n]$. Suppose that during the search process for $\cB_i$, let $q$ be the current state of $\cB_i$ and $\lambda_i$ record the remaining occurrences of transitions of $\cB_i$. We compute the set of transitions of $\cB_i$ that are reachable from the state $q$. Let $\cT_q$ denote this set. If $\{(q, a, q', \myvec{c}) \mid \lambda_i((q, a, q', \myvec{c})) > 0\} \not \subseteq \cT_q$, then we know that it is impossible to continue the search process so that a string accepted by $\cB_i$ will be found and meanwhile the constraint on the number of transitions enforced by $\lambda_i$ is satisfied. Therefore, in this case, the search process for $\cB_i$ in this direction halts and the search process is backtracked. 
 
+%\zhilin{stopped here}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hide{
 In the section \ref{sec:algorithm}, we present an algorithm to solve the $\cefadec$ problem. The algorithm computes existential LIA formulas and then uses SMT solver to solve it. However, this procedure only anwser the question whether the language of the regex is empty or not. If the language is not empty, we need to find a word in the language in practice. In our preivous paper \cite{Denghang2023}, we do not explicitly present the algorithm to find a word in the language because of the space limitation. We have used a naive approach which randomly searching the CEFAs by the depth-first search, based on the regesiters values obtained from solving the existential LIA formula. However, this approach is not efficient when the regexes is non-regesiter-representable. Suppose that there are $n$ registers whose values are $r_1,\cdots, r_n$ respectively in the CEFA, we may visit each transition $O(r_1*r_2\cdots *r_n)$ times during the search. To relieve this problem, we present a heuristic to find a word in the language as follows.
 
 \medskip
@@ -331,3 +348,6 @@ Note that the transitions times is updated during the search process so the sear
   \end{algorithm}
 
   In Algorithm~\ref{alg:isReachable}, all transitions reachable from the state $q'$ is computed and saved to $qreach$. If $qreach$ covers all transitions with positive times in the input map $tmap$, then we say that $tmap$ is reachable from $q'$ and the procedure \textsc{isReachable} returns true, otherwise it returns false.  
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
