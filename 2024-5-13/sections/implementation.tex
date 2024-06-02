@@ -97,7 +97,7 @@ Moreover, $\ostrichrecl$ is the second fastest solver, whose average time on eac
 %   \caption{The performance of solvers on instances with large bounds}\label{tab:large-bound}
 % \end{table}
 
-\subsection{Empirical evaluation of the technical choices and optimizations in Section~\ref{sec:algorithm}-\ref{sec-opt-sol-gen}}\label{subsec:size_reduction_eval}
+\subsection{Evaluation of the technical choices and optimizations in Section~\ref{sec:algorithm}-\ref{sec-opt-sol-gen}}\label{subsec:size_reduction_eval}
 
 At first, we do experiments to evaluate the effectiveness of the automata size-reduction techniques (i.e. Step 2) in Section~\ref{sec:algorithm}. Then we justify our technical choices of reducing the satisfiability problem to that of LIA formulas and resort to the SMT solvers to solve them. Specifically, we compare $\ostrichrecl$ with a variant where the nuXmv model checker like \cite{atva2020} is used to solve the $\cefadec$ problem. 
 %
@@ -109,7 +109,8 @@ We also evaluate the effectiveness of the optimizations in Section~\ref{sec:heur
 %We also do experiments to evaluate the effectiveness of the automata size-reduction techniques, that is, Step 2 in Section~\ref{subsec:cefadec}. 
 %Let us use $\ostrichrecl_{\rm -SIMP}$ to denote $\ostrichrecl$ with the size-reduction techniques removed. 
 
-\paragraph*{Empirical evaluation of the technical choices and optimizations in Section~\ref{sec:algorithm}}
+\paragraph*{Evaluation of the technical choices and optimizations in Section~\ref{sec:algorithm}}
+%
 We compare $\ostrichrecl$ with its variant  $\ostrichrecl_{\rm +NUXMV}$, which is obtained from $\ostrichrecl$ by using the nuXmv model checker to solve the $\cefadec$ problem. Moreover, we also compare $\ostrichrecl$ with its variant $\ostrichrecl_{\rm -ASR}$, which is obtained from $\ostrichrecl$ by removing the automata size-reduction technique (i.e. Step 2 in Section~\ref{subsec:cefadec}). 
 
 The experiment results can be found in Table~\ref{tab:results_algorithm}. From the results, we can see that $\ostrichrecl$ solves 2,532 more instances and is 2.38 times faster than $\ostrichrecl_{\rm +NUXMV}$. 
@@ -133,20 +134,23 @@ From the results, we can see that the automata-size reduction technique indeed p
 We also compare the performance of $\ostrichrecl$ with its variants ${\rm -NEST}$, ${\rm -COMP}$, ${\rm -FIND}$. ${\rm -NEST}$ is obtained from $\ostrichrecl$ by removing the heuristic for nested counting. ${\rm -COMP}$ is obtained by removing the heuristic for complement on counting operators. ${\rm -FIND}$ is obtained by removing the heuristic for finding the accepted word of the automaton.
 
 \begin{table}
-  \import{tables}{table_heuristics.tex}
-  \caption{Evaluation of the optimizations in Section~\ref{sec:heuristic}}\label{tab:results_heuristic}
+  \import{tables}{table_heuristics_complex.tex}
+  \caption{Evaluation of the optimizations in Section~\ref{sec:heuristic}}\label{tab:results_heuristic_complex}
 \end{table}
 
 The overall experiment results can be found in Table~\ref{tab:results_heuristic}. We can see that $\ostrichrecl$ solves 77/388/349 more instances and is 1.13/1.18/1.24 times faster than ${\rm -NEST}$/${\rm -COMP}$/${\rm -FIND}$ respectively. 
 
 Since the non-register-representable regexes collected from real world are few (5\% of RegCoL and AutomatArk benchmark suites) and simple, there seems no much difference between the performance of $\ostrichrecl$ and its variants ${\rm -NEST}$, ${\rm -COMP}$, ${\rm -FIND}$ in the overall experiment results. Therefore, we consider the NestC benchmark suite, which contains more complex non-register-representable regexes, to justify the optimizations for non-register-representable regexes. The NestC benchmark experiment results is shown in Table~\ref{tab:results_heuristic_complex}. We can see that $\ostrichrecl$ solves 82/339/326 more instances and is 1.02/1.92/1.61 times faster than ${\rm -NEST}$/${\rm -COMP}$/${\rm -FIND}$ respectively. From the results, we can conclude that all the optimizations sharply improve the performance of $\ostrichrecl$ on the non-register-representable regexes.
 
+\paragraph*{Evaluation of the optimizations in Section~\ref{sec-opt-sol-gen}}
+
+Table~\ref{tab:results_model-gen}. 
+
 \begin{table}
-  \import{tables}{table_heuristics_complex.tex}
-  \caption{Empirical justification of the optimizations on NestC benchmarks}\label{tab:results_heuristic_complex}
+  \import{tables}{table_heuristics_model_gen.tex}
+  \caption{Evaluation of the optimizations for the model generation in Section~\ref{sec-opt-sol-gen}}\label{tab:results_model-gen}
 \end{table}
 
-\paragraph*{Evaluation of the optimizations in Section~\ref{sec-opt-sol-gen}}
 
 
 %To answer \textbf{Q3}, \textbf{our algorithm for solving the nonemptiness problem is much better than the \textsc{nuXmv}-based techniques}.
