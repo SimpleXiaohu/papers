@@ -12,7 +12,7 @@ such that $(\theta(x_i); \myvec{v_{i,j}}) \in \Lang(\aut_{i, j})$ and  $\varphi[
 $\cefadec$ is PSPACE-complete. 
 \end{proposition}
 %\begin{proof}
-%  The lower bound follows from the fact that the nonemptiness problem of the intersection of NFAs is PSPACE-complete \cite{pspace_int}. For the upper bound, \cite{atva2020} showed that $\cefadec$ is in PSPACE by reducing it to monotonic counter machines.
+%  The lower bound follows from the fact that the non-emptiness problem of the intersection of NFAs is PSPACE-complete \cite{pspace_int}. For the upper bound, \cite{atva2020} showed that $\cefadec$ is in PSPACE by reducing it to monotonic counter machines.
 %\end{proof}
 Note that the decision procedure in \cite{atva2020} was only used to prove the upper bound in Proposition~\ref{prop-cefadec} and not implemented as a matter of fact. Instead, the symbolic model checker nuXmv~\cite{nuxmv} was used to solve $\cefadec$. We do not rely on nuXmv in this work and shall propose a new algorithm for solving $\cefadec$ in Section~\ref{subsec:cefadec}. 
 
