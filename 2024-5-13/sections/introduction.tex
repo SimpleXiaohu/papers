@@ -29,13 +29,18 @@ A typical way for string constraint solvers to deal with regular expressions wit
 \noindent 
 \emph{Contribution.} In this work, we focus on the class of string constraints with regular membership and string-length function, where the counting operators may occur (called RECL for brevity). We make the following contributions.
 \begin{itemize}
-  \item We propose an automata-theoretical approach for solving RECL constraints. \zhilin{update this paragraph later}
+  \item We propose an automata-theoretical approach for solving RECL constraints.
   Our main idea is to represent the counting operators by cost registers in cost-enriched finite automata (CEFA, see Section~\ref{sec:automaton} for the definition), instead of unfolding them explicitly. The string-length function is modeled by cost registers as well. The satisfiability of RECL constraints is reduced to the nonemptiness problem of CEFA w.r.t. a linear integer arithmetic (LIA) formula. According to the results from~\cite{atva2020}, an LIA formula can be computed to represent the potential values of registers in CEFA.
-Thus, the nonemptiness of CEFA w.r.t. LIA formulas can be reduced to the satisfiability of LIA formulas, which is then tackled by off-the-shelf SMT solvers.
-  \item We propose techniques to reduce the sizes (i.e. the number of states and transitions) of CEFA, in order to achieve better performance.
-  \item Combined with the size-reduction techniques mentioned above, the register representation of regex-counting and string-length in CEFA entails an efficient algorithm for solving RECL constraints. We implement the algorithm on top of OSTRICH, resulting in a string solver called $\ostrichrecl$. 
+Thus, the nonemptiness of CEFA w.r.t. LIA formulas can be reduced to the satisfiability of LIA formulas, which is then tackled by off-the-shelf SMT solvers. Moreover, we propose techniques to reduce the sizes (i.e. the number of states and transitions) of CEFA, in order to achieve better performance.
+%
+  \item For complex RECL constraints where the counting operators may be nested with the other counting operators or complement operators, we propose optimization techniques to improve the performance. Furthermore, for the satisfiable RECL constraints where the solutions of the LIA formulas can be obtained, but the models of the original RECL constraint cannot be generated,  we propose optimization techniques to accelerate the model generation process. 
+%
+%  \item 
+%  Combined with the size-reduction techniques mentioned above, the register representation of regex-counting and string-length in CEFA entails an efficient algorithm for solving RECL constraints. 
  %
-  \item Finally, we utilize a collection of benchmark suites comprising 48,843 instances in total to evaluate the performance of $\ostrichrecl$. The experiment results show that $\ostrichrecl$ solves the RECL constraints more efficiently than the state-of-the-art string solvers, especially when the counting and length bounds are large (see Figure~\ref{fig:table_overall_eval} and Table~\ref{tab:large-bound}). For instance, on 1,969 benchmark instances where the counting bounds are greater than or equal to $50$ and the string lengths are required to be beyond $200$, $\ostrichrecl$ solves at least $278$ more instances than the other solvers, while spending only half or less time per instance on average. 
+\item We implement the algorithm on top of OSTRICH, resulting in a string solver called $\ostrichrecl$. Finally, we utilize a collection of benchmark suites comprising 49,843 problem instances in total to evaluate the performance of $\ostrichrecl$. The experiment results show that $\ostrichrecl$ solves the RECL constraints more efficiently than the state-of-the-art string solvers (see Table~\ref{tab:table_overall_eval}-\ref{tab:results_model-gen}). For instance, $\ostrichrecl$ solves 49,638 out of 49,843 instances, while the best state-of-the-art solvers solve only 47,721 instances. We also do experiments to justify some of our technical choices and evaluate the performance of the optimizations. 
+%
+% 1,000 benchmark instances where the counting and length bounds are large or the counting operators are nested with some other counting operators or complement operators, $\ostrichrecl$ solves at least $278$ more instances than the other solvers, while spending only half or less time per instance on average. 
 \end{itemize}
 
 \medskip
@@ -66,8 +71,13 @@ Counting-set automata were proposed in~\cite{redos_lenka,HS+23} to quickly match
 The rest of this paper is structured as follows: Section~\ref{sec:overview} gives an overview of the approach in this paper. Section~\ref{sec:pre} introduces the preliminaries. 
 Section~\ref{sec:recl} presents the syntax and semantics of RECL. 
 Section~\ref{sec:automaton} defines CEFA. Section~\ref{sec:algorithm} introduces the algorithm to solve RECL constraints. 
-Section~\ref{sec:heuristic} presents some heuristics for improving the performance of solving RECL constraints where the counting operators are inside the scope of some other counting operators or complement operators. \zhilin{double check later}
-Section~\ref{sec:implementation} shows the experiment results. Section~\ref{sec:conclu} concludes this paper.
+Section~\ref{sec:heuristic} presents some heuristics for improving the performance of solving RECL constraints where the counting operators are nested with some other counting operators or complement operators. Section~\ref{sec:implementation} shows the experiment results. Section~\ref{sec:conclu} concludes this paper.
 
-A preliminary version of this paper has appeared in the proceedings of SETTA 2023~\cite{Denghang2023}. This paper extends the SETTA paper in the following two aspects: (i) To improve the performance of complex RECL constraints where the counting operators are nested with some other counting operators or nested with the complement operators, various heuristics are proposed, (ii) moreover, to evaluate the performance of these heuristics, the benchmarks as well as the experiments are extended.   \zhilin{double check later}
- 
+\smallskip
+
+A preliminary version of this paper has appeared in the proceedings of SETTA 2023~\cite{Denghang2023}. This paper extends the SETTA paper in the following three aspects.
+\begin{itemize}
+\item To improve the performance of complex RECL constraints where the counting operators are nested with some other counting operators or complement operators, various optimizations are proposed. 
+\item To deal with the issue that the satisfiability of LIA formulas can be solved, but models of the original RECL constraints cannot be generated, we propose techniques to optimize the model generation process.  
+\item The benchmarks are extended to cove the situations that the counting operators are nested with some other counting operators or complement operators, and the experiments are extended accordingly.  
+\end{itemize}
