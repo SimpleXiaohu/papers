@@ -57,7 +57,7 @@ It turns out that our approach can solve almost all the RECL constraints involvi
 %$(a^{\{2, 6\}} \concat b^*) \setminus (a + b)^{\{4, \infty\}}$ is transformed into $(aa(\varepsilon + a + aa + aaa + aaaa) \concat b^*) \setminus (a+b)(a+b)(a+b)(a+b)(a+b)^*$.
 
 For each $i \in [n]$, let $x_i \in e_{i, 1}, \cdots, x_i \in e_{i, l_i}$ be an enumeration of the regular membership constraints for $x_i$ in $\varphi_1$.  Then we can construct CEFA $\aut_{i, j}$ from $e_{i, j}$ for each $i \in [n]$ and $j \in [l_i]$. Moreover, we construct another CEFA $\aut_{i, 0}$ for each $i \in [n]$ to model the length of $x_i$. Specifically, $\aut_{i,0}$ is constructed as $((r_{i,0}), \{q_{i,0}\}, \Sigma, \delta_{i,0}, \{q_{i,0}\}, \{q_{i,0}\}, \ltrue)$ where $r_{i,0}$ is a fresh register and $\delta_{i,0} = \{(q_{i,0}, a, q_{i,0}, (1)) \mid a \in \Sigma\}$. 
-Let $\Lambda_{x_i} = \{\aut_{i,0}, \aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for each $i \in [n]$, and $\varphi'_2 \equiv \varphi_2[r_{1,0}/|x_1|, \cdots, r_{n,0}/|x_n|]$. Then the satisfiability of $\varphi$ is reduced to the nonemptiness of CEFAs in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi'_2$.
+Let $\Lambda_{x_i} = \{\aut_{i,0}, \aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for each $i \in [n]$, and $\varphi'_2 \equiv \varphi_2[r_{1,0}/|x_1|, \cdots, r_{n,0}/|x_n|]$. Then the satisfiability of $\varphi$ is reduced to the non-emptiness of CEFAs in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi'_2$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,7 +71,7 @@ The procedure comprises three steps.
 \noindent
 \emph{Step 1 (Computing intersection automata).} For each $i \in [n]$, compute a CEFA $\cB_{i} = \aut_{i,1} \cap \cdots \cap \aut_{i, l_i}$, and let $\Lambda'_{x_i} := \{\cB_i\}$. \qed
 
-After Step 1, the nonemptiness of CEFAs in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$ is reduced to the nonemptiness of CEFAs in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$. 
+After Step 1, the non-emptiness of CEFAs in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ w.r.t. $\varphi$ is reduced to the non-emptiness of CEFAs in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$. 
 
 In the following steps, we reduce the non-emptiness of CEFAs in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$ to the satisfiability of an LIA formula. The reduction relies on the following two observations. 
 %The first observation follows from the fact that $\Lambda'_{x_i}$ for each $i \in [n]$ contains exactly one CEFA, and the second observation follows from the fact that the non-emptiness of exactly one CEFA w.r.t an LIA formula is entirely unrelated to the alphabet.
@@ -106,7 +106,7 @@ there are $\eta_1 \in \parikh(\cU_{\cB_1}), \cdots, \eta_n \in \parikh(\cU_{\cB_
 is true. 
 \end{itemize}
 
-Therefore, to solve the nonemptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$, it is sufficient to compute the existential LIA formulas $\psi_{\cU_{\cB_1}}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cU_{\cB_n}}(\fZ_{\costset_{\cB_n}})$ to represent the Parikh images of $\cU_{\cB_1}$, $\cdots$, $\cU_{\cB_n}$ respectively, where $\fZ_{\costset_{\cB_i}} = \{\anivarz_{i,\myvec{v}} \mid \myvec{v} \in \costset_{\cB_i}\}$ for $i \in [n]$, and solve the satisfiability of the following existential LIA formula
+Therefore, to solve the non-emptiness of CEFA in $\Lambda'_{x_1}, \cdots, \Lambda'_{x_n}$ w.r.t. $\varphi$, it is sufficient to compute the existential LIA formulas $\psi_{\cU_{\cB_1}}(\fZ_{\costset_{\cB_1}}), \cdots, \psi_{\cU_{\cB_n}}(\fZ_{\costset_{\cB_n}})$ to represent the Parikh images of $\cU_{\cB_1}$, $\cdots$, $\cU_{\cB_n}$ respectively, where $\fZ_{\costset_{\cB_i}} = \{\anivarz_{i,\myvec{v}} \mid \myvec{v} \in \costset_{\cB_i}\}$ for $i \in [n]$, and solve the satisfiability of the following existential LIA formula
 \[
 \begin{array}{l}
 \bigwedge \limits_{i \in [n]} \left(\psi_{\cU_{\cB_i}}(\fZ_{\costset_{\cB_i}}) \wedge \alpha_i\left[\sum\limits_{\myvec{v} \in \costset_{\cB_i}} \anivarz_{i, \myvec{v}} \myvec{v} \big{/}R_{\cB_i}  \right] \right)\  \wedge \\
