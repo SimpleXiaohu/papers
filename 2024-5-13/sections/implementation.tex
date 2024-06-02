@@ -75,7 +75,7 @@ The experiment results can be found in Table~\ref{tab:table_overall_eval}. Note 
 %
 Moreover, $\ostrichrecl$ is the second fastest solver, whose average time on each instance is close to the fastest solver Z3str3RE (2.88s versus 1.99s). 
 
-\begin{table}
+\begin{table}[htbp]
   \centering\vskip 0pt
     \import{tables}{table_regcol.tex}
     \caption{Overall performance evaluation}
@@ -111,46 +111,49 @@ We also evaluate the effectiveness of the optimizations in Section~\ref{sec:heur
 
 \paragraph*{Evaluation of the technical choices and optimizations in Section~\ref{sec:algorithm}}
 %
-We compare $\ostrichrecl$ with its variant  $\ostrichrecl_{\rm +NUXMV}$, which is obtained from $\ostrichrecl$ by using the nuXmv model checker to solve the $\cefadec$ problem. Moreover, we also compare $\ostrichrecl$ with its variant $\ostrichrecl_{\rm -ASR}$, which is obtained from $\ostrichrecl$ by removing the automata size-reduction technique (i.e. Step 2 in Section~\ref{subsec:cefadec}). 
+We compare $\ostrichrecl$ with $\ostrichrecl_{\rm NUXMV}$, which is a variant of $\ostrichrecl$ where the nuXmv model checker is used to solve the $\cefadec$ problem. Moreover, we also compare $\ostrichrecl$ with $\ostrichrecl_{\rm -ASR}$, which is obtained from $\ostrichrecl$ by removing the automata size-reduction technique (i.e. Step 2 in Section~\ref{subsec:cefadec}). 
 
-The experiment results can be found in Table~\ref{tab:results_algorithm}. From the results, we can see that $\ostrichrecl$ solves 2,532 more instances and is 2.38 times faster than $\ostrichrecl_{\rm +NUXMV}$. 
-Therefore, the technical choice in Section~\ref{sec:algorithm} where LIA formulas are computed and then solved by the SMT solvers is reasonable, since $\ostrichrecl$ with this technical choice is more efficient than $\ostrichrecl_{\rm +NUXMV}$, where nuXmv is used to solve the $\cefadec$ problem. 
+The experiment results can be found in Table~\ref{tab:results_algorithm}. From the results, we can see that $\ostrichrecl$ solves 2,532 more instances and is 2.38 times faster than $\ostrichrecl_{\rm NUXMV}$. 
+Therefore, the technical choice in Section~\ref{sec:algorithm} where LIA formulas are computed and then solved by the SMT solvers is reasonable, since $\ostrichrecl$ with this technical choice is more efficient than $\ostrichrecl_{\rm NUXMV}$, where nuXmv is used to solve the $\cefadec$ problem. 
 %
 Moreover, $\ostrichrecl$ solves 1,083 more instances and is 1.65 times faster than $\ostrichrecl_{\rm -ASR}$. 
 From the results, we can see that the automata-size reduction technique indeed plays an important role for the performance improvement. 
 
-\begin{table}
+\begin{table}[htbp]
   \import{tables}{table_algorithm.tex}
   \caption{Evaluation of the technical choices and optimizations in Section~\ref{sec:algorithm}}\label{tab:results_algorithm}
 \end{table}
 
 %\subsubsection{Empirical justification of the optimizations for register-representable regexes}
 
-\zhilin{stopped here}
-
 \paragraph*{Evaluation of the optimizations in Section~\ref{sec:heuristic}}
 %
 %\subsubsection{Empirical evaluation of the optimizations for non-regesiter-representable regexes} 
-We also compare the performance of $\ostrichrecl$ with its variants ${\rm -NEST}$, ${\rm -COMP}$, ${\rm -FIND}$. ${\rm -NEST}$ is obtained from $\ostrichrecl$ by removing the heuristic for nested counting. ${\rm -COMP}$ is obtained by removing the heuristic for complement on counting operators. ${\rm -FIND}$ is obtained by removing the heuristic for finding the accepted word of the automaton.
+We also compare the performance of $\ostrichrecl$ with its variants $\ostrichrecl_{\rm -NEST}$ and $\ostrichrecl_{\rm -COMP}$, where $\ostrichrecl_{\rm -NEST}$ is obtained from $\ostrichrecl$ by removing the optimization for the nesting of counting operators, and $\ostrichrecl_{\rm -COMP}$ is obtained by removing the optimization for the nesting of counting operators and a complement operator. Since these optimizations are not targeted for register-representable RECL constraints and there are very few non-register-representable RECL constraints in the RegCoL and AutomatArk benchmark suites, we restrict our attention to the NestC benchmark suite here. 
 
-\begin{table}
+\begin{table}[htbp]
   \import{tables}{table_heuristics_complex.tex}
   \caption{Evaluation of the optimizations in Section~\ref{sec:heuristic}}\label{tab:results_heuristic_complex}
 \end{table}
 
-The overall experiment results can be found in Table~\ref{tab:results_heuristic}. We can see that $\ostrichrecl$ solves 77/388/349 more instances and is 1.13/1.18/1.24 times faster than ${\rm -NEST}$/${\rm -COMP}$/${\rm -FIND}$ respectively. 
+The experiment results can be found in Table~\ref{tab:results_heuristic_complex}. From the results, we can see that on 1,000 problem instances, $\ostrichrecl$ solves 82/339 more instances and is 1.02/1.92 times faster than $\ostrichrecl_{\rm -NEST}$/$\ostrichrecl_{\rm -COMP}$ respectively. As a result, while both optimizations do play a role in the performance improvement in solving these complex RECL constraints, the optimization for the nesting of counting operators and a complement operator plays a greater role since it allows solving around 1/3 more instances. 
 
-Since the non-register-representable regexes collected from real world are few (5\% of RegCoL and AutomatArk benchmark suites) and simple, there seems no much difference between the performance of $\ostrichrecl$ and its variants ${\rm -NEST}$, ${\rm -COMP}$, ${\rm -FIND}$ in the overall experiment results. Therefore, we consider the NestC benchmark suite, which contains more complex non-register-representable regexes, to justify the optimizations for non-register-representable regexes. The NestC benchmark experiment results is shown in Table~\ref{tab:results_heuristic_complex}. We can see that $\ostrichrecl$ solves 82/339/326 more instances and is 1.02/1.92/1.61 times faster than ${\rm -NEST}$/${\rm -COMP}$/${\rm -FIND}$ respectively. From the results, we can conclude that all the optimizations sharply improve the performance of $\ostrichrecl$ on the non-register-representable regexes.
+%The experiment results can be found in Table~\ref{tab:results_heuristic}. 
+%We can see that $\ostrichrecl$ solves 77/388/349 more instances and is 1.13/1.18/1.24 times faster than ${\rm -NEST}$/${\rm -COMP}$/${\rm -FIND}$ respectively. 
 
-\paragraph*{Evaluation of the optimizations in Section~\ref{sec-opt-sol-gen}}
+%Since the non-register-representable regexes collected from real world are few (5\% of RegCoL and AutomatArk benchmark suites) and simple, there seems no much difference between the performance of $\ostrichrecl$ and its variants ${\rm -NEST}$, ${\rm -COMP}$, ${\rm -FIND}$ in the overall experiment results. Therefore, we consider the NestC benchmark suite, which contains more complex non-register-representable regexes, to justify the optimizations for non-register-representable regexes. The NestC benchmark experiment results is shown in Table~\ref{tab:results_heuristic_complex}. We can see that $\ostrichrecl$ solves 82/339/326 more instances and is 1.02/1.92/1.61 times faster than ${\rm -NEST}$/${\rm -COMP}$/${\rm -FIND}$ respectively. From the results, we can conclude that all the optimizations sharply improve the performance of $\ostrichrecl$ on the non-register-representable regexes.
 
-Table~\ref{tab:results_model-gen}. 
+\paragraph*{Evaluation of the optimizations for the model generation in Section~\ref{sec-opt-sol-gen}}
 
-\begin{table}
+We compare the performance of $\ostrichrecl$ with $\ostrichrecl_{\rm -MODEL}$, where $\ostrichrecl_{\rm -MODEL}$ is obtained from $\ostrichrecl$ by removing the optimizations for the model generation. 
+
+\begin{table}[htbp]
   \import{tables}{table_heuristics_model_gen.tex}
   \caption{Evaluation of the optimizations for the model generation in Section~\ref{sec-opt-sol-gen}}\label{tab:results_model-gen}
 \end{table}
 
+The experiment results can be found in Table~\ref{tab:results_model-gen}. From the results, we can see that compared to $\ostrichrecl$, $\ostrichrecl_{\rm -MODEL}$ solves 349 less instances and is 23\% slower on average (3.57s versus 2.88s). As a result, the optimization for the model generation does improve the performance, especially when the sizes of the CEFAs are huge.  
+Note that the optimization for model generation only affects the satisfiable instances, that is, those instances where the generated LIA formulas can be solved, but the generation of models for these RECL constraints is unsuccessful. 
 
 
 %To answer \textbf{Q3}, \textbf{our algorithm for solving the nonemptiness problem is much better than the \textsc{nuXmv}-based techniques}.
