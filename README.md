@@ -1,2 +1,2 @@
 # papers
-papers pubished by myself
+The repo contains papers published by myself. 
