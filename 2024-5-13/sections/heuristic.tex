@@ -22,7 +22,7 @@ Let $\ufld_1(e)$ and $\ufld_2(e)$ denote the resulting regular expressions.
 \item We estimate the sizes of the two CEFAs $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ constructed from $\ufld_1(e), \ufld_2(e)$ respectively as pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$, where $\snum_1(e)$ and $\rnum_1(e)$ are the estimates of the number of states and registers in $\aut_{\ufld_1(e)}$, similarly for $\snum_2(e)$ and $\rnum_2(e)$. 
 %
 \item From the construction in Section~\ref{sec:algorithm}, 
-two NFAs $\cU_{\aut_{\ufld_2(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are constructed from $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut_{\ufld_2(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are the set of integer vectors  $\myvec{v}$ occurring in the transitions of $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ respectively. The integer vectors of  $\aut_{\ufld_1(e)}$ are of form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{r'-i-1})$, where $i \in [r']$. Consequently, the size of the alphabet of $\cU_{\aut_{\ufld_1(e)}}$ is bounded by $\rnum_1(e)$. Similarly for $\cU_{\aut_{\ufld_1(e)}}$. 
+two NFAs $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are constructed from $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are the set of integer vectors \sout{$\myvec{v}$} occurring in the transitions of $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ respectively. \sout{The integer vectors of  $\aut_{\ufld_1(e)}$ are of form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{r'-i-1})$, where $i \in [r']$.} \hdh{These integer vectors are of form $(0,\cdots,0,1,0,\cdots, 0)$ whose length is the number of registers.} Consequently, the size of the alphabet of $\cU_{\aut_{\ufld_1(e)}}$ is bounded by $\rnum_1(e)$. Similarly for $\cU_{\aut_{\ufld_\hdh{2}(e)}}$. 
 Finally, we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut_{\ufld_1(e)}}, \cU_{\aut_{\ufld_2(e)}}$ as $sz_1 = (\snum_1(e))^2 \cdot \rnum_1(e)$ and $sz_2 = (\snum_2(e))^2 \cdot \rnum_2(e)$ respectively.
 %
 \item If $sz_1 \le sz_2$, then we choose to unfold the counting operators in $e_1$. Otherwise, we choose to unfold the counting operator $^{\{m,n\}}$. 
@@ -30,10 +30,11 @@ Finally, we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut_{\
 
 %In the sequel, we show how we estimate the sizes of CEFAs constructed from register-representable regular expressions. 
 
-It remains to show how to compute the pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$ from $e=(e_1)^{\{m,n\}}$. Let $e=(e_1)^{\{m,n\}}$ be a regular expression where $e_1$ is a register-representable regular expression. Then we compute $\snum'_1(e_1)$ and $(\snum'_2(e_1), \rnum'_2(e_1))$ by a structural induction on $e_1$. Finally, let $(\snum_1(e), \rnum_1(e)) = (\snum'_1(e_1), 1)$ and $(\snum_2(e), \rnum_2(e)) = (\snum'_2(e_1), \rnum'_2(e_1))$.
+It remains to show how to compute the pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$ from $e=(e_1)^{\{m,n\}}$. Let $e=(e_1)^{\{m,n\}}$ be a regular expression where $e_1$ is a register-representable regular expression. Then we compute $\snum'_1(e_1)$ and $(\snum'_2(e_1), \rnum'_2(e_1))$\hdh{(TODO:Change all the $num'$ to $num$, to avoid ambiguity)} by a structural induction on $e_1$, \hdh{in condition, $\rnum_1(e_1)$ is set to $1$.} \sout{Finally, let $(\snum_1(e), \rnum_1(e)) = (\snum'_1(e_1), 1)$ and $(\snum_2(e), \rnum_2(e)) = (\snum'_2(e_1), \rnum'_2(e_1))$.}
 \begin{itemize}
   \item If $e_1 = \emptyset$ or $e_1 = \epsilon$, then $\snum'_1(e_1)  = 0$ and $(\snum'_2(e_1), \rnum'_2(e_1))  = (0, 0)$. 
 %
+  \item \hdh{If $e_1 = a$, then $\snum'_1(e_1) = 1$ and ($\snum'_2(e_1), \rnum'_2(e_1)) = (n, 0)$.}
  %
   \item If $e_1 = e_2 \concat e_3$, then $\snum'_1(e_1) = \snum'_1(e_2) + \snum'_1(e_3)$ and 
 %
@@ -167,7 +168,7 @@ One way of doing the complement operation is to transform $e_1$ into a regular e
 For $e = \overline{e_1}$, we utilize the CEFA constructed from $e_1$, say $\aut_{e_1}$, to construct a CEFA $\cB$ of $e$ so that $\Lang(\cB)$ is an over-approximation of $\Lang(e)$. 
 Let $\aut_{e_1} = (R, Q, \Sigma, \delta, I, F, \alpha)$. The main idea of the construction is explained as follows: If a string $w$ is not accepted by $\aut_{e_1}$, then either there are no runs of $\aut_{e_1}$ on $w$, or every run of $\aut_{e_1}$ on $w$ stop at a non-final state or enter a final state but do not satisfy the accepting condition $\alpha$. We shall construct a CEFA $\cB$ that accepts when one of these situations occurs. Then $\overline{\Lang(\aut_{e_1})} \subseteq \Lang(\cB)$, that is, $\cB$ is an over-approximation of $e$. 
 
-Without loss of generality, we can assume that there are no transitions out of $F$ in $\aut_{e_1}$. If this is not the case, then a new state $q_f$ can be introduced to transform $\aut_{e_1}$ into a CEFA satisfying this constraint, where $q_f$ is the unique accepting state. 
+Without loss of generality, we can assume that there are no transitions out of $F$ in $\aut_{e_1}$. If this is not the case, then a new state $q_f$ can be introduced to transform $\aut_{e_1}$ into a CEFA satisfying this constraint, where $q_f$ is the unique accepting state.\footnote{\hdh{Note that if any initial states are in $F$, a new state $q_I$ without transitions out can be introduced and add to $F$, to accept empty string. Then we can remove all original initial states out of $F$.}} 
 Then we define $\cB= (R \cup \{r'\}, Q \cup \{q_s\}, \Sigma, \delta', I, Q \cup \{q_s\}, \alpha')$, where
 \begin{itemize}
   \item $r'$ is a new register not in $R$, 
@@ -187,6 +188,10 @@ Then we define $\cB= (R \cup \{r'\}, Q \cup \{q_s\}, \Sigma, \delta', I, Q \cup 
 Intuitively, $q_s$ is a sink state that deals with the situations where there are no runs, and $r'$ is a register newly introduced so that the different cases of the non-accepting runs of $\aut_{e_1}$ can be captured by a single accepting condition $\alpha'$. 
 
 Note that $\cB$ is a strict over-approximation of $e = \overline{e_1}$ since $\aut_{e_1}$ may be nondeterministic. For instance, if there are two runs of $\aut_{e_1}$ on a string $w$, say one run that ends at a non-final state and another run that ends at a final state and satisfies accepting condition $\alpha$. Then $w \in \Lang(\aut_{e_1})$, thus $w \not \in \Lang(\overline{\aut_{e_1}})$. Nevertheless, according to the construction, $w$ is accepted by $\cB$, witnessed by the run of $\aut_{e_1}$ that ends at a non-final state. 
+
+\hdh{\paragraph*{Combination of under- and over-approximation}
+Since these two types of approximation influence each other, we separate them apart and run them parallelly.
+}
 
 %As we mentioned in the above section \ref{heuristic:nested}, the unwinding process of the complement operator is exponential to the counting bounds in the worst case. We present a heuristic to reduce the number of states generated by the unwinding process. The idea is to under-approximate and over-approximate the language of the regex first, so that we can avoid unwinding counting operators in complement. We present the heuristic in the following algorithm.
 
@@ -239,7 +244,7 @@ $r$ is the register used to check whether the accepted state is also accepted in
 
 \section{Optimizations for model generation}\label{sec-opt-sol-gen}
 
-Recall that in Section~\ref{sec:algorithm}, the satisfiability of the original RECL constraint is reduced to the satisfiability of the existential LIA formula
+\hdh{The naive approach of finding satisfied string models is to search the accepted words on CEFAs based on the integer models of vectors, which causes an exponential blow-up of searching space. Specifically, } recall that in Section~\ref{sec:algorithm}, the satisfiability of the original RECL constraint is reduced to the satisfiability of the existential LIA formula
 \[
 \begin{array}{l}
 \bigwedge \limits_{i \in [n]} \left(\psi_{\cC_i}(\fZ_{\costset_{\cC_i}}) \wedge \alpha_i\left[\sum\limits_{\myvec{v} \in \costset_{\cC_i}} \anivarz_{i, \myvec{v}} \myvec{v} \big{/}R_{\cB_i}  \right] \right) \ \wedge \\
@@ -251,9 +256,9 @@ Then we utilize some SMT solver, say Z3, to solve the satisfiability of $\theta$
 
 Note that for each $i \in [n]$, the free variables $\fZ_{\costset_{\cC_i}}$ in $\theta$ correspond to the number of occurrences of characters in $\costset_{\cC_i}$, i.e. the alphabet of the NFA $\cC_i$. Moreover, recall that in $\cC_i$, the characters are just the integer vectors and the characters in the original CEFAs $\cB_i$ used to construct $\cC_i$ are ignored. 
 When we utilize $\amodel$ and the CEFAs $\cB_i$ to generate $\amodel'$, for each $i \in [n]$, we record the remaining occurrences of vectors $\myvec{v}$ in the transitions of the CEFAs $\cB_i$ as a number $\nvec_{i, \myvec{v}}$ and
-each time when a transition $(q, a, q', \myvec{v})$ in $\cB_i$ is traversed, $\nvec_{i, \myvec{v}}$ is decremented. Note that initially $\nvec_{i, \myvec{v}}$ is set to $\amodel(\anivarz_{i, \myvec{v}})$. The searching process terminates when $\nvec_{i, \myvec{v}}$ becomes $0$ for every $\myvec{v}$. We record the characters in the traversed transitions and obtain a string for the string variable $x_i$ when the searching process terminates. As a result, we obtain a model of $\varphi$ in the end. 
+each time when a transition $(q, a, q', \myvec{v})$ in $\cB_i$ is traversed, $\nvec_{i, \myvec{v}}$ is decremented. Note that initially $\nvec_{i, \myvec{v}}$ is set to $\amodel(\anivarz_{i, \myvec{v}})$. The searching process terminates when $\nvec_{i, \myvec{v}}$ becomes $0$ for every $\myvec{v}$. We record the characters in the traversed transitions and obtain a string for the string variable $x_i$ when the searching process terminates. As a result, we obtain a model of $\varphi$ in the end. \hdh{In the worst case, we need search O($\prod_{i=0}^{n} \amodel(\anivarz_{i, \myvec{v}})$) times to find an accepted word.}
 
-It turns out that this model generation process is inefficient, mainly due to the fact that the information about the occurrences of vectors $\myvec{v}$ in $\cB_i$ in the searching process is too coarse. In the sequel, we would like to refine this process by using the LIA formulas to obtain the information about the number of occurrences of transitions, instead of just the occurrences of integer vectors, and utilize this information to guide the search process. 
+It turns out that this model generation process is inefficient, mainly due to the fact that the information about the occurrences of vectors $\myvec{v}$ in $\cB_i$ in the searching process is too coarse. In the sequel, we would like to refine this process by using \sout{the LIA formulas to obtain the information about} the number of occurrences of transitions, instead of just the occurrences of integer vectors, \sout{and utilize this information} to guide the search process. 
 Specifically, for each $i \in [n]$ and each transition $(q, a, q', \myvec{v})$ in $\cB_i$, we introduce an integer variable $\anivarz_{i, (q, a, q', \myvec{v})}$ to denote the number of occurrences of the transition, and solve the satisfiability of the following formula,  
 \[
 \begin{array}{l}

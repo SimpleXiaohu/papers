@@ -46,16 +46,16 @@ For the benchmarks that contain the nestings of counting operators, we use the f
 \[x\in e_{nest}\wedge x\in e_{sani}\wedge |x|>50\]
 where $e_{nest}$ is of the form 
 \[(e_1^{\{m_1, n_1\}}e_2^{\{m_2, n_2\}}e_3^{\{m_3, n_3\}}e_4^{\{m_4, n_4\}})^{\{m_5, n_5\}},\]
-such that $0 \leq m_i\leq n_i\leq 20$ for each $i \in [5]$ and $e_i$ contains no counting operators for each $i  \in [4]$,
+such that $0 \leq m_i\leq n_i\leq 20$ \hdh{is chosen randomly} for each $i \in [5]$ and $e_i$ contains no counting operators for each $i  \in [4]$,
 moreover, 
 \[e_{sani} \equiv \overline{\Sigma^*(<+ >+'+''+\&)\Sigma^*}.\]
 Based on this template, we generate 500 instances. 
 
 For the benchmarks that contain the nestings of counting operators and a complement operator, we utilize the following template
 \[x \in e_{comp1} \wedge x \in e_{comp2} \wedge x \in e_{sani} \wedge |x| > 50, \]
-where both $e_{comp1}$ and $e_{comp2}$ are of the form $\overline{e_1^{\{m_1,n_1\}}e_2^{\{m_2,n_2\}}e_3^{\{m_3,n_3\}} e_4^{\{m_4, n_4\}}}$, such that for each $i \in [4]$, $20 \leq m_i\leq n_i\leq 1000$ and $e_i$ contains no counting operators. Note that two regular expressions $e_{comp1} $ and $e_{comp2}$ are introduced to have a better balance between the numbers of satisfiable and unsatisfiable instances. Based on this template, we also generate 500 instances. 
+where both $e_{comp1}$ and $e_{comp2}$ are of the form $\overline{e_1^{\{m_1,n_1\}}e_2^{\{m_2,n_2\}}e_3^{\{m_3,n_3\}} e_4^{\{m_4, n_4\}}}$, such that for each $i \in [4]$, $20 \leq m_i\leq n_i\leq 1000$ \hdh{is chosen randomly} and $e_i$ contains no counting operators. Note that two regular expressions $e_{comp1} $ and $e_{comp2}$ are introduced to have a better balance between the numbers of satisfiable and unsatisfiable instances. Based on this template, we also generate 500 instances. 
 
-In total, the NestC benchmark suite contains 1000 instances. 
+In total, the NestC benchmark suite contains 1000 \hdh{tough} instances \hdh{which may not be practical in real-world programs}. 
 
 %We also generate 500 instances of the nesting of counting operators and a complement operator containing the RECL constraint $x\in e_{comp1}\wedge x\in e_{comp2} \wedge x\in e_{sani} \wedge |x|>50$ in each of them, where $e_{comp\{1,2\}}\equiv \overline{e_0^{\{m_0,n_0\}}e_1^{\{m_1,n_1\}}e_2^{\{m_2,n_2\}}e_3^{\{m_3,n_3\}}}$ is a regex of the nesting of counting operators and a complement operator, and $e_{sani}$ are as above. Note that $20\leq m_i\leq n_i\leq 1000$ and $e_i$  containing no counting operators for $i\in [3]$ is randomly generated.
 
@@ -173,6 +173,7 @@ The experiment results can be found in Table~\ref{tab:results_heuristic_complex}
 We compare the performance of $\ostrichrecl$ with $\ostrichrecl_{\rm -MODEL}$, where $\ostrichrecl_{\rm -MODEL}$ is obtained from $\ostrichrecl$ by removing the optimizations for the model generation. 
 
 \begin{table}[htbp]
+  \centering
   \import{tables}{table_heuristics_model_gen.tex}
   \caption{Evaluation of the optimizations for the model generation in Section~\ref{sec-opt-sol-gen}}\label{tab:results_model-gen}
 \end{table}

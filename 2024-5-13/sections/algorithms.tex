@@ -75,7 +75,7 @@ In the following steps, we reduce the non-emptiness of CEFAs in $\Lambda'_{x_1},
 %The first observation follows from the fact that $\Lambda'_{x_i}$ for each $i \in [n]$ contains exactly one CEFA, and the second observation follows from the fact that the non-emptiness of exactly one CEFA w.r.t an LIA formula is entirely unrelated to the alphabet.
 
 \begin{observation}\label{obs-cefa-output}
-CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are nonempty w.r.t. $\varphi$ iff there are $\myvec{v_{1}} \in \cefaout(\cB_1), \cdots, \myvec{v_{n}} \in \cefaout(\cB_n)$ such that $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true.
+CEFA in $\Lambda'_{x_1} = \{\cB_1\}, \cdots, \Lambda'_{x_n} = \{\cB_n\}$ are nonempty w.r.t. $\varphi$ iff there are \hdh{outputs} $\myvec{v_{1}} \in \cefaout(\cB_1), \cdots, \myvec{v_{n}} \in \cefaout(\cB_n)$ such that $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true.
 \end{observation}
 
 Let $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$ be a CEFA and $\costset_\aut = \{\myvec{v} \mid \exists q, a, q'.\ (q, a, q', \myvec{v}) \in \delta\}$. 
@@ -95,7 +95,7 @@ For $i \in [n]$, let $\alpha_i$ be the accepting condition of $\cB_i$.
 Then from Observation~\ref{obs-cefa-nfa}, we know that the following two conditions are equivalent, 
 \begin{itemize}
 
-\item there are $\myvec{v_{1}} \in \cefaout(\cB_1), \cdots, \myvec{v_{n}} \in \cefaout(\cB_n)$ such that $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true, 
+\item there are \hdh{outputs} $\myvec{v_{1}} \in \cefaout(\cB_1), \cdots, \myvec{v_{n}} \in \cefaout(\cB_n)$ such that $\varphi[\myvec{v_{1}}/R_{\cB_{1}}, \cdots, \myvec{v_{n}}/R_{\cB_{n}}]$ is true, 
 \item 
 there are $\eta_1 \in \parikh(\cU_{\cB_1}), \cdots, \eta_n \in \parikh(\cU_{\cB_n})$ such that 
 \[
@@ -129,7 +129,7 @@ Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cU_{\cB_i}$'s, t
 
 \medskip
 \noindent
-\emph{Step 3 (Computing Parikh images).} For each $i \in [n]$, we compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then we solve the satisfiability of the following formula,
+\emph{Step 3 (Computing Parikh images).} For each $i \in [n]$, we compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then we \hdh{can utilize existing SMT solver like Z3 \cite{Z3}} to solve the satisfiability of the following formula,
 %
 \[
 \begin{array}{l}
