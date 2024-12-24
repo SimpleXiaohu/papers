@@ -26,7 +26,7 @@ They do improve handling of "the other forms of counting", but that is only the 
 
 ~~The Overapproximation on page 22. I am wandering about the transition from an original final state to qs that increments the new counter, and the subsequent self loop on qs. Does this also cause overapproximation? All extensions of the originally accepted words are accepted? If yes, it would deserve a comment.~~
 
-~~I had troubles to understand the section about optimized model generation. Maybe stating what the technical problem that it is solving is in a more dumb proof way would help.~~
+~~I had troubles to understand the section about optimized model generation. Maybe stating what the technical problem that it is solving is in a more dumb proof way would help.
 
 ~~The experimental counting constraints and length constraints you introduce, e.g. those on top of page 26. Could you comment a bit more on what is the ratio of introducing exactly these? Is it motivated by something practical?~~
 
@@ -38,7 +38,7 @@ page 2, third line - "...which is possibly ..." is not a sentence
 ~~page 2, second paragraph "3040%"~~
 ~~page 12, bottom: the automata A1 and A2 have a single initial state, but the definition works with a set of initial states. This may occur on more places.~~
 ~~The font in table 5 is strangely huge.~~
-page 15, the modified Thompson construction. Maybe one should mention that similar constructions, and also alternatives, were proposed elsewhere (the papers on pattern matching and automata with counters might have references).
+~~page 15, the modified Thompson construction. Maybe one should mention that similar constructions, and also alternatives, were proposed elsewhere (the papers on pattern matching and automata with counters might have references).~~
 
 
 
@@ -62,6 +62,7 @@ Counting is a frequently utilized feature in regular expressions (regex) that qu
 
 ~~Para 3, Page 20: Firstly, some U_{A_{ufld_{*1*}(e)}} should be U_{A_{ufld_{*2*}(e)}}, while some U_{A_{ufld_{*2*}(e)}} should be U_{A_{ufld_{*1*}(e)}}. Please check this carefully.
 Secondly, what is r'?~~
+
 ~~Thirdly, I did not follow why the form (0,…,0,1,0,…,0), as for the union of two CEFAs, two registers as well as two kinds of transitions (\overrightarrow{v1},\overrightarrow{0},1,0) and (\overrightarrow{0},\overrightarrow{v2},0,1) are introduced.~~
 
 ~~Sec 7.2, Page 21: better to explain how to combine these two approximation. By the way, utilizing an under-approximation may result in a false negative, whereas employing an over-approximation could lead to a fal se positive. Please engage in a discussion regarding this matter.~~
@@ -75,7 +76,7 @@ Thank you for submitting your manuscript to Journal of Systems Architecture.
 The review process of your manuscript has been completed. Based on the opinions of the reviewers and the Associate Editor in charge, your manuscript requires a Minor Revision. Please resubmit your manuscript by **12-25-2024**.
 This is the standard time expected by the journal. If you require additional time please contact the editors.
 
-When revising your manuscript, please consider all issues mentioned in the reviewers' comments carefully: please outline every change made in response to their comments and provide suitable rebuttals for any comments not addressed. Please provide the source files (WORD or LaTeX) for the manuscript under the item type "Manuscript/latex source file". as well as photos and biographies of all authors.
+When revising your manuscript, please consider all issues mentioned in the reviewers' comments carefully: **please outline every change** made in response to their comments and provide suitable rebuttals for any comments not addressed. Please provide the source files (WORD or LaTeX) for the manuscript under the item type "Manuscript/latex source file". as well as photos and biographies of all authors.
 
 To submit your revised manuscript go to https://www.editorialmanager.com/jsa/ and log in as an Author where you will see a menu item called 'Submission Needing Revision'.
 

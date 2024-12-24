@@ -46,16 +46,16 @@ For the benchmarks that contain the nestings of counting operators, we use the f
 \[x\in e_{nest}\wedge x\in e_{sani}\wedge |x|>50\]
 where $e_{nest}$ is of the form 
 \[(e_1^{\{m_1, n_1\}}e_2^{\{m_2, n_2\}}e_3^{\{m_3, n_3\}}e_4^{\{m_4, n_4\}})^{\{m_5, n_5\}},\]
-such that $0 \leq m_i\leq n_i\leq 20$ \hdh{is chosen randomly} for each $i \in [5]$ and $e_i$ contains no counting operators for each $i  \in [4]$,
+such that $0 \leq m_i\leq n_i\leq 20$  for each $i \in [5]$ and $e_i$ contains no counting operators for each $i  \in [4]$,
 moreover, 
 \[e_{sani} \equiv \overline{\Sigma^*(<+ >+'+''+\&)\Sigma^*}.\]
 Based on this template, we generate 500 instances. 
 
 For the benchmarks that contain the nestings of counting operators and a complement operator, we utilize the following template
 \[x \in e_{comp1} \wedge x \in e_{comp2} \wedge x \in e_{sani} \wedge |x| > 50, \]
-where both $e_{comp1}$ and $e_{comp2}$ are of the form $\overline{e_1^{\{m_1,n_1\}}e_2^{\{m_2,n_2\}}e_3^{\{m_3,n_3\}} e_4^{\{m_4, n_4\}}}$, such that for each $i \in [4]$, $20 \leq m_i\leq n_i\leq 1000$ \hdh{is chosen randomly} and $e_i$ contains no counting operators. Note that two regular expressions $e_{comp1} $ and $e_{comp2}$ are introduced to have a better balance between the numbers of satisfiable and unsatisfiable instances. Based on this template, we also generate 500 instances. 
+where both $e_{comp1}$ and $e_{comp2}$ are of the form $\overline{e_1^{\{m_1,n_1\}}e_2^{\{m_2,n_2\}}e_3^{\{m_3,n_3\}} e_4^{\{m_4, n_4\}}}$, such that for each $i \in [4]$, $20 \leq m_i\leq n_i\leq 1000$  and $e_i$ contains no counting operators. Note that two regular expressions $e_{comp1} $ and $e_{comp2}$ are introduced to have a better balance between the numbers of satisfiable and unsatisfiable instances. Based on this template, we also generate 500 instances. 
 
-In total, the NestC benchmark suite contains 1000 \hdh{tough} instances \hdh{which may not be practical in real-world programs}. 
+In total, the NestC benchmark suite contains 1000 \hdh{tough} instances, \hdh{where the regexes and their associated counting bounds are generated randomly.} 
 
 %We also generate 500 instances of the nesting of counting operators and a complement operator containing the RECL constraint $x\in e_{comp1}\wedge x\in e_{comp2} \wedge x\in e_{sani} \wedge |x|>50$ in each of them, where $e_{comp\{1,2\}}\equiv \overline{e_0^{\{m_0,n_0\}}e_1^{\{m_1,n_1\}}e_2^{\{m_2,n_2\}}e_3^{\{m_3,n_3\}}}$ is a regex of the nesting of counting operators and a complement operator, and $e_{sani}$ are as above. Note that $20\leq m_i\leq n_i\leq 1000$ and $e_i$  containing no counting operators for $i\in [3]$ is randomly generated.
 
@@ -83,10 +83,7 @@ All experiments are conducted on CentOS Stream release 8 with 4 Intel(R) Xeon(R)
 
 \subsection{Performance evaluation against the other solvers}\label{subsec:overall_eval}
 
-We evaluate the performance of $\ostrichrecl$ against the state-of-the-art string constraint solvers, including CVC5
-\cite{cvc5}, Z3seq \cite{z3seq}, Z3str3
-\cite{Z3-str3}, Z3str3RE \cite{BD+23}, and OSTRICH
-\cite{CHL+19}, on RegCoL, AutomatArk and NestC benchmark suites. 
+We evaluate the performance of $\ostrichrecl$ against the state-of-the-art string constraint solvers, including CVC5~\cite{cvc5}, Z3seq~\cite{z3seq}, Z3str3 \cite{Z3-str3}, Z3str3RE~\cite{BD+23}, and OSTRICH \cite{CHL+19}, on RegCoL, AutomatArk and NestC benchmark suites. 
 The experiment results can be found in Table~\ref{tab:table_overall_eval}. Note that we take the results of CVC5 as the ground truth\footnote{Initially,  we used the majority vote of the results of the solvers as the ground truth. Nevertheless, on some problem instances, all the results of the three solvers in the Z3 family are wrong (after manual inspection), thus failing this approach on these instances.}, and the results different from the ground truth are classified as \emph{error}. We can see that $\ostrichrecl$ solves almost all instances, except 182 of them, that is, it solves 49,638 instances correctly. The number is 4,547/1,917/13,618/2,764/3,134 more than the number of instances solved by CVC5/Z3str3RE/Z3str3/Z3seq/OSTRICH respectively.
 %
 Moreover, $\ostrichrecl$ is the second fastest solver, whose average time on each instance is close to the fastest solver Z3str3RE (2.88s versus 1.99s). 

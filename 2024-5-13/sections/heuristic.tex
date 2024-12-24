@@ -22,7 +22,7 @@ Let $\ufld_1(e)$ and $\ufld_2(e)$ denote the resulting regular expressions.
 \item We estimate the sizes of the two CEFAs $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ constructed from $\ufld_1(e), \ufld_2(e)$ respectively as pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$, where $\snum_1(e)$ and $\rnum_1(e)$ are the estimates of the number of states and registers in $\aut_{\ufld_1(e)}$, similarly for $\snum_2(e)$ and $\rnum_2(e)$. 
 %
 \item From the construction in Section~\ref{sec:algorithm}, 
-two NFAs $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are constructed from $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are the set of integer vectors \sout{$\myvec{v}$} occurring in the transitions of $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ respectively. \sout{The integer vectors of  $\aut_{\ufld_1(e)}$ are of form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{r'-i-1})$, where $i \in [r']$.} \hdh{These integer vectors are of form $(0,\cdots,0,1,0,\cdots, 0)$ whose length is the number of registers.} Consequently, the size of the alphabet of $\cU_{\aut_{\ufld_1(e)}}$ is bounded by $\rnum_1(e)$. Similarly for $\cU_{\aut_{\ufld_\hdh{2}(e)}}$. 
+two NFAs $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are constructed from $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are the set of integer vectors \sout{$\myvec{v}$} occurring in the transitions of $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ respectively. \sout{The integer vectors of  $\aut_{\ufld_1(e)}$ are of form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{r'-i-1})$, where $i \in [r']$.} \hdh{The integer vectors of  $\aut_{\ufld_1(e)}$ are of the form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{\rnum_1(e)-i-1})$, where $i \in [\rnum_1(e)]$.} Consequently, the size of the alphabet of $\cU_{\aut_{\ufld_1(e)}}$ is bounded by $\rnum_1(e)$. Similarly for $\cU_{\aut_{\ufld_\hdh{2}(e)}}$. 
 Finally, we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut_{\ufld_1(e)}}, \cU_{\aut_{\ufld_2(e)}}$ as $sz_1 = (\snum_1(e))^2 \cdot \rnum_1(e)$ and $sz_2 = (\snum_2(e))^2 \cdot \rnum_2(e)$ respectively.
 %
 \item If $sz_1 \le sz_2$, then we choose to unfold the counting operators in $e_1$. Otherwise, we choose to unfold the counting operator $^{\{m,n\}}$. 
@@ -30,7 +30,7 @@ Finally, we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut_{\
 
 %In the sequel, we show how we estimate the sizes of CEFAs constructed from register-representable regular expressions. 
 
-It remains to show how to compute the pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$ from $e=(e_1)^{\{m,n\}}$. Let $e=(e_1)^{\{m,n\}}$ be a regular expression where $e_1$ is a register-representable regular expression. Then we compute $\snum'_1(e_1)$ and $(\snum'_2(e_1), \rnum'_2(e_1))$\hdh{(TODO:Change all the $num'$ to $num$, to avoid ambiguity)} by a structural induction on $e_1$, \hdh{in condition, $\rnum_1(e_1)$ is set to $1$.} \sout{Finally, let $(\snum_1(e), \rnum_1(e)) = (\snum'_1(e_1), 1)$ and $(\snum_2(e), \rnum_2(e)) = (\snum'_2(e_1), \rnum'_2(e_1))$.}
+It remains to show how to compute the pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$ from $e=(e_1)^{\{m,n\}}$. Let $e=(e_1)^{\{m,n\}}$ be a regular expression where $e_1$ is a register-representable regular expression. Then we compute $\snum'_1(e_1)$ and $(\snum'_2(e_1), \rnum'_2(e_1))$. Finally, let $(\snum_1(e), \rnum_1(e)) = (\snum'_1(e_1), 1)$ and $(\snum_2(e), \rnum_2(e)) = (\snum'_2(e_1), \rnum'_2(e_1))$.
 \begin{itemize}
   \item If $e_1 = \emptyset$ or $e_1 = \epsilon$, then $\snum'_1(e_1)  = 0$ and $(\snum'_2(e_1), \rnum'_2(e_1))  = (0, 0)$. 
 %
@@ -168,7 +168,7 @@ One way of doing the complement operation is to transform $e_1$ into a regular e
 For $e = \overline{e_1}$, we utilize the CEFA constructed from $e_1$, say $\aut_{e_1}$, to construct a CEFA $\cB$ of $e$ so that $\Lang(\cB)$ is an over-approximation of $\Lang(e)$. 
 Let $\aut_{e_1} = (R, Q, \Sigma, \delta, I, F, \alpha)$. The main idea of the construction is explained as follows: If a string $w$ is not accepted by $\aut_{e_1}$, then either there are no runs of $\aut_{e_1}$ on $w$, or every run of $\aut_{e_1}$ on $w$ stop at a non-final state or enter a final state but do not satisfy the accepting condition $\alpha$. We shall construct a CEFA $\cB$ that accepts when one of these situations occurs. Then $\overline{\Lang(\aut_{e_1})} \subseteq \Lang(\cB)$, that is, $\cB$ is an over-approximation of $e$. 
 
-Without loss of generality, we can assume that there are no transitions out of $F$ in $\aut_{e_1}$. If this is not the case, then a new state $q_f$ can be introduced to transform $\aut_{e_1}$ into a CEFA satisfying this constraint, where $q_f$ is the unique accepting state.\footnote{\hdh{Note that if any initial states are in $F$, a new state $q_I$ without transitions out can be introduced and add to $F$, to accept empty string. Then we can remove all original initial states out of $F$.}} 
+Without loss of generality, we can assume that there are no transitions out of $F$ in $\aut_{e_1}$. If this is not the case, then a new state $q_f$ can be introduced to transform $\aut_{e_1}$ into a CEFA satisfying this constraint, where $q_f$ is the unique accepting state. 
 Then we define $\cB= (R \cup \{r'\}, Q \cup \{q_s\}, \Sigma, \delta', I, Q \cup \{q_s\}, \alpha')$, where
 \begin{itemize}
   \item $r'$ is a new register not in $R$, 
@@ -190,7 +190,7 @@ Intuitively, $q_s$ is a sink state that deals with the situations where there ar
 Note that $\cB$ is a strict over-approximation of $e = \overline{e_1}$ since $\aut_{e_1}$ may be nondeterministic. For instance, if there are two runs of $\aut_{e_1}$ on a string $w$, say one run that ends at a non-final state and another run that ends at a final state and satisfies accepting condition $\alpha$. Then $w \in \Lang(\aut_{e_1})$, thus $w \not \in \Lang(\overline{\aut_{e_1}})$. Nevertheless, according to the construction, $w$ is accepted by $\cB$, witnessed by the run of $\aut_{e_1}$ that ends at a non-final state. 
 
 \hdh{\paragraph*{Combination of under- and over-approximation}
-Since these two types of approximation influence each other, we separate them apart and run them parallelly.
+ In our configuration, under-approximation is performed first due to its superior computational efficiency, and we proceed with over-approximation if it yields an unsatisfiable result. In cases where over-approximation produces a satisfiable result, we execute the decision procedure wherein all non-register-representable regular expressions are naively unfold. To minimize computational overhead, we apply approximation techniques only in cases involving non-register-representable regular expressions with significant counting bounds—specifically, those exceeding 20 in our experimental configuration.
 }
 
 %As we mentioned in the above section \ref{heuristic:nested}, the unwinding process of the complement operator is exponential to the counting bounds in the worst case. We present a heuristic to reduce the number of states generated by the unwinding process. The idea is to under-approximate and over-approximate the language of the regex first, so that we can avoid unwinding counting operators in complement. We present the heuristic in the following algorithm.
@@ -244,7 +244,7 @@ $r$ is the register used to check whether the accepted state is also accepted in
 
 \section{Optimizations for model generation}\label{sec-opt-sol-gen}
 
-\hdh{The naive approach of finding satisfied string models is to search the accepted words on CEFAs based on the integer models of vectors, which causes an exponential blow-up of searching space. Specifically, } recall that in Section~\ref{sec:algorithm}, the satisfiability of the original RECL constraint is reduced to the satisfiability of the existential LIA formula
+\zhilin{TODO: I had troubles to understand the section about optimized model generation. Maybe stating what the technical problem that it is solving is in a more dumb proof way would help., } recall that in Section~\ref{sec:algorithm}, the satisfiability of the original RECL constraint is reduced to the satisfiability of the existential LIA formula
 \[
 \begin{array}{l}
 \bigwedge \limits_{i \in [n]} \left(\psi_{\cC_i}(\fZ_{\costset_{\cC_i}}) \wedge \alpha_i\left[\sum\limits_{\myvec{v} \in \costset_{\cC_i}} \anivarz_{i, \myvec{v}} \myvec{v} \big{/}R_{\cB_i}  \right] \right) \ \wedge \\

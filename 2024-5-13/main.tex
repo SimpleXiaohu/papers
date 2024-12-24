@@ -13,7 +13,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{amsfonts}
-\usepackage{amsmath, amssymb}
+\usepackage{amsmath, amssymb, amsthm}
 \usepackage{float, subcaption, graphics}
 \usepackage{mathbbol}
 \usepackage{colortbl}
@@ -51,7 +51,8 @@
 \newcommand{\anivary}{\mathfrak{y}}
 \newcommand{\anivarz}{\mathfrak{z}}
 
-\newtheorem{proof}{Proof}
+\newtheorem*{proof*}{Proof}
+\newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
 \newtheorem{definition}{Definition}
 \newtheorem{proposition}{Proposition}
@@ -110,7 +111,7 @@
 
 %%%%% comments commands
 \newcommand{\zhilin}[1]{\color{orange}\textbf{ZL:} #1 \textbf{:LZ}\color{black}}
-\newcommand{\hdh}[1]{{\color{teal} #1\color{black}}}
+\newcommand{\hdh}[1]{{\color{red} #1\color{black}}}
 \newcommand{\mycomment}[1]{}
 
 

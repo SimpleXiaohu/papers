@@ -16,7 +16,7 @@ Intuitively, CEFA adds write-only cost registers to finite state automata. ``wri
 For convenience, we use $R_\aut$ to denote the set of registers of $\aut$. We assume a linear order on $R$ and write $R$ as a vector $(r_1, \cdots, r_k)$. Accordingly, we write an element of $\Int^R$ as a vector $(v_1, \cdots, v_k)$, where $v_i$ is the update of $r_i$ for each $i \in [k]$. We also write a transition $(q, a, q', \vec{v}) \in \delta$ as $q \xrightarrow[\vec{v}]{a} q'$.
 
 The semantics of CEFA is defined as follows. Let $\aut = (R, Q, \Sigma, \delta, I, F, \alpha)$ be a CEFA. 
-A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ is a sequence $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ such that $q_0 \in I$ and $q_{i-1} \xrightarrow[\myvec{v_i}]{a_i} q_i$ for each $i \in [n]$. A run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ is \emph{accepting} if $q_n \in F$ and $\alpha(\myvec{v'}/R)$ is true, where $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v_j}$. The string $w$ is $accepted$ by the CEFA if and only if there is an accepting run of $w$. The vector $\myvec{v'}= \sum \limits_{j \in [n]} \myvec{v_j}$ is called the \emph{cost} of an accepting run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$.Note that the values of all registers are initiated to zero and updated to $\sum \limits_{j \in [n]} \myvec{v_j}$ after all the transitions in the run are executed. We use $\myvec{v'} \in \aut(w)$ to denote the fact that there is an accepting run of $\aut$ on $w$ whose cost is $\myvec{v'}$.  
+A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ is a sequence $q_0 \xrightarrow[\myvec{v}_1]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v}_n]{a_n} q_n$ such that $q_0 \in I$ and $q_{i-1} \xrightarrow[\myvec{v}_i]{a_i} q_i$ for each $i \in [n]$. A run $q_0 \xrightarrow[\myvec{v}_1]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v}_n]{a_n} q_n$ is \emph{accepting} if $q_n \in F$ and $\alpha(\myvec{v'}/R)$ is true, where $\myvec{v'} = \sum \limits_{j \in [n]} \myvec{v}_j$. The string $w$ is $accepted$ by the CEFA if and only if there is an accepting run of $w$. The vector $\myvec{v'}= \sum \limits_{j \in [n]} \myvec{v}_j$ is called the \emph{cost} of an accepting run $q_0 \xrightarrow[\myvec{v}_1]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v}_n]{a_n} q_n$.Note that the values of all registers are initiated to zero and updated to $\sum \limits_{j \in [n]} \myvec{v}_j$ after all the transitions in the run are executed. We use $\myvec{v'} \in \aut(w)$ to denote the fact that there is an accepting run of $\aut$ on $w$ whose cost is $\myvec{v'}$.  
 We define the semantics of a CEFA $\aut$, denoted by $\Lang(\aut)$, as $\{(w; \myvec{v'}) \mid  \myvec{v'} \in \aut(w)\}$.  In particular, if $I \cap F \neq \emptyset$ and $\alpha[\myvec{0}/R]$ is true, then $(\varepsilon; \myvec{0}) \in \Lang(\aut)$. Moreover, we define the \emph{output} of a CEFA $\aut$, denoted by $\cefaout(\aut)$, as $\{\myvec{v'} \mid  \exists w.\ \myvec{v'} \in \aut(w)\}$.
 
 We want to remark that the definition of CEFA above is slightly different from that of \cite{atva2020}, where CEFA did not include accepting conditions.
@@ -25,21 +25,21 @@ Moreover, the accepting conditions $\alpha$ in CEFA are defined in a \emph{globa
 In the sequel, we define three CEFA operations: union, intersection, and concatenation. The following section will use these three operations to solve RECL constraints. Note that the union, intersection, and concatenation operations are defined in a slightly more involved manner than register automata~\cite{ra} and counter automata~\cite{GGM12}, as a result of the (additional) accepting conditions. 
 %the technical choice that the accepting condition is attached to each automaton, not to each final state.
 
-Let $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, q_{1,0}, F_1, \alpha_1)$ and  $\aut_2 = (R_2, Q_2, \Sigma, \delta_2, q_{2,0}, F_2, \alpha_2)$\footnote{\hdh{We use a single initial state for simplicity. A set of initial states can be transferred to a single one by introducing a new state $q_I$ and adding $\epsilon-$transition from $q_I$ to each initial state.}} be two CEFA that share the alphabet. 
+Let $\aut_1 = (R_1, Q_1, \Sigma, \delta_1, \hdh{I_1}, F_1, \alpha_1)$ and  $\aut_2 = (R_2, Q_2, \Sigma, \delta_2, \hdh{I_2}, F_2, \alpha_2)$ be two CEFA that share the alphabet. 
 Moreover, suppose that $R_1 \cap R_2 = \emptyset$ and $Q_1 \cap Q_2 = \emptyset$. 
 
-The \emph{union} of $\aut_1$ and $\aut_2$ is denoted by $\aut_1 \cup \aut_2$. Two fresh auxiliary registers say $r'_1,r'_2 \not \in R_1 \cup R_2$, are introduced so that the accepting condition knows whether a run is from $\aut_1$ (or $\aut_2$).\hdh{This is mainly because the accepting condition is "global", i.e., the accepting condition is attached to the CEFA, not specific final state.} Specifically, $\aut_1 \cup \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$ where 
+The \emph{union} of $\aut_1$ and $\aut_2$ is denoted by $\aut_1 \cup \aut_2$. Two fresh auxiliary registers say $r'_1,r'_2 \not \in R_1 \cup R_2$, are introduced so that the accepting condition knows whether a run is from $\aut_1$ (or $\aut_2$).\hdh{This is mainly because the same accepting condition is applied to all final states, in other words, the accepting condition does not distinguish between final states.} Specifically, $\aut_1 \cup \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$ where 
 \begin{itemize}
 \item $R' = R_1 \cup R_2 \cup \{r'_1, r'_2\}$, $Q' = Q_1 \cup Q_2 \cup \{q'_0\}$ with $q'_0 \not \in Q_1 \cup Q_2$, $I' = \{q'_0\}$, 
 %
 \item $\delta'$ is the union of four transitions sets:
 \begin{itemize}
-  \item $\{(q'_0, a, q'_1, (\myvec{v_1}, \myvec{0}, 1,0)) \mid \exists q_1 \in I_1.\ (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\}$
-  \item $\{(q'_0, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 1)) \mid \exists q_2 \in I_2.\ (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\}$
-  \item $\{(q_1, a, q'_1, (\myvec{v_1}, \myvec{0}, 0, 0)) \mid q_1\not\in I_1.\ (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\}$
-  \item $\{(q_2, a, q'_2, (\myvec{0}, \myvec{v_2}, 0, 0)) \mid q_2\not\in I_2.\ (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\}$
+  \item $\{(q'_0, a, q'_1, (\myvec{v}_1, \myvec{0}, 1,0)) \mid \exists q_1 \in I_1.\ (q_1, a, q'_1, \myvec{v}_1) \in \delta_1\}$
+  \item $\{(q'_0, a, q'_2, (\myvec{0}, \myvec{v}_2, 0, 1)) \mid \exists q_2 \in I_2.\ (q_2, a, q'_2, \myvec{v}_2) \in \delta_2\}$
+  \item $\{(q_1, a, q'_1, (\myvec{v}_1, \myvec{0}, 0, 0)) \mid q_1\not\in I_1.\ (q_1, a, q'_1, \myvec{v}_1) \in \delta_1\}$
+  \item $\{(q_2, a, q'_2, (\myvec{0}, \myvec{v}_2, 0, 0)) \mid q_2\not\in I_2.\ (q_2, a, q'_2, \myvec{v}_2) \in \delta_2\}$
 \end{itemize}
- where $(\myvec{v_1}, \myvec{0}, 1,0)$ is a vector that updates $R_1$ by $\myvec{v_1}$, updates $R_2$ by $\myvec{0}$, and updates $r'_1,r'_2$ by $1,0$ respectively. Similarly for $(\myvec{0}, \myvec{v_2}, 0, 1)$, and so on.
+ where $(\myvec{v}_1, \myvec{0}, 1,0)$ is a vector that updates $R_1$ by $\myvec{v}_1$, updates $R_2$ by $\myvec{0}$, and updates $r'_1,r'_2$ by $1,0$ respectively. Similarly for $(\myvec{0}, \myvec{v}_2, 0, 1)$, and so on.
 
 \item $F'$ and $\alpha'$ are defined as follows, 
 \begin{itemize}
@@ -62,16 +62,16 @@ $$
 $$ 
 Intuitively, $\aut_1 \cup \aut_2$ accepts the words that are accepted by one of the $\aut_1$ and $\aut_2$ and outputs the costs of the corresponding automaton.
 
-The \emph{intersection} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cap \aut_2 = (R', Q', \Sigma, \delta', I', F', \alpha')$, is defined in the sequel. 
+The \emph{intersection} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \cap \aut_2 = (R', Q', \Sigma, \delta', I', F',$ $ \alpha')$, is defined in the sequel. 
 \begin{itemize}
 \item $R' = R_1 \cup R_2$, $Q' = Q_1 \times Q_2$, $I' = I_1 \times I_2$, $F' = F_1 \times F_2$, $\alpha' = \alpha_1 \wedge \alpha_2$, 
-\item $\delta'$ comprises the tuples $((q_1, q_2), a, (q'_1, q'_2), (\myvec{v_1}, \myvec{v_2}))$ such that $(q_1,a, q'_1, \myvec{v_1}) \in \delta_1$ and $(q_2,a, q'_2, \myvec{v_2}) \in \delta_2$.
+\item $\delta'$ comprises the tuples $((q_1, q_2), a, (q'_1, q'_2), (\myvec{v}_1, \myvec{v}_2))$ such that $(q_1,a, q'_1, $ $\myvec{v}_1)\in \delta_1$ and $(q_2,a, q'_2, \myvec{v}_2) \in \delta_2$.
 \end{itemize}
 From the construction, 
 $$\Lang(\aut_1 \cap \aut_2) = \{(w; \myvec{v}) \mid (w; \prj_{R_1}(\myvec{v})) \in \Lang(\aut_1) \mbox{ and } (w; \prj_{R_2}(\myvec{v})) \in \Lang(\aut_2)\}.$$
 Intuitively, $\aut_1 \cap \aut_2$ accepts the words that are accepted by both $\aut_1$ and $\aut_2$ and outputs the costs of $\aut_1$ and $\aut_2$.  
 
-The \emph{concatenation} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \concat \aut_2$, is defined similarly as that of NFA, that is, a tuple $(\hdh{R'}, Q', \Sigma, \delta', I', F', \alpha')$, where $\hdh{R' = R_1\cup R_2,} Q' = Q_1 \cup Q_2$, $I' = I_1$, $\alpha' = \alpha_1 \wedge \alpha_2$, $\delta' = \{(q_1, a, q'_1, (\myvec{v_1}, \myvec{0})) \mid (q_1, a, q'_1, \myvec{v_1}) \in \delta_1\} \cup \{(q_2, a, q'_2, (\myvec{0}, \myvec{v_2})) \mid (q_2, a, q'_2, \myvec{v_2}) \in \delta_2\} \cup \{(q_1, a, q_2, (\myvec{0}, \vec{v_2})) \mid q_1 \in F_1, \exists q' \in I_2.\ (q', a, q_2, \vec{v_2}) \in \delta_2\}$, moreover, if $I_2 \cap F_2 \neq \emptyset$, then $F'= F_1 \cup F_2$, otherwise, $F'= F_2$. From the construction, 
+The \emph{concatenation} of $\aut_1$ and $\aut_2$, denoted by $\aut_1 \concat \aut_2$, is defined similarly as that of NFA, that is, a tuple $(\hdh{R'}, Q', \Sigma, \delta', I', F', \alpha')$, where \hdh{$R' = R_1\cup R_2$}, $Q' = Q_1 \cup Q_2$, $I' = I_1$, $\alpha' = \alpha_1 \wedge \alpha_2$, $\delta' = \{(q_1, a, q'_1, (\myvec{v}_1, \myvec{0})) \mid (q_1, a, q'_1, \myvec{v}_1) \in \delta_1\} \cup \{(q_2, a, q'_2, (\myvec{0}, \myvec{v}_2)) \mid (q_2, a, q'_2, \myvec{v}_2) \in \delta_2\} \cup \{(q_1, a, q_2, (\myvec{0}, \vec{v_2})) \mid q_1 \in F_1, \exists q' \in I_2.\ (q', a, q_2, \vec{v_2}) \in \delta_2\}$, moreover, if $I_2 \cap F_2 \neq \emptyset$, then $F'= F_1 \cup F_2$, otherwise, $F'= F_2$. From the construction, 
 $$\Lang(\aut_1 \concat \aut_2) = \{(w_1w_2; \myvec{v}) \mid (w_1; \prj_{R_1}(\myvec{v})) \in \Lang(\aut_1) \mbox{ and }(w_2; \prj_{R_2}(\myvec{v})) \in \Lang(\aut_2)\}.$$
 
 Furthermore, the union, intersection, and concatenation operations can be extended naturally to multiple CEFA, that is, $\aut_1 \cup \cdots \cup \aut_n$, $\aut_1 \cap \cdots \cap \aut_n$, $\aut_1 \concat \cdots \concat \aut_n$. For instance, $\aut_1 \cup \aut_2 \cup \aut_3 = (\aut_1 \cup \aut_2) \cup \aut_3$, $\aut_1 \cap \aut_2 \cap \aut_3 = (\aut_1 \cap \aut_2) \cap \aut_3$, and $\aut_1 \concat \aut_2 \concat \aut_3 = (\aut_1 \concat \aut_2) \concat \aut_3$.
