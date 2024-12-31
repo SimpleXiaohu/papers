@@ -1,19 +1,23 @@
 %!TEX root = ../main.tex
 The string data type plays a crucial role in modern programming languages such as JavaScript, Python, Java, and PHP. 
 String manipulations are error-prone and could even give rise to severe security vulnerabilities (e.g., cross-site scripting, aka XSS). 
-One powerful method for identifying such bugs is \emph{symbolic execution}, which is possibly in combination with dynamic analysis. It analyses symbolic paths in a program by viewing them as constraints checked by constraint solvers. 
+\hdh{One powerful method for identifying such bugs is \emph{symbolic execution}}.
+%, which \hdh{can be combined with } dynamic analysis. 
+It analyses the feasibility of execution paths in a program by encoding the paths as logical formulas and utilizing the constraint solvers (e.g. Z3~\cite{Z3}) to solve the satisfiability of the formulas. 
 %
 Symbolic execution of string manipulating programs has motivated the highly active research area of \emph{string constraint solving}, resulting in the development of numerous string solvers in the last decade, e.g.,
 Z3seq~\cite{z3seq}, CVC4/5~\cite{cvc4,cvc5}, Z3str/2/3/4~\cite{Z3-str,Z3-str2,Z3-str3,BerzishMurphy2021}, Z3str3RE~\cite{BD+23}, 
 Z3-Trau~\cite{Z3-trau}\cite{z3trau}, OSTRICH~\cite{CHL+19}, Slent~\cite{WC+18}, among many others. 
 
-Regular expressions (regex for short) and the string-length function are widely used in string-manipulating programs. \sout{According to the statistics from \cite{CS16,DCSL18,WS18}, regexes are used in about 30–40\% of Java, JavaScript, and Python software projects. Moreover, string-length occupies 78\% of the occurrences of string operations in 18 Javascript applications, according to the statistics from \cite{malware_detection_3_kudzu}.} \hdh{Specifically, regexes are used in about 30–40\% of Java, JavaScript, and Python software projects, while string-length occupies 78\% of the occurrences of string operations in 18 Javascript applications\footnote{According to the statistics from \cite{CS16,DCSL18,WS18,malware_detection_3_kudzu}.}. As a result, most of the aforementioned string constraint solvers support both regexes and string-length function, and specialized algorithms have been proposed to solve such string constraints efficiently (see e.g. \cite{LTR+15,BD+23}).} 
+Regular expressions (regex for short) and the string-length function are widely used in string-manipulating programs. According to the statistics
+from \cite{CS16,DCSL18,WS18}, regexes are used in about \hdh{30–40\%} of Java, JavaScript, and Python software projects. Moreover, string-length occupies 78\% of the occurrences of string operations in 18 Javascript applications, according to the statistics from \cite{malware_detection_3_kudzu}. As a result, most of the aforementioned string constraint solvers support both regexes and string-length function. Moreover, specialized algorithms have been proposed to solve such string constraints efficiently (see e.g. \cite{LTR+15,BD+23}).
 
 Counting (aka repetition) is a convenient feature in regexes that counts the number of matchings of sub-patterns. For instance, $a^{\{2, 4\}}$ specifies that $a$ occurs at least twice and at most four times, and $a^{\{2, \infty\}}$ specifies that $a$ occurs at least twice. 
-Note that the Kleene star and the Kleene plus operator are special cases of counting, i.e., $a^*$ is equivalent to $a^{\{0,\infty\}}$ and $a^+$ is equivalent to $a^{\{1,\infty\}}$.
-Counting is a frequently used feature of regexes \hdh{:}\sout{According to the statistics from \cite{CS16},} kleene star/plus occur in more than 70\% of 1,204 Python projects, while other forms of counting occur in more than 20\% of them\hdh{\footnote{According to the statistics from \cite{CS16}.}}. Therefore, an efficient analysis of string manipulating programs requires efficient solvers for string constraints containing regexes with counting\footnote{In the rest of this paper, for clarity, we use counting to denote expressions of the form $e^{\{m, n\}}$ and  $e^{\{m, \infty\}}$, but not $e^*$ or $e^+$.} and string-length function at least. \hdh{To the best of our knowledge, there is no such solver optimized for both counting and string-length.}
+\hdh{Note that although the Kleene star and the Kleene plus operator are special cases of counting, i.e., $e^*$ is equivalent to $e^{\{0,\infty\}}$ and $e^+$ is equivalent to $e^{\{1,\infty\}}$, 
+in the rest of this paper, for clarity, we use counting to denote expressions of the form $e^{\{m, n\}}$ and  $e^{\{m, \infty\}}$, but not $e^*$ or $e^+$.}
+Counting is a frequently used feature of regexes. According to the statistics from \cite{CS16}, \hdh{counting occurs in more than 20\% of 1,204 Python projects}. Therefore, an efficient analysis of string manipulating programs requires efficient solvers for string constraints containing regexes with counting and string-length function at least. 
 
-\sout{Nevertheless, }The aforementioned state-of-the-art string constraint solvers still suffer from such string constraints, especially when the counting and length bounds are large. For instance, none of the string solvers CVC5, Z3seq, Z3-Trau, Z3str3, Z3str3RE, and OSTRICH is capable of solving the following constraint within 120 seconds,
+The aforementioned state-of-the-art string constraint solvers still suffer from such string constraints, especially when the counting and length bounds are large. For instance, none of the string solvers CVC5, Z3seq, Z3-Trau, Z3str3, Z3str3RE, and OSTRICH is capable of solving the following constraint within 120 seconds,
 %, and Z3 can not solve it within 120 seconds.
 %
 \begin{equation}\label{eqn-running}
@@ -36,9 +40,9 @@ Thus, the non-emptiness of CEFA w.r.t. LIA formulas can be reduced to the satisf
 %  \item 
 %  Combined with the size-reduction techniques mentioned above, the register representation of regex-counting and string-length in CEFA entails an efficient algorithm for solving RECL constraints. 
  %
-\item We implement the algorithm on top of OSTRICH, resulting in a string solver called $\ostrichrecl$. Finally, we utilize a collection of benchmark suites comprising 49,843 problem instances in total to evaluate the performance of $\ostrichrecl$. The experiment results show that $\ostrichrecl$ solves the RECL constraints more efficiently than the state-of-the-art string solvers (see Table~\ref{tab:table_overall_eval}-\ref{tab:results_model-gen}). For instance, $\ostrichrecl$ solves 49,638 out of 49,843 instances, while the best state-of-the-art solver solve only 47,721 instances. We also do experiments to justify some of our technical choices and evaluate the performance of the optimizations\footnote{\hdh{The tool is available as open source at \url{https://github.com/SimpleXiaohu/ostrich/tree/jsa2024}.
+\item We implement the algorithm on top of OSTRICH, resulting in a string solver\footnote{\hdh{The solver is open source and available at \url{https://github.com/SimpleXiaohu/ostrich/tree/jsa2024}}} called $\ostrichrecl$. Finally, we utilize a collection of benchmark suites\footnote{\hdh{The benchmarks are available at \url{https://github.com/SimpleXiaohu/ostrich/tree/jsa2024/zaligvinder/models/jsa2024}}.} comprising 49,843 problem instances in total to evaluate the performance of $\ostrichrecl$. The experiment results show that $\ostrichrecl$ solves the RECL constraints more efficiently than the state-of-the-art string solvers (see Table~\ref{tab:table_overall_eval}-\ref{tab:results_model-gen} for details). For instance, $\ostrichrecl$ solves 49,638 out of 49,843 instances, while the best state-of-the-art solver solve only 47,721 instances. We also do experiments to justify some of our technical choices and evaluate the performance of the optimizations
 
-The benchmark suites are available at \url{https://github.com/SimpleXiaohu/ostrich/tree/jsa2024/zaligvinder/models/jsa2024}.}}. 
+%\footnote{\hdh{The tool is available as open source at \url{https://github.com/SimpleXiaohu/ostrich/tree/jsa2024}.
 %
 % 1,000 benchmark instances where the counting and length bounds are large or the counting operators are nested with some other counting operators or complement operators, $\ostrichrecl$ solves at least $278$ more instances than the other solvers, while spending only half or less time per instance on average. 
 \end{itemize}
@@ -68,7 +72,7 @@ Counting-set automata were proposed in~\cite{redos_lenka,HS+23} to quickly match
 \smallskip
 \noindent
 \emph{Structure.} 
-The rest of this paper is structured as follows: \sout{Section~\ref{sec:overview} gives an overview of the approach in this paper. Section~\ref{sec:pre} introduces the preliminaries.} \hdh{Section~\ref{sec:pre} introduces the preliminaries. Section~\ref{sec:overview} gives an overview of the approach in this paper.}
+The rest of this paper is structured as follows:  \hdh{Section~\ref{sec:pre} introduces the preliminaries. Section~\ref{sec:overview} gives an overview of the approach in this paper.}
 Section~\ref{sec:recl} presents the syntax and semantics of RECL. 
 Section~\ref{sec:automaton} defines CEFA. Section~\ref{sec:algorithm} introduces the algorithm to solve RECL constraints. 
 Section~\ref{sec:heuristic} presents some heuristics for improving the performance of solving RECL constraints where the counting operators are nested with some other counting operators or complement operators. Section~\ref{sec:implementation} shows the experiment results. Section~\ref{sec:conclu} concludes this paper.

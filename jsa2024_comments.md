@@ -34,7 +34,7 @@ I would be very much interested in how Z3-Noodler works on the benchmark. The p 
 
 
 Typos and little things:
-page 2, third line - "...which is possibly ..." is not a sentence
+~~page 2, third line - "...which is possibly ..." is not a sentence~~
 ~~page 2, second paragraph "3040%"~~
 ~~page 12, bottom: the automata A1 and A2 have a single initial state, but the definition works with a set of initial states. This may occur on more places.~~
 ~~The font in table 5 is strangely huge.~~
@@ -67,13 +67,13 @@ Secondly, what is r'?~~
 
 ~~Sec 7.2, Page 21: better to explain how to combine these two approximation. By the way, utilizing an under-approximation may result in a false negative, whereas employing an over-approximation could lead to a fal se positive. Please engage in a discussion regarding this matter.~~
 
-Sec 9, Page 26: It is advisable to conduct a comprehensive analysis regarding the complexity of problem instances for further clarification, with respect to Figure 4. For example, one should consider the depth of counting nesting, the number of regex variables (is it sufficient in practice to utilize just a single variable x?), as well as constraints associated with string length—not limited to a singular condition such as |x| > 10/50.
+~~Sec 9, Page 26: It is advisable to conduct a comprehensive analysis regarding the complexity of problem instances for further clarification, with respect to Figure 4. For example, one should consider the depth of counting nesting, the number of regex variables (is it sufficient in practice to utilize just a single variable x?), as well as constraints associated with string length—not limited to a singular condition such as |x| > 10/50.~~ 
 
 
 ## The E-mail from JSA:
 Thank you for submitting your manuscript to Journal of Systems Architecture.
 
-The review process of your manuscript has been completed. Based on the opinions of the reviewers and the Associate Editor in charge, your manuscript requires a Minor Revision. Please resubmit your manuscript by **12-25-2024**.
+The review process of your manuscript has been completed. Based on the opinions of the reviewers and the Associate Editor in charge, your manuscript requires a Minor Revision. Please resubmit your manuscript by **January 01, 2025**.
 This is the standard time expected by the journal. If you require additional time please contact the editors.
 
 When revising your manuscript, please consider all issues mentioned in the reviewers' comments carefully: **please outline every change** made in response to their comments and provide suitable rebuttals for any comments not addressed. Please provide the source files (WORD or LaTeX) for the manuscript under the item type "Manuscript/latex source file". as well as photos and biographies of all authors.

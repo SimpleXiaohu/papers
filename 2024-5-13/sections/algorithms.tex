@@ -3,7 +3,7 @@
 The goal of this section is to show how to solve RECL constraints by utilizing CEFA. 
 At first, we reduce the satisfiability of RECL constraints to a decision problem defined in the sequel. Then we propose a decision procedure for this problem. 
 
-\begin{definition}[$\cefadec$]
+\begin{definition}[$\cefadec$]\label{def-cefadec}
 Let $x_1, \cdots, x_n$ be string variables, $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ be nonempty sets of CEFA over the alphabet $\Sigma$ with $\Lambda_{x_i} = \{\aut_{i, 1}, \cdots, \aut_{i, l_i}\}$ for every $i \in [n]$ where the sets of registers $R_{\aut_{1, 1}}, \cdots, R_{\aut_{1, l_1}}, \cdots, R_{\aut_{n, 1}}, \cdots, R_{\aut_{n, l_n}}$ are mutually disjoint, moreover, let $\varphi$ be an LIA formula whose free variables are from $ \bigcup \limits_{i \in [n], j \in [l_i]} R_{\aut_{i, j}}$. Then  the CEFA in $\Lambda_{x_1}, \cdots, \Lambda_{x_n}$ are said to be nonempty w.r.t. $\varphi$ if there are assignments $\theta: \{x_1, \cdots, x_n\} \rightarrow \Sigma^*$ and vectors $\myvec{v}_{i,j}$
 such that $(\theta(x_i); \myvec{v}_{i,j}) \in \Lang(\aut_{i, j})$ and  $\varphi[(\myvec{v}_{i,j}/R_{\aut_{i,j}})]$ is true, for every $i \in [n], j \in [l_i]$.
 \end{definition}
@@ -21,11 +21,15 @@ Note that the decision procedure in \cite{atva2020} was only used to prove the u
 Let $\varphi$ be a RECL constraint and $x_1, \cdots, x_n$ be an enumeration of the string variables occurring in $\varphi$. Moreover, let $\varphi \equiv \varphi_1 \wedge \varphi_2$ such that $\varphi_1$ is a conjunction of regular membership constraints of $\varphi$, and $\varphi_2$ is a conjunction of length constraints of $\varphi$.
 We shall reduce the satisfiability of $\varphi$ to an instance of $\cefadec$. 
 
-At first, we show how to construct a CEFA from a regex where counting operators may occur. \hdh{Glushkov’s construction~\cite{Gluskov61} and its variants~\cite{redos_lenka,HS+23,GKM23} convert a regex to a $\epsilon$-free automaton. In contrast, Thompson's construction~\cite{Thompson1968} results in an automaton with $\epsilon$-transitions but the algorithm is simpler and straightforward. }Our approach is based on Thompson's construction~\cite{Thompson1968} \hdh{and we remove $\epsilon$-transitions on the fly (See union at Section \ref{sec:automaton} and construction of counting operators below)}. Let us start with register-representable regexes defined in the sequel. 
+At first, we show how to construct a CEFA from a regex where counting operators may occur. \hdh{Our approach largely follows Thompson's construction~\cite{Thompson1968} but we avoid using the $\epsilon$-transitions. Similar ideas of representing counting operators as counters in automata have been used in e.g. \cite{redos_lenka}. }
+%\hdh{and we remove $\epsilon$-transitions on the fly (See union at Section \ref{sec:automaton} and construction of counting operators below)}. 
+%\hdh{Some other algorithms to construct NFA from regular expressions are also available, for instance, Glushkov’s construction~\cite{Gluskov61} and its variants~\cite{redos_lenka,HS+23,GKM23}.}
+
+Let us start with register-representable regexes defined in the sequel. 
 
 Let us fix an alphabet $\Sigma$.
 
-Let $e$ be a regex over $\Sigma$. Then an occurrence of counting operators in $e$, say $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$), is said to be \emph{register-representable} if $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$) is not in the scope of a Kleene star, another counting operator, complement, or language difference in $e$. We say that $e$ is \emph{register-representable} if and only if all occurrences of counting operators in $e$ are register-representable. For instance, $a^{\{2, 6\}} \cap a^{\{4, \infty\}}$ is register-representable, while $\overline{a^{\{2, 6\}}}$ and $(a^{\{2, 6\}})^{\{4,\infty\}}$ are not since $a^{\{2,6\}}$ is in the scope of complement and the counter operator $\{2, \infty\}$ respectively.  
+Let $e$ be a regex over $\Sigma$. Then an occurrence of counting operators in $e$, say $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$), is said to be \emph{register-representable} if $(e')^{\{m,n\}}$ (or $(e')^{\{m, \infty\}}$) is not in the scope of a Kleene star, another counting operator, complement, or language difference in $e$. We say that $e$ is \emph{register-representable} if and only if all occurrences of counting operators in $e$ are register-representable. For instance, $a^{\{2, 6\}} \cap a^{\{4, \infty\}}$ is register-representable, while $\overline{a^{\{2, 6\}}}$ and $(a^{\{2, 6\}})^{\{4,\infty\}}$ are not since $a^{\{2,6\}}$ is in the scope of complement and the counter operator $\{4, \infty\}$ respectively.  
 
 Let $e$ be a register-representable regex over $\Sigma$. By the following procedure, we will construct a CEFA out of $e$, denoted by $\aut_e$. 
 \begin{enumerate}
@@ -129,46 +133,77 @@ Therefore, we compute LIA formulas from $\cC_i$'s, instead of $\cU_{\cB_i}$'s, t
 
 \medskip
 \noindent
-\emph{Step 3 (Computing Parikh images \hdh{and derive a solution}).} For each $i \in [n]$, we compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. \hdh{Subsequently, we can employ established SMT solvers to determine the satisfiability of the formula and derive a solution if it is satisfiable. The integer variable solutions are directly extracted from the partial model of the formula. The string variable solutions are obtained through indirect means, whose detailed methodology is discussed in Section \ref{sec-opt-sol-gen}. The final Parikh images are as follow :}
+\emph{Step 3 (Computing an LIA formula).} For each $i \in [n]$, we compute an existential LIA formula $\psi_{\cC_i}(\fZ_{\costset_{\cC_i}})$ from $\cC_i$ to represent $\parikh(\cC_i)$. Then the $\cefadec$ problem is reduced to the satisfiability of the following LIA formula, 
 %
-\[
+\begin{equation}\label{eq:parikh_image}
 \begin{array}{l}
 \bigwedge \limits_{i \in [n]} \left(\psi_{\cC_i}(\fZ_{\costset_{\cC_i}}) \wedge \alpha_i\left[\sum\limits_{\myvec{v} \in \costset_{\cC_i}} \anivarz_{i, \myvec{v}} \myvec{v} \big{/}R_{\cB_i}  \right] \right) \ \wedge \\
 \ \ \varphi \left[ \sum\limits_{\myvec{v} \in \costset_{\cC_1}} \anivarz_{1, \myvec{v}} \myvec{v} \big{/}R_{\cB_1}, \cdots, \sum\limits_{\myvec{v} \in \costset_{\cC_n}} \anivarz_{n, \myvec{v}} \myvec{v} \big{/}R_{\cB_n} \right].
 \end{array}
-\]
+\end{equation}
+
+%\hdh{The final Parikh images are as LIA formula (\ref{eq:parikh_image}). Subsequently, we can employ established SMT solvers to determine the satisfiability of the formula and derive a solution if it is satisfiable. The integer variable solutions are directly extracted from the partial model of the formula. The string variable solutions are obtained through indirect means, whose detailed methodology is discussed in Section \ref{sec-opt-sol-gen}.}
+
+\medskip
+\noindent
+\emph{Step 4 (Solving the LIA formula).}
+We utilize some off-the-shelf SMT solver (e.g. Z3) to solve the satisfiability of the LIA formula in Equation~(\ref{eq:parikh_image}). If the solver reports ``sat'' and returns a solution $\amodel$, then we go to Step 5. Otherwise, the $\cefadec$ problem has no solution. 
+
+\hdh{
+\medskip
+\noindent
+\emph{Step 5 (Constructing a solution).}
+%For each $i \in [n]$, 
+Let $\amodel$ be a solution of the LIA formula in Equation~(\ref{eq:parikh_image}). We want to construct from $\amodel$ and the CEFAs $\cB_i$ for $i \in [n]$, a solution $\amodel'$ of the $\cefadec$ problem. The construction of $\amodel'$ is obtained by constructing $\amodel'(x_i)$ for each $i \in [n]$. 
+Let $i \in [n]$. We describe how to construct $\amodel'(x_i)$. 
+The free variables $\fZ_{\costset_{\cC_i}}$ correspond to the number of occurrences of characters in $\costset_{\cC_i}$, i.e. the alphabet of the NFA $\cC_i$. Moreover, in $\cC_i$, the characters are just the integer vectors and the characters in the original CEFAs $\cB_i$ used to construct $\cC_i$ are ignored. 
+The construction of $\amodel'(x_i)$ is actually to solve the reachability problems in a finite transition system where 
+\begin{itemize}
+\item the nodes are of the form $(q, (\nvec_{i, \myvec{v}})_{\myvec{v} \in \costset_{\cC_i}})$, where $\nvec_{i, \myvec{v}}$ denotes the number of the remaining occurrences of the integer vector $\myvec{v}$ in $\cB_i$, 
+%
+\item the transitions are of the form 
+$$((q, (\nvec_{i, \myvec{v}})_{\myvec{v} \in \costset_{\cC_i}}), (q, a, q', \myvec{u}), (q', (\nvec'_{i, \myvec{v}})_{\myvec{v} \in \costset_{\cC_i}}))$$
+such that $(q, a, q', \myvec{u})$ is a transition in $\cB_i$, $\nvec'_{i, \myvec{u}} = \nvec_{i, \myvec{u}}-1$, moreover, $\nvec'_{i, \myvec{v}} = \nvec_{i, \myvec{v}}$ for every $\myvec{v} \neq \myvec{u}$. 
+\end{itemize}
+Moreover, the initial and final state of the reachability problem are set to be $(q_0, (\amodel(\anivarz_{i, \myvec{v}}))_{\myvec{v} \in \costset_{\cC_i}})$ and $(q_f, (0,\cdots, 0))$ for some initial state $q_0$ and final state $q_f$ in $\cB_i$. 
+If a path from the initial state to the final state is found, then the path gives us a desired string $\amodel'(x_i)$.
+}
+%Note that the transition system contains exponentially many nodes. As a result, the searching process takes \emph{doubly exponential time} in the worst case, since there are at most doubly exponentially many simple paths. To alleviate the path-explosion problem, in the sequel, we propose two techniques to reduce the number of transitions of the transition system. 
+
 %\qed
 
 \hdh{
 \subsection{Complexity Analysis of the $\reclsat$ Problem}
-The time complexity of regular expression equivalence with complement has been established as nonelementary~\cite{complementary_complexity_1974}. This directly implies that the $\reclsat$ problem exhibits a nonelementary lower bound. We now turn our attention to analyzing the complexity of the $\reclsat$ problem in the absence of complement operations.
+The time complexity of regular expression equivalence with complement has been established as nonelementary~\cite{complementary_complexity_1974}. This directly implies that the $\reclsat$ problem exhibits a nonelementary lower bound. We now turn our attention to analyzing the complexity of the $\reclsat$ problem in the absence of complement operations (no occurrence of $\Bar{e}$ and $e_1 \backslash e_2$).
 
 \begin{lemma}\label{lemma:regex2cefa}
-    Register-representable regex without complement operation can be converted to CEFA in PSPACE.
+    Register-representable regex without complement operation can be converted to CEFA in EXPSPACE.
 \end{lemma}
 
 \begin{proof}
     We prove this lemma through structural induction on regular expression $e$. For the base case—where the regular expression consists of a single character, $\epsilon$, or $\emptyset$—the lemma holds trivially.
     For the inductive cases, assuming the lemma holds for regular expressions $e_1$ and $e_2$:
-    When $e = e_1\concat e_2$ or $e = e_1+e_2$, the concatenation or union operations described in Section \ref{sec:automaton} produce a CEFA of size $O(|e_1|^{k_1} + |e_2|^{k_2})=O(|e|^{\max(k_1, k_2)})$.
-    For $e = e_1\cap e_2$, the intersection operation detailed in Section \ref{sec:automaton} yields a CEFA of size $O(|e_1|^{k_1}\cdot|e_2|^{k_2})=O(|e|^{k_1+k_2})$.
-    In the case of $e=e_1^{\{m,n\}}$, our construction in Section \ref{subsec:regex2cefa} avoids direct unfolding of counting operators, resulting in a CEFA of size $O(|e_1|^{k_1})=O(|e|^{k_1})$.
-    Finally, for $e=(e_1)$ and $e=e^*$, our application of Thompson's construction~\cite{Thompson1968} produces a CEFA of size $O(|e_1|^{k_1})=O(|e|^{k_1})$.
+    When $e = e_1\concat e_2$ or $e = e_1+e_2$, the concatenation or union operations described in Section \ref{sec:automaton} produce a CEFA of size $O(2^{|e_1|} + 2^{|e_2|}) = O(2^{\max(|e_1|, |e_2|)}) = O(2^{|e|})$.
+    For $e = e_1\cap e_2$, the intersection operation detailed in Section \ref{sec:automaton} yields a CEFA of size $O(2^{|e_1|}\cdot 2^{|e_2|})=O(2^{|e_1| + |e_2|})=O(2^{|e|})$.
+    In the case of $e=e_1^{\{m,n\}}$, our construction in Section \ref{subsec:regex2cefa} avoids direct unfolding of counting operators, resulting in a CEFA of size $O(2^{|e_1|}) = O(2^{|e|})$.
+    Finally, for $e=(e_1)$ and $e=e^*$, our application of Thompson's construction~\cite{Thompson1968} produces a CEFA of size $O(2^{|e_1|}) = O(2^{|e|})$.
 \end{proof}
 
 \begin{theorem}\label{theorem_pspace}
-    If all regexes are register-representable and complement operations are excluded, $\reclsat$ can be solved in PSPACE-complete.
+    If all regexes are register-representable and complement operations are excluded, $\reclsat$ can be solved in EXPSPACE.
 \end{theorem}
 \begin{proof}
-    Based on Lemma \ref{lemma:regex2cefa}, our construction yields a CEFA of polynomial size for each register-representable regex without complement operation. Furthermore, for each string variable's length function, a CEFA of constant size is constructed in Section \ref{subsec:regex2cefa}.
-    Consequently,  the construction outlined in Section \ref{subsec:regex2cefa} requires nondeterministic polynomial size. By Proposition \ref{prop-cefadec}, we can demonstrate that the procedure described in Section \ref{subsec:cefadec} likewise requires nondeterministic polynomial size. Therefore, the complexity of the complete decision procedure for solving the restricted $\reclsat$ problem is NPSPACE-complete, which yields PSPACE-complete by Savitch's theorem~\cite{complexity-book}.
+    Our decision procedure for $\reclsat$ with only register-representable regexes can be decomposed into two steps: (1) constructing CEFAs from regular membership and length function, (2) solving $\cefadec$.
+    Based on Lemma \ref{lemma:regex2cefa}, our construction yields a CEFA of exponential size for each register-representable regex without complement operation. Furthermore, for each string variable's length function, a CEFA of constant size is constructed in Section \ref{subsec:regex2cefa}.
+    Consequently, constructing CEFAs in the decision procedure outlined in Section \ref{subsec:regex2cefa} requires nondeterministic exponential size. After constructing CEFAs, the $\reclsat$ problem is transferred to the $\cefadec$ problem. By Proposition \ref{prop-cefadec}, we can demonstrate that the decision procedure likewise requires nondeterministic exponential size. Therefore, the complexity of the decision procedure for solving the restricted $\reclsat$ problem is NEXPSPACE, which yields EXPSPACE by Savitch's theorem~\cite{complexity-book}.
 \end{proof}
 
 \begin{theorem}
-    $\reclsat$ can be solved in EXPSPACE when complement operations are excluded.
+    $\reclsat$ can be solved in 3-EXPTIME when complement operations are excluded.
 \end{theorem}
 
 \begin{proof}
-    In Section \ref{subsec:regex2cefa}, unfolding non-register-representable occurrences of counting operators leads to an exponential growth in expression length. For each non-register-representable regular expression of length $l$, the unfolding process generates a register-representable regular expression of length $O(m^n\cdot l)=O((2^{|l|})^{|l|}\cdot l) = O(2^{|l|})$, where $m$ represents the maximum counting bound and $n$ denotes the maximum depth of nested counting operators. By Theorem \ref{theorem_pspace}, the complexity of the complete decision procedure for solving the $\reclsat$ problem without complement operations is EXPSPACE.
+    Our decision procedure for $\reclsat$ with non-register-representable regexes can be decomposed into three steps: (1) unfolding non-register-representable occurrences of counting operators, (2) constructing CEFAs from regular membership and length function, (3) solving $\cefadec$.
+    From the decision procedure in Section \ref{subsec:regex2cefa}, unfolding non-register-representable occurrences of counting operators leads to an exponential growth in expression length. For each non-register-representable regular expression of length $l$, the unfolding process generates a register-representable regular expression of length $O(m^n\cdot l)=O((2^{|l|})^{|l|}\cdot l) = O(2^{|l|})$, where $m$ represents the maximum counting bound and $n$ denotes the maximum depth of nested counting operators. By Theorem \ref{theorem_pspace} and the fact that EXPSPACE $\subseteq$ 2-EXPTIME \cite{complexity-book}, the complexity of the decision procedure for solving the $\reclsat$ problem without complement operations is 3-EXPTIME.
 \end{proof}
 }

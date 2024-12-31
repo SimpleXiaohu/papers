@@ -22,8 +22,9 @@ Let $\ufld_1(e)$ and $\ufld_2(e)$ denote the resulting regular expressions.
 \item We estimate the sizes of the two CEFAs $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ constructed from $\ufld_1(e), \ufld_2(e)$ respectively as pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$, where $\snum_1(e)$ and $\rnum_1(e)$ are the estimates of the number of states and registers in $\aut_{\ufld_1(e)}$, similarly for $\snum_2(e)$ and $\rnum_2(e)$. 
 %
 \item From the construction in Section~\ref{sec:algorithm}, 
-two NFAs $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are constructed from $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are the set of integer vectors \sout{$\myvec{v}$} occurring in the transitions of $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ respectively. \sout{The integer vectors of  $\aut_{\ufld_1(e)}$ are of form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{r'-i-1})$, where $i \in [r']$.} \hdh{The integer vectors of  $\aut_{\ufld_1(e)}$ are of the form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{\rnum_1(e)-i-1})$, where $i \in [\rnum_1(e)]$.} Consequently, the size of the alphabet of $\cU_{\aut_{\ufld_1(e)}}$ is bounded by $\rnum_1(e)$. Similarly for $\cU_{\aut_{\ufld_\hdh{2}(e)}}$. 
-Finally, we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut_{\ufld_1(e)}}, \cU_{\aut_{\ufld_2(e)}}$ as $sz_1 = (\snum_1(e))^2 \cdot \rnum_1(e)$ and $sz_2 = (\snum_2(e))^2 \cdot \rnum_2(e)$ respectively.
+two NFAs $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are constructed from $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are the set of integer vectors occurring in the transitions of $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ respectively. \hdh{Note that there is only one register in $\aut_{\ufld_1(e)}$. Because each occurrence of the counting operators in $\ufld_2(e)$ originates from the register-representable $e_1$, thus not in the scope of any Kleene star, counting, complement, or language difference, it follows that 
+in $\aut_{\ufld_2(e)}$, the registers corresponding to these counting operators are updated independently, that is, the integer vectors of  $\aut_{\ufld_2(e)}$ are of the form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{\rnum_1(e)-i-1})$, where $i \in [\rnum_2(e)]$.} Consequently, the size of the alphabet of $\cU_{\aut_{\ufld_1(e)}}$ is bounded by $\rnum_1(e)$. Similarly for $\cU_{\aut_{\ufld_\hdh{2}(e)}}$. 
+Finally, we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut_{\ufld_1(e)}}, \cU_{\aut_{\ufld_2(e)}}$ as $sz_1 = (\snum_1(e))^2 \cdot \rnum_1(e)$ and $sz_2 = (\snum_2(e))^2 \cdot \rnum_2(e)$ respectively. \zhilin{to be checked}
 %
 \item If $sz_1 \le sz_2$, then we choose to unfold the counting operators in $e_1$. Otherwise, we choose to unfold the counting operator $^{\{m,n\}}$. 
 \end{itemize}
@@ -190,7 +191,7 @@ Intuitively, $q_s$ is a sink state that deals with the situations where there ar
 Note that $\cB$ is a strict over-approximation of $e = \overline{e_1}$ since $\aut_{e_1}$ may be nondeterministic. For instance, if there are two runs of $\aut_{e_1}$ on a string $w$, say one run that ends at a non-final state and another run that ends at a final state and satisfies accepting condition $\alpha$. Then $w \in \Lang(\aut_{e_1})$, thus $w \not \in \Lang(\overline{\aut_{e_1}})$. Nevertheless, according to the construction, $w$ is accepted by $\cB$, witnessed by the run of $\aut_{e_1}$ that ends at a non-final state. 
 
 \hdh{\paragraph*{Combination of under- and over-approximation}
- In our configuration, under-approximation is performed first due to its superior computational efficiency, and we proceed with over-approximation if it yields an unsatisfiable result. In cases where over-approximation produces a satisfiable result, we execute the decision procedure wherein all non-register-representable regular expressions are naively unfold. To minimize computational overhead, we apply approximation techniques only in cases involving non-register-representable regular expressions with significant counting bounds—specifically, those exceeding 20 in our experimental configuration.
+ In our configuration, under-approximation is performed first due to its superior computational efficiency, and we proceed with over-approximation if it yields an unsatisfiable result. When the under-approximation yields an unsatisfiable result and the over-approximation yields a satisfiable result, we employ the decision procedure to obtain an answer, which implies that our approach is sound and complete. To minimize computational overhead, we apply approximation techniques only in cases involving non-register-representable regular expressions with significant counting bounds—specifically, those exceeding 20 in our experimental configuration.
 }
 
 %As we mentioned in the above section \ref{heuristic:nested}, the unwinding process of the complement operator is exponential to the counting bounds in the worst case. We present a heuristic to reduce the number of states generated by the unwinding process. The idea is to under-approximate and over-approximate the language of the regex first, so that we can avoid unwinding counting operators in complement. We present the heuristic in the following algorithm.
@@ -242,9 +243,12 @@ $r$ is the register used to check whether the accepted state is also accepted in
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Optimizations for model generation}\label{sec-opt-sol-gen}
+\section{\hdh{Optimizations for model generation}}\label{sec-opt-sol-gen}
 
-\zhilin{TODO: I had troubles to understand the section about optimized model generation. Maybe stating what the technical problem that it is solving is in a more dumb proof way would help., } recall that in Section~\ref{sec:algorithm}, the satisfiability of the original RECL constraint is reduced to the satisfiability of the existential LIA formula
+\zhilin{Double check}
+
+%\zhilin{TODO: I had troubles to understand the section about optimized model generation. Maybe stating what the technical problem that it is solving is in a more dumb proof way would help., } 
+Recall that in Section~\ref{sec:algorithm}, the satisfiability of the original RECL constraint is reduced to the satisfiability of the existential LIA formula
 \[
 \begin{array}{l}
 \bigwedge \limits_{i \in [n]} \left(\psi_{\cC_i}(\fZ_{\costset_{\cC_i}}) \wedge \alpha_i\left[\sum\limits_{\myvec{v} \in \costset_{\cC_i}} \anivarz_{i, \myvec{v}} \myvec{v} \big{/}R_{\cB_i}  \right] \right) \ \wedge \\
@@ -252,13 +256,122 @@ $r$ is the register used to check whether the accepted state is also accepted in
 \end{array}
 \]
 Let us use $\theta$ to denote this formula. 
-Then we utilize some SMT solver, say Z3, to solve the satisfiability of $\theta$. If Z3 reports ``sat'', then it also returns a model, namely, an assignment $\amodel$ of natural numbers to the free integer variables in $\theta$. Then we utilize $\amodel$ to generate a model $\amodel'$ of the original RECL constraint $\varphi$, i.e., an assignment of strings to the string variables so that $\varphi$ is evaluated to true under $\amodel'$. 
+Then we utilize some SMT solver, say Z3, to solve the satisfiability of $\theta$. If Z3 reports ``sat'', then it also returns a model, namely, an assignment $\amodel$ of natural numbers to the free integer variables in $\theta$. Then we utilize $\amodel$ to generate a model $\amodel'$ of the $\cefadec$ problem, i.e., an assignment $\amodel'$ of strings to the string variables so that the conditions in Definition~\ref{def-cefadec} are satisfied. 
+In the sequel, let us assume $n=1$ for simplicity.
+%and use an example to illustrate
+We first describe the naive algorithm of generating $\amodel'$ from $\amodel$. Then we show how we optimize this model generation process. 
 
-Note that for each $i \in [n]$, the free variables $\fZ_{\costset_{\cC_i}}$ in $\theta$ correspond to the number of occurrences of characters in $\costset_{\cC_i}$, i.e. the alphabet of the NFA $\cC_i$. Moreover, recall that in $\cC_i$, the characters are just the integer vectors and the characters in the original CEFAs $\cB_i$ used to construct $\cC_i$ are ignored. 
-When we utilize $\amodel$ and the CEFAs $\cB_i$ to generate $\amodel'$, for each $i \in [n]$, we record the remaining occurrences of vectors $\myvec{v}$ in the transitions of the CEFAs $\cB_i$ as a number $\nvec_{i, \myvec{v}}$ and
-each time when a transition $(q, a, q', \myvec{v})$ in $\cB_i$ is traversed, $\nvec_{i, \myvec{v}}$ is decremented. Note that initially $\nvec_{i, \myvec{v}}$ is set to $\amodel(\anivarz_{i, \myvec{v}})$. The searching process terminates when $\nvec_{i, \myvec{v}}$ becomes $0$ for every $\myvec{v}$. We record the characters in the traversed transitions and obtain a string for the string variable $x_i$ when the searching process terminates. As a result, we obtain a model of $\varphi$ in the end. \hdh{In the worst case, we need search O($\prod_{i=0}^{n} \amodel(\anivarz_{i, \myvec{v}})$) times to find an accepted word.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hide{
+\begin{example}\label{exmp-model-gen-naive}
+The CEFA $\cB_1$ and the corresponding NFA $\cC_1$ are illustrated in Figure~\ref{fig-model-gen-opt}. Moreover, let $\varphi \equiv r_1 = 12$. Since the structure of $\cC_1$ is relatively simple, it is not hard to see that 
+$$\psi_{\cC_1}(\anivarz_{1,(1,0)}, \anivarz_{1,(0,1)}) = \anivarz_{1,(1,0)} \ge 2 \wedge \anivarz_{1,(1,0)} \equiv 0 \bmod 2 \wedge  0 \le \anivarz_{1,(0,1)} \le 2.$$ 
+Moreover, $\alpha_1[(\anivarz_{1,(1,0)}(1,0) + \anivarz_{1,(0,1)}(0,1)) /(r_1, r_2)] \equiv \anivarz_{1,(1,0)} \ge 10 \wedge \anivarz_{1,(0,1)} = 2$.
+Then 
+$$
+\begin{array}{l c l}
+\theta & \equiv & 
+\anivarz_{1,(1,0)} \ge 2 \wedge \anivarz_{1,(1,0)} \equiv 0 \bmod 2 \wedge  0 \le \anivarz_{1,(0,1)} \le 2\ \wedge \\
+& & \anivarz_{1,(1,0)} \ge 10 \wedge \anivarz_{1,(0,1)} = 2 \wedge 
+\anivarz_{1,(1,0)} = 12.
+\end{array}
+$$
+Then $\amodel$ defined by $\amodel(\anivarz_{1,(1,0)}) = 12$ and  $\amodel(\anivarz_{1,(0,1)})= 2$ is a model of $\theta$.
 
-It turns out that this model generation process is inefficient, mainly due to the fact that the information about the occurrences of vectors $\myvec{v}$ in $\cB_i$ in the searching process is too coarse. In the sequel, we would like to refine this process by using \sout{the LIA formulas to obtain the information about} the number of occurrences of transitions, instead of just the occurrences of integer vectors, \sout{and utilize this information} to guide the search process. 
+To generate a model $\amodel'$ for $\cefadec$ problem, it is necessary to generate a string $w$ such that $(w, (12, 2))$ is accepted by $\cB_1$. 
+
+\begin{figure}[htbp]
+\includegraphics[scale = 0.65]{2024-5-13/sections/model-gen-exmp.pdf}
+\caption{The CEFA $\cB_1$ and the NFA $\cC_1$}
+\label{fig-model-gen-opt}
+\end{figure}
+\end{example}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph*{A naive algorithm for model generation}
+%For each $i \in [n]$, 
+The free variables $\fZ_{\costset_{\cC_1}}$ in $\theta$ correspond to the number of occurrences of characters in $\costset_{\cC_1}$, i.e. the alphabet of the NFA $\cC_1$. Moreover, in $\cC_1$, the characters are just the integer vectors and the characters in the original CEFAs $\cB_1$ used to construct $\cC_1$ are ignored. 
+We then utilize $\amodel$ and the CEFA $\cB_1$ to generate $\amodel'$. Essentially, we are solving the reachability problems in a finite transition system where 
+\begin{itemize}
+\item the nodes are of the form $(q, (\nvec_{1, \myvec{v}})_{v \in \costset_{\cC_1}})$,
+%
+\item the transitions are of the form 
+$$((q, (\nvec_{1, \myvec{v}})_{\myvec{v} \in \costset_{\cC_1}}), (q, a, q', \myvec{u}), (q', (\nvec'_{1, \myvec{v}})_{\myvec{v} \in \costset_{\cC_1}}))$$
+such that $(q, a, q', \myvec{u})$ is a transition in $\cB_1$, $\nvec'_{1, \myvec{u}} = \nvec_{1, \myvec{u}}-1$, moreover, $\nvec'_{1, \myvec{v}} = \nvec_{1, \myvec{v}}$ for every $\myvec{v} \neq \myvec{u}$. 
+\end{itemize}
+Moreover, the initial and final state of the reachability problem are set to be $(q_0, (\amodel(\anivarz_{1, \myvec{v}}))_{\myvec{v} \in \costset_{\cC_1}})$ and $(q_f, (0,\cdots, 0))$ for some initial state $q_0$ and final state $q_f$. 
+Note that the transition system contains exponentially many nodes. As a result, the searching process takes \emph{doubly exponential time} in the worst case, since there are at most doubly exponentially many paths. To alleviate the path-explosion problem, in the sequel, we propose two techniques to reduce the number of transitions of the transition system. 
+
+\hide{
+we record the remaining occurrences of vectors $\myvec{v}$ in the transitions of the CEFAs $\cB_1$ as a number $\nvec_{1, \myvec{v}}$ and
+each time when a transition $(q, a, q', \myvec{v})$ in $\cB_1$ is traversed, $\nvec_{1, \myvec{v}}$ is decremented. Initially $\nvec_{1, \myvec{v}}$ is set to $\amodel(\anivarz_{1, \myvec{v}})$. The searching process terminates when $\nvec_{1, \myvec{v}}$ becomes $0$ for every $\myvec{v}$. We record the characters in the traversed transitions and obtain a string for the string variable $x_i$ when the searching process terminates. As a result, we obtain a model of $\cefadec$ in the end. Note that the searching process can be seen as solving the reachability problem in a finite-state transition system where the nodes are of the form $(q, (\nvec_{1, \myvec{v}}))$ and the transitions are 
+is nondeterministic since there may be multiple transitions 
+}
+%\hdh{In the worst case, we need search O($\prod_{i=0}^{n} \amodel(\anivarz_{i, \myvec{v}})$) times to find an accepted word.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hide{
+\begin{example}\label{exmp-model-gen-naive-2}
+There are two distinct vectors $(1,0)$ and $(0,1)$ in $\cC_1$. 
+The searching process starts from the state $(q_0, (12, 2))$, where $\nvec_{1, (1,0)} = 12$ and $\nvec_{1, (0,1)} = 2$. There are three transitions out of $q_0$, $(q_0, a, (1,0), q_1)$, $(q_0, b, (1,0), q_2)$, $(q_0, c, (1,0), q_3)$. 
+\begin{itemize}
+\item If the searching process chooses the transition $(q_0, a, (1,0), q_1)$, then the state $(q_1, (11,2))$ is reached and a letter $a$ is added to the end of the string (to be generated). 
+%
+\item If the searching process chooses the transition $(q_0, c, (1,0), q_2)$, then the state $(q_2, (11,2))$ is reached and a letter $c$ is added to the end of the string  (to be generated).
+%
+\item If the searching process chooses the transition $(q_0, c, (1,0), q_3)$, then the state $(q_3, (11,2))$ is reached and a letter $c$ is added to the end of the string  (to be generated).
+\end{itemize}
+The searching process continues from the state $q_1$, $q_2$, and $q_3$ respectively. If a state $(q_5, (n_1,n_2))$ such that $n_1 > 0$ or $n_2 > 0$ is reached, then some wrong choices have been made before and the searching process should be backtracked. If a state $(q_5, (0,0))$ is reached, then a desired model is found.  
+\end{example}
+Note that since we do not have the information about the number of occurrences of the transitions out of $q_0$, starting from the state $(q_0, (12, 2))$, we have to search all the three transitions out of $q_0$. 
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+At first, we refine the states of the transition system by recording the number of transitions, instead of just the number of occurrences of the integer vectors. 
+
+\paragraph*{Refining the states of the transition system by recording the number of transitions}
+We shall construct the formula $\theta'$ so that a model of $\theta'$ includes the information about the number of occurrences of the transitions of $\cB_1$.
+\[
+\begin{array}{l c l}
+\theta'  & \equiv &  \psi_{\cB_1}(\fZ_{\cB_1}) \wedge \bigwedge \limits_{\myvec{v} \in \costset_{\cC_1}} \anivarz_{1, \myvec{v}} = \amodel(\anivarz_{1, \myvec{v}}) \ \wedge \\
+& & \ \ \bigwedge \limits_{\myvec{v} \in \costset_{\cC_1}} \anivarz_{1, \myvec{v}} = \sum \limits_{(q, a, q') \mbox{ s.t. } (q, a, q', \myvec{v}) \mbox{ is a transition in } \cB_1} \anivarz_{1, (q, a, q', \myvec{v})},
+\end{array}
+\]
+where $\fZ_{\cB_1} = \{\anivarz_{1, (q, a, q', \myvec{v})} \mid (q, a, q', \myvec{v}) \mbox{ is a transition in } \cB_1\}$ is the set of variables $\anivarz_{1, (q, a, q', \myvec{v})}$ denoting the number of occurrences of $(q, a, q', \myvec{v})$. 
+Note that compared to $\theta$, $\theta'$ uses the LIA formula $\psi_{\cB_1}$, which is constructed from $\cB_1$ by ignoring its accepting condition and taking it as an NFA where the alphabet is seen as the set of transitions.  Moreover, $\theta'$ relates the values of the variables $\anivarz_{1, \myvec{v}}$ and $\anivarz_{1, (q, a, q', \myvec{v})}$, as well as restricts that the values of $\anivarz_{1, \myvec{v}}$ should be $\amodel(\anivarz_{1, \myvec{v}})$. We then submit $\theta'$ to some SMT solver, which returns a model for $\theta'$, in particular, the values of the variables $\anivarz_{1, (q, a, q', \myvec{v})}$. Equipped with the model, we refine the transition system by considering the nodes $(q, (\nvec_{1, (q, a, q', \myvec{v})})_{(q, a, q', \myvec{v})\mbox{ is a transition in } \cB_1})$, where $\nvec_{1, (q, a, q', \myvec{v})}$ denotes the number of remaining occurrences of $(q, a, q', \myvec{v})$. Note that this refinement can reduce the number of transitions. For instance, if $\nvec_{1, (q, a, q', \myvec{v})} = 0$ for some $(q, a, q', \myvec{v})$, then we can avoid searching the transition $(q, a, q', \myvec{v})$ out of $q$. On the other hand, if in the original transition system where $\nvec_{1, \myvec{v}}$ is used, then it may be the case that we have $\nvec_{1, \myvec{v}} > 0$ (since there may be multiple transitions associated with $\myvec{v}$) and the transition $(q, a, q', \myvec{v})$ should still be searched. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hide{
+\begin{example}\label{exmp-model-gen-naive-3}
+Let us continue Example~\ref{exmp-model-gen-naive-2}.
+$$
+\begin{array}{l c l}
+\theta' & \equiv & 
+\anivarz_{1,(1,0)} \ge 2 \wedge \anivarz_{1,(1,0)} \equiv 0 \bmod 2 \wedge  0 \le \anivarz_{1,(0,1)} \le 2\ \wedge \\
+& & \anivarz_{1,(1,0)} \ge 10 \wedge \anivarz_{1,(0,1)} = 2 \wedge 
+\anivarz_{1,(1,0)} = 12\ \wedge \\
+& & \anivarz_{1,(1,0)} = \anivarz_{1, (q_0, a, q_1, (1,0))} + \anivarz_{1, (q_1, b, q_0, (1,0))} + \anivarz_{1, (q_0, c, q_2, (1,0))} +\\
+& & \ \ \ \ \ \ \ \ \ \ \  \anivarz_{1, (q_0, c, q_3, (1,0))} + \anivarz_{1, (q_3, c, q_4, (1,0))} + \anivarz_{1, (q_3, c, q_5, (1,0))}\ \wedge\\
+& & \anivarz_{1,(0,1)} = \anivarz_{1, (q_2, d, q_3, (0,1))} + \anivarz_{1, (q_4, d, q_5, (0,1))}.
+\end{array}
+$$
+A model of 
+\end{example}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\hide{
+It turns out that this model generation process is inefficient, mainly due to the fact that the information about the occurrences of vectors $\myvec{v}$ in $\cB_i$ in the searching process is too coarse. In the sequel, we would like to refine this process by using the number of occurrences of transitions, instead of just the occurrences of integer vectors, to guide the search process. 
 Specifically, for each $i \in [n]$ and each transition $(q, a, q', \myvec{v})$ in $\cB_i$, we introduce an integer variable $\anivarz_{i, (q, a, q', \myvec{v})}$ to denote the number of occurrences of the transition, and solve the satisfiability of the following formula,  
 \[
 \begin{array}{l}
@@ -271,8 +384,15 @@ If an SMT solver reports that the aforementioned formula is satisfiable, then th
 %For each $i \in [n]$ and each transition $(q, a, q', \myvec{v})$ in $\cB_i$, let us use $nt_{i, (q, a, q', \myvec{v})}$ to denote the value of $\anivarz_{i, (q, a, q', \myvec{v})}$ in the model.
 Then we utilize these values to generate a model (an assignment of strings to string variables) of $\varphi$. 
 Let $i \in [n]$. We use a function $\lambda_i$ to record the number of occurrences of the transitions in $\cB_i$. During the search process for $\cB_i$, each time when a transition $(q, a, q', \myvec{v})$ is traversed, $\lambda_i$ is updated by decrementing $\lambda_i((q, a, q', \myvec{v}))$, moreover, $a$ is also recorded. Initially, for each $i \in [n]$ and each transition $(q, a, q', \myvec{v})$ in $\cB_i$, $\lambda_i((q, a, q', \myvec{v}))$ is set to be the value of $\anivarz_{i, (q, a, q', \myvec{v})}$ in the model. When a final state of $\cB_i$ is reached and $\lambda_i((q, a, q', \myvec{v}))$ becomes zero for each transition $(q, a, q', \myvec{v})$ in $\cB_i$, then a desired string is generated for the string variable $x_i$. 
+}
 
-Moreover, we propose a method to prune the search space further. Let $i \in [n]$. Suppose that during the search process for $\cB_i$, let $q$ be the current state of $\cB_i$ and $\lambda_i$ record the remaining occurrences of transitions of $\cB_i$. We compute the set of transitions of $\cB_i$ that are reachable from the state $q$. Let $\cT_q$ denote this set. If $\{(q, a, q', \myvec{c}) \mid \lambda_i((q, a, q', \myvec{c})) > 0\} \not \subseteq \cT_q$, then we know that it is impossible to continue the search process so that a string accepted by $\cB_i$ will be found and meanwhile the constraint on the number of transitions enforced by $\lambda_i$ is satisfied. Therefore, in this case, the search process for $\cB_i$ halts and is backtracked. 
+
+Moreover, we propose a method to reduce the number of transitions in the transition system further. 
+
+\paragraph*{Pruning the transitions in the transition system}
+%Let $i \in [n]$. 
+Let the current state of the transition system be $(p, (\nvec_{1, (q, a, q', \myvec{v})})_{(q, a, q', \myvec{v})\mbox{ is a transition in } \cB_1})$. 
+Let us compute the set of transitions of $\cB_1$ that are reachable from the state $p$. Let $\cT_p$ denote this set. If $\{(q, a, q', \myvec{v}) \mid \nvec_{1, ((q, a, q', \myvec{v}))} > 0\} \not \subseteq \cT_p$, then we know that it is impossible to continue the search process so that a string accepted by $\cB_1$ will be found and meanwhile the constraint on the number of transitions enforced by $\nvec_{1, (q, a, q', \myvec{v})}$ is satisfied. Therefore, in this case, we can remove all the transitions out of $(p, (\nvec_{1, (q, a, q', \myvec{v})})_{(q, a, q', \myvec{v})\mbox{ is a transition in } \cB_1})$ and the search halts in this state and is backtracked. 
 
 %\zhilin{stopped here}
 
