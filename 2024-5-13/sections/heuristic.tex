@@ -17,84 +17,104 @@ Let us describe the optimization more precisely.
 \begin{itemize}
 \item For a regular expression $e = (e_1)^{\{m,n\}}$ where $e_1$ is a register-representable regular expression, we can unfold the counting operators in the following ways to obtain a register-representable RECL constraint: (i) unfold the counting operators in $e_1$, (ii) unfold the counting operator $^{\{m,n\}}$. 
 %
-Let $\ufld_1(e)$ and $\ufld_2(e)$ denote the resulting regular expressions. 
+Let $\ufld_1(e)$ and $\ufld_2(e)$ denote the resulting regular expressions. \hdh{Note that in $\ufld_1(e)$, all the counting operators in $e_1$ (if there is any) disappear, while in $\ufld_2(e)$, all the counting operators in $e_1$ are preserved and copied for $n$ times. }
 
-\item We estimate the sizes of the two CEFAs $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ constructed from $\ufld_1(e), \ufld_2(e)$ respectively as pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$, where $\snum_1(e)$ and $\rnum_1(e)$ are the estimates of the number of states and registers in $\aut_{\ufld_1(e)}$, similarly for $\snum_2(e)$ and $\rnum_2(e)$. 
+\item In the sequel, we estimate the sizes (the number of transitions) of
+the NFAs $\cU_{\aut_{\ufld_1(e)}}$ and $\cU_{\aut_{\ufld_2(e)}}$, denoted by $sz_1$ and $sz_2$. If $sz_1 \leq sz_2$, then we choose to unfold the counting operators in $e_1$. Otherwise, we choose to unfold the counting operator $^{\{m, n\}}$. 
+%to make a decision whether to choose $ufld_1(e)$ or $ufld_2(e)$. 
+
+\item To estimate the sizes of $\cU_{\aut_{\ufld_1(e)}}$ and $\cU_{\aut_{\ufld_2(e)}}$, we first estimate the sizes of the  CEFAs $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$   
+as \hdh{two pairs $(\snum_1(e), \anum_1(e))$ and $(\snum_2(e),\anum_2(e))$, where $\snum_1(e)$ and $\anum_1(e)$ are the estimates of the number of states and integer vectors in $\aut_{\ufld_1(e)}$ separately, similarly for $(\snum_2(e)$, $\anum_2(e))$. Since the NFAs $\cU_{\aut_{\ufld_1(e)}}$ and $\cU_{\aut_{\ufld_2(e)}}$ are constructed from $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$ by dropping the accepting conditions and ignore characters, $\snum_1(e)$ and $\anum_1(e)$ are the estimates of the number of states and characters of $\cU_{\aut_{\ufld_1(e)}}$, similarly for $\cU_{\aut_{\ufld_2(e)}}$. Then we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut_{\ufld_1(e)}}$ and $\cU_{\aut_{\ufld_2(e)}}$ as $sz_1 = (\snum_1(e))^2 \cdot \anum_1(e)$ and $sz_2 = (\snum_2(e))^2 \cdot \anum_2(e)$ respectively.}
 %
-\item From the construction in Section~\ref{sec:algorithm}, 
-two NFAs $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are constructed from $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are the set of integer vectors occurring in the transitions of $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ respectively. \hdh{Note that there is only one register in $\aut_{\ufld_1(e)}$. Because each occurrence of the counting operators in $\ufld_2(e)$ originates from the register-representable $e_1$, thus not in the scope of any Kleene star, counting, complement, or language difference, it follows that 
-in $\aut_{\ufld_2(e)}$, the registers corresponding to these counting operators are updated independently, that is, the integer vectors of  $\aut_{\ufld_2(e)}$ are of the form $(\underbrace{0, \cdots, 0}_{i-1}, 1, \underbrace{0, \cdots, 0}_{\rnum_1(e)-i-1})$, where $i \in [\rnum_2(e)]$.} Consequently, the size of the alphabet of $\cU_{\aut_{\ufld_1(e)}}$ is bounded by $\rnum_1(e)$. Similarly for $\cU_{\aut_{\ufld_\hdh{2}(e)}}$. 
-Finally, we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut_{\ufld_1(e)}}, \cU_{\aut_{\ufld_2(e)}}$ as $sz_1 = (\snum_1(e))^2 \cdot \rnum_1(e)$ and $sz_2 = (\snum_2(e))^2 \cdot \rnum_2(e)$ respectively. \zhilin{to be checked}
+\mycomment {\item From the construction in Section~\ref{sec:algorithm}, 
+two NFAs $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are constructed from $\aut_{\ufld_1(e)}$ and $\aut_{\ufld_2(e)}$ by dropping the accepting conditions and ignoring the characters. As a result, the alphabets of $\cU_{\aut_{\ufld_\hdh{1}(e)}}, \cU_{\aut_{\ufld_2(e)}}$ are the set of integer vectors occurring in the transitions of $\aut_{\ufld_1(e)}, \aut_{\ufld_2(e)}$ respectively. \hdh{Note that there is only one register and two integer vectors in $\aut_{\ufld_1(e)}$, in other words, the number of registers and the alphabet size are fixed. }
+Finally, we estimate the sizes (number of transitions) of the NFAs $\cU_{\aut_{\ufld_1(e)}}, \cU_{\aut_{\ufld_2(e)}}$ as $sz_1 = (\snum_1(e))^2 \cdot \rnum_1(e)$ and $sz_2 = (\snum_2(e))^2 \cdot \rnum_2(e)$ respectively. \zhilin{to be checked}}
 %
-\item If $sz_1 \le sz_2$, then we choose to unfold the counting operators in $e_1$. Otherwise, we choose to unfold the counting operator $^{\{m,n\}}$. 
+%\item If $sz_1 \le sz_2$, then we choose to unfold the counting operators in $e_1$. Otherwise, we choose to unfold the counting operator $^{\{m,n\}}$. 
 \end{itemize}
 
 %In the sequel, we show how we estimate the sizes of CEFAs constructed from register-representable regular expressions. 
 
-It remains to show how to compute the pairs $(\snum_1(e), \rnum_1(e))$ and $(\snum_2(e), \rnum_2(e))$ from $e=(e_1)^{\{m,n\}}$. Let $e=(e_1)^{\{m,n\}}$ be a regular expression where $e_1$ is a register-representable regular expression. Then we compute $\snum'_1(e_1)$ and $(\snum'_2(e_1), \rnum'_2(e_1))$. Finally, let $(\snum_1(e), \rnum_1(e)) = (\snum'_1(e_1), 1)$ and $(\snum_2(e), \rnum_2(e)) = (\snum'_2(e_1), \rnum'_2(e_1))$.
+\hdh{It remains to show how to compute $(\snum_1(e), \anum_1(e))$ and $(\snum_2(e),$ $ \anum_2(e))$ from $e=(e_1)^{\{m,n\}}$. Let $e=(e_1)^{\{m,n\}}$ be a regular expression where $e_1$ is a register-representable regular expression. Note that there is only one register in $\aut_{\ufld_1(e)}$. As a result, we set $\anum_1(e) = 2$. Moreover, in the sequel, we inductively compute $\snum'_1(e_1)$ and $(\snum'_2(e_1), \anum'_2(e_1))$ from $e_1$, then let $\snum_1(e)  = \snum'_1(e_1)$ and $(\snum_2(e), \anum_2(e)) = (\snum'_2(e_1),$ $ \anum'_2(e_1))$. 
 \begin{itemize}
-  \item If $e_1 = \emptyset$ or $e_1 = \epsilon$, then $\snum'_1(e_1)  = 0$ and $(\snum'_2(e_1), \rnum'_2(e_1))  = (0, 0)$. 
+  \item If $e_1 = \emptyset$ or $e_1 = \epsilon$, then $\snum'_1(e_1)  = 0$ and 
+  $$
+  \begin{array}{l}
+    (\snum'_2(e_1), \anum'_2(e_1))  = (0, 0).
+  \end{array}
+  $$
+  (Note that here the constant $0$, instead of $1$, is chosen, so that later on, when we consider $e_1 = e_2 \cap e_3$, $\snum'_2(e_2) \times \snum'_2(e_3)$ and $\vnum'_2(e_2) \times \vnum'_2(e_3)$ will become 0 since $\epsilon\cap e_3 = \epsilon$ and $\emptyset\cap e_3 = \emptyset$)
 %
-  \item \hdh{If $e_1 = a$, then $\snum'_1(e_1) = 1$ and ($\snum'_2(e_1), \rnum'_2(e_1)) = (n, 0)$.}
+  \item If $e_1 = a$, then $\snum'_1(e_1) = 2$ and 
+  $$
+  \begin{array}{l}
+    (\snum'_2(e_1), \anum'_2(e_1)) = (2n, 1).
+  \end{array}
+  $$
  %
   \item If $e_1 = e_2 \concat e_3$, then $\snum'_1(e_1) = \snum'_1(e_2) + \snum'_1(e_3)$ and 
 %
   $$
   \begin{array}{l }
- (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
-  \ \ \ \ (n(\snum'_2(e_2) + \snum'_2(e_3)), n(\rnum'_2(e_2) + \rnum'_2(e_3))).
+ (\snum'_2(e_1), \anum'_2(e_1)) = \\
+ \ \ \ \ (  n(\snum'_2(e_2) + \snum'_2(e_3)), n(\anum'_2(e_2) + \anum'_2(e_3))).
  \end{array}
   $$
+  Note that because $e_1$ is concatenated for $n$ times in $\ufld_2(e)$, we define $\snum'_2(e_1)$ as  $n(\snum'_2(e_2) + \snum'_2(e_3))$. Moreover, since the integer vectors in $\aut_1 \cdot \aut_2$ are of the form $(\myvec{v}_1,\myvec{0})$ and $(\myvec{0}, \myvec{v}_2)$ where $\myvec{v}_1$ and $\myvec{v}_2$ are integer vectors in $\aut_1$ and $\aut_2$ respectively, we define $\anum'_2(e_1)$ as $n(\anum'_2(e_2) + \anum'_2(e_3)))$.
 %
  \item If $e_1 = e_2 + e_3$, then $\snum'_1(e_1) = \snum'_1(e_2) + \snum'_1(e_3)$ and 
 %
   $$
   \begin{array}{l }
- (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
-  \ \ \ \ (n(\snum'_2(e_2) + \snum'_2(e_3)), n(\rnum'_2(e_2) + \rnum'_2(e_3)+1)).
+ (\snum'_2(e_1), \anum'_2(e_1)) =  \\
+  \ \ \ \ (n(\snum'_2(e_2) + \snum'_2(e_3)+1),   n(2\anum'_2(e_2) + 2\anum'_2(e_3))).
  \end{array}
   $$
- (Recall that the construction of $\aut_1 \cup \aut_2$ introduces one additional register.)
+ (Recall that each integer vector in $\aut_1$ resp. $\aut_2$ is copied at most twice in the construction of $\aut_1 \cup \aut_2$.)
 %
  \item If $e_1 = e_2 \cap e_3$, then $\snum'_1(e_1) = \snum'_1(e_2) \times \snum'_1(e_3)$ and 
 %
   $$
   \begin{array}{l }
- (\snum'_2(e_1), \rnum'_2(e_1)) =  \\
-  \ \ \ \ (n(\snum'_2(e_2) \times \snum'_2(e_3)), n(\rnum'_2(e_2) + \rnum'_2(e_3))).
+ (\snum'_2(e_1), \anum'_2(e_1)) =  \\
+  \ \ \ \ (n(\snum'_2(e_2) \times \snum'_2(e_3)),  n(\anum'_2(e_2) \times \anum'_2(e_3)) 
+  ).
  \end{array}
   $$
+  (Recall that the integer vectors in $\aut_1 \cap \aut_2$ are of the form $(\myvec{v}_1, \myvec{v}_2)$, where $\myvec{v}_1$ and $\myvec{v}_2$ are the integer vectors in $\aut_1$ and $\aut_2$ repsectively.)
 %
  \item If $e_1 = \overline{e_2}$, then $\snum'_1(e_1) = 2^{\snum'_1(e_2)}$ and 
 %
-  $
-%  \begin{array}{l }
- (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \cdot 2^{\snum'_2(e_2)}, 0).
-% \end{array}
-  $
- (The exponential blow-up is explained by the fact that the determinization is needed for the complementation.) 
+  $$
+ \begin{array}{l }
+ (\snum'_2(e_1), \anum'_2(e_1)) = (n \cdot 2^{\snum'_2(e_2)}, 1).
+ \end{array}
+  $$
+ (In this case, since $e_1$ is register-representable, we know that $e_2$ contains no counting operators. As a result, we first construct the NFA for $e_2$, then determinize and complement it to construct the automaton for $e_1$.) 
 %
 %  \item If $\regex = \overline{\regex_1}$, then $s_\regex = 2^{s_{\regex_1}}$ (since the determinization is needed for the complement) and $r_\regex = 0$.
 %
  \item If $e_1 = (e_2)^*$, then $\snum'_1(e_1) = \snum'_1(e_2)$ and 
 %
-  $
-%  \begin{array}{l }
- (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \snum'_2(e_2), 0).
-% \end{array}
-  $
+  $$
+ \begin{array}{l }
+ (\snum'_2(e_1), \anum'_2(e_1) =  (n \snum'_2(e_2), 1).
+ \end{array}
+  $$
+  (In this case, since $e_1$ is register-representable, we know that $e_2$ contains no counting operators.)
 %  \item If $\regex = \regex_1^*$, then $s_{\regex} = s_{\regex_1}$ and $r_{\regex} = 0$.
 %  \item $\regex = \regex_1 \backslash \regex_2$ can be transferred to $\regex = \regex_1 \cap \overline{\regex_2}$ and then the size can be computed by the formula of $\cap$ and $\bar{}$.
  \item If $e_1 = (e_2)^{\{m', n'\}}$ or $e_1 = (e_2)^{\{n', \infty\}}$, then $\snum'_1(e_1) = n' \snum'_1(e_2)$ and 
 %
-  $
-%  \begin{array}{l }
- (\snum'_2(e_1), \rnum'_2(e_1)) =  (n \snum'_2(e_2), n).
-% \end{array}
-  $
+  $$
+ \begin{array}{l }
+ (\snum'_2(e_1), \anum'_2(e_1)) =  (n \snum'_2(e_2), n).
+\end{array}
+  $$
+  (In this case, since $e_1$ is register-representable, we know that $e_2$ contains no counting operators.)
 %  \item For $\regex = \regex_1^{\{m, n\}}$ or $\regex = \regex_1^{\{n,\infty\}}$, $s_{\regex} = s_{\regex_1}$ and $r_{\regex} = 1$.
 \end{itemize}
-
+}
 %The naive approach for nested counting in the paper \cite{Denghang2023} is to unwind all inner counting operators. This approach may generate a large number of states, which is linear to the product of the counting bounds in regex and exponential to the length of the regex. For example, naive unwinding regex $(a^{\{1,1000\}})^{\{1,2\}}$ generate a CEFA containing 1000 states. But if we only unwind the outer counting operator of the regex, not the inner, we obtain a CEFA containing only 2 states. The side effect is that we need two registers to store the information of counting in the inner regex (unwinding of the outer counting operator repeats the inner regex, which also repeats the registers of the inner regex). We present a heuristic to reduce the number of states generated by the unwinding process. The idea is to unwind the counting operator with less bound and fewer side effects firstly. We present the heuristic in the following algorithm.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,7 +211,13 @@ Intuitively, $q_s$ is a sink state that deals with the situations where there ar
 Note that $\cB$ is a strict over-approximation of $e = \overline{e_1}$ since $\aut_{e_1}$ may be nondeterministic. For instance, if there are two runs of $\aut_{e_1}$ on a string $w$, say one run that ends at a non-final state and another run that ends at a final state and satisfies accepting condition $\alpha$. Then $w \in \Lang(\aut_{e_1})$, thus $w \not \in \Lang(\overline{\aut_{e_1}})$. Nevertheless, according to the construction, $w$ is accepted by $\cB$, witnessed by the run of $\aut_{e_1}$ that ends at a non-final state. 
 
 \hdh{\paragraph*{Combination of under- and over-approximation}
- In our configuration, under-approximation is performed first due to its superior computational efficiency, and we proceed with over-approximation if it yields an unsatisfiable result. When the under-approximation yields an unsatisfiable result and the over-approximation yields a satisfiable result, we employ the decision procedure to obtain an answer, which implies that our approach is sound and complete. To minimize computational overhead, we apply approximation techniques only in cases involving non-register-representable regular expressions with significant counting bounds—specifically, those exceeding 20 in our experimental configuration.
+ We combine the under- and over-approximation as well as the decision procedure into the following procedure.  
+ \begin{enumerate}
+ \item We first apply the under-approximation.
+ \item If the under-approximation returns ``sat'', then we know that the original constraint is satisfiable. Otherwise, the under-approximation returns ``unsat'' and we apply the over-approximation.
+ \item If the over-approximation returns ``unsat'', then we know that the original constraint is unsatisfiable. Otherwise, the over-approximation returns ``sat'' and we resort to the decision procedure (without approximations) in Section~\ref{sec:algorithm} to solve the RECL constraint. 
+ \end{enumerate}
+% In our configuration, under-approximation is performed first due to its superior computational efficiency, and we proceed with over-approximation if under-approximation yields an "unsat" result. If the over-approximation yields a "sat" result, we employ the decision procedure to obtain an answer, which implies that our approach is sound and complete. To minimize computational overhead, we apply approximation techniques only in cases involving non-register-representable regular expressions with significant counting bounds—specifically, those exceeding 20 in our experimental configuration.
 }
 
 %As we mentioned in the above section \ref{heuristic:nested}, the unwinding process of the complement operator is exponential to the counting bounds in the worst case. We present a heuristic to reduce the number of states generated by the unwinding process. The idea is to under-approximate and over-approximate the language of the regex first, so that we can avoid unwinding counting operators in complement. We present the heuristic in the following algorithm.
@@ -245,9 +271,14 @@ $r$ is the register used to check whether the accepted state is also accepted in
 
 \section{\hdh{Optimizations for model generation}}\label{sec-opt-sol-gen}
 
-\zhilin{Double check}
+%\zhilin{Double check}
 
 %\zhilin{TODO: I had troubles to understand the section about optimized model generation. Maybe stating what the technical problem that it is solving is in a more dumb proof way would help., } 
+
+Recall that in Step 5 of Section~\ref{sec:algorithm}, we construct a solution $\amodel'$ from the model $\amodel$ of the LIA formula in Equation~(\ref{eq:parikh_image}) by solving the reachability problems in a finite transition system. It is easy to see that the transition system contains exponentially many nodes in general and a naive search over the transition system is not efficient. In the sequel, we describe two optimizations so that the reachability problem can be solved more efficiently. 
+
+
+\hide{
 Recall that in Section~\ref{sec:algorithm}, the satisfiability of the original RECL constraint is reduced to the satisfiability of the existential LIA formula
 \[
 \begin{array}{l}
@@ -260,6 +291,7 @@ Then we utilize some SMT solver, say Z3, to solve the satisfiability of $\theta$
 In the sequel, let us assume $n=1$ for simplicity.
 %and use an example to illustrate
 We first describe the naive algorithm of generating $\amodel'$ from $\amodel$. Then we show how we optimize this model generation process. 
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -291,6 +323,7 @@ To generate a model $\amodel'$ for $\cefadec$ problem, it is necessary to genera
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\hide{
 \paragraph*{A naive algorithm for model generation}
 %For each $i \in [n]$, 
 The free variables $\fZ_{\costset_{\cC_1}}$ in $\theta$ correspond to the number of occurrences of characters in $\costset_{\cC_1}$, i.e. the alphabet of the NFA $\cC_1$. Moreover, in $\cC_1$, the characters are just the integer vectors and the characters in the original CEFAs $\cB_1$ used to construct $\cC_1$ are ignored. 
@@ -304,6 +337,7 @@ such that $(q, a, q', \myvec{u})$ is a transition in $\cB_1$, $\nvec'_{1, \myvec
 \end{itemize}
 Moreover, the initial and final state of the reachability problem are set to be $(q_0, (\amodel(\anivarz_{1, \myvec{v}}))_{\myvec{v} \in \costset_{\cC_1}})$ and $(q_f, (0,\cdots, 0))$ for some initial state $q_0$ and final state $q_f$. 
 Note that the transition system contains exponentially many nodes. As a result, the searching process takes \emph{doubly exponential time} in the worst case, since there are at most doubly exponentially many paths. To alleviate the path-explosion problem, in the sequel, we propose two techniques to reduce the number of transitions of the transition system. 
+}
 
 \hide{
 we record the remaining occurrences of vectors $\myvec{v}$ in the transitions of the CEFAs $\cB_1$ as a number $\nvec_{1, \myvec{v}}$ and
@@ -332,11 +366,13 @@ Note that since we do not have the information about the number of occurrences o
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+To ease the presentation, let us assume that $n$, i.e. the number of string variables, to be $1$. 
 
 At first, we refine the states of the transition system by recording the number of transitions, instead of just the number of occurrences of the integer vectors. 
 
 \paragraph*{Refining the states of the transition system by recording the number of transitions}
-We shall construct the formula $\theta'$ so that a model of $\theta'$ includes the information about the number of occurrences of the transitions of $\cB_1$.
+Let $\theta$ denote the formula in Equation~(\ref{eq:parikh_image}).
+We shall construct the formula $\theta'$ so that any model of $\theta'$ necessarily encodes the number of occurrences of transitions within $\cB_1$.
 \[
 \begin{array}{l c l}
 \theta'  & \equiv &  \psi_{\cB_1}(\fZ_{\cB_1}) \wedge \bigwedge \limits_{\myvec{v} \in \costset_{\cC_1}} \anivarz_{1, \myvec{v}} = \amodel(\anivarz_{1, \myvec{v}}) \ \wedge \\
@@ -344,7 +380,7 @@ We shall construct the formula $\theta'$ so that a model of $\theta'$ includes t
 \end{array}
 \]
 where $\fZ_{\cB_1} = \{\anivarz_{1, (q, a, q', \myvec{v})} \mid (q, a, q', \myvec{v}) \mbox{ is a transition in } \cB_1\}$ is the set of variables $\anivarz_{1, (q, a, q', \myvec{v})}$ denoting the number of occurrences of $(q, a, q', \myvec{v})$. 
-Note that compared to $\theta$, $\theta'$ uses the LIA formula $\psi_{\cB_1}$, which is constructed from $\cB_1$ by ignoring its accepting condition and taking it as an NFA where the alphabet is seen as the set of transitions.  Moreover, $\theta'$ relates the values of the variables $\anivarz_{1, \myvec{v}}$ and $\anivarz_{1, (q, a, q', \myvec{v})}$, as well as restricts that the values of $\anivarz_{1, \myvec{v}}$ should be $\amodel(\anivarz_{1, \myvec{v}})$. We then submit $\theta'$ to some SMT solver, which returns a model for $\theta'$, in particular, the values of the variables $\anivarz_{1, (q, a, q', \myvec{v})}$. Equipped with the model, we refine the transition system by considering the nodes $(q, (\nvec_{1, (q, a, q', \myvec{v})})_{(q, a, q', \myvec{v})\mbox{ is a transition in } \cB_1})$, where $\nvec_{1, (q, a, q', \myvec{v})}$ denotes the number of remaining occurrences of $(q, a, q', \myvec{v})$. Note that this refinement can reduce the number of transitions. For instance, if $\nvec_{1, (q, a, q', \myvec{v})} = 0$ for some $(q, a, q', \myvec{v})$, then we can avoid searching the transition $(q, a, q', \myvec{v})$ out of $q$. On the other hand, if in the original transition system where $\nvec_{1, \myvec{v}}$ is used, then it may be the case that we have $\nvec_{1, \myvec{v}} > 0$ (since there may be multiple transitions associated with $\myvec{v}$) and the transition $(q, a, q', \myvec{v})$ should still be searched. 
+Note that compared to $\theta$, $\theta'$ uses the LIA formula $\psi_{\cB_1}$, which is constructed from $\cB_1$ by ignoring its accepting condition and taking it as an NFA where the alphabet is seen as the set of transitions.  Furthermore, $\theta'$ relates the values of the variables $\anivarz_{1, \myvec{v}}$ and $\anivarz_{1, (q, a, q', \myvec{v})}$, while simultaneously constraining the values of $\anivarz_{1, \myvec{v}}$ to be $\amodel(\anivarz_{1, \myvec{v}})$. We then submit $\theta'$ to SMT solver, which returns a model of $\theta'$, in particular, the values of the variables $\anivarz_{1, (q, a, q', \myvec{v})}$. Equipped with the model, we refine the transition system by considering the nodes $(q, (\nvec_{1, (q, a, q', \myvec{v})})_{(q, a, q', \myvec{v})\mbox{ is a transition in } \cB_1})$, where $\nvec_{1, (q, a, q', \myvec{v})}$ denotes the number of remaining occurrences of $(q, a, q', \myvec{v})$. Note that this refinement can avoid searching useless transitions. For instance, if $\nvec_{1, (q, a, q', \myvec{v})} = 0$ for some $(q, a, q', \myvec{v})$, then we can avoid searching the transition $(q, a, q', \myvec{v})$ out of $q$. This stands in contrast to the original transition system where $\nvec_{1, \myvec{v}}$ is used, it may be the case that we have $\nvec_{1, \myvec{v}} > 0$ (since there may be multiple transitions associated with $\myvec{v}$) and the transition $(q, a, q', \myvec{v})$ should still be searched. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -392,7 +428,7 @@ Moreover, we propose a method to reduce the number of transitions in the transit
 \paragraph*{Pruning the transitions in the transition system}
 %Let $i \in [n]$. 
 Let the current state of the transition system be $(p, (\nvec_{1, (q, a, q', \myvec{v})})_{(q, a, q', \myvec{v})\mbox{ is a transition in } \cB_1})$. 
-Let us compute the set of transitions of $\cB_1$ that are reachable from the state $p$. Let $\cT_p$ denote this set. If $\{(q, a, q', \myvec{v}) \mid \nvec_{1, ((q, a, q', \myvec{v}))} > 0\} \not \subseteq \cT_p$, then we know that it is impossible to continue the search process so that a string accepted by $\cB_1$ will be found and meanwhile the constraint on the number of transitions enforced by $\nvec_{1, (q, a, q', \myvec{v})}$ is satisfied. Therefore, in this case, we can remove all the transitions out of $(p, (\nvec_{1, (q, a, q', \myvec{v})})_{(q, a, q', \myvec{v})\mbox{ is a transition in } \cB_1})$ and the search halts in this state and is backtracked. 
+Let $\cT_p$ denote the set of transitions that are reachable from the state $p$ in $\cB_1$. If $\{(q, a, q', \myvec{v}) \mid \nvec_{1, (q, a, q', \myvec{v})} > 0\} \not \subseteq \cT_p$, in other words, there exists some transitions $(q, a, q', \myvec{v})$ not reachable from the state $p$ in $\cB_1$ while $\nvec_{1, (q, a, q', \myvec{v})} > 0$ is established in the current state $(p, (\nvec_{1, (q, a, q', \myvec{v})})_{(q, a, q', \myvec{v})\mbox{ is a transition in } \cB_1})$, then we know that it is impossible to reach the final state $(q_f, (0,\cdots, 0))$ from the current state so that we can remove all the transitions out of the current state in the transition system.
 
 %\zhilin{stopped here}
 

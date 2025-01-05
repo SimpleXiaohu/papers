@@ -55,7 +55,16 @@ For the benchmarks that contain the nestings of counting operators and a complem
 \[x \in e_{comp1} \wedge x \in e_{comp2} \wedge x \in e_{sani} \wedge |x| > 50, \]
 where both $e_{comp1}$ and $e_{comp2}$ are of the form $\overline{e_1^{\{m_1,n_1\}}e_2^{\{m_2,n_2\}}e_3^{\{m_3,n_3\}} e_4^{\{m_4, n_4\}}}$, such that for each $i \in [4]$, $20 \leq m_i\leq n_i\leq 1000$  and $e_i$ contains no counting operators. Note that two regular expressions $e_{comp1} $ and $e_{comp2}$ are introduced to have a better balance between the numbers of satisfiable and unsatisfiable instances. Based on this template, we also generate 500 instances. 
 
-In total, the NestC benchmark suite contains 1000 \hdh{tough} instances, \hdh{where the regexes and their associated counting bounds are generated randomly.} 
+In total, the NestC benchmark suite contains 1000 instances. 
+
+\hdh{Note that the two templates are chosen so that on the one hand, the nestings of counting operators or nestings of counting operators and complement operators are available, and on the other hand, some additional regular and length constraints are introduced, so that the constraints are not trivially satisfied, in particular, the constraints are not satisfied by very short strings.  
+}
+
+\hide{
+\hdh{where the regexes and their associated counting bounds are generated randomly.
+
+It is sufficient to utilize only one string variable in the template, as there is no interaction between different string variables. Moreover, the depth of nested counting is set to 2 in the template since it is the most common case in real-world programs. Concerning string variable length constraints, there exists a positive correlation between bound value and instance complexity. Therefore, we employ two fixed length bounds—a smaller one $10$ and a larger one $50$—to encompass both simple and complex instances. Finally, all the features in Fig.\ref{fig:syntax} except counting and complement are randomly generated on the regexes of the template. } 
+}
 
 %We also generate 500 instances of the nesting of counting operators and a complement operator containing the RECL constraint $x\in e_{comp1}\wedge x\in e_{comp2} \wedge x\in e_{sani} \wedge |x|>50$ in each of them, where $e_{comp\{1,2\}}\equiv \overline{e_0^{\{m_0,n_0\}}e_1^{\{m_1,n_1\}}e_2^{\{m_2,n_2\}}e_3^{\{m_3,n_3\}}}$ is a regex of the nesting of counting operators and a complement operator, and $e_{sani}$ are as above. Note that $20\leq m_i\leq n_i\leq 1000$ and $e_i$  containing no counting operators for $i\in [3]$ is randomly generated.
 

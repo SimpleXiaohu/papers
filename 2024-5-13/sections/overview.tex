@@ -17,7 +17,7 @@ A string $w$ is accepted by $\aut_1$ if, when reading the characters in $w$, $\a
 \end{figure}
 
 Next, 
-we construct $\aut_1 \cap \aut_2 \cap \aut_3$, that is, the intersection (aka product) of $\aut_1$, $\aut_2$, and $\aut_3$, as illustrated in Figure~\ref{fig:overview:product}(a), where the states can not reach the final states are removed. 
+we construct $\aut_1 \cap \aut_2 \cap \aut_3$, that is, the intersection (aka product) of $\aut_1$, $\aut_2$, and $\aut_3$, as illustrated in Figure~\ref{fig:overview:product}(a), where the states that cannot reach the final states are removed. 
 For technical convenience, we also think of the updates of registers in transitions as vectors $(u_1, u_2, u_3, u_4)$, where $u_i \in \Int$ is the update on the register $r_{i}$ for each $i \in [4]$. For instance, the transitions corresponding to the self-loop around $(p_0, q_0, q'_0)$ are thought as $((p_0, q_0, q'_0), a', (p_0, q_0, q'_0), (1,0,0,1))$ with $a' \in \Sigma \setminus \{a\}$, since $r_1$ and $r_4$ are incremented by one in these transitions. After considering the updates of registers as vectors, the CEFA is like Figure~\ref{fig:overview:product}(b).
 
 \begin{figure}[ht]
