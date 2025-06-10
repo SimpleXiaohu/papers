@@ -1,0 +1,12 @@
+  function prepareVersionNo(version) {
+    // precondition: version in [0-9]+([0-9a-zA-Z._ /-])*
+    numbers = version.split(/[a-z._ \/\-]/i);
+    if (numbers.length === 1) { // path-1
+      result = numbers[0];     }
+    if (numbers.length > 1) { // path-2
+      temp = numbers[0] + ".";
+      numbers1 = numbers.slice(1, numbers.length);
+      result = temp + numbers1.join("");      }
+    return Number(result);
+    // postcondition: result in [0-9]+(\.[0-9]+)?
+  }

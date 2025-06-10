@@ -1,0 +1,141 @@
+%!TEX root = main.tex
+
+\section{Related work}\label{sect:related}
+
+\smallskip
+\noindent
+{\bf String constraint solving.} 
+String constraint solving has received considerable attentions in literature. Amadini \cite{Amadini23} provides a comprehensive survey for the literature up to 2021. In particular, %extensive documentation of this diversity, and classifies
+approaches to string constraint solving are classified into three main categories: automata-based (relying on finite state automata to represent the domain of string variables
+and to handle string operations, e.g., \cite{Abdulla14,HJLRV18,CCH+18,Vijay-length,LB16,BerzishKMMDNG20,ChenCHHLS24}), word-based (algebraic approaches based on systems of word equations%They mainly use SMT solvers to tackle string constraints
+, e.g., \cite{cvc4,BarbosaBBKLMMMN22,Z3,Z3str2,Z3str3,Z3str4,TCJ16,S3,BerzishKMMDNG20,ChenCHHLS24} 
+), 
+and unfolding-based approaches (explicitly reducing each string into a number of contiguous elements denoting its
+characters, e.g., \cite{SFPS17,KGAGHE13,SAHMMS10,LG13,AGS18,DEKMNP19}). 
+
+%Generally speaking, 
+From another perspective, there are two lines of work aiming for building %Approaches to building 
+practical string solvers: %could essentially be classified into two categories. 
+(1) one could support as many constraints as possible, but primarily resort to heuristics, offering no completeness/termination guarantee. 
+%This is a realistic approach since, as mentioned above, the problem involving both string and integer data types is in general undecidable. 
+Many solvers %for string constraints 
+are usually implemented as string
+theory solvers inside SMT solvers, %, such as cvc5 [9] or Z3 [31], 
+allowing combination with other theories, most commonly the theory of integers for string lengths. Some (non-exhaustive) examples include CVC4/5 \cite{cvc4,BarbosaBBKLMMMN22}, Z3 \cite{Z3,BTV09}, Z3-str2/3/4 \cite{Z3str2,Z3str3,Z3str4}, S3(P)~\cite{TCJ16,S3}, Trau~\cite{Abdulla17} (or its variants Trau+ \cite{AbdullaA+19}), %and
+%Z3-Trau [9]), %ABC [10], 
+Slent~\cite{WC+18}, etc.  
+%
+%
+%i) Automata-based approaches: .
+%(ii) Word-based approaches: .
+%(iii) Unfolding-based approaches: 
+%String constraint solving has received considerable attentions in literature. Generally speaking, there are two lines of work aiming for building 
+%practical string solvers: %could essentially be classified into two categories. 
+%(1) one strives to support as many constraints as possible, but primarily resort to heuristics, offering no completeness/termination guarantee. 
+More recent ones include Z3str3RE \cite{BerzishKMMDNG20} %Z3-Trau [1], Z3str4 [30],  
+%This is a realistic approach since, as mentioned above, the problem involving both string and integer data types is in general undecidable. 
+% 
+%Completeness guarantees are, however, valuable since the performance of heuristics can be difficult to predict. 
+and Z3-Noodler \cite{ChenCHHLS24} %is a fork of Z3 that replaces its string theory solver with a custom solver implementing the recently introduced 
+(which is based on stabilization-based algorithm \cite{BlahoudekCCHHLS23,ChenCHHLS23} for solving word equations with regular constraints). 
+%
+%An extensive experimental evaluation shows that Z3-Noodler is a fully-fledged solver that can compete with state-of-the-art solvers, surpassing them by far on many benchmarks. Moreover, it is often complementary to other solvers, making it a suitable choice as a candidate to a solver portfolio.
+%
+(2) The second approach is to develop solvers for decidable fragments. 
+%supporting both strings and integers %
+Solvers in this category include Norn \cite{Abdulla14}, SLOTH \cite{HJLRV18} and
+OSTRICH \cite{CCH+18,CHL+19}, which are usually based on complete decision procedures, (e.g. \cite{Vijay-length,AbdullaA+19,LB16}) 
+
+%The fragment without complex string operations (e.g. replaceAll and
+%finite transducers, but length) can be handled quite well by Norn. The fragment without
+%length constraints (but replaceAll and finite transducers) can be handled effectively by
+%OSTRICH and SLOTH. Moreover, most existing solvers that belong to the first category do not support complex string operations like replaceAll and finite transducers
+%as well. This motivates the following problem: provide a decision procedure that supports both string and integer data type, with completeness guarantee and meanwhile
+%admitting efficient implementation
+
+We also mention that there are solvers which emphasize certain aspects of string constraint solving by providing dedicated methods or optimization. These include, for instance, those for more expressive regular expressions \cite{BerzishDGKMMN23,ChenFHHHKLRW22},  regex-counting~\cite{HuW23},  %A decision procedure for string constraints with 
+string/integer conversion and flat regular constraints~\cite{WuCWXZ24}, Not-Substring Constraint~\cite{AbdullaACDHHTWY21}, integer data type~\cite{atva2020}, etc. 
+
+%	Parosh Aziz Abdulla, Mohamed Faouzi Atig, Yu-Fang Chen, Bui Phi Diep, Lukás Holík, Denghang Hu, Wei-Lun Tsai, Zhilin Wu, Di-De Yen:Solving Not-Substring Constraint withFlat Abstraction. APLAS 2021: 305-320
+%\tl{some other work popl22, zhilin's work with Yufang, I cannot access dblp.}
+
+\smallskip
+\noindent
+{\bf Sequences as an extension of strings.} Strings and sequences are closely related, but may exhibit in different forms. For instance, a string can be considered as a sequence over a finite alphabet. 
+Jez etc.~\cite{JezLMR23} recently studied sequence theories which are an extension of theories of strings with an infinite alphabet of letters, together with a corresponding alphabet theory (e.g. linear integer arithmetic). They provide decision procedures based on parametric automata/transducers, giving rise to   a sequence constraint solver $\seco$. Our work is different in that we essentially work on a sequence theory where the element is instantiated by the string type. 
+
+%
+%A. Jez etc.~\cite{JezLMR23} present a formal and practical study of decision procedures for sequence theories logical theories that generalize string reasoning to sequences over infinite alphabets, such as integers or strings themselves. The main idea is to introduce parametric automata (PA) and parametric transducers as generalizations of symbolic automata, enabling expressive yet decidable formulations of sequence constraints. To support practical verification tasks, they develop $\seco$, a sequence constraint solver based on the parametric automata. Unfortunately, despite the power of parametric automata, the implementation of $\seco$ is not yet mature enough to be used in practice, which has some soundness issues on our benchmarks.
+
+%The CVC5 team propose using an SMT theory of sequences to represent vectors more naturally and flexibly~\cite{cvc5_seq}. They develop two proof calculi for this theory. (1) A base calculus, adapted from existing techniques for strings, focusing on operations like sequence concatenation, extraction, nth, and update, (2) an extended calculus, which incorporates array-style reasoning (e.g., read-over-write axioms) directly into the sequence theory, enabling more efficient handling of nth and update.
+%The experiment result shows that the extended calculus significantly outperforms the base calculus. 
+
+%Z3~\cite{Z3} is a well-known SMT solver that has supported sequence theory but has not published a literature on it. The documentation of Z3 \cite{Z3_seq} provides a brief overview of its sequence theory, which support all the operations used in CVC5 except for the update operation. But it supports two more general operations: map and foldleft.
+
+\smallskip
+\noindent
+{\bf Theory of arrays.}
+There are many studies on solving formulas in the theory of arrays or its extensions, for instance, \cite{SBDL01,BMS06,HIV08,FalkeMS13,DacaHK16,FarinierDBL18}, which are also related to the sequence theory. Note that in these studies, the elements are considered to be either of a generic type or of integer type. In other words, theory of arrays where the elements are of the string type has not been defined and investigated therein. 
+%The theory of arrays is a fundamental component in software verification, particularly for modeling memory and data structures. 
+%For instance, \cite{FarinierDBL18} proposes a new approach to array formula simplification based on a new dedicated data structure;  \cite{DacaHK16} proposed array fold logic (AFL), which is an extension to the quantifier-free theory of integer arrays to express counting. The satisfiability of AFL is shown by a reduction to counter machines.
+
+%The properties expressible in Array Folds Logic (AFL) include statements such as "the first array cell contains the array length," and "the array contains equally many minimal and maximal elements." These properties cannot be expressed in quantified fragments of the theory of arrays, nor in the theory of concatenation. Using reduction to counter machines, we show that the satisfiability problem of AFL is PSPACE-complete, and with a natural restriction the complexity decreases to NP. We also show that adding either universal quantifiers or concatenation leads to undecidability.
+%AFL contains terms that fold a function over an array. We demonstrate that folding, a well-known concept from functional languages, allows us to concisely summarize loops that count over arrays, which occurs frequently in real-life programs. We provide a tool that can discharge proof obligations in AFL, and we demonstrate on practical examples that our decision procedure can solve a broad range of problems in symbolic testing and program verification.
+% 
+
+
+%\cite{FarinierDBL18}
+%The theory of arrays has a central place in software verification due to its ability to
+%model memory or data structures. Yet, this theory is known to be hard to solve in both
+%theory and practice, especially in the case of very long formulas coming from unrolling-based
+%verification methods. Standard simplification techniques à la read-over-write suffer from
+%two main drawbacks: they do not scale on very long sequences of stores and they miss
+%many simplification opportunities because of a crude syntactic (dis-)equality reasoning. We
+%propose a new approach to array formula simplification based on a new dedicated data
+%structure together with original simplifications and low-cost reasoning. The technique is
+%efficient, scalable and it yields significant simplification. The impact on formula resolution
+%is always positive, and it can be dramatic on some specific classes of problems of interest,
+%e.g. very long formula or binary-level symbolic execution. While currently implemented as
+%a preprocessing, the approach would benefit from a deeper integration in an array solver
+%
+%Decision procedures for the theory of arrays. Surprisingly, there have been relatively few
+%works on the efficient handling of the (basic) theory of arrays. Standard symbolic approaches
+%for pure arrays complement symbolic read-over-write preprocessing [22, 5, 2] with enumeration
+%on (dis-)equalities, yielding a potentially huge search space. New array lemmas can be added
+%on-demand or incrementally discovered through an abstraction-refinement scheme [9]. Another
+%possibility is to reduce the theory of arrays to the theory of equality by systematic “inlining” of
+%the array axioms to remove all store operators, at the price of introducing many case-splits The
+%encoding can be eager [24] or lazy [9]. Our method generalizes previous preprocessing [22, 2]
+%and is complementary to complete resolution methods [9, 24]. Note also that our approach
+%could benefit from being integrated directly within such a complete resolution method, allowing
+%incremental simplification all along the resolution process.
+%Decision procedures have also been developed for expressive extensions of the array theory,
+%such as arrays with extensionality (i.e. equality over whole arrays) or the array property fragment
+%[7], which enables limited forms of quantification over indexes and arithmetic constraints. These
+%extensions aim at increasing expressiveness and they do not focus so much on practical efficiency.
+%Our method can also be applied to these settings (as row are still a crucial issue), even though
+%it will not cover all difficulties of these extensions.
+
+%. 
+
+
+
+
+%Recently,many tools for solving string constraints have been developed, motivated
+%mainlybytechniquesforfindingsecurityvulnerabilitiessuchasSQLinjectionorcross-
+%site scripting(XSS)inwebapplications[34,35,36].
+%
+%String solving has also found its
+%applications in,e.g.,analysis of access user policies in Amazon Web Services [26,8,39]
+%or smart contracts [7].
+
+
+
+
+
+
+%Sequence theories are an extension of theories of strings with an infinite alphabet of letters, together with a corresponding alphabet theory (e.g. linear integer arithmetic). Sequences are natural abstractions of extendable arrays, which permit a wealth of operations including append, map, split, and concatenation. In spite of the growing amount of tool support for theories of sequences by leading SMT-solvers, little is known about the decidability of sequence theories, which is in stark contrast to the state of the theories of strings. We show that the decidable theory of strings with concatenation and regular constraints can be extended to the world of sequences over an alphabet theory that forms a Boolean algebra, while preserving decidability. In particular, decidability holds when regular constraints are interpreted as parametric automata (which extend both symbolic automata and variable automata), but fails when interpreted as register automata (even over the alphabet theory of equality). When length constraints are added, the problem is Turing-equivalent to word equations with length (and regular) constraints. Similar investigations are conducted in the presence of symbolic transducers, which naturally model sequence functions like map, split, filter, etc. We have developed a new sequence solver, SeCo, based on parametric automata, and show its efficacy on two classes of benchmarks: (i) invariant checking on array-manipulating programs and parameterized systems, and (ii) benchmarks on symbolic register automata.
+
+%Sequences are an extension of strings, wherein elements might range over an infinite domain (e.g., integers, strings, and even sequences themselves). Sequences are ubiquitous and commonly used data types in modern programming languages. They come under different names, e.g., Python/Haskell/Prolog lists, Java ArrayList (and to some extent Streams) and JavaScript arrays. Crucially, sequences are extendable, and a plethora of operations (including append, map, split, filter, concatenation, etc.) can naturally be defined and are supported by built-in library functions in most modern programming languages.
+%
+%Various techniques in software model checking [30] — including symbolic execution, invariant generation — require an appropriate SMT theory, to which verification conditions could be discharged. In the case of programs operating on sequences, we would consequently require an SMT theory of sequences, for which leading SMT solvers like Z3 [6, 38] and cvc5 [4] already provide some basic support for over a decade. The basic design of sequence theories, as done in Z3 and cvc5, as well as in other formalisms like symbolic automata [15], is in fact quite natural. That is, sequence theories can be thought of as extensions of theories of strings with an infinite alphabet of letters, together with a corresponding alphabet theory, e.g. Linear Integer Arithmetic (LIA) for reasoning about sequences of integers. Despite this, very little is known about what is decidable over theories of sequences.

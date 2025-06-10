@@ -1,0 +1,30 @@
+%!TEX root = main.tex
+
+\section{The Decision Procedure} \label{sect:procedure}
+
+\begin{theorem}\label{thm-main}
+	The satisfiability of $\slarraylogic$ is decidable.
+\end{theorem}
+
+The general idea of the decision procedure is to encode each string sequence as a string, based on which all operations in $\slarraylogic$ can be transformed into string operations. %whose pre-images can be effectively computed. 
+The decision procedure utilizes the framework~\cite{atva2020} for solving straight-line string constraints with integer data type. There are, however, certain technical challenges. For instance, %We show that while some operations in $\slarraylogic$ 
+%operations such as 
+$seqt[it \rightarrow strt]$ and $seqt[it, it]$ cannot be captured directly by standard string operations 
+%therein. In the sequel, we introduce several new string operations 
+so new ones have to be provided and %to tackle the challenge and 
+%show how to compute 
+their pre-images need to be computed. %so that the framework in~\cite{atva2020} can still be applied. %in \cite{atva2020}, the framework therein is general enough and can still be extended to tackle these operations. 
+%
+%In the sequel, we first show how to encode the string sequences as strings and operations on string sequences as string operations, then show how to compute the pre-images of these operations. 
+
+\vspace{-3mm}
+\subsection{From string sequences to strings}
+%\denghang{Stop here}
+
+\input{seq2str.tex}
+
+\vspace{-2mm}
+\subsection{Computing the pre-images of $\mywrite$, $\subseq$, $\elem$ and $\myseqlen$} \label{subsect:preimage}
+
+\input{preimage.tex}
+

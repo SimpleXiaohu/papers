@@ -1,0 +1,167 @@
+%!TEX root = main.tex
+
+
+\section{Implementation and Experiments} \label{sect:exp}
+
+We implement a solver  $\ostrichseq$ on top of the string solver OSTRICH~\cite{CHL+19} and the SMT solver $\princess$~\cite{princess08}. The implementation consists of approximately 5,000 lines of Scala code. The core functionality, preimage computation for sequence operations such as $\mysplit$, $\myjoin$, $\myfilter$ and $\mymatchall$ are implemented in about 2,000 lines of code and is integrated directly into the OSTRICH framework. To support the representation of sequences, we built a lightweight library of automata which treat the separator as a special transition. The library is implemented in about 1,000 lines of code. The remaining code is used for the integration with OSTRICH and for the implementation of the decision procedures for the theory of sequences.
+
+%Moreover, we do experiments to evaluate the effectiveness of our approach.
+
+%The experiment is conducted on a benchmark suite comprising the constraints generated from real-world and hand-crafted templates. We compare our implementation with the state-of-the-art SMT solvers, including Z3, and cvc5. The results show that our approach is efficient and capable of solving constraints that existing solvers cannot.
+
+
+\subsection{Benchmarks}
+
+To evaluate the effectiveness of $\ostrichseq$, we create two benchmark suites, $\seqbase$ and $\seqext$.
+
+\paragraph*{$\seqbase$.}
+The $\seqbase$ benchmark suite comprises $\arraylogic$ constraints that contain only the generic sequence operations, that is, sequence operations that can be applied to the elements of any type (not necessarily string), such as sequence length $\myseqlen$, sequence concatenation, subsequence $seqt[it_1, it_2]$, sequence read $\myat(seqt, it)$ and sequence write $seqt[it \rightarrow strt]$.
+%
+$\seqbase$ is designed to facilitate a fairer comparison with the existing solvers since they do not support the string-specific sequence operations. %where the sequences and strings are tightly related %(e.g. the constraints that contain $\mysplit_e$ and $\myjoin_u$ that convert between strings and sequences).
+$\seqbase$ contains 100 $\arraylogic$ constraints that are generated from three templates. Specifically,
+\begin{itemize}
+  \item  The first template $\svaru_1\in e_1 \wedge \svars = s[0\rightarrow\svaru_1, 1\rightarrow\svaru_1] \wedge \svaru_2 = \myat(\svars, 0)\cdot\myat(\svars, 1) \wedge \svaru_2 \in e_2 \wedge \myseqlen(\svars_2) < \mystrlen(\svaru_2)$ is utilized to generate 20 instances,  where $\svaru_1$ is a string variable, $\svars$ is a sequence variable, $s$ is a sequence constant, and $e_1$ and $e_2$ are  randomly generated regular expressions. Generally speaking, the template writes the same string to different positions of a sequence and then checks the length property and regular properties of elements.
+        %    
+  \item The second template $\svaru_1\in e_1 \wedge \svars_1 = s[0\rightarrow\svaru_1, 1\rightarrow\svaru_2] \wedge \svars_2 = \svars_1[0,2]\cdot\svars_1[1,2] \wedge \svaru_3 = \myat[\svars_2,0]\cdot\myat[\svars_2,1]\cdot\myat[\svars_2,2]\cdot\myat[\svars_2,3]\wedge\svaru_3\in e_2 \wedge \myseqlen(\svars_2) < \mystrlen(\svaru_3) + 1$ is utilized to generate 20 instances, where $\svaru_1$ and $\svaru_2$ are string variables, $\svars_1$ and $\svars_2$ are sequence variables, $s$ is a sequence constant, and $e_1$ and $e_2$ are randomly generated regular expressions. Briefly, the template generates a new sequence from an initial sequence by concatenating two overlapping subsequences and then checks the length and regular properties.
+  \item The third template $\svars_1 = s[m_1\rightarrow \svaru_1]\wedge\svars_2 = \svars_1[m_2\rightarrow \svaru_2]\wedge\cdots\wedge\svaru_1=\myat(\svars_1, n_1)\wedge\svaru_2=\myat(\svars_2, n_2)\wedge\cdots\wedge\svaru_1\in e_1 \wedge \svaru_2\in e_2 \wedge \cdots$ is utilized to generate 60 instances, where $\svars_1$ and $\svars_2$ are sequence variables, $s$ is a sequence constant, $\svaru_1$ and $\svaru_2$ are string variables, $m_1$, $m_2$, $n_1$, and $n_2$ are randomly generated concrete integers, and $e_1$ and $e_2$ are randomly generated regular expressions. In this template, write ($s[\cdot\rightarrow\cdot]$) and read($\myat$) operations are performed randomly on a string sequence, and the strings read from the sequence are checked against some regular expressions.
+\end{itemize}
+
+
+
+%The benchmark contains 100 constraints generated from 3 different templates. The templates are aimed to cover the basic operations of string sequences. The templates and corresponding number of instances are as follows:
+
+%Note that the regular properties of the sequence are defined by concatenating the first and the second string element in the sequence and checking whether the concatenated string satisfies a regular expression. This benchmark is designed to cover the basic operations of string sequences. 
+
+\paragraph*{$\seqext$.}
+The $\seqext$ benchmark suite comprises $\arraylogic$ constraints that use operations that are specialized to string sequences, that is, $\myfilter_e$, $\mymatchall_e$, $\mysplit_e$ and $\myjoin_u$. There are 60 constraints in $\seqext$, where 19 of them are manually generated for the unit tests of $\ostrichseq$, and 41 of them are generated from the real-world JavaScript programs collected from GitHub. Moreover, to compare with SMT solvers that do not support the operations specialized to string sequences, we rewrite the constraints in $\seqext$ to the basic operations of string theory whenever possible. ($\mymatchall_e$ is not rewritten since it can not be simulated using existing string operations.) We partition the constraints in $\seqext$ into two categories: $\withoutmatch$ and $\withmatch$. The former contains constraints that do not use $\mymatchall_e$, while %the $\withmatch$ category 
+the latter may use it. %contains the constraints that use the operation $\mymatchall_e$.  
+
+%60 constraints generated by hand. 
+%41 of them are transformed from the real-world JavaScript programs snippets, and 19 of them are collected from the unit tests of our solver. 
+%The benchmark is designed to cover the extended operations of string sequences. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hide{
+  Since we support some extended functionalities of string sequences such as \verb|str.split| and \verb|seq.join|, we divide the benchmark suite into two parts: \textbf{Seq-Base} and \textbf{Seq-Ext}. The \textbf{Seq-Base} benchmark contains the constraints with only the basic operations of string sequences, such as \textbf{length, concatenation, subsequence, read and write}. Note that we also use write in the benchmark, which can be transformed to concatenation, subsequence and length.
+  The \textbf{Seq-Ext} benchmark contains the constraints with the extended operations of string sequences, such as \textbf{split, join, match and filter}.
+
+  \begin{itemize}
+    \item \textbf{Seq-Base}: The benchmark contains 100 constraints generated from 3 different templates. The templates are aimed to cover the basic operations of string sequences. The templates and corresponding number of instances are as follows:
+          \begin{itemize}
+            \item \texttt{Template 1}: 20 instances, which write a same string to different positions of sequence and then check the regular properties of the sequence.
+
+            \item \texttt{Template 2}: 20 instances, which generate a new sequence from initial sequence by concatenating two overlapping subsequences and then check the regular properties of the sequence.
+            \item \texttt{Template 3}: 60 instances, which randomly read and write to a sequence of strings and then check the regular properties of the read strings.
+          \end{itemize}
+          Note that the regular properties of the sequence are defined by concatenating the first and the second string element in the sequence and checking whether the concatenated string satisfies a regular expression. This benchmark is designed to cover the basic operations of string sequences.
+    \item \textbf{Seq-Ext}: The benchmark contains 60 constraints generated by hand. 41 of them are transformed from the real-world JavaScript programs snippets, and 19 of them are collected from the unit tests of our solver. The benchmark is designed to cover the extended operations of string sequences.
+  \end{itemize}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Experimental results}
+%We compare with cvc5, Z3, Z3-noodler, $\ostrich$ and $\princessarr$ on them.
+
+We conduct experiments by comparing $\ostrichseq$ with several existing solvers, including cvc5, Z3, Z3-noodler, $\ostrich$ and $\princessarr$ (which refers to an array-theory-based solver implemented within $\princess$). $\seco$~\cite{JezLMR23} is not included in the comparison due to soundness issues. Additionally, \verb|foldleft| and \verb|map| operations are not used to simulate $\myjoin$, as most constraints return unknown under such usage in Z3.
+
+On the $\seqbase$ benchmark, we evaluate $\ostrichseq$ along with sequence solvers cvc5, Z3 and $\princessarr$. For the $\seqext$ benchmark, we rewrite the constraints using only the basic string operations and compare $\ostrichseq$ with string solvers cvc5, Z3, Z3-noodler and $\ostrich$.
+
+All experiments are run on a 24 $\times$ 3.1 GHz-core server with 185 GB RAM, where each solver is started as a single thread, with a 60s time limit and without the memory limit.
+
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.1}
+\begin{table}[htbp]
+\vspace{-6mm}
+  \centering
+    \caption{Experimental results on $\seqbase$.
+  	%$\ostrichseq$ can solve all the constraints in $\seqbase$ and is more efficient than cvc5 and Z3. $\princessarr$ is slightly more efficient than $\ostrichseq$.
+  }\vspace{-3mm}
+    \begin{tabular}{| c | c | c | c | c |}
+      \hline
+                      & cvc5        & Z3    & $\princessarr$ & $\ostrichseq$ \\
+      \hline
+      sat             & \textbf{33} & 14    & \textbf{33}    & \textbf{33}   \\
+      \hline
+      unsat           & 50          & 36    & \textbf{67}    & \textbf{67}   \\
+      \hline
+      solved          & 83          & 50    & \textbf{100}   & \textbf{100}  \\
+      \hline
+      unknown/timeout & 17          & 50    & \textbf{0}     & \textbf{0}    \\
+      \hline
+      avg. time (s)   & 10.77       & 15.02 & \textbf{4.04}  & 6.24          \\
+      \hline
+    \end{tabular} %
+%  \end{center}
+  \label{tab:seq-base}
+\vspace{-8mm}
+\end{table}
+
+The results on the $\seqbase$ can be found in Table~\ref{tab:seq-base}.
+We can see that $\ostrichseq$ outperforms cvc5  and Z3 on $\seqbase$ in both the number of solved instances and the solving time per instance. Specifically,   $\ostrichseq$ solves all the 100 instances in $\seqbase$, while cvc5 and Z3 solve 83 and 50 instances respectively. Moreover,  $\ostrichseq$ is more efficient than cvc5 and Z3, that is, $\ostrichseq$ spends 6.24 seconds in solving each instance from $\seqbase$ on average, while cvc5 and Z3 spend 10.77 and 15.02 seconds respectively. However, $\ostrichseq$ is slightly slower than $\princessarr$, which solves all the instances in $\seqbase$ in 4.04 seconds on average. This is because $\princessarr$ utilizes the optimization techniques that are specialized to the array theory, making it more efficient for solving constraints that involve only read and write operations.
+
+
+The results on $\seqext$ can be found in Table~\ref{tab:seq-ext}. Since the SOTA sequence solvers do not support the operations $\myfilter_e$, $\mymatchall_e$ or $\mysplit_e$ directly, the $\arraylogic$ constraints is rewritten to string constraints (instead of solving the $\arraylogic$ constraints directly) when we compare with them on $\seqext$.
+% we fulfill the comparison with string solvers on $\seqext$ by 
+%call string solvers use them to solve the string constraints generated from the $\arraylogic$ constraints (instead of solving the $\arraylogic$ constraints directly). 
+Moreover, while we can use {\sf str.replace\_re\_all} to encode $\myfilter_e$ and $\mysplit_e$, the encoding of $\mymatchall_e$ requires finite-state transducers which have not been supported by the SOTA string solvers (except {\sf OSTRICH}). As a result, we do \emph{not} generate the string constraints for the 12 instances in $\seqext$ that contain $\mymatchall_e$.
+Let us use $\seqext\mbox{\sf -M}$ to denote the 12 instances in $\seqext$ that contain $\mymatchall_e$ and $\seqext\mbox{\sf -N}$ to denote the other 48 instances in $\seqext$.
+
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1}
+\begin{table}[htbp]
+\vspace{-6mm}
+\caption{Experimental results on $\seqext$.
+	% $\withmatch$ refers to the constraints that contain the operation $\mymatchall_e$, while $\withoutmatch$ refers to the constraints that do not contain the operation $\mymatchall_e$. The results show that $\ostrichseq$ can solve all the constraints in $\seqext$ and is more efficient than cvc5 and $\ostrich$. Z3 and Z3-noodler solve only a few constraints but are much faster than others.
+}
+\vspace{-3mm}
+\centering
+    \begin{tabular}{| c| c| c | c | c | c| c|}
+      \hline
+                                              &                 & cvc5  & Z3   & Z3-noodler    & $\ostrich$ & $\ostrichseq$ \\
+      \hline
+      \multirow{3}{*}{$\seqext\mbox{\sf -N}$} & sat             & 19    & 4    & 4             & 20         & \textbf{23}   \\
+      \cline{2-7}
+                                              & unsat           & 21    & 6    & 4             & 18         & \textbf{25}   \\
+      \cline{2-7}
+                                              & solved          & 40    & 10   & 8             & 38         & \textbf{48}   \\
+      \cline{2-7}
+                                              & unknown/timeout & 8     & 38   & 40            & 10         & \textbf{0}    \\
+      \cline{2-7}
+                                              & avg. time (s)   & 10.83 & 0.13 & \textbf{0.05} & 15.92      & 3.53          \\
+      \hline
+      \multirow{3}{*}{$\seqext\mbox{\sf -M}$} & sat             & -     & -    & -             & -          & \textbf{12}   \\
+      \cline{2-7}
+                                              & unsat           & -     & -    & -             & -          & \textbf{0}    \\
+      \cline{2-7}
+                                              & solved          & -     & -    & -             & -          & \textbf{0}    \\
+      \cline{2-7}
+                                              & unknown/timeout & -     & -    & -             & -          & \textbf{0}    \\
+      \cline{2-7}
+                                              & avg. time (s)   & -     & -    & -             & -          & \textbf{1.77} \\
+      \hline
+    \end{tabular}
+  \label{tab:seq-ext}
+\vspace{-8mm}
+\end{table}
+
+
+From Table~\ref{tab:seq-ext}, we can see that Z3 and Z3-noodler solve only 10 and 8 out of 48 constraints in $\seqext\mbox{\sf -N}$ respectively, and cvc5 and OSTRICH solve 40 and 38 instances respectively,
+indicating that the complexity of the string constraints generated from the $\arraylogic$ constraints. %are too complex to be solved by string solvers successfully in general. 
+On the other hand, $\ostrichseq$ solves all of them, demonstrating its superiority over solvers in solving the $\arraylogic$ constraints that contain the operations specialized to string sequences. For the solving time per instance, $\ostrichseq$ spends 3.53 seconds on average, which is significantly lower than cvc5 and $\ostrich$,  spending 10.83 and 15.92 seconds on average respectively. For the constraints in $\seqext\mbox{\sf -M}$, $\ostrichseq$ successfully solves all 12 instances with an average time of 1.77 seconds.
+As mentioned before, for the constraints in $\seqext\mbox{\sf -M}$, we do not generate string constraints or compare against cvc5, Z3, Z3-noodler and $\ostrich$, since these constraints cannot be be expressed using only the basic operations of string theory.
+%are unable to solve any of these instances, as $\mymatchall_e$ cannot be rewritten using only the basic operations of string theory.
+%In contrast, cvc5, Z3, Z3-noodler are unable to solve any of these instances, as $\mymatchall_e$ cannot be rewritten using only the basic operations of string theory.
+
+
+
+%The results of the Seq-Base benchmark are shown in Table~\ref{tab:seq-base}. The results show that our solver is slower than Z3 and cvc5 in some cases, but it is still able to solve all the constraints. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hide{
+  The results of the Seq-Ext benchmark are shown in Table~\ref{tab:seq-ext}. Since the extended operations are not supported by Z3 and cvc5, we rewrite the constraints to the basic operations of string theory, where we use string $'\#aa\#bb'$ to stand for the sequence $['aa', 'bb']$. \textbf{filter} and \textbf{match} are not rewrote since they are transducer which is not supported even in string theory. The results show that our solver OSTRICH outperforms Z3 and cvc5 in this benchmark, solving all the constraints with a competetive time. 28 unknown constraints of cvc5 and Z3 are due to filter and match. 17 unknown constraints of cvc5 and 25 unknown constraints of Z3 are due to the axioms we introduced to simulate the extended operations such as \textbf{split} and \textbf{join}.
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

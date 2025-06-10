@@ -1,0 +1,167 @@
+\documentclass{llncs}
+\usepackage{hyperref}
+\usepackage[fleqn]{amsmath}
+\usepackage{amsfonts}
+\usepackage{float}
+%\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}   % For professional-quality tables
+\usepackage[T1]{fontenc} %(or \usepackage{t1enc}) 
+
+\usepackage{tikz}
+\usepackage{multirow} 
+
+\usepackage[cache=false]{minted}
+%\usepackage{minted}
+
+\setminted{
+  % Line numbers not flowing out of the margin
+  numbersep=5pt,
+  xleftmargin=12pt,
+  %
+  % Better listing breaking
+  breakafter=-/\{,
+  breakbefore=\\
+  %
+  % Alternative: Rely on pygment's tokenizer. Does not work well with LaTeX and comments
+  % breakbytoken=true,
+  % breakbytokenanywhere=true
+}
+
+\usepackage{listings}  % Include the listings package for code formatting
+
+
+% Define SMT-LIB language for syntax highlighting
+\lstdefinelanguage{SMT-LIB}{
+  morekeywords={
+    declare-const, assert, check-sat, define-fun, forall, or, and, not, 
+    exists, if, then, else, let, in, re, str, seq, Int, String, 
+    exists, true, false, "=",
+  },
+  sensitive=true,
+  morecomment=[l]{;}, % Single-line comments
+}
+
+\lstset{ %
+  language=java,               % Use 'java' for basic highlighting
+  basicstyle=\ttfamily\small,   % Use a small monospaced font
+  numbers=left,                % Show line numbers on the left
+  numberstyle=\tiny\color{gray},% Line number style
+  stepnumber=1,                % Number every line
+  numbersep=5pt,               % Distance between line numbers and code
+  backgroundcolor=\color{white},% Background color for the code
+  showspaces=false,            % Do not highlight spaces
+  showstringspaces=false,      % Do not highlight spaces in strings
+  showtabs=false,              % Do not highlight tabs
+  frame=single,                % Frame around the code block
+  rulecolor=\color{black},     % Color of the rule/frame
+  tabsize=2,                   % Tab size
+  captionpos=b,                % Position of the caption (b for bottom)
+  breaklines=true,             % Break long lines
+  breakatwhitespace=false,     % Break at whitespace
+  escapeinside={\%*}{*)},      % Allows you to escape to LaTeX
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{macros.tex}
+
+%\theoremstyle{remark}
+%\newtheorem{definition}{Definition}[section]
+
+\newcommand{\zhilin}[1]{\color{blue} {ZL: #1 :LZ} \color{black} }
+\newcommand{\denghang}[1]{\color{red} {DH: #1 :HD} \color{black} }
+\newcommand{\tl}[1]{\color{magenta} {TL: #1 :LT} \color{black} }
+\newcommand{\fu}[1]{\color{purple} {FU: #1 :UF} \color{black} }
+%\newcommand{\denghang}[1]{{\color{teal}\textbf{DH:} #1 \textbf{:HD}\color{black}}}
+%\newcommand{\comment}[1]{{\color{blue}\textbf{MARK:} #1 \textbf{:KRAM}\color{black}}}
+
+
+\pagestyle{plain}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Decision Procedure for \\ A Theory of String Sequences}
+
+\author{}
+\institute{}
+%\author{Denghang Hu\inst{1,2}, Taolue Chen\inst{3}, Philipp R\"{u}mmer\inst{4}, Zhilin Wu\inst{1,2}}
+%\institute{Key Laboratory of System Software and State Key Laboratory of Computer Science, Institute of Software, Chinese Academy of Sciences, China \and
+%University of Chinese Academy of Sciences, China \and 
+%Birkbeck, University of London, United Kingdom \and 
+%University of Regensburg, Germany
+%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{-6mm}
+\begin{abstract}
+%Sequence of strings (aka array of strings) occurs frequently in string-manipulating programs (e.g. the result of matching of regular expressions or the result of the split function).  
+%In this paper, we investigate how to solve theory of sequences of strings. We show that while the satisfiability problem of this theory is undecidable in general, it is decidable for the straight-line fragments. We implement the decision procedure and do experiments to show the efficiency of the tool. 
+
+The theory of sequences, supported by many SMT solvers, can model program data types including bounded arrays and lists. Sequences are parameterized by the element data type and provide operations such as accessing elements, concatenation, forming sub-sequences and updating elements. Strings and sequences are intimately related; many operations, e.g., matching a string according to a regular expression, %(returning an array of sub-strings), for
+splitting strings, or joining strings in a sequence, are frequently used in string-manipulating programs. Nevertheless,
+these operations are typically not directly supported by existing SMT solvers, which instead only consider the generic theory of sequences.  
+In this paper, we propose a theory of string sequences and study its
+satisfiability. We show that, while it is undecidable in general,  the
+decidability can be recovered by restricting to the straight-line
+fragment. This is shown by encoding each string sequence as a string,
+and each string sequence operation as a corresponding string operation. %providing associated 
+We provide pre-image computation for the resulting string operations with respect to automata, effectively casting it into the generic OSTRICH string constraint solving framework. %to which existing decision procedure for strings and integer constraints can be applied.  
+  %
+We implement the new decision procedure as a tool $\ostrichseq$,  and carry out experiments on benchmark constraints generated from both real-world and hand-crafted JavaScript programs. The experiments confirm the efficacy of our approach. %show that our approach is
+  %efficient and capable of solving constraints that existing solvers
+  %cannot.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\vspace{-6mm}
+\input{intro.tex}
+
+%\section{Preliminaries}
+%\vspace{-2mm}
+\input{mot-exmp}
+
+%\vspace{-2mm}
+\input{prelim}
+
+%\vspace{-2mm}
+\input{theory.tex}
+
+%\vspace{-2mm}
+\input{algo.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\vspace{-2mm}
+\input{experiments.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\vspace{-2mm}
+\input{related.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{-2mm}
+\section{Conclusion} \label{sect:conc}
+\vspace{-2mm}
+
+In this paper, we have proposed $\arraylogic$, a logic of string sequences, which supports a wealth of string and sequence operations---especially their interactions---commonly in real-word string-manipulation programs. We have provided a decision procedure for the straight-line fragment, which is implemented as a new tool $\ostrichseq$. The experiments on both hand-crafted and real-word benchmarks demonstrate that $\ostrichseq$ is an effective and promising tool for testing, analysis and verification of string-manipulation programs in practice. 
+
+%
+%and study its satisfiability. We show that, while it is undecidable in general,  the decidability can be recovered by restricting to the straight-line fragment. This is shown by encoding a string sequence into a string and accordingly, encoding string sequence operations into corresponding string operations. %providing associated 
+%We provide pre-image computation for the resulting string operations with respect to automata, effectively casting it into the generic OSTRICH string constraint solving framework. %to which existing decision procedure for strings and integer constraints can be applied.  
+%%
+%We implement the new decision procedure as a tool $\ostrichseq$,  and carry out experiments on benchmark constraints generated from both real-world and hand-crafted JavaScript programs. The experiments confirm the efficacy of our approach.
+\newpage
+
+\bibliographystyle{abbrv}
+\bibliography{ref}
+
+\end{document}

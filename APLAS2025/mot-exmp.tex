@@ -1,0 +1,75 @@
+%!TEX root = main.tex
+
+\section{Motivating Example} \label{sect:example}
+To motivate and illustrate our approach, we consider a snippet of a Javascript program shown  in Listing~\ref{lst:js_example}. The program is extracted, with slight adaptions, from a real-world example.\footnote{\url{https://github.com/hgoebl/mobile-detect.js/blob/master/mobile-detect.js}} 
+%Listing \ref{lst:js_example} is an example of JavaScript code coming from a real-world program\footnote{\url{https://github.com/hgoebl/mobile-detect.js/blob/master/mobile-detect.js}}, which manipulates a sequence of strings. 
+%In Listing~\ref{lst:js_example}, 
+Here, the function \texttt{prepareVersionNo} extracts from the input string \texttt{version} a version number in the floating point number format. 
+Specifically, it splits  \texttt{version} according to the non-numeric characters into a sequence/array {\tt numbers}. If {\tt numbers} contains exactly one element, {\tt numbers[0]} is returned. Otherwise, the function returns the concatenation of {\tt numbers[0]}, the dot, and the string obtained by concatenating the other elements of {\tt numbers}.  For instance, if {\tt version = 12a56b23}, the output %of \texttt{prepareVersionNo} 
+is {\tt 12.5623}.
+
+To verify the functional correctness of  \texttt{prepareVersionNo}, we specify the following precondition and postcondition.  
+\begin{itemize}
+\item The  precondition {\tt version $\in$ \verb|[0-9]+([0-9a-zA-Z._ /-])*|} requires that the input string starts with a decimal number, followed by a string of digits, letters, dot \verb|.|, underline  \verb|_|, blank symbol, slash \verb|/|, or hyphen \verb|-|.
+\item As postcondition {\tt result} $\in$ \verb|[0-9]+(\.[0-9]+)?|, the output string starts with a decimal number, possibly followed by a dot \verb|.| and a decimal number. 
+\end{itemize}
+ 
+\lstinputlisting[float=t,caption={JavaScript code snippet: The motivating example}, label = {lst:js_example}]
+{mot-exmp-js-code.tex}  
+
+
+
+\begin{lstlisting}[float=t,language=SMT-LIB, caption={Constraints for path-2 in {\tt prepareVersionNo}}, label={lst:js_example_constraints},belowskip=-2\baselineskip,aboveskip=-0.8\baselineskip]
+; precondition 
+(assert (str.in_re version preReg)) 
+(assert (= numbers (str.splitre version splitReg)))
+(assert (< 1 (seq.len numbers)))
+(assert (= temp (str.++ (seq.nth numbers 0) ".")))
+(assert (= numbers1
+           (seq.extract numbers 1 (- (seq.len numbers) 1))))
+(assert (= result (str.++ temp (seq.join numbers1 ""))))
+; postcondition
+(assert (not (str.in_re result postReg))) 
+\end{lstlisting} 
+
+We apply symbolic execution to verify \texttt{prepareVersionNo}. % satisfies the specification. 
+We enumerate the execution paths of \texttt{prepareVersionNo} and check for each path that, provided the input string satisfies the precondition, after the execution the output string satisfies the postcondition. 
+%
+%From Listing~\ref{lst:js_example}, we can see that 
+There are three execution paths: path-1, taking \verb|numbers.length===1|; path-2, taking \verb|numbers.length>1|; and path-3,  in which both conditions are false.
+%Let us exemplify the symbolic execution by considering 
+As an example, we consider path-2, where %, that is, the path takes the branch . 
+the symbolic execution %of path 2 with respect to the precondition and postcondition is 
+reduces to deciding the satisfiability of the SMT formula in Listing~\ref{lst:js_example_constraints}, where {\tt preReg} and {\tt postReg} denote the regular expressions  in the precondition and postcondition respectively, i.e., \verb|[0-9]+([0-9a-zA-Z._ /-])*| and  \verb|[0-9]+(\.[0-9]+)?|, and {\tt splitReg} represents \verb|[a-zA-Z._ /-]|. 
+
+%From Listing~\ref{lst:js_example_constraints}, we can see that 
+The SMT formula involves various operations of string sequences and strings, including sequence length {\tt seq.len}, string split {\tt str.splitre}, sequence read {\tt seq.nth}, string concatenation {\tt str.++},
+sequence extract {\tt seq.extract}, sequence join {\tt seq.join}, as well as regular constraints  {\tt str.in\_re}. 
+While state-of-the-art SMT solvers like Z3 and cvc5 can solve constraints in the generic sequence theory, they do not directly support complex operations that feature mutual transformations between strings and string sequences, such as {\tt str.splitre} and {\tt seq.join}. 
+This motivates us to define an SMT theory of string sequences ($\arraylogic$, cf. Section~\ref{sec:logic}) and investigate its decision procedure (Section~\ref{sect:procedure}). %how to solve the constraints in $\arraylogic$. 
+
+\enlargethispage{2ex}%
+Due to the general undecidability of %we show that the satisfiability of 
+$\arraylogic$, %is undecidable in general. %and it is decidable for the straight-line fragment of $\arraylogic$. 
+we focus on %For the decidable 
+the straight-line fragment, into which the constraint in Listing~\ref{lst:js_example_constraints} falls.  %The decision procedure of the straight-line fragment is obtained by first 
+%
+We encode string sequences as strings, and, accordingly, %and 
+operations involving string sequences as string operations. %,  then utilize the string solvers to discharge the resulting string constraints. 
+%It turns out that the string constraints resulted from the translation are complex and challenging for the SOTA string solvers to solve, since they usually involve the string operations {\tt str.replace\_re\_all}, {\tt str.substr}, {\tt str.len}, as well as some non-standard string operations. 
+In the example, the resulting constraint  %from the translation of the constraint in Listing~\ref{lst:js_example_constraints} 
+contains a complex combinations of  {\tt str.replace\_re\_all}, {\tt str.substr} and {\tt str.len} and cannot be solved by Z3 or cvc5. (Z3 returns {\tt unknown} as it does not support the {\tt str.replace\_re\_all} function well; cvc5 fails to solve the problem in 300 seconds.) 
+%To tackle the challenge, we utilize and extend the framework established in the string solver {\sf OSTRICH}~\cite{atva2020} to reason about the complex as well as non-standard string operations and obtain a solver called \oursolver. In the end, 
+Our new solver $\ostrichseq$ solves Listing~\ref{lst:js_example_constraints} in less than 1~second.
+ 
+%\zhilin{stopped here}
+
+%and then joins the all parts consisting of number characters,  and finally returns its numeric representation. Moreover, the function has a precondition and a postcondition. We use regular expressions to express the precondition and postcondition. $version \in$ \verb|[0-9]+([0-9a-z._ \/\-])*| is the precondition, which checks if the input string contains numbers and each number is followed by a non-numeric character. The postcondition is $version \in$ \verb|[0-9]+(\.[0-9]+)*|, which checks if the output string is a float.
+
+%%%%%%%%%%%%%%%%%%%%%%% removed
+%%%%%%%%%%%%%%%%%%%%%%% removed
+\hide{
+To check the path feasibility of the function, we need to solve the constraints involving string sequences. For example, we need to check whether the length of the sequence \texttt{numbers} is equal to 1 or greater than 1, and we also need to model the \texttt{split} operation and the \texttt{join} operation. The state-of-the-art SMT solvers, such as Z3 and cvc5, are not capable of solving these constraints directly. Our solver $\ostrichseq$, however, can handle these constraints effectively. The constraints generated from the example can be expressed in our theory of string sequences, which includes operations like \texttt{seq.len}, \texttt{seq.++}, \texttt{seq.extract}, \texttt{seq.nth}, \texttt{str.split}, and \texttt{seq.join}. The path feasibility constraints of \textbf{path 2} is shown in Listing \ref{lst:js_example_constraints}. The \texttt{precondition} is a regular expression that checks if the input string contains numbers, and the \texttt{postcondition} checks if the output string is a float. Line 2 ensures that the input string \texttt{version0} satisfies the precondition. Line 3 asserts that \texttt{numbers0} is the result of splitting the input string \texttt{version0} by the regular expression \verb|/[a-z._ \/\-]/i|. Line 4 asserts that the length of \texttt{numbers0} is greater than 1, which corresponds to the condition in the JavaScript code. Line 5-9 constructs the final result of the version string, corresponding to the operations of line 8-10 in the JavaScript code \ref{lst:js_example}. Finally, line 10 checks the negation of the postcondition. If the constraints are satisfiable, it means that there is an input string that satisfies the precondition and produces an output string that does not satisfy the postcondition, indicating a potential bug in the code. Our solver $\ostrichseq$ can solve these constraints within 1 second, while Z3 and cvc5 fail to solve them within a reasonable time.
+}
+%%%%%%%%%%%%%%%%%%%%%%% removed
+%%%%%%%%%%%%%%%%%%%%%%% removed

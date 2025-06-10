@@ -1,0 +1,18 @@
+\centering
+\small % You can use \footnotesize or \scriptsize for even smaller text
+\resizebox{0.85\linewidth}{!}{ % Adjust the table width to 85% of the page width
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{}          & CVC5 & OSTRICH     & Z3   & Z3-noodler    \\
+    \midrule
+    \textsc{sat}       & 12   & \textbf{29} & 3    & 3             \\
+    \midrule
+    \textsc{unsat}     & 12   & \textbf{31} & 6    & 4             \\
+    \midrule
+    \textsc{solved}    & 24   & \textbf{60} & 9    & 7             \\
+    unknown/timeout    & 36   & \textbf{0}  & 51   & 53            \\
+    \midrule
+    \textsc{avg.t (s)} & 7.43 & 2.05        & 0.17 & \textbf{0.06} \\
+    \bottomrule
+  \end{tabular} %
+}
