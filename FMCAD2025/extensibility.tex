@@ -1,0 +1,102 @@
+% !TeX root = main.tex
+
+An important features of OSTRICH is the possibility to extend the
+solver with minimal effort.
+%
+OSTRICH’s \texttt{PreOp} trait lets users add new string functions by
+overriding three core methods. This can be done in either Scala (the
+main language used to implement OSTRICH) or in Java.
+%
+Below we show each method in turn,
+together with the \texttt{ReversePreOp} implementation\footnote{This
+  snippet is abbreviated for clarity. The full implementation in
+  \texttt{ReversePreOp.scala} includes additional automaton‐type
+  matching and error handling.}.
+
+First, the method \texttt{apply} computes the \emph{pre-image} of a
+regular language under $f$, which is the core operation needed for
+backward propagation in RCP.  The method is passed any existing automata constraints on the $r$ arguments (which may be ignored) and the automaton $\mathcal{A}$ representing the result language.  The method returns an iterator over tuples of automata whose images under $f$ lie inside $\mathcal{A}$, plus (optionally) the subset of the input constraints actually used.
+
+\begin{lstlisting}[language=Scala]
+override def apply(
+	argCs: Seq[Seq[Automaton]],
+	resultC: Automaton
+) : (Iterator[Seq[Automaton]], Seq[Seq[Automaton]]) = {
+	(Iterator(Seq(ReverseAutomaton(resultC))), List())
+}
+\end{lstlisting}
+
+Second, the method \texttt{eval} performs \emph{concrete} evaluation on ground strings: when all arguments are known, it simply returns the result of applying $f$.
+
+\begin{lstlisting}[language=Scala]
+override def eval(
+	args: Seq[Seq[Int]]
+): Option[Seq[Int]] = Some(args.head.reverse)
+\end{lstlisting}
+
+Third, \texttt{forwardApprox} computes a (sound) \emph{post-image} of input languages under $f$, used for forward propagation.  While returning the universal automaton is always correct, a tighter approximation greatly improves performance.  For \texttt{str.reverse}, one can exactly compute this by intersecting any input automata and then reversing the resulting automaton.
+
+\begin{lstlisting}[language=Scala]
+override def forwardApprox(
+	argCs: Seq[Seq[Automaton]]
+): Automaton = {
+	val prod = ProductAutomaton(argCs)
+	ReverseAutomaton(prod)
+}
+\end{lstlisting}
+%
+%Putting it all together:
+%
+%\begin{lstlisting}[language=Scala]
+%package ostrich.preop
+%
+%object ReversePreOp extends PreOp {
+%	override def name: String  = "str.reverse"
+%	override def arity: Int     = 1
+%
+%	// 1) Pre-image
+%	override def apply(
+%		argCs: Seq[Seq[Automaton]],
+%		resultC: Automaton
+%	): (Iterator[Seq[Automaton]], Seq[Seq[Automaton]]) = {
+%		(Iterator(Seq(ReverseAutomaton(resultC))), List())
+%	}
+%
+%	// 2) Concrete evaluation
+%	override def eval(
+%		args: Seq[Seq[Int]]
+%	): Option[Seq[Int]] = Some(args.head.reverse)
+%
+%	// 3) Post-image
+%	override def forwardApprox(
+%		argCs: Seq[Seq[Automaton]]
+%	): Automaton = {
+%		val prod = ProductAutomaton(argCs)
+%		ReverseAutomaton(prod)
+%	}
+%}
+%\end{lstlisting}
+
+
+Finally, the new string function has to be registered in the core
+string theory class of OSTRICH.
+In the file \texttt{OstrichStringTheory.scala}, we register \texttt{str.reverse} by first declaring its SMT-side function symbol:
+
+\begin{lstlisting}[language=Scala]
+val str_reverse = MonoSortedIFunction(
+	"str.reverse",
+	List(StringSort), StringSort, true, false
+)
+\end{lstlisting}
+
+We then add it to the \texttt{extraStringFunctions} list, pairing the name, the \texttt{IFunction}, our \texttt{ReversePreOp} implementation, and the simple lambdas that pick out the input and output terms:
+
+\begin{lstlisting}[language=Scala]
+val extraStringFunctions = List(
+	("str.reverse", str_reverse, ReversePreOp,a =>
+		 List(a(0)),a => a(1)))
+\end{lstlisting}
+
+With these two lines in place, any occurrence of \texttt{str.reverse} in the SMT-LIB script is recognized by OSTRICH2 and automatically dispatched to our \texttt{ReversePreOp} for pre-image computation, concrete evaluation, and forward-approximation.
+
+

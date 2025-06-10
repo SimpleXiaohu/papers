@@ -1,0 +1,56 @@
+% !TEX root = main.tex
+
+
+Strings are ubiquitous in modern software systems, especially with the
+advent of programming languages like JavaScript, PHP, and Python. Despite this, 
+string manipulation is well-known to be error-prone and can easily lead to 
+security vulnerabilities including HTML injection (e.g.\ see \cite{Kern14,LB16}).
+Applications to analysis of security vulnerabilities caused by string
+manipulation have been one of the main catalysts for the extensive research into
+SMT over strings spanning across the last twenty years
+\cite{LB16,DBLP:conf/cav/AbdullaACHRRS15,ostrich,Berkeley-JavaScript,HAMPI,BTV09,string-survey}.
+One of the success stories of string solvers includes their usage at AWS
+for analysis of Role-Based Access Control (RBAC) policies (e.g.\ see
+\cite{neha,Cook18}).
+Since 2020 SMT-LIB Unicode String theory \cite{SMTLIB} has been formalized and supported by
+many existing string solvers, including Z3 \cite{z3}, Z3-alpha \cite{z3alpha}, Z3-Noodler \cite{noodler,noodler-int,noodler-len, noodler-tool}, Z3str3RE \cite{z3str3re},
+cvc5 \cite{cvc5}, Z3str4 \cite{z3str4}, Trau \cite{trau0,trau-tool,trau2}, and our own solver OSTRICH \cite{ostrich}.
+
+In this paper, we present OSTRICH2: the latest evolution of the string solver 
+OSTRICH \cite{ostrich}. The goal behind the development of OSTRICH in 2018 was 
+to address the lack of support for complex string functions like replaceall, 
+transducers, reverse, etc. by string solvers. In particular, these are known to
+be crucial for capturing real-world string manipulations
+\cite{Berkeley-JavaScript,framework,LB16}. In a nutshell, this initial version
+of OSTRICH employed the so-called \emph{backward regular propagation} for the
+so-called straight-line fragments, and leveraged the use of \emph{Nielsen's
+transformation}, when the formula is not straight-line. Over the years, 
+OSTRICH has undergone some substantial changes, which have radically enhanced
+the solver, resulting (among others) in the superior performance of OSTRICH in
+competitions (e.g. \#1 for QF\_S track in SMT-Competition 2023). This paper aims
+to, for the first time, introduce potential future users to OSTRICH in its
+latest form. To this end, rather than being exhaustive, we aim for 
+accessibility by taking the reader through illustrative examples (among others).
+In addition to unravelling the design of OSTRICH2, we also report our latest
+experimentation of the solver on SMT-COMP'24 and SMT-COMP'25 benchmarks, showing
+its competitiveness, most notably on unsatisfiable instances.
+
+The following is a list of main features  of OSTRICH2:
+\begin{description}
+    \item[(F1)] SMT-LIB Unicode String theory inputs.
+    \item[(F2)] Native support of features of ECMAScript regular expressions (e.g. 
+        lookaround assertions, capture groups, references).
+    \item[(F3)] Native support of replaceall and, more generally, complex string
+        transductions using a more comprehensive \emph{regular constraint
+        propagation} strategy, which includes not only backward, but also 
+        \emph{forward} regular propagations (among others).
+    \item[(F4)] An extensive portfolio of solving strategies that includes
+%The original OSTRICH string‐solver framework—built atop Princess with automata‐based reasoning—was introduced in \cite{ostrich}. In subsequent work we enriched it with prioritized transducers and full ECMA-2020 regex parsing (look-around assertions, capture groups) \cite{popl22}. OSTRICH2 is a complete rewrite that unifies three core solving engines—Regular Constraint Propagation (RCP), 
+        a cost-enriched string solver (CE-Str) \cite{atva2020}, a list-based ADT 
+        solver (ADT-Str), %—within a portfolio architecture, 
+        and preprocessings (length/character-count abstraction).
+        %and new inference rules.
+\end{description}
+
+\paragraph*{Organization} Section~\ref{sec:grammar} reviews the SMT-LIB 
+Unicode Strings standard and our grammar (a fully formal description is given in Appendix~\ref{app:grammar}); Section~\ref{sec:architecture} reviews the architecture of OSTRICH2; Section~\ref{sec:string-theory-algorithms} details OSTRICH2’s key algorithms; Section~\ref{sec:completeness} discusses the completeness of the algorithms; Section~\ref{sec:extensibility} shows that OSTRICH2 is extensible with user-defined string functions; Section~\ref{sec:experiments} reports evaluation results; and Section~\ref{sec:conclusion} concludes with directions for future work.

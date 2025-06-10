@@ -1,0 +1,86 @@
+\subsection{SMT-LIB Standard for Unicode Theory of Strings}
+
+\label{app:grammar}
+
+We begin by outlining the basic syntactic elements for our formulas and the key string and regular expression operations as defined in the SMT-LIB Unicode theory.
+
+\subsection*{Grammar}
+
+We define the grammar as follows:
+
+\medskip
+
+\noindent\textbf{Formulas:}
+\[
+\begin{array}{rcl}
+	\phi & ::= & \lnot\, \phi \mid \phi \land \phi \mid \phi \lor \phi \mid Atom \\[1ex]
+	Atom & ::= & t_{\mathit{s}} \sim t_{\mathit{s}} \mid t_{\mathit{ar}} \sim t_{\mathit{ar}} \mid t_{\mathit{s}} \in t_{\mathit{re}} \mid \\
+	&     & StrPred \\[1ex]
+	StrPred & ::= & \operatorname{prefixof}(t_{\mathit{s}}, t_{\mathit{s}}) \mid \operatorname{suffixof}(t_{\mathit{s}}, t_{\mathit{s}}) \mid \\[1ex]
+	&     & \operatorname{contains}(t_{\mathit{s}}, t_{\mathit{s}}) \\[1ex]
+	t_{\mathit{s}} & ::= & BaseStr \mid StrPos \mid StrRep \\[1ex]
+	BaseStr & ::= & c_{\mathit{str}} \mid x_{\mathit{str}} \mid  \sconcat(t_{\mathit{s}},t_{\mathit{s}})\  \\[1ex]
+	StrPos & ::= & \operatorname{at}(t_{\mathit{s}}, t_{\mathit{ar}}) \mid \operatorname{substr}(t_{\mathit{s}}, t_{\mathit{ar}}, t_{\mathit{ar}}) \\[1ex]
+	StrRep & ::= & \operatorname{rep}(t_{\mathit{s}}, t_{\mathit{s}}, t_{\mathit{s}}) \mid \operatorname{rep\_all}(t_{\mathit{s}}, t_{\mathit{s}}, t_{\mathit{s}}) \mid \\[1ex]
+	& & \operatorname{rep\_re}(t_{\mathit{s}}, t_{\mathit{re}}, t_{\mathit{s}}) \mid \operatorname{rep\_re\_all}(t_{\mathit{s}}, t_{\mathit{re}}, t_{\mathit{s}}) \\[1ex]
+	t_{\mathit{ar}} & ::= & c_{\mathit{int}} \mid x_{\mathit{int}} \mid t_{\mathit{ar}} + t_{\mathit{ar}} \mid \lvert t_{\mathit{s}} \rvert \mid \\[1ex]
+	&     & \operatorname{indexof}(t_{\mathit{s}}, t_{\mathit{s}}, t_{\mathit{ar}}) \\[1ex]
+	t_{\mathit{re}} & ::= & \emptyset \mid \Sigma \mid \Sigma^* \mid \operatorname{toRE}(t_{\mathit{s}}) \mid t_{\mathit{re}} \cdot t_{\mathit{re}} \mid \\[1ex]
+	&     & t_{\mathit{re}} \cup t_{\mathit{re}} \mid t_{\mathit{re}} \cap t_{\mathit{re}} \mid t_{\mathit{re}}^*
+\end{array}
+\]
+
+
+
+\section*{Explanation}
+
+\begin{itemize}
+	\item \textbf{Formulas (\(\phi\)) and Atoms:}  
+	The Boolean formulas \(\phi\) are constructed using the standard logical connectives (negation \(\lnot\), conjunction \(\land\), and disjunction \(\lor\)) along with atomic formulas. The atomic formulas include comparisons on string terms \( t_s \) (via a placeholder relation \(\sim\)), arithmetic terms \( t_{\mathit{ar}} \) (also using \(\sim\)), the membership test \( t_s \in t_{\mathit{re}} \), and the dedicated string predicates defined by \( StrPred \).
+	
+	\item \textbf{String Predicates (\(StrPred\)):}  
+	This subclass of atoms is dedicated to predicates that operate specifically on strings. It includes:
+	\begin{itemize}
+		\item \(\operatorname{prefixof}(t_s, t_s)\): Checks if the first string is a prefix of the second.
+		\item \(\operatorname{suffixof}(t_s, t_s)\): Checks if the first string is a suffix of the second.
+		\item \(\operatorname{contains}(t_s, t_s)\): Checks if the first string is contained within the second.
+	\end{itemize}
+	
+	\item \textbf{String Terms (\(t_s\)):}  
+	The nonterminal \( t_s \) is divided into three subclasses:
+	\begin{itemize}
+		\item \textbf{\(BaseStr\):}  
+		Represents the basic string values. This includes string constants \(c_s\), string variables \(x_s\), or the concatenation of two string terms using the operator \(\sconcat\).
+		
+		\item \textbf{\(StrPos\):}  
+		Represents string functions that require an integer parameter. These include:
+		\begin{itemize}
+			\item \(\operatorname{at}(t_s, t_{\mathit{ar}})\): Returns the character (as a string) at a specified position.
+			\item \(\operatorname{substr}(t_s, t_{\mathit{ar}}, t_{\mathit{ar}})\): Returns a substring starting at a given position with a specified length.
+		\end{itemize}
+		
+		\item \textbf{\(StrRep\):}  
+		Contains the string replacement functions, abbreviated here for conciseness. They include:
+		\begin{itemize}
+			\item \(\operatorname{rep}(t_s, t_s, t_s)\): Literal replacement.
+			\item \(\operatorname{rep\_all}(t_s, t_s, t_s)\): Replace all occurrences (literal).
+			\item \(\operatorname{rep\_re}(t_s, t_{\mathit{re}}, t_s)\): Regex-based replacement.
+			\item \(\operatorname{rep\_re\_all}(t_s, t_{\mathit{re}}, t_s)\): Replace all occurrences based on a regex.
+		\end{itemize}
+	\end{itemize}
+	
+	\item \textbf{Arithmetic Terms (\(t_{\mathit{ar}}\)):}  
+	The arithmetic expressions include integer constants \(c_{\mathit{int}}\), integer variables \(x_{\mathit{int}}\), the sum of two arithmetic expressions \(t_{\mathit{ar}} + t_{\mathit{ar}}\), the length function \(\lvert t_s \rvert\) (which returns the length of a string), and the function \(\operatorname{indexof}(t_s, t_s, t_{\mathit{ar}})\), which returns the index of one string within another as an integer.
+	
+	\item \textbf{Regular Expressions (\(t_{\mathit{re}}\)):}  
+	Regular expressions are defined in a manner consistent with standard mathematical notation:
+	\begin{itemize}
+		\item \(\emptyset\) denotes the empty language.
+		\item \(\Sigma\) is the alphabet, and \(\Sigma^*\) represents its Kleene closure.
+		\item \(\operatorname{toRE}(t_s)\) converts a string term into its corresponding regular expression.
+		\item The operators \(\cdot\) (concatenation), \(\cup\) (union), \(\cap\) (intersection), and \(^*\) (Kleene star) are used to build more complex regular expressions.
+	\end{itemize}
+\end{itemize}
+
+
+This grammar provides a foundation that captures the core constructs of the SMT-LIB Unicode theory for strings. 

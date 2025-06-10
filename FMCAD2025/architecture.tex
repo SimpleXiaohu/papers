@@ -1,0 +1,133 @@
+
+The overall architecture of OSTRICH2 is depicted schematically in Figure~\ref{fig:architecture}.
+In essence, OSTRICH2 comprises three string solvers that can be used independently or run using a time-sliced portfolio approach.
+
+At its core, OSTRICH2 builds on the SMT solver Princess~\cite{princess}, which provides the logical reasoning framework and support for theories such as linear integer arithmetic.
+OSTRICH2 provides pre-processing and support for the quantifier-free string theories \verb+QF_S+ (pure strings) and \verb+QF_SLIA+ (strings with linear integer arithmetic).
+Princess also provides support for algebraic data-types (ADTs), on top
+of which the ADT-Str string solver is implemented.
+
+The second and third solver are the Regular Constraint Propagation
+(RCP) and Cost-Enriched String (CE-Str) engine, respectively.
+These share similar architectures.
+They begin with a shared string preprocessor, which processes the SMT-LIB input and forwards it to the SMT Core of Princess.
+Details of the string preprocessing are given in the next section.
+The SMT Core coordinates with the LIA Solver for linear integer arithmetic and with a solver engine for string-specific reasoning.
+
+Both solvers uses automata- and tranducer-based representations of sets of strings and supported string functions.
+A main loop applies proof rules like Automata Intersection, Forward (FWD) and Backward (BWD) Propagation, Nielsen Splitting, and other string-related inference rules.
+Details of the rules are given in the next section.
+A string database and an automata database are used for efficiently storing and retrieving string and automata data.
+The automata database is based on the BRICS Automata Library~\cite{brics}, which provides efficient automaton operations.
+
+For the purposes of presentation, the solvers can be considered to receive and handle constraints from the SMT Core in the following normal form
+\begin{align*}
+    S ~~::=~~ & A \;|\; \neg A \;|\; S \land S \\
+    A ~~::=~~ &
+        f(x_1, \ldots, x_n)
+        \;|\; x = g(x_1, \ldots, x_n)
+        \;|\; \\ & x \in L
+        \;|\; x = \sum_i d_i x_i \ .
+\end{align*}
+Here $x$, $x_1$, \ldots, $x_n$ are string or integer variables and $d_i$ are integer constants, $f$ denotes a string predicate over parameters $x_1, \ldots, x_n$, and $g$ denotes a string function with input parameters $x_1, \ldots, x_n$ and output $x$.
+We will make use of standard string functions and predicates such as $\sconcat$, $\sprefixof$, $\scontains$, and $\ssuffixof$ as needed.
+We sometimes write $|t|$ to denote the length of the word represented by the term $t$.
+For example, the constraint
+\begin{lstlisting}[language=SMTLib,frame=single]
+(assert (and (= (str.++ x y) (str.++ y x))
+             (str.in_re x (re.from_ecma2020 "a*ba*"))
+             (str.in_re y (re.from_ecma2020 "a*ca*"))))
+\end{lstlisting}
+has the following normal form using an additional variable $z$
+\[
+    z = \sconcat(x,y) \wedge z = \sconcat(y,x)
+        \wedge x \in a^*ba^* \wedge y \in a^*ca^* \ .
+\]
+
+%ecma script 2020 -> remove
+
+\begin{figure}
+    \begin{center}
+        \resizebox{\columnwidth}{!}{ % Scale the diagram to fit within the column width
+            \begin{tikzpicture}[node distance=2cm]
+
+                % Nodes
+                \node (input) [] {SMT-LIB Input};
+                \node (preprocessor) [block, below of=input] {String Preprocessor};
+                \node (princess) [below of=preprocessor,yshift=0.2cm] {Princess};
+                \node (smtcore) [block,below of=princess, yshift=1.1cm] {SMT Core};
+                \node (lia) [block, below of=smtcore, yshift=0.6cm] {LIA/ADT Solver};
+                \node (proof) [right of=input, xshift=3cm] {RCP/CEA Rules};
+                \node (database) [block, right of=proof, xshift=3cm] {String Database};
+                \node (automata) [block, below of=database, yshift=0.6cm] {Automata Database};
+                \node (brics) [block, below of=automata] {Brics Automata Library};
+                \node (intersection) [block, below of=proof, yshift=0.6cm] {Automata Intersection};
+                \node (fwdprop) [block, below of=intersection, yshift=0.6cm] {FWD Propagation};
+                \node (bwdprop) [block, below of=fwdprop, yshift=0.6cm] {BWD Propagation};
+                \node (nielsen) [block, below of=bwdprop, yshift=0.6cm] {Nielsen Splitting};
+                \node (etc)[below of=nielsen, yshift=1.2cm] {etc.};
+
+                % Arrows
+                \draw [arrow] (input) -- (preprocessor);
+                \draw [arrow, shorten >=0.5cm] (preprocessor) -- (princess);
+                \draw [arrow] (smtcore) -- (lia);
+                \draw [arrow] (automata) -- (brics);
+                \draw [arrow] (brics) -- (automata);
+
+                \draw [arrow, <->] (2,-4) -- (2.8,-4);
+                \draw [arrow, shorten >=0.9cm] (database) -- (proof);
+                \draw [arrow, shorten <=0.95cm] (proof) -- (database);
+                \draw [arrow, shorten >=0.5cm] (automata) -- (intersection);
+                \draw [arrow, shorten <=0.55cm] (intersection) -- (automata);
+                % Draw the large box around the middle portion
+                \node[bigbox, fit=(proof)(intersection)(nielsen)(fwdprop)(bwdprop)] {};
+                \node[bigbox, fit=(princess)(smtcore)(lia)] {};
+
+            \end{tikzpicture}
+        }
+    \end{center}
+    \caption{Overall architecture of OSTRICH2: the SMT-LIB input is handled by our string preprocessor and Princess SMT core (with LIA and ADT-Str), while the RCP and CE-Str solvers consist of inference rules that are repeatedly applied using  string and automata databases.}
+    \label{fig:architecture}
+\end{figure}
+
+In the sections below, we given an overview of the three main solver engines.
+These are: ADT-Str (algebraic data-types), RCP (regular constraint propagation), and CE-Str (cost-enriched strings).
+
+\subsection{ADT-Str: List-Based Solver}
+
+The ADT-Str solver builds on the decision procedure for algebraic data-types (ADTs) with size catamorphism implemented in Princess~\cite{DBLP:conf/synasc/HojjatR17}.
+Algebraic data-types are used to represent strings using the standard encoding of lists with \texttt{nil} and \texttt{cons} constructors.
+The length of a string is computed using the build-in \texttt{size} function provided by the ADT solver, mapping every constructor term to the number constructor occurrences.
+Other SMT-LIB functions on strings, for instance substring, concatenation, etc., are in ADT-Str encoded using uninterpreted functions and axioms capturing the recursive
+definition of the string functions.
+Regular expression matching is implemented using Brzozowski derivatives~\cite{Brzozowski}.
+
+ADT-Str is  useful, in particular, for computing solutions of string
+constraints that are outside of the fragments for which the other
+solvers are complete.
+ADT-Str can easily handle certain functions that are hard for our propagation algorithms.
+Those functions include, among others, string-to-integer conversion, and functions like substring and indexof that calculate with integer offsets.
+
+\subsection{RCP: Regular Constraint Propagation}
+
+\emph{Regular Constraint Propagation (RCP)} is the newest algorithm that has been implemented in OSTRICH2, based on a subset of proof rules in our paper~\cite{popl22}.
+The main goal of RCP is to \emph{prove unsatisfiability of the input constraint}.
+The algorithm handles string functions like concatenation, replace, replaceall, and regular constraints.
+Other string functions (e.g.\ reverse, one-way and two-way transducers) are also permitted.
+These functions permit either exact pre-image or exact post-image computation of regular constraints or both.
+In general, these images need not be exact, but must at least overapproximate the true pre/post image.
+
+The main idea behind RCP is to propagate regular constraints of the form
+$x \in L$ to other string variables through forward and backward propagations using the RCP inference rule described in the next section.
+
+\subsection{CE-Str: Cost-Enriched String Engine}
+
+The main algorithm of CE-Str (based on \cite{atva2020}) applies backward regular constraint propagation.
+It uses cost-enriched finite automata (CEFAs) instead of standard finite automata to represent sets of words.
+These automata are able to capture numerical information about accepted strings, such as the string length, the number of characters appearing before a transition is fired, and so on.
+This allows length constraints on strings and functions like indexof to be directly supported.
+
+In addition, CE-Str can handle counting operators more efficiently by leveraging the numerical information encoded in CEFAs. For instance, the regex $a^{\{1,1000\}}$, which accepts strings consisting of 1 to 1000 repetitions of the character $a$, can be represented as a CEFA with just one state and one transition—compared to the 1000 states and 1000 transitions required by a standard finite automaton.
+
+CE-Str supports a wide range of string functions, including concatenation, replace, replaceall, substring, indexof and length. It provides completeness guarantees for the straight-line fragment of these functions. CE-Str complements RCP and ADT-Str. It performs well on string constraints involving integer type but struggles when the constraints are outside its decidable fragment.
+

@@ -1,0 +1,372 @@
+% !TeX root = main.tex
+
+In this section we describe the core inference rules and algorithmic components that OSTRICH2 applies to solve string constraints.
+We first present the preprocessing steps shared by the RCP and CE-Str solvers.
+We then present the \emph{inference rules} applied in the main loops of RCP and CE-Str.
+
+\subsection{Preprocessing}
+
+Before applying the core inference rules, OSTRICH2 performs a series of preprocessing steps to enrich the constraint set with auxiliary information and simplify trivial cases.
+The simplification rules are given below.
+First we describe the simplification rules used by both RCP and CE-Str, then we describe the additional rules used by RCP only.
+%\paragraph{Preprocessor vs.\ Reducer}
+%OSTRICH actually performs two flavors of “pre-solving” simplifications.  The standalone \emph{Preprocessor} (in \texttt{OstrichPreprocessor.scala}) runs once on the raw SMT-LIB input, under a global context: it desugars high-level constructs (regex literals, transducers), introduces fresh variables, applies context-sensitive rewrites (e.g.\ inlining of definitions, constant folding) and emits a flat conjunction of normalized constraints.  By contrast, the \emph{Reducer} lives inside the string‐solver loop—operating on each branch’s current conjunction in CNF—and applies stronger, in-context simplifications that only make sense once some constraints are already solved or partially evaluated.  These include discharging newly trivial predicates, merging overlapping automata constraints, eliminating solved variables, and propagating length/character bounds discovered during proof construction.  Splitting these two stages lets us handle the full SMT-LIB grammar up-front, while still enjoying lightweight, incremental reductions during solving.
+
+\subsubsection{Common Preprocessing}
+
+\paragraph*{Prefix/Contains/Suffix Simplification}
+We apply the following rewrites when one argument is concrete:
+\begin{itemize}
+	\item $\sprefixof(s,t)$ / $\ssuffixof(s,t)$ with concrete $s$:
+	replace by
+	\[
+	t \;\in\; L(\texttt{s.*}) \quad/\quad t \;\in\; L(\texttt{.*s}).
+	\]
+	\item $\scontains(t,s)$ with concrete $s$:
+	replace by
+	\[
+	t \;\in\; L(\texttt{.*s.*}).
+	\]
+\end{itemize}
+In \emph{positive} contexts we instead encode:
+\[
+    \begin{array}{rcl}
+        \sprefixof(s,t)&\rightsquigarrow&t = \sconcat(s, u) \\
+        \ssuffixof(s,t)&\rightsquigarrow&t = \sconcat(u, s)
+    \end{array}
+\]
+for fresh $u$.
+Finally, $\sprefixof(t,t)$, $\scontains(t,t)$, $\ssuffixof(t,t)$
+are \emph{trivially true} and replaced by the Boolean constant $\mathsf{true}$.
+
+\paragraph*{Common Sub-Expression Elimination}
+
+While OSTRICH2 does not apply aggressive sharing of terms and expressions, it is useful to merge repeated occurrences of certain operators that are relatively expensive to handle, including expressions~$\sindexof(x,y,i)$. For expressions~$e$ of this kind that occur multiple times in a formula, OSTRICH2 introduces a fresh variable~$k$ and adds the equation~$k = e$.
+All occurrences of $e$ in the formula are then rewritten as $k$.
+This rewriting ensures that the solver only sees one copy of each complex sub-expression and speeds up subsequent reasoning.
+
+%To avoid repeatedly rewriting the same complex subexpression (e.g.\ multiple occurrences of $\sindexof(x,y,i)$), the preprocessor replaces each closed occurrence by a fresh constant $k$ and records the definition $k = \sindexof(x,y,i)$.  Internally this is encoded as
+%\[
+%\forall k.\;\bigl(k = \sindexof(x,y,i)\bigr)\;\Longrightarrow\;\phi\bigl[k/\sindexof(x,y,i)\bigr],
+%\]
+%so that $k$ is scoped like a local `let`.  Although this formula contains a universal quantifier, it is only used to simulate local binding of $k$.  Before the solver sees the constraints, we substitute each definition $k = e$ back into the body and drop the quantifier, preserving a purely quantifier‐free conjunction of equalities.
+
+%    \todo[inline]{MH: given the supported logic is quantifier-free, what does this mean?}
+ %       \todo[inline]{OM: I wrote 2 versions of text to answer this, detailed and simplified version.}
+%        \todo[inline]{MH: the both look quite different! The first means the solver gets constraints with just k in them, the second means the solver is handling the original constraint, but in a "compressed" form that is expanded on the fly. Which one is it?}
+
+\subsubsection{RCP Preprocessing}
+
+The next simplifications are currently used by RCP only.
+
+\paragraph{Length and Character-Count Approximation}
+Infers approximate bounds on string lengths and character counts for complex string functions.
+\begin{itemize}
+    \item \emph{Derived length constraints:} derive length constraints and character count approximations from word equations and other string functions.
+    E.g.\ $|x| = |y| + |z|$ is added for $x = \sconcat(y, z)$.
+    \item \emph{Automaton‐transition analysis:} inspect each transition in an automaton $A$ and, for any character $a$ not appearing on any transition, add the char count constraint $|x_a| = 0$
+    for every $x$ constrained by $A$.
+    \item \emph{Index‐of range constraints:} for each occurrence of $\sindexof(x,y,i)$ (which returns the first index of $y$ in $x$ after position $i$), add implied constraints on the result.
+    E.g.,
+    $-1 \leq \sindexof(x, y, i) \leq \lvert x\rvert$
+    captures that the result must be either be $-1$ or in the interval $[0,\lvert x\rvert]$.
+\end{itemize}
+
+\paragraph{Index‐of/Substr/At Rewriting}
+Translate $\ssubstr$, $\sat$, and $\sindexof$ into equivalent combinations of string concatenation, length constraints, and regex‐membership tests by introducing fresh variables and constraints to encode the positional semantics.
+
+%\[
+%str.substr(s,i,n)
+%\;=\;
+%\begin{cases}
+%	\varepsilon, &
+%	i<0\;\lor\;n\le0\;\lor\;i\ge |s|, \\[4pt]
+%	r, &
+%	\begin{aligned}[t]
+%		\exists\,p,r,q.\;s=p\,r\,q\;\wedge\;|p|=i\;\wedge\\
+%		|r|=n \land n\le |s|-i
+%	\end{aligned}
+%	\\[4pt]
+%	r, &
+%	\begin{aligned}[t]
+%		&\exists\,p,r,q.\;s=p\,r\,q\;\wedge\;|p|=i\;\wedge\\ &|r|=|s|-i \land		i<|s|\;\land\;i+n>|s|
+%	\end{aligned}
+%\end{cases}
+%\]
+We illustrate one such rewrite for $r = \ssubstr(s,i,n)$, which asserts that $r$ contains the longest contiguous substring of $s$ of length at most $n$ starting at position $i$.
+It can be split into three cases.
+
+First we introduce fresh string variables $p,r,q$ with
+\[
+s = \sconcat(p, r, q) \land |p| = i,
+\]
+and then distinguish:
+
+\begin{itemize}
+	\item If $i<0$, $n\le0$, or $i\ge|s|$, then $r = \varepsilon$.
+
+	\item If $0 \le i < |s|$ and $i + n \le |s|$, then $|r| = n$, so $r$ is exactly the length-$n$ slice of $s$ starting at position $i$.
+
+	\item If $0 \le i < |s|$ but $i + n > |s|$, then $|r| = |s| - i$, so $r$ is the substring from position $i$ to the end of $s$.
+\end{itemize}
+
+\subsection{Inprocessing Rules}
+\label{sec:inprocessing}
+
+There is also a set of lightweight simplification rules that are applied to
+expressions during proving. Such rules are applied in the local
+context of a proof goal and are often able to significantly simplify
+expressions, for instance by evaluating function applications with
+known arguments or discovering obvious contractions. During
+inprocessing, equations and assignments of values to variables are
+propagated to other constraints. There are also
+certain preprocessing rules that are applied again during
+inprocessing; for instance, $\neg\,\ssuffixof(s,t)$ can be turned into
+a regular expression constraint as soon as one of the arguments~$s, t$
+is a known string, but has to be kept unchanged before that.
+
+\iffalse
+\begin{itemize}
+	\item eliminate newly obvious contradictions or tautologies (e.g.\ if an automaton constraint becomes empty, close the branch)
+	\item re-apply any preprocessing-style rewrites that depend on polarity (for example, rewrite $\neg\,\ssuffixof(s,t)$ to membership tests and disequalities)
+	\item incorporate any new equalities or bounds discovered by other inference rules such as a fresh assignment from lazy enumeration or from the cut rule.
+\end{itemize}
+
+Not all of these rewrites can be performed in the up-front preprocessor, since at that point we don’t yet know which literals will be negated or which variables will become concrete during solving.
+
+\todo[inline]{MH: the first bullet is reasonable, but the second sounds like ``do other things like the list above'', which is somewhat mysterious.}
+\fi
+
+\subsection{Inference Rules}
+\label{sec:inference-rules}
+
+The main loops of the RCP and CE-Str repeatedly apply proof rules
+until a branch is closed or a model is found. We discuss the most
+important proof rules in this section.
+
+The RCP algorithm assigns priorities to each possible rule application based on an estimation of the workload (e.g.\ the size of the involved automata) and selects the rule application with the highest priority first. Fairness is ensured by penalizing newer rule applications, and therefore preferring rule applications that have resided in the waiting queue the longest.
+%
+%In RCP we distinguish two independent queues—one for forwards propagation and one for backwards propagation.  When the SMT core decides to do a forward step, RCP scores all pending forward‐propagation tasks and fires the highest‐scoring one; likewise, a backward step picks from the backward queue.
+Priorities are computed as the weighted sum of several criteria:
+%
+\begin{itemize}
+	\item \emph{Concrete‐argument:} any rule whose input or output language is a ground string is given high priority.
+	\item \emph{Information‐gain penalty (backward only):} rules whose input automata are universal (e.g.\ $x\in\Sigma^*$) yield little new information in backward propagation and given low priority.
+	\item \emph{Exactness adjustment (forward only):} forward rules for functions without an exact post-image (e.g.\ replaceall with symbolic patterns) are given low priority.
+	\item \emph{Cost‐based penalty:} a weight proportional to the combined size of the input and result automata is subtracted.
+\end{itemize}
+
+%We fully saturate forward‐ and backward‐propagation (including length abstraction) before applying any other inference rules; whenever new information arrives for a string variable, we re-enter this saturation phase.
+
+
+%\todo[inline]{MH: Philipp can you say something proper here?}
+%\todo[inline]{PR: actually, everything works with priorities, so it is never the case that we first fully apply one rule before another rule. It would be difficult to ensure completeness using such strict priorities.}
+
+Differences between the two solvers in their application of the rules is included in the descriptions.
+The proof rules may cause branching in the proof search.
+If a satisfying assignment is found on a branch, it witnesses that the constraint is satisfiable.
+The Close rule detects unsatisfiable constraints.
+If all branches are closed, the constraint is unsatisfiable.
+
+\paragraph{Regex‐to‐Automata}
+OSTRICH2 constructs an automaton $A$ for each regular membership constraint in $x \in L$.
+The automaton is stored in the automaton database, which detects equivalent automata to avoid duplication.
+In the remaining rules, we make the automaton explicit by writing $x \in L(A)$.
+The CE-Str solver creates cost-enriched automata.
+Initially these automata do not track any costs.
+Cost tracking is introduced during the RCP rule below.
+
+\paragraph{BreakCyclicEquations}
+OSTRICH2 detects strongly connected components in the variable‐dependency graph induced by concatenation equations of the form
+\[
+x = \sconcat(y,z)
+\quad\text{and}\quad
+y = \sconcat(a,x).
+\]
+For each cycle it removes one equation and, for every remaining equation $\,v = \sconcat(u,w)$ in that cycle, adds a trivial emptiness constraint on one argument (e.g.\ $w = \varepsilon$ or $u = \varepsilon$) to break the dependency.
+
+For example, from
+\[
+x = \sconcat(y,z)
+\quad\land\quad
+y = \sconcat(a,x)
+\]
+we might remove the first equation and introduce
+\[
+y = \sconcat(a,x),
+\quad
+z = \varepsilon,
+\quad
+a = \varepsilon,
+\]
+yielding an acyclic set of equations.
+This transformation is \emph{sound}, because in any finite model of the original cyclic equations at least one concatenation argument must be empty, and \emph{complete}, since any solution of the resulting acyclic system (with the added emptiness constraints) automatically satisfies the dropped equations.
+
+\paragraph{Equation Decomposition}
+OSTRICH2 uses two simple heuristics to simplify word equations.  In what follows, $z,x_1,x_2,y_1,y_2$ are arbitrary string terms (each may be a variable or a constant).
+First, when one side is a constant string $w$ and the other is a concatenation
+\[
+w = \sconcat(x_1,x_2),
+\]
+in which the length of $x_1$ is known,
+OSTRICH2 matches the first $|x_1|$ characters of $w$ with $x_1$ and the remaining characters with $x_2$. Second, if the same variable appears in two concatenations,
+\[
+z = \sconcat(x_1,x_2)
+\quad\text{and}\quad
+z = \sconcat(y_1,y_2),
+\]
+then whenever $|x_1| = |y_1|$ we infer $x_1 = y_1$ and $x_2 = y_2$. These heuristics often resolve equations without full case splitting.
+
+\paragraph{Close}
+If for some variable $x$ we have constraints
+\[
+    x \in L(A_1) \land \dots \land x \in L(A_k)
+\]
+and $\bigcap_{i=1}^k L(A_i)=\emptyset$, OSTRICH2 derives a contradiction and close the branch.
+
+\paragraph{Intersection}
+When the \texttt{+eager} flag is on, OSTRICH2 maintains at most one automaton per variable by replacing $x \in L(A) \land x \in L(B)$ with $x \in L(A \cap B)$.
+
+\paragraph{LengthAbstraction}
+From length inequalities (e.g.\ $|x|\le|y|+5$), derive lower/upper bounds on $|x|$, then assert $x \in L(A)$ where $A$ accepts any word within the derived length bounds.
+
+
+\paragraph{RCP (Regular Constraint Propagation)}
+Propagate $x_1 \in L_1$, \ldots, $x_n \in L_n$ forwards through string functions $x=f(x_1,\dots,x_n)$, or $x \in L$ backwards through $f$.
+
+For example, on
+$z = concat(x,y) \wedge z = concat(y,x) \wedge x \in a^*ba^* \wedge y \in a^*ca^*$
+we can propagate $x \in a^*ba^*$ and $y \in a^*ca^*$ forwards (from input to output) through the string concatenation function $concat$ in $z = concat(x, y)$ to obtain $z \in a^*ba^*a^*ca^*$.
+Similarly, we can propagate forwards through $z = concat(y, x)$ and derive $z \in a^*ca^*a^*ba^*$.
+Since there are no words matching both $a^*ba^*a^*ca^*$ and $a^*ca^*a^*ba^*$ we can conclude---using the Close rule---that the constraint is unsatisfiable.
+
+Backwards propagation may result in branching.
+For example, if $x = \sconcat(y, z)$ and $x = ab$, then either $y = ab \land z = \varepsilon$ or $y = a \land z = b$ or $y = \varepsilon \land z = ab$.
+
+When the variable constraints are given by standard finite automata, a rich selection of string functions support exact forwards and backwards propagation.
+These include $\sconcat$, $\sreverse$, and $\sreplace$ and $\sreplaceall$, where the replacement pattern can include string variables or references to capture groups in the search pattern.
+In general, any function can be supported using over-approximations of the pre- and post-images, but without completeness guarantees.
+
+The CE-Str solver only applies backwards propagation and represents pre-images using cost-enriched automata.
+This allows functions such as $\sindexof$ and $\slength$ to be supported (by introducing costs to the automata), but restricts, for example, which versions of $\sreplace$ and $\sreplaceall$ can be analysed precisely.
+
+\paragraph{NielsenSplitter}
+OSTRICH2 invokes Nielsen’s transformation \cite{nielsen1,nielsen2} on any pair of equations in our normal form
+\[
+z = \sconcat(x_1,x_2)
+\quad\text{and}\quad
+z = \sconcat(y_1,y_2),
+\]
+where each of $z,x_i,y_i$ may be a variable or a constant.  We
+introduce a fresh string variable $w$ and split the proof into two
+\emph{prefix‐alignment} cases, guided by current length information in
+a similar way as was done in Norn~\cite{DBLP:conf/cav/AbdullaACHRRS15}.
+That is
+\[
+	|x_1|\ge|y_1|, \quad
+	x_1 = \sconcat(y_1,\,w), \quad
+	\sconcat(w,\,x_2) = y_2
+\]
+or
+\[
+	|y_1|\ge|x_1|, \quad
+	y_1 = \sconcat(x_1,\,w), \quad
+	\sconcat(w,\,y_2) = x_2.
+\]
+
+In each branch we align the longer prefix against the shorter one, adding both the corresponding concatenation equalities and the derived length equality (e.g.\ $|x_1|=|y_1|+|w|$ in the first case).
+
+\paragraph{String-Integer-Conversions}
+\iffalse \todo[inline]{ MH: what is the next paragraph referring to?
+  Can we stick to the normal form we said we expect rather than $|t|$
+  for an arbitrary term (which is not the normal form)?  Is this
+  paragraph trying to say that whenever it finds a term $|t|$ it
+  starts adding $|t| < 2^b$ constraints and checking satisfiability?
+  In normal form this would be $x = f(x_1, \ldots, x_n)$, then i think
+  it's ok to say we assert $|x| < 2^b$ (as the normal form is a bit
+  long and saying we assert it is ok since we assert an equivalent
+  expression).  } \fi For handling expressions $\sstrtoint(s) = n$ or
+$\sinttostr(n) = s$, OSTRICH2 systematically explores the possible
+values of $n$. As soon as $n$ has a concrete value, inprocessing rules
+(Section~\ref{sec:inprocessing}) apply that replace the function
+application with an equation or a regular expression constraint
+describing the possible values of $s$. To make this exploration
+perform well in practical cases, the LIA solver utilized in OSTRICH2
+applies interval constraint propagation to narrow down the range of
+possible values of $n$ as much as
+possible~\cite{DBLP:journals/fmsd/BackemanRZ21}. The interval for $n$
+is then sub-divided, until eventually only one possible value for $n$
+remains. This search will not terminate in general, since the domain
+of $n$ can be infinite, but it tends to derive solutions or
+contradictions quickly in many practical cases.
+
+\iffalse
+OSTRICH2 avoids an up-front infinite split over all integers by interleaving coarse bounding and on-demand guessing.  First it checks whether $|t| < 2^b$ for increasing $b$, so that eventually $t$ is known to lie in the finite interval $\bigl[-2^b+1,\,2^b-1\bigr]$.
+Here $t$ denotes any non-constant integer term produced by one of the built-in functions $\sstrtoint(s)$, $\sinttostr(n)$, or as the index $k$ in $\sindexof(s,p,k)$.  Within that interval, it then guesses candidate values in the simple order
+$0,\,1,\,-1,\,2,\,-2,\dots$
+and for each guess $k$ adds the case $t = k$ to the current goal.
+If this branch immediately contradicts other constraints (for instance $k = \sstrtoint(``42'')$ fails until $k=42$).
+The process repeats until a satisfying assignment is found or all $k$ in the interval have been tried.
+\fi
+
+\paragraph{Index Computation}
+
+When handling $\sindexof(s,p,k)$ on two concrete strings $s,p$,
+OSTRICH2 systematically explores possible values of $k$, taking into
+account the fact that any value~$k$ not satisfying
+$ 0 \le k \le |s| - |p| $ will necessarily lead to the result~$-1$.
+In the ``in-range'' branch OSTRICH2 applies interval constraint
+propagation to determine the possible values of $k$, sub-dividing the
+interval of values until a concrete value~$k$ has been chosen. As soon
+as all arguments of $\sindexof$ have concrete values, inprocessing
+rules (Section~\ref{sec:inprocessing}) can evaluate the function.
+
+\iffalse
+    it again guesses
+$k = 0,\,1,\,2,\dots$ pruning each value if $p$ does not occur at that position, and stops as soon as a valid match is found (e.g.\ $\sindexof(\text{"banana"},\text{"na"},k)$ accepts $k=2$). This ensure that solutions to those functions that evaluate to integer are eventually found.
+
+
+\todo[inline]{%
+    MH: needs clarification.
+    Is it that when this rule is fired, it picks a possible value for the function result and creates a branch where the result is the picked value and one where it is not?
+    What are the length constraints generated?
+    For $\sstrtoint$ is it the length of the string encoding of the guessed value?
+}
+
+\todo[inline]{%
+	OM: I believe that is how it works inside. Philipp probably knows better. In practice $str.to\_int("42")$ should not make it to this point but is caught in the reducer, but what can happen is that we turn $str.to\_int(x)$ to multiple branches, i.e., $str.to\_int(x) = 3$ etc. and then those are checked/rewritten in the reducer.
+}
+\todo[inline]{MH: Philipp -- can you check?}
+\fi
+
+\paragraph{Cut Rule}
+When all other rules have been exhausted, OSTRICH2 applies cuts to
+introduce a candidate solution for a string variable $x$.  For this, OSTRICH2 collects every regular‐language membership constraint $x \in L_i$
+together with any length bounds $\ell\le|x|\le u$.  From the intersection of the $L_i$ (and respecting $\ell,u$), OSTRICH2 extracts a single accepted word $w$ via a standard automaton search.  We then split on the two exhaustive cases
+%
+\[
+x = w
+\quad\text{vs.}\quad
+x \notin \{w\}.
+\]
+
+This rule is always sound because any satisfying assignment for $x$ either equals the chosen $w$ or lies outside $\{w\}$ and guarantees that each string variable will eventually be grounded to a concrete value (or shown impossible).
+
+%\subsection{CE-Str Optimizations}
+%
+%\todo[inline]{%
+%    MH: moved this here as it seemed inappropriate in the architecture section.
+%    It is also not quite right here, but some discussion on this section is needed.
+%}
+%
+%The transition of a CEFA is a tuple $(q, a, q', \vec{v})$, where $q, q'$ are states of the CEFA, $a$ is a character, and $\vec{v}$ is a vector of integer that represents the cost function on the transition. For example, the transition $(q, a, q', (1))$ means the CEFA can transit from state $q$ to state $q'$ with the register incremented by 1. We observe that the characters on transitions do not affect the values of registers in the CEFA\@. Moreover, the cost function $\vec{0}$ also does not affect the values of registers.
+% Based on these observations, we drop the characters after the intersection of CEFAs and consider the cost function $\vec{0}$ as the epsilon label. In contrast, other cost functions are considered as non-epsilon labels. The transition $(q, a, q', \vec{0})$ is changed to $(q, q', \epsilon)$ and the transition $(q, a, q', \vec{v})$ is changed to $(q, q', \vec{v})$. Determinization and minimization for the transferred CEFA are then performed to reduce the size\cite{setta2023}.
+%
+%To reduce the size of automata genereted from regexes with the nesting of counting operators, we apply several heuristic rules. The main idea is illustrated by the constraint $x \in (a^{\{1,1000\}})^{\{1,2\}}$. If we apply the naive unfolding as last year, we will unfold  $a^{\{1,1000\}}$ and obtain the constraint $x \in (a(\varepsilon + a + aa + \cdots + \underbrace{a\cdots a}_{999}))^{\{1,2\}}$. It is easy to observe that a smarter way is to unfold  $^{\{1,2\}}$, instead of $^{\{1, 1000\}}$. If we do this, then we get a constraint $x \in (a^{\{1,1000\}})(\varepsilon + a^{\{1,1000\}})$, whose size is much smaller, compared to $x \in (a(\varepsilon + a + aa + \cdots + \underbrace{a\cdots a}_{999}))^{\{1,2\}}$. To achieve this, we propose a score function to evaluate the number of transitions and registers produced by the unfolding of each counting operator and then unfold the counting operator producing fewer transitions and registers first.
+%
+%We also propose two approximations of the complement operation on the regex with counting operators, i.e., an under-approximation and an over-approximation, and combine them into a procedure that achieves a nice balance between efficiency and precision. We compute an under-approximation of $\overline{e_1}$ by replacing each occurrence of the counting operators in $e_1$, say $e_2^{\{m,n\}}$ or $(e_2^{\{n, \infty\}})$, by $e_2^*$. Futhermore, for $e = \overline{e_1}$, we utilize the CEFA constructed from $e_1$, say $\mathcal{A}_{e_1}$, to construct a CEFA $\mathcal{B}$ of $e$ so that $\mathcal{L}(\mathcal{B})$ is an over-approximation of $\mathcal{L}(e)$.
+% Let $\mathcal{A}_{e_1} = (R, Q, \Sigma, \delta, I, F, \alpha)$. The main idea of the construction is explained as follows: If a string $w$ is not accepted by $\mathcal{A}_{e_1}$, then either there are no runs of $\mathcal{A}_{e_1}$ on $w$, or every run of $\mathcal{A}_{e_1}$ on $w$ stop at a non-final state or enter a final state but do not satisfy the accepting condition $\alpha$. We shall construct a CEFA $\mathcal{B}$ that accepts when one of these situations occurs. Then $\overline{\mathcal{L}(\mathcal{A}_{e_1})} \subseteq \mathcal{L}(\mathcal{B})$, that is, $\mathcal{B}$ is an over-approximation of $e$.
+
+
+
+

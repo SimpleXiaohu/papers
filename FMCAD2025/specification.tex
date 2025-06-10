@@ -1,0 +1,195 @@
+% !TeX root = main.tex
+
+\subsection{SMT-LIB Standard for Unicode Theory of Strings}%
+
+We begin with the input language of OSTRICH2\@.
+It is based on SMT-LIB 2.6~\cite{SMTLIB} --- in particular, including support 
+for the SMT-LIB Unicode theory and Linear Integer Arithmetic constraints
+--- but additionally also supports some ``complex'' string functions including
+transductions.
+A formal description of the grammar is deferred to Appendix~\ref{app:grammar}, 
+and here we illustrate the supported language features by example.
+
+\subsubsection{SMT-LIB Constraints}
+
+Below is a minimal SMT‑LIB script to show some core features.
+The script uses the quantifier-free string theory with linear integer arithmetic (\verb+QF_SLIA+), contains three string variables \verb+x+, \verb+y+, and \verb+z+, and one integer variable \verb+l+.
+It \verb+assert+s constraints on the variables that are explained below.
+The final statements check the satisfiability of the constraints and produce a satisfying assignment.
+
+\begin{lstlisting}[language=SMTLib,frame=single]
+(set-logic QF_SLIA)
+
+(declare-fun x () String)
+(declare-fun y () String)
+(declare-fun z () String)
+(declare-fun k () Int)
+
+(assert (= (str.len x) (+ k 1)))
+(assert (= x (str.++ y z)))
+(assert (str.in_re x (re.+ (re.union (str.to_re "a") (str.to_re "b")))))
+
+(check-sat)
+(get-model)
+\end{lstlisting}
+
+Constraints are written in a Lisp-style prefix notation.
+The first \verb+assert+ requires that the length of \verb+x+ is equal to $\mathtt{k} + 1$.
+The second requires that \verb+x+ is equal to the concatenation of \verb+y+ and \verb+z+.
+The third requires that \verb+x+ belongs to the regular language
+$(\{\mathtt{a}\} \cup \{\mathtt{b}\})^+$,
+represents a non-empty sequence of $\mathtt{a}$ and $\mathtt{b}$ characters.
+
+Standard Boolean connectives are supported.
+The example below requires \verb+x+ to either be the concatenation of \verb+y+ and \verb+z+ or the concatenation of \verb+z+ and \verb+y+.
+\begin{lstlisting}[language=SMTLib,frame=single]
+(assert (or (= x (str.++ y z))) (= x (str.++ z y))))
+\end{lstlisting}
+
+\subsection{Extensions Beyond the SMT-LIB Standard}
+
+OSTRICH2 provides additional features to model string constraints in practical applications.
+A simple example is the \verb+str.reverse+ function.
+Below, we introduce the transducer, regular expression, and automata extensions.
+
+\subsubsection{Transducer-based Operations}
+
+OSTRICH2 supports transducers and prioritised finite-state transducers~\cite{BDM14,BM17,popl22}.
+
+A transducer (a.k.a. a \emph{rational transducer}) takes a single string as 
+input and produces a single output string.
+They enable operations such as HTML encoding (e.g.\ replacing \verb+&+ with \verb+&amp;+) to be defined.
+Transducers are written as recursive functions with two arguments: the input and the output.
+The example below shows a \verb+toUpper+ transduction.
+The base case (line~4) applies when both strings are empty.
+The recursive case (lines~5--11) asserts three conditions.
+First, both arguments are non-empty.
+Second, the head of the output (\verb+y+) is equal to the upper case version of the head of the input (\verb+x+).
+Third, the tails of the two arguments recursively satisfy \verb+toUpper+.
+To obtain the upper case version of a character, arithmetic is
+performed on the character codes. In general, a transducer definition
+can
+contain multiple mutually recursive functions. The option
+\verb!:parse-transducers! instructs OSTRICH2 to translate the recursive
+function definition to an internal transducer representation and apply
+an automata-based decision procedure to solve the constraints in lines~16--17.
+
+\begin{lstlisting}[language=SMTLib,frame=single]
+(set-option :parse-transducers true)
+
+(define-fun-rec toUpper ((x String) (y String)) Bool
+(or (and (= x "") (= y ""))
+  (and (not (= x "")) (not (= y ""))
+       (= (char.code (str.head y))
+          (ite (and (<= 97 (char.code (str.head x)))
+                    (<= (char.code (str.head x)) 122))
+               (- (char.code (str.head x)) 32)
+               (char.code (str.head x))))
+       (toUpper (str.tail x) (str.tail y)))))
+
+(declare-fun x () String)
+(declare-fun y () String)
+
+(assert (= x "Hello World"))
+(assert (toUpper x y))
+\end{lstlisting}
+
+Prioritised transducers additionally allow certain transitions to take
+precedence over other transitions.
+That is, a non-deterministic transduction may only succeed on one path if another cannot succeed.
+Such transducers are used internally in regular expression handling,
+described below, but can also be formulated using the
+\verb!define-fun-rec! notation (not shown here). We discuss these below after we
+cover extended regular expressions.
+
+\subsubsection{Extended Regular Expression Support}
+
+The SMT-LIB standard defines a minimal set of regular expression
+constructs,
+all of which are supported by OSTRICH2.
+In addition, OSTRICH2 can also parse ECMAScript regular expressions,
+following the 2020 version~\cite{ECMAScript11}, and supports regular
+expression features such as look-arounds that cannot directly
+expressed in SMT-LIB.
+A simple usage of ECMAScript regular expressions is shown below, using the \verb+re.from_ecma2020+ function.
+The expression matches either sequences of characters or sequences of digits.
+\begin{lstlisting}[language=SMTLib,frame=single]
+(assert (str.in_re w (re.from_ecma2020 "[a-z]*|[0-9]*")))
+\end{lstlisting}
+To enable full support of ECMAScript character escaping, OSTRICH2 also supports
+single-quoted strings, in which the normal SMT-LIB character escaping
+is disabled and strings are passed unmodified to the
+regular expression parser:
+\begin{lstlisting}[language=SMTLib,frame=single]
+(assert (str.in_re w (re.from_ecma2020 '\x24[0-9]+')))
+\end{lstlisting}
+
+One notable extension is the use of capture groups and references in replace and extract functions.
+The following example shows the replacement of any substring matching \verb+src='.*'+ with the text appearing between the single quotation marks.
+For example
+%
+\verb+<img src='image.png'>+ would become
+%
+\verb+<img image.png>+.
+%
+We use the \verb+re.from_ecma2020+ function for convenience;
+direct functions for regular expression operators---such as \verb+re.capture+---are also available.
+\begin{lstlisting}[language=SMTLib,frame=single]
+(assert (= x
+           (str.replace_cg_all
+              y
+              (re.from_ecma2020 "src='(.*)'")
+              (_ re.reference 1))))
+\end{lstlisting}
+%\todo[inline]{MH: do we need (\_ re.reference 1) or is there a
+%  fromECMA alternative? PR: not at the moment, but would be easy to add}
+
+There are several features to note about this example.
+The first argument of \verb+str.replace_cg_all+ is the string to be searched.
+The second is the regular expression that captures part of the string using the parenthesis notation \verb+(+\ldots\verb+)+.
+The final argument is the \emph{replacement pattern} that can be a concatenation of string literals and references to captured text.
+In this case, only the contents of the first (and only) capture group are used.
+
+Importantly, when matching \verb+src='(.*)'+, precedence rules must be respected.
+The \verb+*+ operator is \emph{greedy} in ECMAScript (and many other regular expression languages), which means that it should match as many characters as possible before the remainder of the match begins.
+This can be a cause of errors when developers write regular expressions and a challenge for symbolic execution tools using a string constraint solver~\cite{LMK19}.
+For example, if \verb+y+ contained the value \verb+src='a' src='b'+, then there should only be one match of \verb+src='(.*)'+ rather than two.
+In the match, the captured value is \verb+a' src='b+,
+that is, the longest string surrounded by \verb+'+ symbols.
+This semantics is respected by OSTRICH2 through the use of \emph{prioritised} transducers~\cite{BDM14,BM17,popl22}.
+In a prioritised transducer, steps of the transduction can be given priority over the alternatives.
+When matching against \verb+src='a' src='b'+ there is a choice whether the match of \verb+(.*)+ should stop at the second \verb+'+ or continue.
+Because \verb+*+ is greedy, the match of \verb+(.*)+ has priority and
+matching can only stop if continuing would fail. When replacing the
+pattern
+%
+\verb+src='(.*)'+ with \verb+src='(.*?)'+,
+%
+using a \emph{lazy} quantifier~\verb+*?+, instead the
+shortest string will be matched.
+
+\subsubsection{Automata Representations}
+
+OSTRICH2 also directly supports finite-state automata, which are often
+more convenient than regular expressions when integrating an SMT
+solver in applications.
+The function \verb|re.from_automaton| parses a finite‑state automaton given as a string.
+In the example below the automaton has
+\begin{itemize}
+    \item an initial state \texttt{s0},
+    \item an accepting state \texttt{s1},
+    \item a transition $\texttt{s0 -> s1 [0,100];}$ (accepting character codes 0–100),
+    \item a loop $\texttt{s1 -> s1 [0,65535];}$ (accepting any Unicode character).
+\end{itemize}
+Then \verb|str.in_re| can be used to test whether the value of an expression belongs to the language of that automaton.
+
+\begin{lstlisting}[language=SMTLib,frame=single]
+(assert (str.in_re x
+       (re.from_automaton "automaton value_0 {init s0; s0 -> s1 [0, 100]; s1 ->s1[0,65535]; accepting s1;};")))
+\end{lstlisting}
+
+
+
+
+
+

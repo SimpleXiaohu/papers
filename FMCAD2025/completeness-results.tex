@@ -1,0 +1,32 @@
+% !TeX root = main.tex
+
+The RCP solver is (in principle) complete for %orderable fragment~\cite{???}, %which subsumes
+the straight-line fragment~\cite{ostrich} and chain-free fragment~\cite{chain19} of string constraints,
+in the sense that the underlying proof system can show unsatisfiability of unsatisfiable instances from these fragments,
+when applying the rules in an appropriate (easy) order.
+However, the usage of priorities means the rules may be applied in a different order, causing the proof to fail.
+In practice, failures for these fragments are rare.
+
+In the straight-line fragment we require that the constraints are in normal form as in Section~\ref{sec:inference-rules},
+and variables can be ordered $x_1, \ldots, x_n$
+such that for $x_i$ there is exactly one equational constraint $x_i = f_i(x_1, \ldots, x_{i-1})$,
+where $f_{i}$ is a string function such that the pre-image of a regular set is regular.
+The definition of the chain-free fragment is a bit involved, in essence it relaxes the assumption on the form of the equation and the number of equations,
+but still requires that there are no ``cycles'' of dependencies.
+For the straight-line fragment, we can propagate backwards and the instance is unsatisfiable if and only if all branches are closed using Close rule.
+For the chain-free fragment~\cite{chain19} we can adapt the original proof (which works for a different solver) to the rules used in OSTRICH2.
+
+The CE-Str solver also provides a completeness guarantee for a version of the straight-line fragment that includes string constraints and linear integer arithmetic~\cite{atva2020}.
+The supported string functions are those where the pre-image of cost-enriched automata constraints can be expressed using cost-enriched automata.
+This includes $\sindexof$ and $\slength$ as well as some versions of $\sreplace$ and $\sreplaceall$.
+
+
+%The orderable fragment is defined procedurally defined: we assume that the constraints are in normal form as in Section~\ref{sec:inference-rules}.
+%In each round we mark variables that occur once (in all constraints) then, if there is a constraint $x = f(\overline y)$ such that
+%each variable in $\overline y$ is marked and an image of regular set by $f$ is regular (i.e.\ for each regualr $L$ the $f(L)$ is also regular) then
+%we remove the constrain (and continue);
+%similarly, if $x$ is marked and the pre-image of $f$ of each regular set is a recognizable relation (i.e.\ it is of a form $\bigcup^k_{i=1}
+%L^i_1\times \dots \times L^i_n$ for some regular sets $\{L_j^i\}$)
+%then we remove the constraint.
+%In particular, this algorithm is effective and yields an order in which to apply the \texttt{[Fwd-Prop]} and \texttt{[Bwd-Prop]} rules.
+

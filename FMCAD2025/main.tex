@@ -1,0 +1,192 @@
+\documentclass{fmcad}
+\usepackage[english]{babel}
+
+% Include packages as necessary
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{listings}
+\usetikzlibrary{calc}
+\usepackage{todonotes}
+
+\usepackage{booktabs}
+\PassOptionsToPackage{table}{xcolor}
+\usepackage{xcolor}
+% any other packages that might also load xcolor…
+\usepackage{colortbl}     % optional, for \rowcolor, \columncolor, etc.
+
+\usepackage{siunitx}
+\usepackage{graphicx}
+
+
+\input{macros}
+
+\lstdefinelanguage{JavaScript}{
+	keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+	keywordstyle=\color{blue}\bfseries,
+	ndkeywords={class, export, boolean, throw, implements, import, this},
+	ndkeywordstyle=\color{darkgray}\bfseries,
+	identifierstyle=\color{black},
+	sensitive=false,
+	comment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	commentstyle=\color{purple}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	morestring=[b]',
+	morestring=[b]"
+}
+
+\lstset{
+	language=JavaScript,
+	backgroundcolor=\color{lightgray},
+	extendedchars=true,
+	basicstyle=\footnotesize\ttfamily,
+	showstringspaces=false,
+	showspaces=false,
+	numbers=left,
+	numberstyle=\footnotesize,
+	numbersep=9pt,
+	tabsize=2,
+	breaklines=true,
+	showtabs=false,
+	captionpos=b
+}
+
+\lstdefinelanguage{SMTLib}{
+	morekeywords={
+		set-logic,declare-fun,assert,check-sat,get-model,
+		str.++,str.in.re,str.to.re,re.+,re.union
+	},
+	sensitive=true,
+	morecomment=[l]{;},
+	morestring=[b]"
+}
+\lstset{
+	language=SMTLib,
+	frame=single,
+	basicstyle=\ttfamily\small,
+	keywordstyle=\bfseries\color{blue},
+	stringstyle=\color{teal},
+	commentstyle=\color{gray}
+}
+\lstset{
+	breaklines=true,
+	breakatwhitespace=true,
+	postbreak=\raisebox{0ex}[0ex][0ex]{$\hookrightarrow$\ },
+	basicstyle=\ttfamily\scriptsize,
+        numbers=left,
+        xleftmargin=2em,
+        numberstyle=\scriptsize
+}
+
+
+
+\usetikzlibrary{shapes,automata,positioning,decorations.markings, arrows, fit}
+\tikzstyle{block} = [rectangle, draw, text centered, minimum height=1cm, minimum width=3cm]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+\tikzstyle{bigbox} = [draw, thick, rounded corners, inner sep=0.5cm]
+\usepackage{lipsum} % For placeholder text
+\usepackage[ND,SEQ,EQ,ML]{prftree}
+% Title and Author
+\title{OSTRICH2: Solver for Complex String Constraints}
+\author{
+	\IEEEauthorblockN{Matthew Hague \orcid{0000-0003-4913-3800}}
+	\IEEEauthorblockA{Department of Computer Science\\Royal Holloway, University of London\\matthew.hague@rhul.ac.uk}
+	\and
+	\IEEEauthorblockN{Denghang Hu \orcid{0009-0004-6928-6032}}
+	\IEEEauthorblockA{Key Laboratory of System Software\\Institute of Software\\Chinese Academy of Sciences\\hudh@ios.ac.cn}
+    \and
+	\IEEEauthorblockN{Artur Je\.z \orcid{0000-0003-4321-3105}}
+	\IEEEauthorblockA{Institute of Computer Science\\University of Wroc\l{}aw\\aje@cs.uni.wroc.pl}
+	\and[\par{\hspace{0.5em}}]
+    \IEEEauthorblockN{Anthony~W. Lin \orcid{0000-0003-4715-5096}}
+    \IEEEauthorblockA{University of Kaiserslautern-Landau\\
+                      Max-Planck Institute for Software Systems\\
+                      awlin@mpi-sws.org}
+	\and[\hspace{1.5em}]
+	\IEEEauthorblockN{Oliver Markgraf \orcid{0000-0003-4817-4563}}
+	\IEEEauthorblockA{University of Kaiserslautern-Landau\\markgraf@cs.uni-kl.de}
+	\and[\hspace{4em}]
+	\IEEEauthorblockN{Philipp R\"ummer\orcid{0000-0002-2733-7098}}
+	\IEEEauthorblockA{University of Regensburg\\Uppsala University\\philipp.ruemmer@ur.de}
+	\and[\par{\hspace{3em}}]
+	\IEEEauthorblockN{Zhilin Wu \orcid{0000-0003-0899-628X}}
+	\IEEEauthorblockA{Key Laboratory of System Software\\
+										Institute of Software\\
+										Chinese Academy of Sciences\\
+										wuzl@ios.ac.cn}
+	}
+
+\begin{document}
+
+	\maketitle
+
+	\begin{abstract}
+			We present OSTRICH2, the latest evolution of the SMT solver
+            OSTRICH for string constraints. OSTRICH2
+            supports a wide range of complex functions on strings and provides
+            completeness guarantees for a substantial fragment of
+            string constraints, including
+            the straight-line fragment and the chain-free fragment.
+            %, a string‐theory extension for the Princess SMT‐solver that
+            %brings advanced string reasoning capabilities to SMT‐based
+            %verification and analysis.
+            OSTRICH2 provides full support for the SMT-LIB theory of
+            Unicode strings, extending the standard with several
+            unique features not found in other solvers: among others,
+            parsing of ECMAScript regular expressions (including look‐around
+            assertions and capture groups) and handling of
+            user‐defined string transducers.
+            %Its modular architecture leverages the BRICS automata
+            %library to efficiently handle automaton‐based operations.
+            We empirically demonstrate that OSTRICH2 is competitive to other 
+            string solvers on SMT-COMP benchmarks.
+        \OMIT{
+            We show by case studies and experiments that OSTRICH2 is not only capable of 
+            solving string constraints involving complex
+            regular expressions and transducers that lie beyond
+            the reach of existing solvers, but also remains competitive on
+            standard benchmarks.
+        }
+            %The solver won SMT-Competition Track QF\_S in
+            %year 2023.
+            %, which won SMT-Competition'23 Track QF\_S
+	\end{abstract}
+
+	\section{Introduction}\label{sec:introduction}
+	\input{introduction}
+
+	\section{Specification Language}\label{sec:grammar}
+	\input{specification}
+
+	\section{System Architecture}\label{sec:architecture}
+	\input{architecture}
+
+	\section{String Theory Algorithms}\label{sec:string-theory-algorithms}
+	\input{string-theory-algorithms}
+
+	\section{Completeness Results}\label{sec:completeness}
+	\input{completeness-results}
+
+	\section{Extensibility}\label{sec:extensibility}
+	\input{extensibility}
+
+	\section{Experiments}\label{sec:experiments}
+	\input{experiments}
+
+	\section{Conclusion}\label{sec:conclusion}
+	\input{conclusion}
+	% References
+
+	\bibliographystyle{IEEEtran}
+
+	\bibliography{references}
+	
+	\appendix
+	
+	\section{SMT-LIB Grammar}
+	\input{smt-lib-grammar}
+
+\end{document}

@@ -1,0 +1,16 @@
+
+\centering
+\resizebox{\linewidth}{!}{%
+    \begin{tabular}{lccccc}
+        \toprule
+                        & CVC5 & Z3   & Z3-alpha & Z3-Noodler    & OSTRICH1 \\
+        \midrule
+        \textsc{sat}    & 1135 & 1074 & 1077     & \textbf{1192} & 755      \\
+        \textsc{unsat}  & 722  & 726  & 701      & \textbf{744}           & 645      \\
+        \midrule
+        unknown/timeout & 144  & 200  & 222      & \textbf{64}            & 600      \\
+        \midrule
+        Solved          & 1856 & 1800 & 1778     & \textbf{1936}          & 1400     \\
+        \bottomrule
+    \end{tabular}%
+}
