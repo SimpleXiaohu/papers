@@ -1,21 +1,18 @@
 %!TEX root = main.tex
 
-\section{Related work}\label{sect:related}
 
-\smallskip
+%\smallskip
 \noindent
 {\bf String constraint solving.} 
-String constraint solving has received considerable attentions in literature. Amadini \cite{Amadini23} provides a comprehensive survey for the literature up to 2021. In particular, %extensive documentation of this diversity, and classifies
+String constraint solving has received considerable attention in the literature. Amadini \cite{Amadini23} provides a comprehensive survey of the literature up to 2021. In particular, %extensive documentation of this diversity, and classifies
 approaches to string constraint solving are classified into three main categories: automata-based (relying on finite state automata to represent the domain of string variables
-and to handle string operations, e.g., \cite{Abdulla14,HJLRV18,CCH+18,Vijay-length,LB16,BerzishKMMDNG20,ChenCHHLS24}), word-based (algebraic approaches based on systems of word equations%They mainly use SMT solvers to tackle string constraints
-, e.g., \cite{cvc4,BarbosaBBKLMMMN22,Z3,Z3str2,Z3str3,Z3str4,TCJ16,S3,BerzishKMMDNG20,ChenCHHLS24} 
+and to handle string operations, e.g., \cite{Abdulla14,HJLRV18,CCH+18,Vijay-length,LB16,BerzishKMMDNG20,ChenCHHLS24}), word-based (algebraic approaches based on systems of word equations, e.g., \cite{cvc4,BarbosaBBKLMMMN22,Z3,Z3str2,Z3str3,Z3str4,TCJ16,S3,BerzishKMMDNG20,ChenCHHLS24} 
 ), 
 and unfolding-based approaches (explicitly reducing each string into a number of contiguous elements denoting its
 characters, e.g., \cite{SFPS17,KGAGHE13,SAHMMS10,LG13,AGS18,DEKMNP19}). 
 
 %Generally speaking, 
-From another perspective, there are two lines of work aiming for building %Approaches to building 
-practical string solvers: %could essentially be classified into two categories. 
+From another perspective, there are two lines of work aiming for building practical string solvers: %could essentially be classified into two categories. 
 (1) one could support as many constraints as possible, but primarily resort to heuristics, offering no completeness/termination guarantee. 
 %This is a realistic approach since, as mentioned above, the problem involving both string and integer data types is in general undecidable. 
 Many solvers %for string constraints 
@@ -44,7 +41,7 @@ and Z3-Noodler \cite{ChenCHHLS24} %is a fork of Z3 that replaces its string theo
 (2) The second approach is to develop solvers for decidable fragments. 
 %supporting both strings and integers %
 Solvers in this category include Norn \cite{Abdulla14}, SLOTH \cite{HJLRV18} and
-OSTRICH \cite{CCH+18,CHL+19}, which are usually based on complete decision procedures, (e.g. \cite{Vijay-length,AbdullaA+19,LB16}) 
+OSTRICH \cite{CCH+18,CHL+19}, which are usually based on complete decision procedures (e.g. \cite{Vijay-length,AbdullaA+19,LB16}) 
 
 %The fragment without complex string operations (e.g. replaceAll and
 %finite transducers, but length) can be handled quite well by Norn. The fragment without
@@ -62,7 +59,7 @@ string/integer conversion and flat regular constraints~\cite{WuCWXZ24}, Not-Subs
 \smallskip
 \noindent
 {\bf Sequences as an extension of strings.} Strings and sequences are closely related, but may exhibit in different forms. For instance, a string can be considered as a sequence over a finite alphabet. 
-Jez etc.~\cite{JezLMR23} recently studied sequence theories which are an extension of theories of strings with an infinite alphabet of letters, together with a corresponding alphabet theory (e.g. linear integer arithmetic). They provide decision procedures based on parametric automata/transducers, giving rise to   a sequence constraint solver $\seco$. Our work is different in that we essentially work on a sequence theory where the element is instantiated by the string type. 
+Jez et al.~\cite{JezLMR23} recently studied sequence theories which are an extension of theories of strings with an infinite alphabet of letters, together with a corresponding alphabet theory (e.g. linear integer arithmetic). They provide decision procedures based on parametric automata/transducers, giving rise to a sequence constraint solver $\seco$. Our work is different in that we essentially work on a sequence theory where the element is instantiated by the string type. 
 
 %
 %A. Jez etc.~\cite{JezLMR23} present a formal and practical study of decision procedures for sequence theories logical theories that generalize string reasoning to sequences over infinite alphabets, such as integers or strings themselves. The main idea is to introduce parametric automata (PA) and parametric transducers as generalizations of symbolic automata, enabling expressive yet decidable formulations of sequence constraints. To support practical verification tasks, they develop $\seco$, a sequence constraint solver based on the parametric automata. Unfortunately, despite the power of parametric automata, the implementation of $\seco$ is not yet mature enough to be used in practice, which has some soundness issues on our benchmarks.
@@ -75,7 +72,7 @@ Jez etc.~\cite{JezLMR23} recently studied sequence theories which are an extensi
 \smallskip
 \noindent
 {\bf Theory of arrays.}
-There are many studies on solving formulas in the theory of arrays or its extensions, for instance, \cite{SBDL01,BMS06,HIV08,FalkeMS13,DacaHK16,FarinierDBL18}, which are also related to the sequence theory. Note that in these studies, the elements are considered to be either of a generic type or of integer type. In other words, theory of arrays where the elements are of the string type has not been defined and investigated therein. 
+There are many studies on solving formulas in the theory of arrays or its extensions, for instance, \cite{SBDL01,BMS06,HIV08,FalkeMS13,DacaHK16,FarinierDBL18}, which are also related to the sequence theory. Note that in these studies, the elements are considered to be either of a generic type or of integer type. In other words, the theory of arrays where the elements are of the string type has not been defined and investigated therein. 
 %The theory of arrays is a fundamental component in software verification, particularly for modeling memory and data structures. 
 %For instance, \cite{FarinierDBL18} proposes a new approach to array formula simplification based on a new dedicated data structure;  \cite{DacaHK16} proposed array fold logic (AFL), which is an extension to the quantifier-free theory of integer arrays to express counting. The satisfiability of AFL is shown by a reduction to counter machines.
 

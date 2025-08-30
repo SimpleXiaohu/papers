@@ -1,13 +1,13 @@
 %!TEX root = main.tex
 
  
-We fix a fresh symbol $\separator\notin\Sigma$ and let $\Sigma':=\Sigma \cup \{\separator\}$.
-Each string sequence  $s = (u_1, \cdots, u_m)$ over $\Sigma$ is encoded as a string  $\enc(s):=\separator u_1\separator \cdots \separator u_m \separator$ over $\Sigma'$. % the (extended) alphabet $\Sigma \cup \{\separator\}$.  
+We fix a symbol $\separator\notin\Sigma$ and let $\Sigma_{\separator}:=\Sigma \cup \{\separator\}$.
+Each string sequence  $s = (u_1, \cdots, u_m)$ over $\Sigma$ is encoded as a string  \polished{$\enc(s):=\separator u_1\separator u_2 \separator \cdots \separator u_m \separator$} over $\Sigma_{\separator}$. % the (extended) alphabet $\Sigma \cup \{\separator\}$.  
 Note that the strings %encodings of string sequences are not arbitrary strings from $(\Sigma \cup \{\separator\})^*$, but the strings that match 
 resulted from the encoding should match the regular expression $\separator (\Sigma^* \separator)^*$ and the string $\separator$ encodes the empty sequence.
 %For a sequence $s$, let $\enc(s)$ denote the string encoding of $s$. 
 
-With this encoding of sequences as strings, each string sequence operation is also transformed into the corresponding \emph{string operation}. 
+With this encoding of string sequences as strings, each string sequence operation is also transformed into the corresponding \emph{string operation}. 
  %all the sequence operations can be turned into string operations. 
 %
 \begin{description}
@@ -16,7 +16,8 @@ string concatenation  $\enc(s_1) \concat \enc(s_2)$.
 %
 \item[sequence  write {$s[i \rightarrow u]$}: ] 
 %string operation 
-$\mywrite(\enc(s), i+1, u)$, which replaces the substring of $\enc(s)$ between the $(i+1)$-th occurrence of $\separator$ and the $(i+2)$-th occurrence of $\separator$, by $u$, if $i\in[0,n-2]$, where $n$ is the number of occurrences of $\separator$ in $\enc(s)$, and is undefined otherwise (i.e. $i\not\in[0,n-2]$). Note that this operation is not a typical string replace operation.  (Recall that the indices of elements in sequences start from $0$ and $n$, i.e. the number of occurrences of $\separator$ in $\enc(s)$, is one more than the length of $s$.) 
+$\mywrite(\enc(s), i+1, u)$, which replaces the substring of $\enc(s)$ between the $(i+1)$-th occurrence of $\separator$ and the $(i+2)$-th occurrence of $\separator$, by $u$, if $i\in[0,n-2]$, where $n$ is the number of occurrences of $\separator$ in $\enc(s)$, and is undefined otherwise (i.e. $i\not\in[0,n-2]$). 
+\hide{Note that this operation is not a typical string replace operation.  (Recall that the indices of elements in sequences start from $0$ and $n$, i.e. the number of occurrences of $\separator$ in $\enc(s)$, is one more than the length of $s$.) }
 %Although this operation is not a typical replace operation, we can show that its pre-image can still be effectively computed. 
 
 \item[sequence filter operation $\myfilter_e(s)$:] %string operation 
@@ -25,13 +26,13 @@ $\myfilter_e(\enc(s))$, which removes every substring of $\enc(s)$ between two c
 \item[subsequence operation {$s[i, j]$}:] %$s[i, j]$ is turned into 
 $\subseq(\enc(s), i+1, j)$, which keeps only the substring of $\enc(s)$ between the $(i+1)$-th occurrence and the $\min(i+j, n-1)$-th occurrence of $\separator$, if $i\in[0,n-2]$, where $n$ is the number of occurrences of $\separator$ in $\enc(s)$, and  is undefined otherwise (i.e. $i\not\in[0,n-2]$). 
 %
-\item [$\mysplit_e(u)$:] string operation $\mysplitstr_e(u)$ that transforms $u = u'_1 v_1 u'_2 \cdots u'_{k-1} v_{k-1} u'_k$ into  $\separator u'_1 \separator u'_2 \cdots u'_{k-1} \separator u'_k \separator$, where for each $i \in [k-1]$,  $v_1$ is the leftmost and longest matching of $e$ in $u'_{i} v_i u'_{i+1}$, moreover,  $u'_k$ does not contain any substring that matches $e$. 
+\item [$\mysplit_e(u)$:] string operation $\mysplitstr_e(u)$ that transforms $u = u'_1 v_1 u'_2 \cdots u'_{k-1} v_{k-1} u'_k$ into  $\separator u'_1 \separator u'_2 \cdots u'_{k-1} \separator u'_k \separator$, where for each $i \in [k-1]$,  \polished{$v_i$} is the leftmost and longest matching of $e$ in \polished{$u'_i v_i u'_{i+1}\cdots v_{k-1}u'_k$}, and $u'_k$ does not contain any substring that matches $e$. 
 %
 %(Note that here we abuse the notation a bit by using $\mysplit_e$ to denote both the operation of splitting a string into a sequence and the operation of transducing a string into another string. Similarly for the operation $\mymatchall_e$ in the sequel.)
 %
 \item[$\mymatchall_e(u)$:] %string operation 
 $\mymatchallstr_e(u)$ that transforms $u = u'_1 v_1 u'_2 v_2 \cdots u'_{k-1}v_{k-1} u'_k$ into 
-$\separator v_1 \separator \cdots \separator v_{k-1} \separator$, where for each $i \in [k-1]$, $v_i$ is the leftmost and longest occurrence of $e$ in $u'_i v_i u'_{i+1}$, moreover, $u'_k$ does not contain any substring that matches $e$.
+$\separator v_1 \separator \cdots \separator v_{k-1} \separator$, where for each $i \in [k-1]$, $v_i$ is the leftmost and longest occurrence of $e$ in \polished{$u'_i v_i u'_{i+1}\cdots v_{k-1}u'_k$}, moreover, $u'_k$ does not contain any substring that matches $e$.
 
 %\item The transduction operation $\transducer(\seqvarb)$ is turned into a string operation $\transducer_{\separator}(\enc(\seqvarb))$, where $\transducer_{\separator}$ is the transducer that replaces every substring between  two occurrences of $\separator$, say $u$, by $\transducer(u)$.
 %
@@ -42,16 +43,15 @@ $\separator v_1 \separator \cdots \separator v_{k-1} \separator$, where for each
 \end{description}
 
 %After encoding string sequences into strings, 
-Hence we obtain atomic string constraints %where the string equalities are in one 
-of the following forms, 
-\begin{equation*}\label{eqn-str-enc}
-\begin{array} {l}
+Hence, we obtain atomic string constraints %where the string equalities are in one 
+of the following forms:
+%\begin{equation*}\label{eqn-str-enc}
+\[\begin{array} {l}
 \svarx = u \mid \svarx = \svary \mid \svarx = \svary \concat \svarz \mid \svarx = \transducer(\svary) \mid \svarz = \mywrite(\svarx, it, \svary) \mid  \svary  = \myfilter_e(\svarx)  \mid   \\
 \svary = \mysplitstr_e(\svarx) \mid \svary = \subseq(\svarx, it_1, it_2) \mid   
  \svary = \mymatchallstr_e(\svarx) \mid \svary = \elem(\svarx, it)  \mid \\
  \svary = \myjoin_u(\svarx) \mid it = \mystrlen(\svarx) \mid it = \myseqlen(\svarx),
-\end{array}
-\end{equation*}
+\end{array}\]
 where $\transducer$ is a finite-state transducer. 
 
 We denote by $\exstrlogic$ %(where $\sf Ex$ means ``Extended'') to denote 
@@ -69,17 +69,14 @@ For each  constraint $\varphi$ in $\arraylogic$,
 \end{proposition}
 %It is not hard to see that the aforementioned encoding of 
 \begin{example}
-Consider the $\slarraylogic$ constraint $\varphi:= (\svars_1 = \svars_0\cdot(u,v)\wedge\myseqlen(\svars_1) < 2)$ where $\svars_0$ is a string variable and $u,v$ are string constants. 
-Then, its string encoding is $\enc(\varphi) := (\enc(\svars_1) = \enc(\svars_0)\cdot \separator u \separator v \separator \wedge \myseqlen(\enc(\svars_1)) - 1  < 2)$, which is unsatisfiable, since there are at least three occurrences of $\separator$ in $\enc(\svars_1)$. \qed
+Consider the constraint $\varphi:= (\svars_1 = \svars_0\cdot(u,v)\wedge\myseqlen(\svars_1) < 2)$ in  $\slarraylogic$ where $\svars_0$ is a string variable and $u,v$ are string constants. 
+Then, its string encoding is $\enc(\varphi):= (\enc(\svars_1) = \enc(\svars_0)\cdot \separator u \separator v \separator \wedge \myseqlen(\enc(\svars_1)) - 1  < 2)$, which is unsatisfiable, as there are at least three occurrences of $\separator$ in $\enc(\svars_1)$. \qed
 \end{example}
 
 The satisfiability of $\slarraylogic$ is now reduced to that of $\slexstrlogic$. %Our goal is then to apply the framework in~\cite{atva2020} to solve the $\slexstrlogic$ constraints. At first, 
 It is easy to observe that the operations $\myfilter_e$, $\mysplitstr_e$, $\mymatchallstr_e$ and $\myjoin_u$ can all be represented by a finite-state transducer, %seen as special cases of transducers $\transducer$, thus their pre-images can be effectively computed according to the 
 so the results in~\cite{atva2020} are directly applicable. 
-In the next section, %It remains to 
-we show that the pre-images of the remaining string operations, i.e., %that are not captured directly by the operations in~\cite{atva2020}, that is, 
-$\mywrite$, $\subseq$, $\elem$ and $\myseqlen$, 
-%satisfy that their  
-can be effectively computed. 
+In the next section, we show that the pre-images under the remaining string operations, i.e., %that are not captured directly by the operations in~\cite{atva2020}, that is, 
+$\mywrite$, $\subseq$, $\elem$ and $\myseqlen$,  can be effectively computed. 
 
 

@@ -1,33 +1,101 @@
 %!TEX root = main.tex
 
-\section{Preliminaries}\label{sec:prelim}
 
-Throughout the paper, let $\natnum$ denote the set of natural numbers. For $1\leq n\in \natnum$, let $[n]:=\{1, \ldots, n\}$, and for $m<n \in \natnum$, let $[m,n] := \{j \mid m \le j \le n\}$.
+%Throughout the paper, 
+Let $\natnum$ denote the set of natural numbers. For $1\leq n\in \natnum$, let $[n]:=\{1, \ldots, n\}$, and for $m<n \in \natnum$, let $[m,n] := \{j \mid m \le j \le n\}$. We also use standard quantifier-free/existential \emph{linear integer arithmetic} (LIA) formulas, which are typically ranged over by $\phi, \varphi$, etc. For an integer term $t$, we use $t[t_1/t_2]$ to denote the term obtained by replacing $t_2$ with $t_1$ where $t_1$ and $t_2$ are integer terms.
 
-We fix an alphabet $\Sigma$, i.e., a finite set of letters. 
+\smallskip
+\polished{\noindent \textbf{Strings, languages, and transductions.}} We fix an alphabet $\Sigma$, i.e., a finite set of letters. 
 %Moreover, we use $\nullchar$ to denote a special null symbol and assume that  $\nullchar \not \in \Sigma$. 
 A \emph{string} over $\Sigma$ is a finite sequence of letters from $\Sigma$. We use $\Sigma^*$ to denote the set of strings over $\Sigma$ and $\varepsilon$ to denote the empty string. %Moreover, for convenience, we use $\Sigma^\varepsilon$ to denote $\Sigma \cup \{\varepsilon\}$. 
 %A string $w'$ is called a \emph{prefix} of $w$ if $w = w'w''$ for some string $w''$. We use $\pref(w)$ to denote the set of prefixes of $w$. For a prefix $w_1$ of $w$, let $w = w_1 w_2$, then we use $w_1^{-1}w$ to denote $w_2$.
 %
-A \emph{language} over $\Sigma$ is a subset of $\Sigma^*$. We will use $L_1, L_2, \dots$ to denote languages. For two languages $L_1, L_2$, $L_1 \cup L_2$ denotes the union of $L_1$ and $L_2$, and $L_1 \cdot L_2$  denotes the concatenation of $L_1$ and $L_2$, that is,  $\{u_1 \cdot u_2 \mid u_1 \in L_1, u_2 \in L_2\}$. For a language $L$ and $n \in \natnum$, we define $L^n$, the \emph{iteration} of $L$ for $n$ times, inductively as: $L^0=\{\varepsilon\}$ and $L^{n} =L \cdot L^{n-1}$ for $n > 0$. We also use $L^*$ to denote the iteration of $L$ for arbitrarily many times, that is, $L^* = \bigcup_{n \in \natnum} L^n$. Moreover, let $L^+ = \bigcup_{n>0} L^n$.
-
+A \emph{language} over $\Sigma$ is a subset of $\Sigma^*$. We will use $L_1, L_2, \dots$ to denote languages. For two languages $L_1, L_2\subseteq \Sigma^*$, $L_1 \cup L_2$ denotes the union of $L_1$ and $L_2$, and $L_1 \cdot L_2$  denotes the concatenation of $L_1$ and $L_2$, that is,  $\{u_1 \cdot u_2 \mid u_1 \in L_1, u_2 \in L_2\}$. For a language $L\subseteq\Sigma^*$, we define the complement of $L$ as $\Bar{L} = \{w\in\Sigma^*\mid w\not\in L\}$, moreover, we define $L^n$ for $n \in \natnum$, the \emph{iteration} of $L$ for $n$ times, inductively as: $L^0=\{\varepsilon\}$ and $L^{n} =L \cdot L^{n-1}$ for $n > 0$. We also use $L^*$ to denote the iteration of $L$ for arbitrarily many times, that is, $L^* = \bigcup_{n \in \natnum} L^n$, and let $L^+ = \bigcup_{n>0} L^n$. \polished{A \emph{transduction} over $\Sigma$ is a binary relation over $\Sigma^*$, namely, a subset of $\Sigma^* \times \Sigma^*$.}
 %\begin{definition}[
+
 Regular expressions over $\Sigma$ are defined in a standard way, i.e., 
-$$e \eqdef \emptyset \mid \varepsilon \mid a \mid e + e \mid e \concat e \mid e^*,\  \text{where}\  a \in \Sigma.$$
+$$e \eqdef \emptyset \mid \varepsilon \mid a \mid e + e \mid e \concat e \mid e^*  \text{where}\  a \in \Sigma.$$
 %
-The language $\Lang(e)$ of $e$ is defined %that is, the set of strings that match $e$, 
+
+The language $\Lang(e)\subseteq\Sigma^*$ of a regular expression $e$ is defined %that is, the set of strings that match $e$, 
 	inductively as: $\Lang(\emptyset) =\emptyset$,
 	$\Lang(\varepsilon) =\{\varepsilon\}$,
 	$\Lang(a)= \{a\}$,
 	$\Lang(e_1 + e_2) = \Lang(e_1) \cup \Lang(e_2)$,
 	$\Lang(e_1 \concat e_2) = \Lang(e_1) \cdot \Lang(e_2)$,
-	$\Lang(e_1^*)=(\Lang(e_1))^*$.
+	$\Lang(e_1^*)=(\Lang(e_1))^*$. \polished{A \emph{regular language} is a language that can be defined by a regular expression.}
 %\end{definition}
 
-As $+$ is associative and commutative, we write $(e_1 + e_2) + e_3$ as $e_1 + e_2 + e_3$ for brevity. We use the abbreviation $e^+ \equiv e \concat e^*$. Moreover, for $\Gamma = \{a_1, \cdots, a_n\}\subseteq \Sigma$, we may overload $\Gamma$ (resp. $\Gamma^\ast$) as the regular expression $a_1 + \cdots + a_n$ (resp. $(a_1 + \cdots + a_n)^\ast$). 
-In addition, $|e|$ denotes the number of symbols occurring in $e$.
+
+\hide{As $+$ is associative and commutative, we write $(e_1 + e_2) + e_3$ as $e_1 + e_2 + e_3$ for brevity. We use the abbreviation $e^+ \equiv e \concat e^*$. Moreover, for $\Gamma = \{a_1, \cdots, a_n\}\subseteq \Sigma$, we may overload $\Gamma$ (resp. $\Gamma^\ast$) as the regular expression $a_1 + \cdots + a_n$ (resp. $(a_1 + \cdots + a_n)^\ast$). 
+In addition, $|e|$ denotes the number of symbols occurring in $e$.}
+
+\smallskip
+\noindent \textbf{Automata.} A \emph{(nondeterministic) finite automaton} (NFA) $\NFA$ is a 5-tuple $(Q, \Sigma, \delta,$ $ I, F)$, where $Q$ is a finite set of states, $\Sigma$ is a finite alphabet, $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, $I,F \subseteq Q$ are the sets of initial and final states respectively. For readability, we write a transition $(q, a, q') \in \delta$ as $q \xrightarrow[\delta]{a} q'$ (or simply $q \xrightarrow{a} q'$). %Moreover, when $\delta$ is clear from context, we omit $\delta$ in $q \xrightarrow[\delta]{a} q'$ and write $q \xrightarrow{a} q'$. 
+%
+A \emph{run} of $\NFA$ on a string $w = a_1 \cdots a_n$ is a sequence of transitions $q_0 \xrightarrow{a_1} q_1 \cdots q_{n-1} \xrightarrow{a_n} q_n$ with $q_0 \in I$. The run is \emph{accepting} if $q_n \in F$.
+A string $w$ is accepted by an NFA $\NFA$ if there is an accepting run of $\NFA$ on $w$. In particular, the empty string $\varepsilon$ is accepted by $\NFA$ if $I \cap F \neq \emptyset$. The language of $\NFA$, denoted by $\Lang(\NFA)$, is the set of strings accepted by $\NFA$. In addition, an NFA can be built to recognize the language of each given regular expression, and vice versa.
+%the language of an NFA corresponds 
+%to the language described by a specific regular expression.  
+
+A \emph{(nondeterministic) finite transducer (\nft)} $\transducer$ is an extension of {\nfa} with outputs. Formally, an {\nft} $\transducer$ is a 5-tuple $(Q, \Sigma, \delta, I, F)$, where $Q, \Sigma, I, F$ are the same as in {\nfa} and the transition relation $\delta$ is a finite subset of $Q \times \Sigma \times Q \times \Sigma^*$. For readability, we write a transition $(q, a, q', u) \in \delta$ as $q \xrightarrow[\delta]{a, u} q'$ or $q \xrightarrow{a, u} q'$. A run of $\transducer$ over a string $w=a_1 \cdots a_n$ is a sequence of transitions $q_0 \xrightarrow{a_1, u_1} q_1\xrightarrow{a_2, u_2} q_2\cdots q_{n-1} \xrightarrow{a_n, u_n} q_n$
+where $q_0 \in I$. Similar to {\nfa}, the run is  \emph{accepting} if $q_n \in F$. The string $u_1 \cdots u_n$ is called the \emph{output} of the run. The transduction $\Tran(\transducer)\subseteq \Sigma^*\times \Sigma^*$ defined by $\transducer$ is the set of string pairs $(w, u)$ such that there is an accepting run of $\transducer$ on $w$, with the output $u$.
+\begin{definition}[Cost-enriched finite automata]
+A cost-enriched finite automaton (CEFA for short) $\aut$ is a 6-tuple $(R, Q, \Sigma, \delta, $ $I, F)$ where
+	\begin{itemize}[topsep=0pt,partopsep=0pt]
+            \item $R = \{r_1, \cdots, r_k\}$ is a finite set of registers,
+		\item $Q, I, F$ are the same as in {\nfa}, i.e., the set of states, the set of initial states, and the set of final states, respectively, 
+		\item $\delta \subseteq Q \times \Sigma \times Q \times \Int^{k}$ is a transition relation, where $\Int^{k}$ represents the values to update the registers in $R$. 
+	\end{itemize}
+We write $R_\aut$ for the set of registers of $\aut$
+and represent it as a vector $(r_1, \cdots, r_k)$. Accordingly, updates $r_i:= r_i + v_i$ for all $i\in [k]$  are simply identified as the vector $\vec{v}=(v_1, \cdots, v_k)$, i.e., $r_i$ is  incremented by $v_i$ for each $i \in [k]$. Typically, we write a transition $(q, a, q', \vec{v}) \in \delta$ as $q \xrightarrow[\vec{v}]{a} q'$.
+\end{definition}    
+%\hide{In particular, $(q,a,q')$ stands for the transition $(q,a,q',())$ without any updates.}
+Intuitively, CEFAs add write-only cost registers to finite automata, where ``write-only'' means that the cost registers can only be written/updated but cannot be read, i.e., they cannot be used in the guards of the transitions.  
 
 
+%The semantics of CEFA is defined as follows. 
+%Let $\aut = (R, Q, \Sigma, \delta, I, F)$ be a CEFA. 
+%A \emph{configuration} of $\aut$ is a pair $(q, \vec{v})$ where $q \in Q$ and $\vec{v}$ is a vector denoting the values of registers.  
+%An \emph{initial configuration} of $\aut$ is $(q_0, \vec{0})$ with $q_0 \in I$, where the value of each register is zero. 
+A \emph{run} of the CEFA $\aut$ on a string $w = a_1 \cdots a_n$ is a sequence of transitions $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ such that $q_0 \in I$ and $q_{i-1} \xrightarrow[\myvec{v_i}]{a_i} q_i$ for each $i \in [n]$. 
+%
+%The run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ 
+It is \emph{accepting} if $q_n \in F$, and 
+%
+the vector $\myvec{c}= \sum_{i \in [n]} \myvec{v_i}$ is defined as the \emph{cost} of the run. %$q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$. 
+(Note that all registers are initialized to zero.) 
+%
+%and updated to $\sum \limits_{j \in [n]} \myvec{v_j}$ after all the transitions in the run are executed. 
+We write $\myvec{c} \in \aut(w)$ if there is an accepting run of $\aut$ on $w$ whose cost is $\myvec{c}$.  The language of a CEFA $\aut$, denoted by $\Lang(\aut)$, is defined as the set of pairs $\{(w, \myvec{c})\in\Sigma^*\times \Int^{|R|} \mid  \myvec{c} \in \aut(w)\}$.
+%
+In particular, if $I \cap F \neq \emptyset$, then $(\varepsilon, \myvec{0}) \in \Lang(\aut)$. 
+We denote by $\Lang_1(\aut)$ the language $\{w\in\Sigma^*\mid \exists \myvec{c}\in \Int^{|R|}.\ (w, \myvec{c})\in \Lang(\aut)\}$.
+
+%\hide{Moreover, the \emph{output} of a CEFA $\aut$, denoted by $\cefaout(\aut)$, is defined as $\{\myvec{c} \mid  \exists w.\ \myvec{c} \in \aut(w)\}$.
+%}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hide{The following example illustrates the backward propagation. 
+
+% \vspace*{-2mm}
+\begin{example}
+	Consider the equality $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ (where $\svaru_1,\svaru_2$ are string variables, $it_1, it_2$ are integer terms, and $f$ is a function) and the CEFA $\aut = (R, Q, \Sigma, \delta, I, F)$, where $R= \{r_1\}$. %(that is, $R$ contains only one register). 
+	%Moreover, let $t = r^{(1)}_1 + r^{(2)}_1$ which intuitively describes how $r_1$ can be calculated from $r^{(1)}_1$ and $r^{(2)}_1$. 
+	Then an $R$-cost-enriched pre-image of $\aut$ under $f$, denoted by $f^{-1}_{R}(\aut)$, is a pair $(\cerl, t)$ where $\cerl \subseteq (\Sigma)^\ast \times (\intnum \times \intnum) \times (\Sigma)^\ast \times (\intnum \times \intnum)$, $t$ is an LIA term over $\{r^{(1)}_1, r^{(2)}_1\}$, and $\cerl$ satisfies that for every $(v, n') \in \Lang(\aut)$, there is $(u_1, n_1, n'_1, u_2, n_2, n'_2) \in \cerl$ such that $f(u_1, n_1, u_2, n_2) = v$, and  $n'= t[n'_1/r^{(1)}_1, n'_2/r^{(2)}_1]$. 
+	%
+	We say that a pre-image $f^{-1}_{R}(\aut) = (\cerl, t)$ is CEFA-definable if $\cerl$ can be expressed as a finite collection of CEFA tuples $(\autb_{j, 1}, \autb_{j, 2})$ with $j \in [k]$ such that $R_{\autb_{j,1}}=(r'_{1,1}, r^{(1)}_1)$, $R_{\autb_{j, 2}} = (r'_{2,1}, r^{(2)}_1)$, and $\cerl = \bigcup_{j \in [k]} \Lang(\autb_{j, 1}) \times \Lang(\autb_{j, 2})$.  
+	Intuitively, $r'_{1,1}$ and $r'_{2,1}$ are the fresh registers corresponding to the two integer parameters, and $r^{(1)}_1, r^{(2)}_1$ are the fresh registers introduced in $\autb_{j, 1}$ and $\autb_{j, 2}$ respectively for computing $r_1$ according to $t$. Then the backward propagation of the constraint $\svarv \in \aut$ 
+	%with respect to the equality $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ 
+	under $f$ nondeterministically chooses a tuple $(\autb_{j, 1}, \autb_{j, 2})$, removes $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ from the string constraint, and adds $\svaru_1 \in \autb_{j, 1} \wedge \svaru_2 \in \autb_{j, 2} \wedge r_1 = t \wedge it_1 = r'_{1,1} \wedge it_2 = r'_{2,1}$ to the string constraint.
+	%removes $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ from the string constraint, and adds $r_1 = t \wedge it_1 = r'_{1,1} \wedge it_2 = r'_{2,1}$ to the string constraint. \qed
+\end{example}
+% \vspace*{-2mm}
+}
+
+\hide{
 \begin{definition}[Finite-state automata] \label{def:nfa}
 	A \emph{(nondeterministic) finite-state automaton
 	(\nfa)} over the alphabet $\Sigma$ is a tuple $\aut =
@@ -53,13 +121,66 @@ used when the computational complexity is concerned.
 
 For convenience, $(q,a,q')\in\delta$ may be written as  $q \xrightarrow[\delta]{a} q'$ or $q \xrightarrow{a} q'$,
 and for each letter $a \in \Sigma$, let $\delta^{(a)}$  denote  the  relation $\{(q, q') \mid (q, a, q') \in \delta\}$.
+}
 
-\begin{definition}[Finite-state transducer]\label{defn:nft}
-A \emph{(nondeterministic) finite transducer (\nft)} $\transducer$ is an extension of {\nfa} with outputs. Formally, an {\nft} $\transducer$ is a tuple $(Q, \Sigma, \delta, I, F)$, where $Q, \Sigma, I, F$ are the same as in {\nfa} and the transition relation $\delta$ is a finite subset of $Q \times \Sigma \times Q \times \Sigma^*$. Similarly to {\nfa}, for readability, we write a transition $(q, a, q', u) \in \delta$ as $q \xrightarrow[\delta]{a, u} q'$ or $q \xrightarrow{a, u} q'$. The \emph{size} of an {\nft} $\transducer$, denoted by $|\transducer|$, is defined as the sum of the sizes of the transitions of $\transducer$, where the size of a transition $q \xrightarrow{a, u} q'$ is defined as $|u|+3$.
-\end{definition}
+\polished{
+\smallskip
+\noindent \textbf{Pre-images under string functions.} Consider a language $L \subseteq \Sigma^* \times \Int^{k_0}$ defined by a CEFA $\aut =(R, Q, \Sigma, \delta, I, F)$ with the registers $R= (r_1, \cdots, r_{k_0})$ and a function $f: (\Sigma^* \times \Int^{k_1}) \times \cdots \times (\Sigma^* \times \Int^{k_l}) \rightarrow \Sigma^*$.  
+For each $i \in [k_0]$, let $r^{i}_1, \cdots, r^{i}_l$ be the freshly introduced registers,
+and 
+$\vec{t} = (t_1, \cdots ,t_{k_0})$ be a vector of LIA formulas such that $t_i$ is a linear combination of $r^{i}_1, \cdots, r^{i}_l$ for each $i \in [k_0]$. 
+
+The pre-image of $L$ under $f$ with respect to $\vec{t}$, denoted by $f^{-1}_{\vec{t}}(L)$, is 
+%$\cerl$ such that
+%\begin{itemize}
+%\item $\vec{t} = (t_1, \cdots ,t_{k_0})$ is a vector of LIA formulas where $t_i$ is a linear combination of fresh registers $r^{i}_1, \cdots, r^{i}_l$ for each $i \in [k_0]$;
 %
-A run of $\transducer$ over a string $w=a_1 \cdots a_n$ is a sequence of transitions $$q_0 \xrightarrow{a_1, u_1} q_1\xrightarrow{a_2, u_2} q_2\cdots q_{n-1} \xrightarrow{a_n, u_n} q_n$$
-where $q_0 \in I$. Similary to {\nfa}, the run is  \emph{accepting} if $q_n \in F$. The string $u_1 \cdots u_n$ is called the \emph{output} of the run. The transduction $\Tran(\transducer)\subseteq (\Sigma^*,\Sigma^*)$ defined by $\transducer$ is the set of string pairs $(w, u)$ such that there is an accepting run of $\transducer$ on $w$, with the output $u$. 
+%[intuitively, each cost register $r_i$ is split into $l$ cost registers $r^{(1)}_i, \cdots,r^{(l)}_i$, one for each string input parameter, and $t_i$ tells how to compute $r_i$ from $r^{(1)}_i, \cdots,r^{(l)}_i$]
+%\item %$\cerl\subseteq (\Sigma^* \times \Int^{k_1 + k_0}) \times \cdots \times (\Sigma^* \times \Int^{k_l + k_0})$ such that 
+a relation 
+\begin{center}
+    $\cerl\subseteq  (\Sigma^* \times \Int^{k_1 + k_0}) \times \cdots \times (\Sigma^* \times \Int^{k_l + k_0})$
+\end{center}
+that comprises tuples of the form  
+$((w_1, (\myvec{c_1}, \myvec{d_1})), \cdots, (w_l, (\myvec{c_l}, \myvec{d_l})))$ 
+such that
+\begin{itemize}
+\item 
+for every $j\in [l]$,
+$\myvec{c_j} \in \Int^{k_j}$ and $\myvec{d_j} = (d^{1}_{j}, \cdots, d^{k_0}_{j}) \in \Int^{k_0}$, 
+%
+\item let 
+$w_0 = f((w_1, (\myvec{c_1}, \myvec{d_1})), \cdots, (w_l, (\myvec{c_l}, \myvec{d_l})))$ and  
+\begin{center}
+    $\myvec{d'} = \left(t_1\left[d^{1}_{1}/r^{1}_1, \cdots, d^{1}_{l}/r^{1}_l\right], \cdots, t_{k_0}\left[d^{k_0}_{1}/r^{k_0}_{1}, \cdots, d^{k_0}_{l}/r^{k_0}_{l}\right] \right),$
+\end{center}
+it holds that 
+$(w_0, \myvec{d'}) \in L$.
+\end{itemize}
+%
+%ensure that $L$ can be derived from $\cerl$ and $\vec{t}$, and comprising
+%
+%\[\left(w_0, t_1\left[d^{1}_{1}/r^{1}_1, \cdots, d^{1}_{l}/r^{1}_l\right], \cdots, t_{k_0}\left[d^{k_0}_{1}/r^{k_0}_{1}, \cdots, d^{k_0}_{l}/r^{k_0}_{l}\right]\right), \]
+%
+%such that  
+%\[w_0 = f\left((w_1, \vec{c_1}), \cdots, (w_l, \vec{c_l}\right)) \mbox{ for some } ((w_1, (\vec{c_1}, \vec{d_1})), \cdots, (w_l, (\vec{c_l}, \vec{d_l}))) \in \cerl,\]
+%where $\vec{c_j} \in \Int^{k_j}$, $\vec{d_j} = (d^{1}_{j}, \cdots, d^{k_0}_{j}) \in \Int^{k_0}$ for $j\in [l]$.
+%
+%$\vec{c_1} \in \Int^{k_1}$, $\cdots$, $\vec{c_l} \in \Int^{k_l}$, $\vec{d_1} = (d^{(1)}_{1}, \cdots, d^{(1)}_{k_0}) \in \Int^{k_0}$, $\cdots$, and $\vec{d_l} = (d^{(l)}_{1},\cdots, d^{(l)}_{k_0}) \in \Int^{k_0}$.
+%\end{itemize}
+
+The pre-image $f^{-1}_{\vec{t}}(L)$ is \emph{CEFA-definable} if $f^{-1}_{\vec{t}}(L) = \bigcup_{i=1}^n \Lang(\aut_{i,1}) \times \cdots \times \Lang(\aut_{i,l})$ for some $n\ge 1$, where for all $i\in [n]$ and $j\in [l]$, $\aut_{i,j}$ is a CEFA such that $\Lang(\aut_{i,j})\subseteq \Sigma^* \times \Int^{k_j}$.  
+%
+Finally, a pre-image of $L$ under $f$， denoted by $f^{-1}(L)$, is a pair $(\cerl,\vec{t})$ such that $\cerl = f^{-1}_{\vec{t}}(L)$.
+%is the pre-image of $L$ under $$f$ with respect to $\vec{t}$. 
+%
+
+The core concept of \emph{pre-image computation} for the function $f$ involves determining the vector $\vec{t}$ of LIA formulas and, for each CEFA $\aut$, computing $f^{-1}_{\vec{t}}(\Lang(\aut))$ represented as a finite set of CEFAs. 
+%
+Intuitively, we remove the string equalities of the form $y = f(x_1, \myvec{it_1}, \cdots, x_l, \myvec{it_l})$ (where $\myvec{it_1}$, $\cdots$, $\myvec{it_l}$ are integer expressions) one by one by computing the pre-images and adding the resulting CEFA membership constraints for $x_1, \cdots, x_l$. In the end,  the original string constraint is transformed into a conjunction of CEFA membership constraints and LIA formulas, whose satisfiability checking %can be solved in 
+is known to be PSPACE-complete~\cite{atva2020}.
+}
+ 
 
 %An {\nft} $\transducer$ is \emph{deterministic} if $I$ is a singleton, and, for every pair $(q,a) \in Q\times \Sigma$,  there is at most one pair $(q', u) \in Q \times \Sigma^*$ such that $(q, a, q', u) \in \delta$. \tl{do we need this?}
 %
@@ -72,4 +193,3 @@ where $q_0 \in I$. Similary to {\nfa}, the run is  \emph{accepting} if $q_n \in 
 
 %In this paper, we consider logics involving two data-types, i.e., the string data-type and the integer data-type. We will use $u, v, \dots$ to denote string constants,  $c, d,\dots$ to denote integer constants, $x, y, \dots$ to denote string variables, and $i, j, \dots$ to denote  integer variables.
 
-We will also use standard  quantifier-free/existential \emph{linear integer arithmetic} (LIA) formulas, which are typically ranged over by $\phi, \varphi$, etc. %, which is essentially Presburger 

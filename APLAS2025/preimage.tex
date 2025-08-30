@@ -1,7 +1,7 @@
 %!TEX root = main.tex
 
 %In this section, we show how to compute the pre-images of the string operations in Equation~(\ref{eqn-str-enc}). The operations $\myfilter_e$,  $\mysplit_u$, $\mymatch_e$, $\mymatchall_e$ and $\myjoin_u$ can be easily encoded in transducers, the computations of their pre-images can be derived by the work \cite{atva2020}. (The details can be found in Appendix~\ref{???}.) We focus on $\mywrite$, $\subseq$ and $\elem$. 
-
+\hide{
 \cite{atva2020} introduced cost-enriched finite automata (CEFA for short) and showed that the pre-images of all the considered string operations involving the string and integer data types only can be effectively computed. 
 % 
 %The decision procedure in~\cite{atva2020} introduced cost-enriched finite automata (CEFA for short) and show that the pre-images of all the string operations involving the string and integer data type can be effectively computed.
@@ -10,7 +10,7 @@ framework
 %If all the string operations in a 
 essentially informs that once the pre-image is computable, the straight-line %string constraint satisfy this property, then the constraint 
 fragment can be solved by propagating the constraints encoded in CEFA  %of the form $\svaru \in \aut$ 
-backwards. Our decision procedure for  $\slexstrlogic$ constraints follow this approach. 
+backwards. Our decision procedure for $\slexstrlogic$ constraints follows this approach. 
 
 We first recall the definition of CEFAs.
 %Recall the cost-enriched finite automata (CEFAs~\cite{atva2020}). 
@@ -21,30 +21,29 @@ Intuitively, CEFAs add write-only cost registers to finite state automata, where
 
 
 %\begin{definition}[Cost-Enriched Finite Automaton]
-A CEFA $\aut$ over $\Sigma'$ is a  tuple $(R, Q, \Sigma', \delta, I, F)$ where
+A CEFA $\aut$ over $\Sigma_{\separator}$ is a  tuple $(R, Q, \Sigma_{\separator}, \delta, I, F)$ where
 	\begin{itemize}
 		\item $R = \{r_1, \cdots, r_k\}$ is a finite set of registers,
 		\item $Q, I, F$ are the same as in {\nfa}, i.e., the set of states, the set of initial states, and the set of final states, respectively, 
 		%    \item $R = (r_1\cdots r_n)$ is a vector of mutually distinct cost registers,
-		\item $\delta \subseteq Q \times \Sigma' \times Q \times \Int^R$ is a transition relation, where $\Int^R$ denotes the updates on the values of registers. (Recall that $\Sigma':=\Sigma \cup \{\separator\}$ is the extended alphabet.)
+		\item $\delta \subseteq Q \times \Sigma_{\separator} \times Q \times \Int^R$ is a transition relation, where $\Int^R$ denotes the updates on the values of registers. (Recall that $\Sigma_{\separator}:=\Sigma \cup \{\separator\}$ is the extended alphabet.)
 		%  set whose elements are tuples $(q, c, q', \myvec{v})$ where $q, q'$ are states of $Q$, $c$ is a letter in alphabet $\Sigma\cup\{\epsilon\}$ and $\myvec{v}$ is the cost update function for registers, which is an integer vector whose $i$-th element is the incremental value of register $r_i$.  $(q, a, q', \myvec{v})$ is written as $q\xrightarrow[\myvec{v}]{a} q'$ for readability.
 %		\item $acc \in \Phi(R)$ is an LIA formula specifying an accepting condition.
 		%    a linear integer arithmetic constraint function on final states. $\theta$ is called \emph{accepting condition}.
 	\end{itemize}
 %\end{definition}
 We write $R_\aut$ for the set of registers of $\aut$. %We assume a linear order on $R$ and write 
-Typically, $R_\aut$ is represented as a vector $(r_1, \cdots, r_k)$. Accordingly, we write assignments $r_i:= r_i + v_i$ for all $i\in [k]$ %element of $\Int^R$ 
-simply as 
+Typically, $R_\aut$ is represented as a vector $(r_1, \cdots, r_k)$. Accordingly, we write assignments $r_i:= r_i + v_i$ for all $i\in [k]$ simply as 
 %its values are represented as 
 $\vec{v}=(v_1, \cdots, v_k)$, i.e., $r_i$ is to be incremented by $v_i$ for each $i \in [k]$. We also write a transition $(q, a, q', \vec{v}) \in \delta$ as $q \xrightarrow[\vec{v}]{a} q'$. In particular, $(q,a,q')$ stands for the transition $(q,a,q',())$ without any updates.
 %The definition of CEFA above is slightly different from the definition in~\cite{atva2020} in the sense that accepting conditions on register values
 %are attached to final states. 
 
 %The semantics of CEFA is defined as follows. 
-Let $\aut = (R, Q, \Sigma', \delta, I, F)$ be a CEFA. 
+Let $\aut = (R, Q, \Sigma_{\separator}, \delta, I, F)$ be a CEFA. 
 %A \emph{configuration} of $\aut$ is a pair $(q, \vec{v})$ where $q \in Q$ and $\vec{v}$ is a vector denoting the values of registers.  
 %An \emph{initial configuration} of $\aut$ is $(q_0, \vec{0})$ with $q_0 \in I$, where the value of each register is zero. 
-A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ over $\Sigma'$ is a sequence $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ such that $q_0 \in I$ and $q_{i-1} \xrightarrow[\myvec{v_i}]{a_i} q_i$ for each $i \in [n]$. 
+A \emph{run} of $\aut$ on a string $w = a_1 \cdots a_n$ over $\Sigma_{\separator}$ is a sequence $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ such that $q_0 \in I$ and $q_{i-1} \xrightarrow[\myvec{v_i}]{a_i} q_i$ for each $i \in [n]$. 
 %
 %The run $q_0 \xrightarrow[\myvec{v_1}]{a_1} q_1 \cdots q_{n-1}\xrightarrow[\myvec{v_n}]{a_n} q_n$ 
 It is \emph{accepting} if $q_n \in F$, and 
@@ -62,18 +61,18 @@ In particular, if $I \cap F \neq \emptyset$, then $(\varepsilon, \myvec{0}) \in 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The following example illustrates the backward propagation. 
 
-\vspace*{-2mm}
+% \vspace*{-2mm}
 %\begin{example}
-%Consider the equality $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ (where $\svaru_1,\svaru_2$ are string variables and $it_1, it_2$ are integer terms) and the CEFA $\aut = (R, Q, \Sigma', \delta, I, F)$, where $R= \{r_1\}$. %(that is, $R$ contains only one register). 
+%Consider the equality $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ (where $\svaru_1,\svaru_2$ are string variables and $it_1, it_2$ are integer terms) and the CEFA $\aut = (R, Q, \Sigma_{\separator}, \delta, I, F)$, where $R= \{r_1\}$. %(that is, $R$ contains only one register). 
 %Suppose that $f^{-1}(\aut)$ is a finite collection of tuples $(\autb_1, \autb_2, t_1)$, where $\autb_1$ and $\autb_2$ are CEFAs such that $R_{\autb_1}=(r'_{1,1}, r^{(1)}_1)$ and $R_{\autb_2} = (r'_{2,1}, r^{(2)}_1)$ and $t_1$ is an LIA formula over $r^{(1)}_1$ and $r^{(2)}_1$. Intuitively, $r'_{1,1}$ and $r'_{2,1}$ are the fresh registers corresponding to the two integer parameters,  and $r^{(1)}_1, r^{(2)}_1$ are the fresh registers introduced in $\autb_1$ and $\autb_2$ respectively for restoring $r_1$. Then the backward propagation of the constraint $\svarv \in \aut$ 
 %%with respect to the equality $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ 
 %wrt. $f$ 
 %nondeterministically chooses a tuple $(\autb_1, \autb_2, t_1)$, removes $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ from the string constraint, and adds $t_1 \wedge it_1 = r'_{1,1} \wedge it_2 = r'_{2,1}$ to it. \qed
 %\end{example}
 \begin{example}
-	Consider the equality $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ (where $\svaru_1,\svaru_2$ are string variables, $it_1, it_2$ are integer terms, and $f$ is a function) and the CEFA $\aut = (R, Q, \Sigma', \delta, I, F)$, where $R= \{r_1\}$. %(that is, $R$ contains only one register). 
+	Consider the equality $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ (where $\svaru_1,\svaru_2$ are string variables, $it_1, it_2$ are integer terms, and $f$ is a function) and the CEFA $\aut = (R, Q, \Sigma_{\separator}, \delta, I, F)$, where $R= \{r_1\}$. %(that is, $R$ contains only one register). 
 	%Moreover, let $t = r^{(1)}_1 + r^{(2)}_1$ which intuitively describes how $r_1$ can be calculated from $r^{(1)}_1$ and $r^{(2)}_1$. 
-	Then an $R$-cost-enriched pre-image of $\aut$ under $f$, denoted by $f^{-1}_{R}(\aut)$, is a pair $(\cerl, t)$ where $\cerl \subseteq (\Sigma')^\ast \times (\intnum \times \intnum) \times (\Sigma')^\ast \times (\intnum \times \intnum)$, $t$ is an LIA term over $\{r^{(1)}_1, r^{(2)}_1\}$, and $\cerl$ satisfies that for every $(v, n') \in \Lang(\aut)$, there is $(u_1, n_1, n'_1, u_2, n_2, n'_2) \in \cerl$ such that $f(u_1, n_1, u_2, n_2) = v$, and  $n'= t[n'_1/r^{(1)}_1, n'_2/r^{(2)}_1]$. 
+	Then an $R$-cost-enriched pre-image of $\aut$ under $f$, denoted by $f^{-1}_{R}(\aut)$, is a pair $(\cerl, t)$ where $\cerl \subseteq (\Sigma_{\separator})^\ast \times (\intnum \times \intnum) \times (\Sigma_{\separator})^\ast \times (\intnum \times \intnum)$, $t$ is an LIA term over $\{r^{(1)}_1, r^{(2)}_1\}$, and $\cerl$ satisfies that for every $(v, n') \in \Lang(\aut)$, there is $(u_1, n_1, n'_1, u_2, n_2, n'_2) \in \cerl$ such that $f(u_1, n_1, u_2, n_2) = v$, and  $n'= t[n'_1/r^{(1)}_1, n'_2/r^{(2)}_1]$. 
 	%
 	We say that a pre-image $f^{-1}_{R}(\aut) = (\cerl, t)$ is CEFA-definable if $\cerl$ can be expressed as a finite collection of CEFA tuples $(\autb_{j, 1}, \autb_{j, 2})$ with $j \in [k]$ such that $R_{\autb_{j,1}}=(r'_{1,1}, r^{(1)}_1)$, $R_{\autb_{j, 2}} = (r'_{2,1}, r^{(2)}_1)$, and $\cerl = \bigcup_{j \in [k]} \Lang(\autb_{j, 1}) \times \Lang(\autb_{j, 2})$.  
 	%Suppose $t = r^{(1)}_1 + r^{(2)}_1$ and $f^{-1}_{R, t}(\aut)$ is computed as a finite collection of tuples $(\autb_1, \autb_2)$, where $\autb_1$ and $\autb_2$ are CEFAs such that $R_{\autb_1}=(r'_{1,1}, r^{(1)}_1)$ and $R_{\autb_2} = (r'_{2,1}, r^{(2)}_1)$ and $t_1$ is an LIA formula over $r^{(1)}_1$ and $r^{(2)}_1$. Intuitively, 
@@ -82,19 +81,19 @@ The following example illustrates the backward propagation.
 	under $f$ nondeterministically chooses a tuple $(\autb_{j, 1}, \autb_{j, 2})$, removes $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ from the string constraint, and adds $\svaru_1 \in \autb_{j, 1} \wedge \svaru_2 \in \autb_{j, 2} \wedge r_1 = t \wedge it_1 = r'_{1,1} \wedge it_2 = r'_{2,1}$ to the string constraint.
 	%removes $\svarv = f(\svaru_1, it_1, \svaru_2, it_2)$ from the string constraint, and adds $r_1 = t \wedge it_1 = r'_{1,1} \wedge it_2 = r'_{2,1}$ to the string constraint. \qed
 \end{example}
-\vspace*{-2mm}
+%\vspace*{-2mm}
+}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-We now show how to compute the pre-images of $\mywrite$, $\subseq$, $\elem$ and $\myseqlen$. Note that the pre-image computation utilizes an NFA $\aut_0$ (resp. $\aut_1$) that formats the strings that represent the string sequences (resp. strings), namely, $\aut_0$ (resp. $\aut_1$) recognizes the language $\separator (\Sigma \separator)^*$ (resp. $\Sigma^*$). 
+We now show how to compute the pre-images under $\mywrite$, $\subseq$, $\elem$ and $\myseqlen$. Note that the pre-image computation utilizes an NFA $\aut_0$ (resp. $\aut_1$) to format the strings that represent the string sequences (resp. strings), namely, $\aut_0$ (resp. $\aut_1$) recognizes the language $\separator (\Sigma \separator)^*$ (resp. $\Sigma^*$). 
 
-\paragraph*{Pre-image of $\mywrite$.}
-Let $\aut = (R, Q, \Sigma', \delta, I, F)$ be a CEFA. 
-Intuitively, $\mywrite^{-1}(\aut)$ is computed as the collection $((\autb_{(p, q)} \cap \aut_0, \aut_{R_2/R}[p, q] \cap \aut_1), t_{(p,q)})_{(p, q) \in Q \times Q}$, where  $\autb_{(p, q)}$, $ \aut_{R_2/R}[p, q]$ and $t_{(p,q)}$ are constructed as follows. 
-\begin{itemize}
-\item $\autb_{(p, q)}$ is constructed by the following procedure. 
+\paragraph*{Pre-image under $\mywrite$.}
+Let $\aut = (R, Q, \Sigma_{\separator}, \delta, I, F)$ be a CEFA.  $\mywrite^{-1}(\Lang(\aut))$ is computed as the collection $((\autb_{(p, q)} \cap \aut_0, \aut_{R_2/R}[p, q] \cap \aut_1), t_{(p,q)})_{(p, q) \in Q \times Q}$, where  $\autb_{(p, q)}$, $ \aut_{R_2/R}[p, q]$ and $t_{(p,q)}$ are constructed as follows:
+\begin{itemize}%[topsep=0pt,partopsep=0pt]
+\item $\autb_{(p, q)}$ is constructed by the following procedure: 
 \begin{itemize}
 %\item We compute an existential LIA formula $\varphi_{p, q}(\myvec{x}, \myvec{y})$ to capture the reachability relation of $\aut[p, q]$. 
 %
@@ -111,13 +110,14 @@ Intuitively, $\mywrite^{-1}(\aut)$ is computed as the collection $((\autb_{(p, q
 \item $\aut_{R_2/R}[p, q]$ is obtained from $\aut[p, q]$ by replacing each register in $R$ with the corresponding copy in $R_2$, where $\aut[p, q]$ is the sub-automaton of $\aut$ that accepts the strings starting from the state $p$ and ending at the state $q$.
 %
 \item $t_{(p, q)} := (t_{(p, q), r})_{r \in R}$ and 
-$t_{(p, q), r} = r^{(1)} + r^{(2)}$ for each $r \in R$.
+$t_{(p, q), r} = r^{(1)} + r^{(2)}$ \polished{where $r^{(1)}$ and $r^{(2)}$ are the copies of $r$} for each $r \in R$.
 %\item $t_{(p,q)} := \bigwedge_{r\in R} r = r^{(1)} + r^{(2)}$, where $r^{(1)}$ and $r^{(2)}$ are the copies of $r$ in $R_1$ and $R_2$ respectively.
 \end{itemize}
 Note that in the backward propagation of $\aut$ with respect to an equality $\svarz = \mywrite(\svarx, it, \svary)$, the constraint $r' = it $ is added to the LIA constraint to assert that $r'$ is equal to the index $it$. 
 %
-Formally, $\mywrite^{-1}(\aut)$ is a finite collection of $(\autb_{(p,q)}  \cap \aut_0, \aut_{R_2/R}[p, q] \cap \aut_1, t_{(p,q)})$, where $(p, q) \in Q \times Q$, and $\autb_{(p,q)} = (R_1 \cup \{r'\}, Q', \Sigma', \delta', I', F')$ such that  $Q' = Q \times \{pre, idle, post\}$, $I'  = I \times \{pre\}$, $F'  = F \times \{post\}$, and $\delta'$ comprises, 
-\begin{itemize}
+Formally, $\mywrite^{-1}(\Lang(\aut))$ is a finite collection of $(\autb_{(p,q)}  \cap \aut_0, \aut_{R_2/R}[p, q] \cap \aut_1, t_{(p,q)})$, where $(p, q) \in Q \times Q$, and $\autb_{(p,q)} = (R_1 \cup \{r'\}, Q', \Sigma_{\separator}, \delta', I', F')$ such that  $Q' = Q \times \{pre, idle, post\}$, $I'  = I \times \{pre\}$, $F'  = F \times \{post\}$, and $\delta'$ comprises:
+
+\begin{itemize}%[topsep=0pt,partopsep=0pt]
 \item $((q_1, pre), a, (q_2, pre), (\myvec{v}, 0))$ such that $(q_1, a, q_2, \myvec{v}) \in \delta$ and $a \in \Sigma$ (thus $a \neq \separator$), 
 %
 \item $((q_1, pre), \separator, (q_2, pre), (\myvec{v}, 1))$ such that $(q_1, \separator, q_2, \myvec{v}) \in \delta$, 
@@ -140,19 +140,19 @@ From the construction of $\autb_{(p,q)}$, we can observe that the pair $(p,q)$ s
 % \textcolor{blue}{Did not see how `` $q$ should be reachable from $p$'' is ensured.}
 %Moreover, $acc' = acc$. 
 
-\vspace*{-2mm}
+% \vspace*{-2mm}
 \begin{example}
-Let us consider the constraint $\svarv = \mywrite(\svaru, 1, \svary)\ \wedge\ \svarv \in \separator (a^+ \separator)^*\ \wedge\ \mystrlen(\svarv) \ge 4$. Let $\aut = (\{r_1\}, \{q_0, q_1, q_2\}, \Sigma', \delta, \{q_0\}, \{q_1\})$ be the CEFA, where the register $r_1$ is used to record the string length and $\delta$ comprises the transitions $q_0 \xrightarrow[(1)]{\separator} q_1 \xrightarrow[(1)]{a}q_2 \xrightarrow[(1)]{a} q_2 \xrightarrow[(1)]{\separator} q_1$. 
+Consider the constraint $\svarv = \mywrite(\svaru, 1, \svary)\ \wedge\ \svarv \in \separator (a^+ \separator)^*\ \wedge\ \mystrlen(\svarv) \ge 4$. Let $\aut = (\{r_1\}, \{q_0, q_1, q_2\}, \Sigma_{\separator}, \delta, \{q_0\}, \{q_1\})$ be the CEFA, where the register $r_1$ is used to record the string length and $\delta$ comprises the transitions $q_0 \xrightarrow[(1)]{\separator} q_1 \xrightarrow[(1)]{a}q_2 \xrightarrow[(1)]{a} q_2 \xrightarrow[(1)]{\separator} q_1$. 
 Let us consider the pairs $(p, q)$ in $\aut$ satisfying that there is a $\separator$-transition into $p$ and a $\separator$-transition out of $q$, moreover, $q$ should be reachable from $p$.
-It is not hard to observe that there is exactly one such pair, that is, $(q_1, q_2)$. 
-Therefore, $\mywrite^{-1}(\aut)$ comprises exactly one tuple $(\autb_{(q_1, q_2)}\cap \aut_0, \aut_{R_2/R}[q_1,q_2] \cap \aut_1, (r^{(1)}_1+r^{(2)}_1))$ such that
+One can easily observe that there is exactly one such pair, that is, $(q_1, q_2)$. 
+Therefore, $\mywrite^{-1}(\Lang(\aut))$ comprises exactly one tuple $(\autb_{(q_1, q_2)}\cap \aut_0, \aut_{R_2/R}[q_1,q_2] \cap \aut_1, (r^{(1)}_1+r^{(2)}_1))$ such that
 %and $(\autb_{(q_2, q_2)}\cap \aut_0, \aut_{R_2/R}[q_2,q_2] \cap \aut_1, (r^{(1)}_1+r^{(2)}_1))$ such that  
 %\begin{itemize}
 %\item 
-$\autb_{(q_1,q_2)} = (\{r^{(1)}_1, r' \}, Q', \Sigma', \delta', I', F')$ where 
-\begin{itemize}
+$\autb_{(q_1,q_2)} = (\{r^{(1)}_1, r' \}, Q', \Sigma_{\separator}, \delta', I', F')$ where 
+\begin{itemize}%[topsep=0pt,partopsep=0pt]
 \item $Q' = \{q_0, q_1, q_2\} \times \{pre, idle, post\}$, $I' = \{(q_0, pre)\}$, $F' = \{(q_1, post)\}$, and 
-\item $\delta' $ comprises the following transitions 
+\item $\delta' $ comprises the following transitions:
 \begin{itemize}
 \item $((q_1, pre), a, (q_2, pre), (1,0))$, $((q_2, pre), a, (q_2, pre), (1,0))$, 
 %$$(q_0, pre)\xrightarrow[(1,1)]{\separator}(q_1, pre)\xrightarrow[(1, 0)]{a}(q_2, pre) \xrightarrow[(1, 0)]{a}(q_2, pre) \xrightarrow[(1, 1)]{\separator}(q_1, pre),$$ 
@@ -180,16 +180,16 @@ $\autb_{(q_1,q_2)} = (\{r^{(1)}_1, r' \}, Q', \Sigma', \delta', I', F')$ where
 \end{itemize}
 \end{itemize}
 To illustrate how $\autb_{(q_1, q_2)}$ and $\aut_{R_2/R}[q_1,q_2]$ work, we can see that $(\separator aa \separator a \separator, 6)$ is accepted by $\aut$, moreover,  for any $b\in\Sigma$,
-\begin{itemize}
-\item $(\separator ab \separator a \separator, 4, 1)$ is accepted by $\autb_{(q_1, q_2)}$, witnessed by the following sequence of transitions, 
-\[
-\begin{array}{l}
+\begin{itemize}[topsep=0pt,partopsep=0pt]
+\item $(\separator ab \separator a \separator, 4, 1)$ is accepted by $\autb_{(q_1, q_2)}$, witnessed by %the following sequence of transitions, 
+\begin{center}
+    $\begin{array}{l}
 (q_0, pre) \xrightarrow[(1, 1)]{\separator} (q_1, idle) \xrightarrow[(0, 0)]{a} (q_1, idle) \xrightarrow[(0, 0)]{b} (q_1, idle) \\
 \xrightarrow[(1, 0)]{\separator} (q_1, post) \xrightarrow[(1, 0)]{a} (q_2, post) \xrightarrow[(1, 0)]{\separator} (q_1, post),
-\end{array}
-\]
+\end{array}$
+\end{center}
 %
-\item and $(aa, 2)$ is accepted by $\aut_{R_2/R}[q_1,q_2]$, witnessed by the following sequence of transitions, 
+\item and $(aa, 2)$ is accepted by $\aut_{R_2/R}[q_1,q_2]$, witnessed by %the following sequence of transitions, 
 $
 q_1 \xrightarrow[(1)]{a} q_2  \xrightarrow[(1)]{a} q_2
 $.  
@@ -201,7 +201,7 @@ can be $\separator ab \separator a \separator$ and $aa$, respectively.\qed
 %\item $\aut_{R_2/R}[q_1,q_2]$, 
 %\item $\autb_{(q_1, q_1)}$ is similar to $\autb_{(q_1,q_2)}$ and is obtained from $\autb_{(q_1,q_2)}$ by replacing the transition $(q_1, idle)\xrightarrow[(0, 0)]{\separator}(q_2, post)$ in $\delta'$ with $(q_1, idle) \xrightarrow[(0, 0)]{\separator}(q_2, idle)$.
 %
-%$\autb_{(q_1,q_1)} = (\{r^{(1)}_1, r' \}, Q', \Sigma', \delta',I', F')$ where $Q' = \{q_0, q_1, q_2\} \times \{pre, idle, post\}$, $I' = \{(q_0, pre)\}$, $F' = \{(q_1, post)\}$, and $\delta' $ comprises the following transitions 
+%$\autb_{(q_1,q_1)} = (\{r^{(1)}_1, r' \}, Q', \Sigma_{\separator}, \delta',I', F')$ where $Q' = \{q_0, q_1, q_2\} \times \{pre, idle, post\}$, $I' = \{(q_0, pre)\}$, $F' = \{(q_1, post)\}$, and $\delta' $ comprises the following transitions 
 %$$(q_0, pre)\xrightarrow[(1,1)]{\separator}(q_1, pre)\xrightarrow[(1, 0)]{a}(q_2, pre) \xrightarrow[(1, 0)]{a}(q_2, pre) \xrightarrow[(1, 1)]{\separator}(q_1, pre),$$ 
 %$$
 %\begin{array}{l}
@@ -212,18 +212,18 @@ can be $\separator ab \separator a \separator$ and $aa$, respectively.\qed
 %One tuple of $\mywrite^{-1}(\aut)$ is $(\autb_{(q_1,q_2)}\cap \aut_0, \aut_{R_2/R}[q_1,q_2] \cap \aut_1, true)$ where $\autb_{(q_1,q_2)}$ consist of transitions $(q_0,pre)\xrightarrow[(1)]{\separator}(q_1,pre)\xrightarrow[(0)]{a}(q_2,pre)\xrightarrow[(1)]{\separator}(q_3,pre)$ and $(q_0,pre)\xrightarrow[(1)]{\separator}(q_1, idle)\xrightarrow[(0)]{\Sigma}(q_1,idle)\xrightarrow[(0)]{\separator}(q_2,post)$.
 %$\aut_{R_2/R}[q_1,q_2]$ is $q_1\xrightarrow{a}q_2$. After back propagation, we remove the constraint $\svarv = \mywrite(\svaru, 1, \svary)$ and add the constraints $r' = 1\wedge \svaru \in \autb_{(q_1,q_2)}\cap \aut_0\wedge \svary \in \aut_{R_2/R}[q_1,q_2] \cap \aut_1$, where $r'$ is the fresh register introduced in $\autb_{(q_1,q_2)}$. Solving the new constraints, we obtain a solution $\svaru = \separator a \separator$ and $\svary = a$.
 \end{example}
-\vspace*{-2mm}
+%\vspace*{-2mm}
 
 %$\myfilter_e$: seen as a special case of transducers
 
-\paragraph*{Pre-image of $\subseq$.}
+\paragraph*{Pre-image under $\subseq$.}
 %$\subseq$: from $\aut$, introduce two fresh cost registers $r_1, r_2$, increment $r_1, r_2$ each time when a $\separator$ is read, nondeterministically choose to stop incrementing $r_1$, start running $\aut$ until nondeterministically choosing to stop incrementing $r_2$, moreover, check whether $\aut$ accepts when stopping incrementing $r_2$. 
 %
-Let $\aut = (R, Q, \Sigma', \delta, I, F)$ be a CEFA. 
-Then $\subseq^{-1}(\aut)$ is computed as $(\autb\cap \aut_0, t)$ such that $t := true$ and $\autb$ introduces two fresh registers $r'_1, r'_2$ to count the two numbers of occurrences of $\separator$ that correspond to the starting position and the length of the subsequence respectively. Moreover, $\autb$ simulates the run of $\aut$ on the substring representing the subsequence returned by $\subseq$. 
+Let $\aut = (R, Q, \Sigma_{\separator}, \delta, I, F)$ be a CEFA. 
+$\subseq^{-1}(\Lang(\aut))$ is computed as $(\autb\cap \aut_0, t)$ such that $t:= true$ and $\autb$ introduces two fresh registers $r'_1, r'_2$ to count the two numbers of occurrences of $\separator$ that correspond to the starting position and the length of the subsequence, respectively. Moreover, $\autb$ simulates the run of $\aut$ on the substring representing the subsequence returned by $\subseq$. 
 %
-Formally, $\subseq^{-1}(\aut)$ is computed as $(\autb \cap \aut_0, true)$, where $\autb = (R \cup \{r'_1, r'_2\}, Q \cup \{pre, post\}, \Sigma', \delta', \{pre\}, \{post\})$ such that $pre, post$ are two fresh states denoting the fact that $\autb$ is reading a symbol before and after the subsequence respectively and $\delta'$ comprises the following tuples, 
-\begin{itemize}
+Formally, $\subseq^{-1}(\Lang(\aut))$ is computed as $(\autb \cap \aut_0, true)$, where $\autb = (R \cup \{r'_1, r'_2\}, Q \cup \{pre, post\}, \Sigma_{\separator}, \delta', \{pre\}, \{post\})$ such that $pre, post$ are two fresh states denoting the fact that $\autb$ is reading a symbol before and after the subsequence respectively and $\delta'$ comprises the  following transitions:
+\begin{itemize}[topsep=0pt,partopsep=0pt]
 \item $(pre, a, pre, (\myvec{0}, 0,0))$ such that $a \in \Sigma$ (thus $a \neq \separator$),  
 %
 \item $(pre, \separator, pre, (\myvec{0}, 1,0))$,
@@ -240,14 +240,16 @@ Formally, $\subseq^{-1}(\aut)$ is computed as $(\autb \cap \aut_0, true)$, where
 \end{itemize}
 Note that in the backward propagation of $\aut$ with respect to an equality $\svarz = \subseq(\svarx, it_1, it_2)$, the constraint $r'_1 = it_1 \wedge r'_2 = it_2$ is added to the LIA constraint to assert that the value of $r'_1$ and $r'_2$ are equal to the beginning index and the length of the subsequence respectively.
 
-\vspace*{-2mm}
+% \vspace*{-2mm}
 \begin{example}
-Let $\svarv = \subseq(\svaru, 2, 1) \wedge \svarv \in \separator (a^+ \separator)^* \wedge \mystrlen(\svarv) \ge 4$ and $\aut = (\{r_1\}, \{q_0, q_1, q_2\}, \Sigma', \delta, \{q_0\}, \{q_1\})$ be the CEFA, where the register $r_1$ is used to record the string length and $\delta$ comprises the transitions $q_0 \xrightarrow[(1)]{\separator} q_1 \xrightarrow[(1)]{a}q_2 \xrightarrow[(1)]{a} q_2 \xrightarrow[(1)]{\separator} q_1$. 
-Then $\subseq^{-1}(\aut)$ is $(\autb \cap \aut_0, true)$ such that 
-$$\autb = (\{r^{(1)}_1, r'_1, r'_2\}, \{q_0, q_1, q_2, pre, post\}, \Sigma', \delta', \{pre\}, \{post\})$$
+Let $\svarv = \subseq(\svaru, 2, 1) \wedge \svarv \in \separator (a^+ \separator)^* \wedge \mystrlen(\svarv) \ge 4$ and $\aut = (\{r_1\}, \{q_0, q_1, q_2\}, \Sigma_{\separator}, \delta, \{q_0\}, \{q_1\})$ be the CEFA, where the register $r_1$ is used to record the string length and $\delta$ comprises the transitions $q_0 \xrightarrow[(1)]{\separator} q_1 \xrightarrow[(1)]{a}q_2 \xrightarrow[(1)]{a} q_2 \xrightarrow[(1)]{\separator} q_1$. 
+Then $\subseq^{-1}(\Lang(\aut))$ is $(\autb \cap \aut_0, true)$ such that 
+\begin{center}
+    $\autb = (\{r^{(1)}_1, r'_1, r'_2\}, \{q_0, q_1, q_2, pre, post\}, \Sigma_{\separator}, \delta', \{pre\}, \{post\})$
+\end{center}
 where 
-$\delta' $ comprises the following transitions 
-\begin{itemize}
+$\delta' $ comprises the following transitions: 
+\begin{itemize}[topsep=0pt,partopsep=0pt]
 \item $(pre, a', pre, (0, 0,0))$ such that $a' \in \Sigma$, 
 %
 \item $(pre, \separator, pre, (0, 1,0))$,
@@ -265,27 +267,26 @@ $\delta' $ comprises the following transitions
 %
 \item $(post, a', post, (0, 0,0))$ and $(post, \separator, post, (0, 0,0))$ where $a' \in \Sigma$.
 \end{itemize}
-To illustrate how $\autb$ works, we can see that $(\separator a  \separator a a \separator, 4, 2, 1)$ is accepted by $\autb$, witnessed by the following sequence of transitions, 
-
-$
-pre \xrightarrow[(0, 1, 0)]{\separator} pre \xrightarrow[(0, 0, 0)]{a} pre \xrightarrow[(1, 1, 0)]{\separator} q_1 \xrightarrow[(1, 0, 0)]{a} q_2 \xrightarrow[(1, 0, 0)]{a} q_2  \xrightarrow[(1, 0, 1)]{\separator} post.
-$\qed
+To illustrate how $\autb$ works, we can see that $(\separator a  \separator a a \separator, 4, 2, 1)$ is accepted by $\autb$, witnessed by %the following sequence of transitions, 
+$$
+pre \xrightarrow[(0, 1, 0)]{\separator} pre \xrightarrow[(0, 0, 0)]{a} pre \xrightarrow[(1, 1, 0)]{\separator} q_1 \xrightarrow[(1, 0, 0)]{a} q_2 \xrightarrow[(1, 0, 0)]{a} q_2  \xrightarrow[(1, 0, 1)]{\separator} post.  
+$$
 %where $\autb$ is 
-%$pre\xrightarrow[(1, 0)]{\separator}pre\xrightarrow[(0, 0)]{\Sigma}pre\xrightarrow[(1, 0)]{\separator}q_1\xrightarrow[(0, 0)]{a}q_2\xrightarrow[(0, 1)]{\separator}post\xrightarrow[(0, 0)]{\Sigma'}post$. 
+%$pre\xrightarrow[(1, 0)]{\separator}pre\xrightarrow[(0, 0)]{\Sigma}pre\xrightarrow[(1, 0)]{\separator}q_1\xrightarrow[(0, 0)]{a}q_2\xrightarrow[(0, 1)]{\separator}post\xrightarrow[(0, 0)]{\Sigma_{\separator}}post$. 
 %After back propagation, we remove the constraint $\svarv = \subseq(\svaru, 1, 1)$ and add the constraints $r'_1 = 2\wedge r'_2 = 3\wedge \svaru \in \autb \cap \aut_0$, where $r'_1$ and $r'_2$ are the fresh registers introduced in $\autb$. Solving the new constraints, we obtain a solution $\svaru = \separator\separator a \separator$ which represents the sequence $(\epsilon, a)$.
 \end{example}
-\vspace*{-4mm}
+% \vspace*{-4mm}
 
 %$\mysplit_u$: seen as a special case of transducers
 
 %$\mymatch_e$ and $\mymatchall_e$: seen as special cases of transducers
 
 
-\paragraph*{Pre-image of $\elem$.}
+\paragraph*{Pre-image under $\elem$.}
 %$\elem$: seen as special cases of transducers
 Let $\aut = (R, Q, \Sigma, \delta, I, F)$ be a CEFA. 
-The computation of $\elem^{-1}(\aut)$ is similar to that of $\subseq^{-1}(\aut)$. Nevertheless, the construction is slightly different since the output of $\elem$ is a string, instead of a sequence. Intuitively, $\elem^{-1}(\aut)$ is computed as $(\autb \cap \aut_0,t)$ where $t := true$, a fresh register $r'$ is introduced to count the number of occurrences of $\separator$ that corresponds to the position where the element is extracted. Formally, $\elem^{-1}(\aut)$ is computed as $(\autb \cap \aut_0, true)$ such that $\autb = (R \cup \{r'\}, Q \cup \{pre, post\}, \Sigma', \delta', \{pre\}, \{post\})$, where $\delta'$ comprises the following tuples, 
-\begin{itemize}
+$\elem^{-1}(\Lang(\aut))$ is constructed similar to $\subseq^{-1}(\Lang(\aut))$. Nevertheless, the construction is slightly different since the output of $\elem$ is a string, instead of a sequence. Intuitively, $\elem^{-1}(\Lang(\aut))$ is computed as $(\autb \cap \aut_0,t)$ where $t := true$, a fresh register $r'$ is introduced to count the number of occurrences of $\separator$ that corresponds to the position where the element is extracted. Formally, $\elem^{-1}(\Lang(\aut))$ is computed as $(\autb \cap \aut_0, true)$ such that $\autb = (R \cup \{r'\}, Q \cup \{pre, post\}, \Sigma_{\separator}, \delta', \{pre\}, \{post\})$, where $\delta'$ comprises the following transitions: 
+\begin{itemize}[topsep=0pt,partopsep=0pt]
 \item $(pre, a, pre, (\myvec{0}, 0))$ such that $a \in \Sigma$ (thus $a \neq \separator$),  
 %
 \item $(pre, \separator, pre, (\myvec{0}, 1))$,
@@ -304,20 +305,20 @@ Note that in the backward propagation of $\aut$ with respect to an equality $\sv
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \hide{
 \begin{example}
-Consider the constraints $\svarv = \elem(\svaru, 2) \wedge \svarv = a$. Then the automaton $\aut$ that $\svarv$ belongs to is $q_0\xrightarrow{a}q_1$. The $\elem^{-1}(\aut)$ is $(\autb \cap \aut_0, true)$, where $\autb$ is $pre\xrightarrow[(1)]{\separator}pre\xrightarrow[(0)]{\Sigma}pre\xrightarrow[(1)]{\separator}q_0\xrightarrow[(0)]{a}q_1\xrightarrow[(0)]{\separator}post\xrightarrow[(0)]{\Sigma'}post$. After back propagation, we remove the constraint $\svarv = \elem(\svaru, 1)$ and add the constraints $r' = 2\wedge \svaru \in \autb \cap \aut_0$, where $r'$ is the fresh register introduced in $\autb$. Solving the new constraints, we obtain a solution $\svaru = \separator\separator a \separator$ which represents the sequence $(\epsilon, a)$.
+Consider the constraints $\svarv = \elem(\svaru, 2) \wedge \svarv = a$. Then the automaton $\aut$ that $\svarv$ belongs to is $q_0\xrightarrow{a}q_1$. The $\elem^{-1}(\aut)$ is $(\autb \cap \aut_0, true)$, where $\autb$ is $pre\xrightarrow[(1)]{\separator}pre\xrightarrow[(0)]{\Sigma}pre\xrightarrow[(1)]{\separator}q_0\xrightarrow[(0)]{a}q_1\xrightarrow[(0)]{\separator}post\xrightarrow[(0)]{\Sigma_{\separator}}post$. After back propagation, we remove the constraint $\svarv = \elem(\svaru, 1)$ and add the constraints $r' = 2\wedge \svaru \in \autb \cap \aut_0$, where $r'$ is the fresh register introduced in $\autb$. Solving the new constraints, we obtain a solution $\svaru = \separator\separator a \separator$ which represents the sequence $(\epsilon, a)$.
 \end{example}
 }
 %$\myjoin_u$: special case of transducers
 
 \medskip
 
-Finally, we  remark that the operation $\myseqlen(\svarx)$ can be modeled as a CEFA, similarly to the CEFA for $\mystrlen$ in \cite{atva2020}.
+Finally, we remark that the operation $\myseqlen(\svarx)$ can be modeled as a CEFA, similarly to the CEFA for $\mystrlen$ in \cite{atva2020}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \hide{
 \paragraph*{Pre-image of $\myseqlen$.} 
 Let $\aut = (R, Q, \Sigma, \delta, I, F)$ be a CEFA. 
-The computation of $\myseqlen^{-1}(\aut)$ is similar to that of $\mystrlen^{-1}(\aut)$ in \cite{atva2020}, except that $\myseqlen^{-1}(\aut)$ count the number of occurrences of $\separator$ while $\mystrlen^{-1}(\aut)$ counts the length of the string. Formally, $\myseqlen^{-1}(\aut)$ is computed as $(\autb \cap \aut_0, t_{(p,q)})$ where $t_r = r^{(1)}$ for each $r \in R$, $\autb = (R \cup \{r'\}, \{q\}, \Sigma', \delta', \{q\}, \{q\})$ and $\delta'$ comprises the following tuples,
+The computation of $\myseqlen^{-1}(\aut)$ is similar to that of $\mystrlen^{-1}(\aut)$ in \cite{atva2020}, except that $\myseqlen^{-1}(\aut)$ count the number of occurrences of $\separator$ while $\mystrlen^{-1}(\aut)$ counts the length of the string. Formally, $\myseqlen^{-1}(\aut)$ is computed as $(\autb \cap \aut_0, t_{(p,q)})$ where $t_r = r^{(1)}$ for each $r \in R$, $\autb = (R \cup \{r'\}, \{q\}, \Sigma_{\separator}, \delta', \{q\}, \{q\})$ and $\delta'$ comprises the following tuples,
 \begin{itemize}
 \item $(q, a, q, (0))$ such that $a \in \Sigma$ (thus $a \neq \separator$),
 \item $(q, \separator, q, (1))$.
@@ -328,8 +329,6 @@ Note that in the backward propagation of $\aut$ with respect to an equality $it 
 	Let us consider the constraints $it = \myseqlen(\svaru) - 1\wedge it > 0$. The $\myseqlen^{-1}$ is $(\autb \cap \aut_0, true)$, where $\autb$ is $q\xrightarrow[(1)]{\separator}q\xrightarrow[(0)]{\Sigma}q$. After back propagation, we remove the constraint $it = \myseqlen(\svaru)$ and add the constraints $r' = it\wedge \svaru \in \autb \cap \aut_0$, where $r'$ is the fresh register introduced in $\autb$. Solving the new constraints, we obtain a solution $it = 1$ and $\svaru = \separator\separator$ which represents the sequence $(\epsilon)$. 
 \end{example}
 }
-
-
 
 %% write by denghang ==================================================================
 %% write by denghang ==================================================================

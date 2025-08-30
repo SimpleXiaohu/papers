@@ -1,10 +1,5 @@
 %!TEX root = main.tex
 
-\section{A Theory of String Sequences ($\arraylogic$)}\label{sec:logic}
-
-%In this section, 
-%For a natural number $n \ge 1$, we use $[n]$ to denote $\{1, \cdots, n\}$.
-
 A \emph{sequence} over the set $X$ is $(a_0, \ldots, a_{n-1})$, where $a_i \in X$ for each $i \in [0,n-1]$, and $n$ is the \emph{length} of the sequence.
 %A \emph{string} is a sequence over %$A$ is 
 %a (finite) alphabet $\Sigma$. As usual, $\Sigma^*$ denotes the set of strings over $\Sigma$, and the empty sequence/string is denoted by $\varepsilon$.
@@ -14,25 +9,27 @@ We shall focus on \emph{string sequences}, namely, sequences over $\Sigma^*$. We
 %We consider the following 
 \smallskip
 \noindent\emph{Operations on string sequences and strings.} %Let $\Sigma$ be an alphabet and 
-Let us assume two string sequences $s_1 = (u_0, \ldots, u_{m-1})$ and  $s_2 = (v_0, \ldots, v_{n-1})$.
-\begin{itemize}
+We assume two string sequences $s_1 = (u_0, \ldots, u_{m-1})$ and  $s_2 = (v_0, \ldots, v_{n-1})$.
+\begin{itemize}%[topsep=0pt,partopsep=0pt]
 	\item $s_1 \concat s_2$ is the concatenation of $s_1$ and $s_2$, i.e., $(u_0, \ldots, u_{m-1}, v_0, \ldots, v_{n-1})$.
 
 	      % \item $\transducer(u)$, which applies a \emph{functional} transduction $\transducer$ to $u\in \Sigma^*$ and returns  $v$ such that $(u, v) \in \transducer$. \tl{check}
 	      %
-	\item $\myat(s_1, i)$ is the $i$-th element of $s_1$ if $i\in [0,m-1]$, and  undefined otherwise.
+	\item $\myat(s_1, i)$ is $u_i$ if $i\in [0,m-1]$, and  undefined otherwise.
 	      %
-	\item $\myjoin_v(s_1)$ joins the elements in $s_1$ with $v$ as the intermediate string, i.e., $\myjoin_v(s_1) = u_0 v \cdots v u_{m-1}$. 
+	\item $\myjoin_v(s_1)$ joins the elements in $s_1$ with $v$ as the intermediate string, i.e., \polished{$\myjoin_v(s_1) = u_0 v u_1 v u_2 v \cdots v u_{m-1}$}. 
 		      %
-	\item $s_1[i \rightarrow u]$ replaces the $i$-th element of $s_1$ by $u$ if $i\in [0,m-1]$,  and is $s_1$ otherwise,  i.e.
-	\[s_1[i \rightarrow u] = 
+	\item $s_1[i \rightarrow u]$ replaces $u_i$ in $s_1$ by $u$ if $i\in [0,m-1]$,  and is $s_1$ otherwise,  i.e.
+	\begin{center}
+	 $[s_1[i \rightarrow u] = 
 	\left \{
 	\begin{array}{l l}
 	(u_0, \ldots, u_{i-1}, u, u_{i+1}, \ldots, u_{m-1}), & \mbox{ if } i\in [0,m-1]; \\
 	s_1, & \mbox{ otherwise}.
 	\end{array}
 	\right.
-	\] 
+	$    
+	\end{center}
 	      %
 	\item $\myfilter_e(s_1)$ filters out all elements in $s_1$ that do not match the regular expression $e$, i.e., $\myfilter_e(s_1) = (u_{i_1}, \ldots, u_{i_k})$  such that $0\le i_1 < \cdots < i_k\le m-1$ and  for all $j \in [0,m-1]$, $u_j \in \Lang(e)$ iff $j \in \{i_1, \ldots, i_k\}$. %$u_j \in \Lang(e)$ iff $j \in \{i_1, \ldots, i_k\}$. 
 	      %
@@ -40,7 +37,7 @@ Let us assume two string sequences $s_1 = (u_0, \ldots, u_{m-1})$ and  $s_2 = (v
 	      %\tl{or $\myfilter_e(s_1) = ()$? it should be a sequence!?}\zhilin{yes, use () here}
 %\tl{$\varepsilon$ or $(\varepsilon)$?}\zhilin{empty sequence, $\varepsilon$. $(\varepsilon)$ denotes a sequence of length 1, where the element is the empty string ?}
 	      %
-	\item $\mysplit_e(u)$ splits a string $u$ into a sequence of substrings according to the regular expression $e$, i.e.,  $\mysplit_e(u) = (u'_1, \ldots, u'_k)$, where $u = u'_1 v_1 u'_2 v_2 \cdots u'_{k-1}v_{k-1} u'_k$ such that (1) for each $i \in [k-1]$, $v_i$ is the leftmost and longest substring of $u'_i v_i u'_{i+1}$ that matches $e$, and (2) $u'_k$ does not contain any substring that matches $e$.
+	\item $\mysplit_e(u)$ splits a string $u$ into a sequence of substrings according to the regular expression $e$, i.e.,  $\mysplit_e(u) = (u'_1, \ldots, u'_k)$, where $u = u'_1 v_1 u'_2 v_2 \cdots u'_{k-1}v_{k-1} u'_k$ such that (1) for each $i \in [k-1]$, $v_i$ is \polished{the leftmost and longest substring of $u'_i v_i u'_{i+1}\cdots v_{k-1}u'_k$} that matches $e$, and (2) $u'_k$ does not contain any substring that matches $e$.
 	      % moreover, $u'_k$ does not contain occurrences of $v$.
 	      In particular, if $u$ does not contain any substring that matches $e$, then $\mysplit_e(u) = (u)$.
 
@@ -51,11 +48,15 @@ Let us assume two string sequences $s_1 = (u_0, \ldots, u_{m-1})$ and  $s_2 = (v
 	      %
 	\item $\mymatchall_e(u)$ extracts the substrings of $u$ that match the regular expression $e$, 
 	%all occurrences of $e$ in the string $u$,
-	 i.e., $\mymatchall_e(u) = (v_1, \ldots, v_{k-1})$ such that $u = u'_1 v_1 u'_2 v_2 \cdots u'_{k-1}v_{k-1} u'_k$ and (1) for each $i \in [k-1]$, $v_i$ is the leftmost and longest occurrence of $e$ in $u'_i v_i u'_{i+1}$, and (2) $u'_k$ does not contain any substring that matches $e$.
+	 i.e., $\mymatchall_e(u) = (v_1, \ldots, v_{k-1})$ such that $u = u'_1 v_1 u'_2 v_2 \cdots u'_{k-1}v_{k-1} u'_k$ and (1) for each $i \in [k-1]$, $v_i$ is \polished{the leftmost and longest substring of $u'_i v_i u'_{i+1}\cdots v_{k-1}u'_k$}, and (2) $u'_k$ has no substring that matches $e$.
 
 	      % \item $\transducer(s_1)$ applies a transduction $\transducer$ to $s_1$ elementwise, i.e., $(\transducer(u_1), \ldots, \transducer(u_m))$.
 	      %subsequence, match, matchAll, transduction, 
 \end{itemize}
+
+\polished{Note that we choose the longest match semantics in $\mysplit_e(u)$ and $\mymatchall_e(u)$
+just for illustrating our approach, where
+the shortest match semantics can be captured by adapting the automata construction in the pre-image computation.}
 
 %A string over an alphabet $\Sigma$ is a sequence of symbols from $\Sigma$. 
 \smallskip
@@ -69,25 +70,25 @@ $s, t, \ldots$ (resp. $\svars,\svart, \ldots$) to denote sequence constants (res
 %\begin{figure}[htbp]
 %	\renewcommand{\arraystretch}{1.3}
 
-The syntax of $\arraylogic$ is defined as follows. 
+The syntax of $\arraylogic$ is defined as follows:
 \[
-	\begin{tabular}{l l l r}
+\begin{tabular}{c l l l r}
 		%        $u, v, \cdots$     &  &                                                                          & string constants           \\
 		%        $\svarx, \svary, \cdots$     &  &                                                                          & string variables           \\
 		%        $m,n, \cdots$     &  &                                                                          & integer constants         \\
 		%        $\ivarx, \ivary, \cdots$     &  &                                                                          & integer variables          \\
 		%        $s, s', \cdots$     &  &                                                                          & sequence constants            \\
 		%        $\seqvara,\seqvarb, \cdots$     & &                                                                          & sequence variables            \\
-		$it$      & $ \eqdef $ & $m \mid \svarm \mid it+it \mid it-it \mid \mystrlen(strt)\mid \myseqlen(seqt) $                                                      & integer terms  \\
-		$strt$    & $ \eqdef $ & $u \mid \svaru \mid strt \concat strt \mid \myat(seqt, it) \mid \myjoin_u(seqt)    $                      & string terms   \\
-		$seqt$    & $ \eqdef $ & $(strt) \mid s \mid \svars \mid seqt \concat seqt \mid seqt[it \rightarrow strt] \mid  \myfilter_e(seqt) \mid  $ &                \\
-		          &            & $\ \ seqt[it, it]  \mid \mysplit_e(strt) \mid \mymatchall_e(strt) $                              & sequence terms \\
+	$~$ &	$it$      & $ \eqdef $ & $m \mid \svarm \mid it+it \mid it-it \mid \mystrlen(strt)\mid \myseqlen(seqt) $                                                      & integer terms  \\
+		&	$strt$    & $ \eqdef $ & $u \mid \svaru \mid strt \concat strt \mid \myat(seqt, it) \mid \myjoin_u(seqt)    $                      & string terms   \\
+		&	$seqt$    & $ \eqdef $ & $(strt) \mid s \mid \svars \mid seqt \concat seqt \mid seqt[it \rightarrow strt] \mid  \myfilter_e(seqt) \mid  $ &                \\
+			&          &            & $\ \ seqt[it, it]  \mid \mysplit_e(strt) \mid \mymatchall_e(strt) $                              & sequence terms \\
 		%        $a$      & $::=$    & $\seqvara = \seqvarb[m: n] \mid A = \transducer(B) \mid x=\myread(A, m) \mid$          &                           \\
 		%                  &          & $A = \mywrite(B, x ,m) \mid x = \myjoin(A,u) \mid A = \mysplit(x, e) \mid$ &                           \\
 		%                  &          & $x= y\cdot z \mid x = \transducer(y)\mid x\in e$                         & atomic formulas        \\
-		$\varphi$ & $ \eqdef $ & $ it \iop it  \mid seqt = seqt \mid strt = strt \mid strt \in e  \mid \varphi \wedge \varphi $                   & formulas
+		&	$\varphi$ & $ \eqdef $ & $ it \iop it  \mid seqt = seqt \mid strt = strt \mid strt \in e  \mid \varphi \wedge \varphi $                   & formulas
 	\end{tabular}
-\]
+    \]
 where  $\iop\, \in \{=, \neq, <, \le, >, \ge\}$.
 %	\caption{Syntax of $\arraylogic$}
 %	\label{fig:syntax}
@@ -106,17 +107,19 @@ A $\arraylogic$ formula is a conjunction of atomic formulas, each of which is of
 %For each regular expression $e$, the language defined by $e$, denoted by $\Lang(e)$, is defined recursively. For instance, $\Lang(\emptyset) = \emptyset$, $\Lang(\varepsilon) = \{\varepsilon\}$, $\Lang(a) = \{a\}$, and $\Lang(e_1 \cdot e_2) = \Lang(e_1) \cdot \Lang(e_2)$, $\Lang(e_1 + e_2) = \Lang(e_1) \cup \Lang(e_2)$, and so on. 
 %
 Note that sequence and string inequalities can be expressed as well. %seen as macros, with the help of existential quantifiers. 
-For instance (using disjunctions and quantifiers for sake of presentation):
+For instance (using disjunctions and quantifiers for the sake of presentation):
 %
-$$\svarx \neq \svary ~\equiv~ \exists \svarx_1, \svarx_2, \svary_2.\ \bigvee \limits_{a, b \in \Sigma, a \neq b} (\svarx = \svarx_1 a \svarx_2 \wedge \svary = \svarx_1 b \svary_2) \vee \exists \svarz.\ \bigvee_{a \in \Sigma} (\svarx = \svary a \svarz \vee \svary = \svarx a \svarz),$$
+%$$\svarx \neq \svary ~\equiv~ \exists \svarx_1, \svarx_2, \svary_2.\ \bigvee \limits_{a, b \in \Sigma, a \neq b} (\svarx = \svarx_1 a \svarx_2 \wedge \svary = \svarx_1 b \svary_2) \vee \exists \svarz.\ \bigvee_{a \in \Sigma} (\svarx = \svary a \svarz \vee \svary = \svarx a \svarz),$$
 %\tl{how about $\varepsilon$ and $a$?}
 %\tl{does not read right ?}%
-$$
-	\begin{array}{l c l }
-		\seqvara \neq \seqvarb & ~\equiv~ & (\exists \seqvara_1, \seqvara_2, \seqvarb_2, \svarz_1, \svarz_2.\ \seqvara = \seqvara_1 \concat (\svarz_1) \concat \seqvara_2 \wedge \seqvarb = \seqvara_1 \concat (\svarz_2) \concat \seqvarb_2 \wedge \svarz_1 \neq \svarz_2)\ \vee \\
-		                       &        & \hspace{4mm} \exists \seqvarg, \svarz.\ \seqvara  = \seqvarb \concat (\svarz) \concat \seqvarg \vee    \seqvarb  = \seqvara \concat (\svarz) \concat \seqvarg.
-	\end{array}
-$$
+ \begin{align*}
+    \svarx \neq \svary & \equiv& \exists \svarx_1, \svarx_2, \svary_2. \bigvee \limits_{a, b \in \Sigma, a \neq b} (\svarx = \svarx_1 a \svarx_2 \wedge \svary = \svarx_1 b \svary_2) \vee \exists \svarz. \bigvee_{a \in \Sigma} (\svarx = \svary a \svarz \vee \svary = \svarx a \svarz) \\
+		\seqvara \neq \seqvarb &\equiv & (\exists \seqvara_1, \seqvara_2, \seqvarb_2, \svarz_1, \svarz_2.\ \seqvara = \seqvara_1 \concat (\svarz_1) \concat \seqvara_2 \wedge \seqvarb = \seqvara_1 \concat (\svarz_2) \concat \seqvarb_2 \wedge \svarz_1 \neq \svarz_2)\ \vee \\
+		                   &   & %\hspace{4mm} 
+                               \exists \seqvarg, \svarz.\ \seqvara  = \seqvarb \concat (\svarz) \concat \seqvarg \vee    \seqvarb  = \seqvara \concat (\svarz) \concat \seqvarg.
+\end{\align*}
+%
+\polished{Though rewriting inequalities produces disjunctions, they can still be handled in the DPLL(T) framework~\cite {dpll_t}. Hence, we focus on the disjunction-free fragment.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\hide{
@@ -147,7 +150,7 @@ Henceforth, we assume that all sequence/string equalities satisfy this constrain
 
 %It is easy to see that for a sequence equality $seqt_1 = seqt_2$, we can introduce a fresh sequence variable $\seqvara$ and rewrite  it as $\seqvara= seqt_1 \wedge \seqvara = seqt_2$. Similarly, for a string equality $strt_1 = strt_2$, we can introduce a fresh string variable $\svarx = strt_1 \wedge \svarx = strt_2$. Note that the rewritings preserve the satisfiability. As a result, we can assume that all the sequence equalities $seqt_1 = seqt_2$ (resp. string equalities $strt_1 = strt_2$) satisfy that $seqt_1$ is a sequence variable (resp. $strt_1$ is a string variable). 
 
-\begin{definition}[Straight-line fragment]
+\begin{definition}[Straight-line fragment]\label{def:straight_line}
 	Given a $\arraylogic$ formula $\varphi$, 
 	 the \emph{dependency graph} $G_\varphi$ of  $\varphi$
 	 is a directed graph $(V,E)$ such that
@@ -158,7 +161,7 @@ Henceforth, we assume that all sequence/string equalities satisfy this constrain
 	%
 	%For instance, from the equality $\seqvara = \seqvarb[1, \mylen(\svarx)]$, we know that $(\seqvara, \seqvarb)$ is an edge in $G_\varphi$, while $(\seqvara, \svarx)$ is not. 
 
-$\varphi$ is \emph{straight-line} if $\varphi$ is disjunction-free, and each string/sequence variable occurs as the left-hand sides of equalities at most once, moreover, and $G_\varphi$ is acyclic.
+$\varphi$ is \emph{straight-line} if $\varphi$ is disjunction-free, and each string/sequence variable occurs as the left-hand side of equalities at most once; moreover, $G_\varphi$ is acyclic.
 
 %	$\varphi$ is \emph{straight-line} if $G_\varphi$ is acyclic.
 \end{definition}

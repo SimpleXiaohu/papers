@@ -1,6 +1,7 @@
 \documentclass{llncs}
 \usepackage{hyperref}
-\usepackage[fleqn]{amsmath}
+% \usepackage[fleqn]{amsmath}
+\usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{float}
 %\usepackage{amsthm}
@@ -9,10 +10,12 @@
 \usepackage[T1]{fontenc} %(or \usepackage{t1enc}) 
 
 \usepackage{tikz}
+\usepackage{enumitem}
 \usepackage{multirow} 
 
 \usepackage[cache=false]{minted}
 %\usepackage{minted}
+
 
 \setminted{
   % Line numbers not flowing out of the margin
@@ -73,6 +76,8 @@
 \newcommand{\denghang}[1]{\color{red} {DH: #1 :HD} \color{black} }
 \newcommand{\tl}[1]{\color{magenta} {TL: #1 :LT} \color{black} }
 \newcommand{\fu}[1]{\color{purple} {FU: #1 :UF} \color{black} }
+\DeclareRobustCommand{\polished}[1]{{\color{red}{#1}}}
+
 %\newcommand{\denghang}[1]{{\color{teal}\textbf{DH:} #1 \textbf{:HD}\color{black}}}
 %\newcommand{\comment}[1]{{\color{blue}\textbf{MARK:} #1 \textbf{:KRAM}\color{black}}}
 
@@ -81,10 +86,49 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{Decision Procedure for \\ A Theory of String Sequences}
+\title{Decision Procedure for \\ A Theory of String Sequences\thanks{This work was partially supported by TBD.}}
 
-\author{}
-\institute{}
+% \title{Contribution Title}
+% %
+% %\titlerunning{Abbreviated paper title}
+% % If the paper title is too long for the running head, you can set
+% % an abbreviated paper title here
+% %
+% \author{First Author\inst{1}\orcidID{0000-1111-2222-3333} \and
+% Second Author\inst{2,3}\orcidID{1111-2222-3333-4444} \and
+% Third Author\inst{3}\orcidID{2222--3333-4444-5555}}
+% %
+% \authorrunning{F. Author et al.}
+% % First names are abbreviated in the running head.
+% % If there are more than two authors, 'et al.' is used.
+% %
+% \institute{Princeton University, Princeton NJ 08544, USA \and
+% Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
+% \email{lncs@springer.com}\\
+% \url{http://www.springer.com/gp/computer-science/lncs} \and
+% ABC Institute, Rupert-Karls-University Heidelberg, Heidelberg, Germany\\
+% \email{\{abc,lncs\}@uni-heidelberg.de}}
+
+\author{Denghang Hu\inst{1,2} \and 
+  Taolue Chen\inst{3} \and
+  Philipp R\"{u}mmer\inst{4}\and\\ 
+  Fu Song\inst{1,2,5} \and
+  Zhilin Wu\inst{1,2} 
+  }
+
+\institute{
+Key Laboratory of System Software and State Key
+  Laboratory of Computer Science, Institute of Software, Chinese Academy
+  of Sciences 
+  \and
+University of Chinese Academy of Sciences, China
+\and 
+Birkbeck, University of London, United Kingdom
+\and University of Regensburg, Germany
+\and Nanjing Institute of Software Technology, China
+}
+
+
 %\author{Denghang Hu\inst{1,2}, Taolue Chen\inst{3}, Philipp R\"{u}mmer\inst{4}, Zhilin Wu\inst{1,2}}
 %\institute{Key Laboratory of System Software and State Key Laboratory of Computer Science, Institute of Software, Chinese Academy of Sciences, China \and
 %University of Chinese Academy of Sciences, China \and 
@@ -98,61 +142,64 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\vspace{-6mm}
 \begin{abstract}
-%Sequence of strings (aka array of strings) occurs frequently in string-manipulating programs (e.g. the result of matching of regular expressions or the result of the split function).  
-%In this paper, we investigate how to solve theory of sequences of strings. We show that while the satisfiability problem of this theory is undecidable in general, it is decidable for the straight-line fragments. We implement the decision procedure and do experiments to show the efficiency of the tool. 
-
-The theory of sequences, supported by many SMT solvers, can model program data types including bounded arrays and lists. Sequences are parameterized by the element data type and provide operations such as accessing elements, concatenation, forming sub-sequences and updating elements. Strings and sequences are intimately related; many operations, e.g., matching a string according to a regular expression, %(returning an array of sub-strings), for
-splitting strings, or joining strings in a sequence, are frequently used in string-manipulating programs. Nevertheless,
-these operations are typically not directly supported by existing SMT solvers, which instead only consider the generic theory of sequences.  
+The theory of sequences, supported by many SMT solvers, can model program data types including bounded arrays and lists. Sequences are parameterized by the element data type and provide operations such as accessing elements, concatenation, forming sub-sequences and updating elements. Strings and sequences are intimately related; many operations, e.g., matching a string according to a regular expression, 
+splitting strings, or joining strings in a sequence, are frequently used in string-manipulating programs. Nevertheless, these operations are typically not directly supported by existing SMT solvers, which instead only consider the generic theory of sequences.  
 In this paper, we propose a theory of string sequences and study its
 satisfiability. We show that, while it is undecidable in general,  the
 decidability can be recovered by restricting to the straight-line
 fragment. This is shown by encoding each string sequence as a string,
-and each string sequence operation as a corresponding string operation. %providing associated 
-We provide pre-image computation for the resulting string operations with respect to automata, effectively casting it into the generic OSTRICH string constraint solving framework. %to which existing decision procedure for strings and integer constraints can be applied.  
-  %
-We implement the new decision procedure as a tool $\ostrichseq$,  and carry out experiments on benchmark constraints generated from both real-world and hand-crafted JavaScript programs. The experiments confirm the efficacy of our approach. %show that our approach is
-  %efficient and capable of solving constraints that existing solvers
-  %cannot.
+and each string sequence operation as a corresponding string operation. We provide pre-image computation for the resulting string operations with respect to automata, effectively casting it into the generic OSTRICH string constraint solving framework. 
+We implement the new decision procedure as a tool $\ostrichseq$, and carry out experiments on benchmark constraints generated from \polished{real-world JavaScript programs, hand-crafted templates and unit tests}. The experiments confirm the efficacy of our approach. 
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %\vspace{-6mm}
+\section{Introduction} \label{sect:intro}
+
 \input{intro.tex}
 
-%\section{Preliminaries}
-%\vspace{-2mm}
-\input{mot-exmp}
 
 %\vspace{-2mm}
+\section{Preliminaries}\label{sec:prelim}
+
 \input{prelim}
 
 %\vspace{-2mm}
+\section{Motivating Example} \label{sect:example}
+
+\input{mot-exmp}
+
+%\vspace{-2mm}
+\section{A Theory of String Sequences ($\arraylogic$)}\label{sec:logic}
+
 \input{theory.tex}
 
 %\vspace{-2mm}
+\section{The Decision Procedure} \label{sect:procedure}
+
 \input{algo.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %\vspace{-2mm}
+\section{Implementation and Experiments} \label{sect:exp}
+
 \input{experiments.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %\vspace{-2mm}
+\section{Related work}\label{sect:related}
+
 \input{related.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\vspace{-2mm}
 \section{Conclusion} \label{sect:conc}
-\vspace{-2mm}
 
-In this paper, we have proposed $\arraylogic$, a logic of string sequences, which supports a wealth of string and sequence operations---especially their interactions---commonly in real-word string-manipulation programs. We have provided a decision procedure for the straight-line fragment, which is implemented as a new tool $\ostrichseq$. The experiments on both hand-crafted and real-word benchmarks demonstrate that $\ostrichseq$ is an effective and promising tool for testing, analysis and verification of string-manipulation programs in practice. 
+In this paper, we have proposed $\arraylogic$, a logic of string sequences, which supports a wealth of string and sequence operations---especially their interactions---commonly in real-word string-manipulation programs. We have provided a decision procedure for the straight-line fragment, which is implemented as a new tool $\ostrichseq$. The experiments on both hand-crafted and real-world benchmarks demonstrate that $\ostrichseq$ is an effective and promising tool for testing, analysis and verification of string-manipulation programs in practice. 
 
 %
 %and study its satisfiability. We show that, while it is undecidable in general,  the decidability can be recovered by restricting to the straight-line fragment. This is shown by encoding a string sequence into a string and accordingly, encoding string sequence operations into corresponding string operations. %providing associated 

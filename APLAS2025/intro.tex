@@ -1,45 +1,17 @@
 %!TEX root = main.tex
 
-\section{Introduction} \label{sect:intro}
-% illustrate current situation of string sequence reasoning
-
-%\zhilin{
-%outline 
-%
-%strings are important. 
-%
-%string sequences/arrays occur frequently, different sources, match of regular expressions, split and join functions, 
-%
-%the SOTA SMT solvers support sequences, either its elements is of generic type or integers. these solvers are incapable of solving the aforementioned operations that transform between strings and string sequences, 
-%
-%contributions
-%
-%theory of string sequences
-%
-%decision procedure straight-line
-%
-%implementation
-%
-%experiments show that our solver can solve more instances than the other solvers. 
-%}
-
-
 Many real-world applications, such as web applications and programs processing data of type string, involve a multitude of complex operations that convert between strings and string sequences. Typical examples include $\myjoin$ and $\mysplit$, which are present in 
-almost all  built-in libraries of modern programming languages.
+almost all built-in libraries of modern programming languages.
 %
-Reasoning about string sequences, also known as extendable string arrays~\cite{JezLMR23}, is therefore a crucial aspect of program analysis.
-%in the context of string manipulation. 
+Reasoning about string sequences, also known as extendable string arrays~\cite{JezLMR23}, is therefore a crucial aspect of program analysis. 
 
 Satisfiability Modulo Theory (SMT~\cite{smt_18}) solving provides an automatic way to verify software systems. 
 %using sequences. 
-At the moment, there is no standardized sequence theory in SMT-LIB~\cite{smt_standard}. Instead, in verification tools, often the theory of arrays is used, which is limited and does not provide even basic operations like sequence length. Fortunately, \cite{seq_2012} proposed a basic format for a sequence theory, which has been implemented and extended by SMT solvers such as Z3~\cite{Z3} and cvc5~\cite{BarbosaBBKLMMMN22} %attempt to extend it 
-with practical operations. In particular, \cite{cvc5_seq} presents a calculus in cvc5 for reasoning about string sequences, which extends the proposal~\cite{seq_2012} with \verb|update| (aka \verb|write|) operations. 
-The implementation of sequences in Z3 has been documented in the Z3 guide~\cite{z3_seq_doc} and includes operations
-%the  \verb|update| function is not supported, but 
-like \verb|map| and \verb|foldleft| (but no \verb|update|).
+At the moment, there is no standardized sequence theory in SMT-LIB~\cite{smt_standard}. Instead, in verification tools, often the theory of arrays is used, which is limited and does not provide even basic operations like sequence length. Fortunately, \cite{seq_2012} proposed a basic format for a sequence theory, which has been implemented and extended by SMT solvers such as Z3~\cite{Z3} and cvc5~\cite{BarbosaBBKLMMMN22} with practical operations. In particular, \cite{cvc5_seq} presents a calculus in cvc5 for reasoning about string sequences, which extends the proposal~\cite{seq_2012} with \verb|update| (aka \verb|write|) operations. 
+The implementation of sequences in Z3 has been documented in the Z3 guide~\cite{z3_seq_doc} and includes operations such as \verb|map| and \verb|foldleft| (but no \verb|update|).
 
 Although existing SMT solvers are effective at reasoning about sequences in general, to the best of our knowledge, none of them directly support functions that convert between strings and string sequences %.  no SMT solvers can handle conversions between string and string sequence, for instance through 
-such as $\myjoin$ and $\mysplit$ functions. While it is possible to implement these functions using existing ones for some SMT solvers (e.g., Z3 can use \verb|map| and \verb|foldleft| to implement the $\myjoin$ function), usually the solvers do not provide decision procedures for those theories and fail to solve many instances. 
+such as $\myjoin$ and $\mysplit$. While it is possible to implement these functions using existing ones for some SMT solvers (e.g., Z3 can use \verb|map| and \verb|foldleft| to implement the $\myjoin$ function), usually the solvers do not provide decision procedures for those theories and fail to solve many instances. 
 This limitation poses a significant challenge for program analysis that involves such operations.
 %
 % illustrate the need for a new solver
@@ -49,17 +21,16 @@ The purpose of our work is to fill this gap.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \smallskip
-\noindent\emph{Contributions.} We propose a logic (aka constraint language) $\arraylogic$ of string sequences, which 
-extends the existing sequence theory in SMT solvers with dedicated string operations. In addition to standard string operations (replace/replaceAll, reverse, finite transducers, regular constraints, 
+\noindent\emph{Contributions.} We propose a logic (aka constraint language) $\arraylogic$ of string sequences, which extends the existing sequence theory in SMT solvers with dedicated operations of string sequences and strings. In addition to the standard string operations (replace/replaceAll, reverse, finite transducers, regular constraints, 
 %as well as 
-length, indexOf, substring, etc.), our logic emphasizes the interaction between strings and string sequences through operations such as $\mysplit$, $\myjoin$, $\myfilter$, and $\mymatchall$. For instance, $\mysplit$ splits a string into a sequence of substrings according to a regular expression; $\myjoin$ concatenates all the strings in a sequence to obtain a single string. More details can be found in Section~\ref{sec:logic}. Typically, when string sequences are considered, it is natural to consider the integer data type as well; for instance, one usually needs to refer to the length of a sequence or the index of specific sequence elements. As a result, $\arraylogic$ features three data types: integers, strings, and string sequences. In terms of operations, the logic subsumes, to our best knowledge, most string constraint languages that have been proposed in the literature. 
+length, indexOf, substring, etc.), our logic emphasizes the interaction between strings and string sequences through operations such as $\mysplit$, $\myjoin$, $\myfilter$, and $\mymatchall$. For instance, $\mysplit$ splits a string into a sequence of substrings according to a regular expression; $\myjoin$ concatenates all the strings in a sequence to obtain a single string. More details can be found in Section~\ref{sec:logic}. Typically, when string sequences are considered, it is natural to consider the integer data type as well; for instance, one usually needs to refer to the length of a sequence or the index of a specific sequence element. As a result, $\arraylogic$ features three data types: integers, strings, and string sequences. In terms of operations, the logic subsumes, to our best knowledge, most string constraint languages that have been proposed in the literature. 
 
 %
 %This motivates the following problem: provide a decision procedure that supports both string and integer data type, with completeness guarantee and meanwhile
 %admitting efficient implementation.
 
 Our main focus is the decision procedure for the satisfiability problem of  $\arraylogic$. 
-Because of its expressiveness, it is perhaps not surprising that $\arraylogic$ is undecidable in general. To reinstate decidability, we consider the straight-line fragment, which imposes syntactic restrictions on the constraints written in the logic. %In a nutshell, this
+Because of its expressiveness, it is perhaps not surprising that $\arraylogic$ is undecidable in general. To reinstate decidability, we consider the straight-line fragment, which imposes a syntactic restriction on the constraints written in the logic. %In a nutshell, this
 Straight-line formulas naturally arise when verifying programs using
 bounded model checking or  symbolic execution, 
 % (e.g. see [27, 43, 65]), 
@@ -67,9 +38,7 @@ which unroll loops in the programs up to a given
 depth and convert programs to static single assignment form (i.e. each variable is defined at most once). For example, a majority of the constraints in the standard Kaluza
 benchmarks~\cite{Berkeley-JavaScript} %with 50,000+ test cases generated by symbolic execution of
 %JavaScript applications 
-satisfy this condition. (Cf.\ Section~\ref{sect:example} for a concrete example.) %\cite{Vijay-length}.
-%
-%Second, it unifies the earlier logics
+satisfy this condition. (Cf.\ Section~\ref{sect:example} for a concrete example.)  
 
 
 %Nonetheless, as already noted in
@@ -94,10 +63,7 @@ satisfy this condition. (Cf.\ Section~\ref{sect:example} for a concrete example.
 %proceeded by showing that a new straight-line logic with the more general replaceAll function and
 %concatenation is decidable, but becomes undecidable when the length function is permitted.
 
-The general strategy of our decision procedure is to encode each string sequence as a string in such a way that all operations for string sequences considered in $\arraylogic$ can be transformed into string operations, possibly involving integers. As such, the decidability of (straight-line) $\arraylogic$ is reduced to string constraints with the integer data type, which was shown to be decidable \cite{atva2020}. Needless to say, this strategy requires to overcome certain technical challenges,
-%resulting string constraints. 
-%It turns out that 
-as the string constraints resulted from the reduction typically encompass complex (and sometimes non-standard) string operations, which go well beyond the capacity of state-of-the-art string constraint solvers. % to solve, since they usually involve the string operations {\tt str.replace\_re\_all}, {\tt str.substr}, {\tt str.len}, as well as some non-standard  
+The general strategy of our decision procedure is to encode each string sequence as a string in such a way that all operations for string sequences considered in $\arraylogic$ can be transformed into string operations, possibly involving integers. As such, the decidability of (straight-line) $\arraylogic$ is reduced to string constraints with the integer data type, which was shown to be decidable \cite{atva2020}. Needless to say, this strategy requires overcoming certain technical challenges, as the string constraints resulting from the reduction typically encompass complex (and sometimes non-standard) string operations, which go well beyond the capacity of state-of-the-art string constraint solvers. % to solve, since they usually involve the string operations {\tt str.replace\_re\_all}, {\tt str.substr}, {\tt str.len}, as well as some non-standard  
 Recall that for the decidability of string constraints with integers, cost-enriched finite automata (CEFA), a variant of cost-register automata,  %introduced by Alur et al. [4], which are called  for convenience. 
 were utilized \cite{atva2020}. %to maintain a separation of string variables and integer variables. 
 %Intuitively, each CEFA records the connection between a
@@ -112,11 +78,15 @@ so the powerful string constraint solving framework  OSTRICH %for string constra
 %%class of string constraints considered in this paper is currently one of the most expressive string theories involving the integer data type known to enjoy a decision procedure.
 
 %-------------------------------------------------------------------------------------
-We implement the decision procedure as a new solver $\ostrichseq$ on top of OSTRICH~\cite{CHL+19} and $\princess$~\cite{princess08}. To evaluate the effectiveness of $\ostrichseq$, we curate two benchmark suites of constraints generated from both real-world and hand-crafted
-JavaScript programs, on which  %$\seqbase$ and $\seqext$. 
-we compare $\ostrichseq$ with cvc5, Z3, Z3-noodler~\cite{ChenCHHLS24}, $\ostrich$ and $\princessarr$.
+We implement the decision procedure as a new solver $\ostrichseq$ on top of OSTRICH~\cite{CHL+19} and $\princess$~\cite{princess08}. To evaluate the effectiveness of $\ostrichseq$, we curate two benchmark suites of constraints that 
+are randomly generated from templates (only using
+the operations directly supported by some existing SMT solvers) and extracted from real-world JavaScript programs and unit tests (involving string sequence operations that are not directly supported by existing SMT solvers), respectively. 
+%generated from real-world and hand-crafted JavaScript programs, 
+%We compare $\ostrichseq$ with the SOTA string solvers, cvc5, Z3, Z3-noodler~\cite{ChenCHHLS24}, $\ostrich$ and $\princessarr$~\cite{princess08}.
 %
-The experimental results show that $\ostrichseq$ can solve considerably more constraints generated from both real-world and hand-crafted JavaScript programs than the SOTA string solvers (e.g., cvc5 and Z3), while being largely as efficient as most of them. 
+On both benchmark suites, the experimental results show that $\ostrichseq$ can solve considerably more constraints
+%generated from both real-world and hand-crafted JavaScript programs 
+than SOTA string solvers including cvc5, Z3, Z3-noodler~\cite{ChenCHHLS24}, $\ostrich$ and $\princessarr$~\cite{ruemmer2024princess}, while being largely as efficient as most of them. 
 
 %The implementation consists of approximately 5,000 lines of Scala code. The core functionality—preimage computation for sequence operations such as $\mysplit$, $\myjoin$, $\myfilter$, and $\mymatchall$—is implemented in about 2,000 lines of code and is integrated directly into the OSTRICH framework. To support the representation of sequences, we built a lightweight library for sequence automata that compiles the sequence variable into a set of automata, which are then used to solve the constraints. The library is implemented in about 1,000 lines of code. The remaining code is used for the integration with OSTRICH and for the implementation of the decision procedures for the theory of sequences. 
 
