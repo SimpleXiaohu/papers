@@ -2,23 +2,21 @@
 
 
 %\smallskip
-\noindent
+%\noindent
 {\bf String constraint solving.} 
 String constraint solving has received considerable attention in the literature. Amadini \cite{Amadini23} provides a comprehensive survey of the literature up to 2021. In particular, %extensive documentation of this diversity, and classifies
-approaches to string constraint solving are classified into three main categories: automata-based (relying on finite state automata to represent the domain of string variables
-and to handle string operations, e.g., \cite{Abdulla14,HJLRV18,CCH+18,Vijay-length,LB16,BerzishKMMDNG20,ChenCHHLS24}), word-based (algebraic approaches based on systems of word equations, e.g., \cite{cvc4,BarbosaBBKLMMMN22,Z3,Z3str2,Z3str3,Z3str4,TCJ16,S3,BerzishKMMDNG20,ChenCHHLS24} 
-), 
+prior approaches %to string constraint solving 
+are classified into three main categories: automata-based (relying on finite automata to represent the domain of string variables
+and to handle string operations, e.g., \cite{Abdulla14,HJLRV18,CCH+18,Vijay-length,LB16,BerzishKMMDNG20,ChenCHHLS24}), word-based (algebraic approaches based on systems of word equations, e.g., \cite{cvc4,BarbosaBBKLMMMN22,Z3,Z3str2,Z3str3,Z3str4,TCJ16,S3,BerzishKMMDNG20,ChenCHHLS24}), 
 and unfolding-based approaches (explicitly reducing each string into a number of contiguous elements denoting its
 characters, e.g., \cite{SFPS17,KGAGHE13,SAHMMS10,LG13,AGS18,DEKMNP19}). 
 
 %Generally speaking, 
-From another perspective, there are two lines of work aiming for building practical string solvers: %could essentially be classified into two categories. 
-(1) one could support as many constraints as possible, but primarily resort to heuristics, offering no completeness/termination guarantee. 
+From another perspective, there are two lines of work aiming for building practical string constraint solvers. %could essentially be classified into two categories. 
+(1) One could support as many operations as possible, but primarily resort to heuristics, offering no completeness/termination guarantees. 
 %This is a realistic approach since, as mentioned above, the problem involving both string and integer data types is in general undecidable. 
-Many solvers %for string constraints 
-are usually implemented as string
-theory solvers inside SMT solvers, %, such as cvc5 [9] or Z3 [31], 
-allowing combination with other theories, most commonly the theory of integers for string lengths. Some (non-exhaustive) examples include CVC4/5 \cite{cvc4,BarbosaBBKLMMMN22}, Z3 \cite{Z3,BTV09}, Z3-str2/3/4 \cite{Z3str2,Z3str3,Z3str4}, S3(P)~\cite{TCJ16,S3}, Trau~\cite{Abdulla17} (or its variants Trau+ \cite{AbdullaA+19}), %and
+Many string constraint solvers are implemented in SMT solvers, %, such as cvc5 [9] or Z3 [31], 
+allowing combination with other theories, most commonly the theory of integers for string lengths. Some (non-exhaustive) examples include cvc4/5 \cite{cvc4,BarbosaBBKLMMMN22}, Z3 \cite{Z3,BTV09}, Z3-str2/3/4 \cite{Z3str2,Z3str3,Z3str4}, S3(P)~\cite{TCJ16,S3}, Trau~\cite{Abdulla17} (or its variants Trau+ \cite{AbdullaA+19}), %and
 %Z3-Trau [9]), %ABC [10], 
 Slent~\cite{WC+18}, etc.  
 %
@@ -38,9 +36,9 @@ and Z3-Noodler \cite{ChenCHHLS24} %is a fork of Z3 that replaces its string theo
 %
 %An extensive experimental evaluation shows that Z3-Noodler is a fully-fledged solver that can compete with state-of-the-art solvers, surpassing them by far on many benchmarks. Moreover, it is often complementary to other solvers, making it a suitable choice as a candidate to a solver portfolio.
 %
-(2) The second approach is to develop solvers for decidable fragments. 
+(2) The second approach is to develop solvers for decidable fragments, 
 %supporting both strings and integers %
-Solvers in this category include Norn \cite{Abdulla14}, SLOTH \cite{HJLRV18} and
+including Norn \cite{Abdulla14}, SLOTH \cite{HJLRV18} and
 OSTRICH \cite{CCH+18,CHL+19}, which are usually based on complete decision procedures (e.g. \cite{Vijay-length,AbdullaA+19,LB16}) 
 
 %The fragment without complex string operations (e.g. replaceAll and
@@ -59,7 +57,7 @@ string/integer conversion and flat regular constraints~\cite{WuCWXZ24}, Not-Subs
 \smallskip
 \noindent
 {\bf Sequences as an extension of strings.} Strings and sequences are closely related, but may exhibit in different forms. For instance, a string can be considered as a sequence over a finite alphabet. 
-Jez et al.~\cite{JezLMR23} recently studied sequence theories which are an extension of theories of strings with an infinite alphabet of letters, together with a corresponding alphabet theory (e.g. linear integer arithmetic). They provide decision procedures based on parametric automata/transducers, giving rise to a sequence constraint solver $\seco$. Our work is different in that we essentially work on a sequence theory where the element is instantiated by the string type. 
+Jez et al.~\cite{JezLMR23} recently studied sequence theories which are an extension of theories of strings with an infinite alphabet of letters, together with a corresponding alphabet theory (e.g. linear integer arithmetic). They provided decision procedures based on parametric automata/transducers, giving rise to a sequence constraint solver $\seco$. Our work is different in that we essentially work on a sequence theory where the element is instantiated by the string type. 
 
 %
 %A. Jez etc.~\cite{JezLMR23} present a formal and practical study of decision procedures for sequence theories logical theories that generalize string reasoning to sequences over infinite alphabets, such as integers or strings themselves. The main idea is to introduce parametric automata (PA) and parametric transducers as generalizations of symbolic automata, enabling expressive yet decidable formulations of sequence constraints. To support practical verification tasks, they develop $\seco$, a sequence constraint solver based on the parametric automata. Unfortunately, despite the power of parametric automata, the implementation of $\seco$ is not yet mature enough to be used in practice, which has some soundness issues on our benchmarks.
