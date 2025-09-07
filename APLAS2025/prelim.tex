@@ -2,7 +2,7 @@
 
 
 %Throughout the paper, 
-Let $\natnum$ denote the set of natural numbers. For $1\leq n\in \natnum$, let $[n]:=\{1, \ldots, n\}$, and for $m<n \in \natnum$, let $[m,n] := \{j \mid m \le j \le n\}$. We also use standard quantifier-free/existential \emph{linear integer arithmetic} (LIA) formulas, which are typically ranged over by $\phi, \varphi$, etc. For an integer term $t$, we use $t[t_1/t_2]$ to denote the term obtained by replacing $t_2$ with $t_1$ where $t_1$ and $t_2$ are integer terms.
+Let $\natnum$ denote the set of natural numbers. For $1\leq n\in \natnum$, let $[n]:=\{1, \ldots, n\}$, and for $m<n \in \natnum$, let $[m,n] := \{j \mid m \le j \le n\}$. We also use standard quantifier-free/existential \emph{linear integer arithmetic} (LIA) formulas, which are typically ranged over by $\phi, \varphi$, etc. For an integer term $t$, we use $t[t_1/t_2]$ to denote the term obtained by replacing $t_2$ with $t_1$ in $t$, where $t_1$ and $t_2$ are integer terms.
 
 \smallskip
 \polished{\noindent \textbf{Strings, languages, and transductions.}} We fix an alphabet $\Sigma$, i.e., a finite set of letters. 
@@ -177,7 +177,10 @@ Finally, a pre-image of $L$ under $f$, denoted by $f^{-1}(L)$, is a pair $(\cerl
 
 The core concept of \emph{pre-image computation} for the function $f$ involves determining the vector $\vec{t}$ of LIA formulas and, for each CEFA $\aut$, computing $f^{-1}_{\vec{t}}(\Lang(\aut))$ represented as a finite set of CEFAs. 
 %
-Intuitively, we remove the string equalities of the form $y = f(x_1, \myvec{it_1}, \cdots, x_l, \myvec{it_l})$ (where $\myvec{it_1}$, $\cdots$, $\myvec{it_l}$ are integer expressions) one by one by computing the pre-images and adding the resulting CEFA membership constraints for $x_1, \cdots, x_l$. In the end,  the original string constraint is transformed into a conjunction of CEFA membership constraints and LIA formulas, whose satisfiability checking %can be solved in 
+Intuitively, we remove the string equalities of the form 
+$y = f(x_1, \myvec{it_1}, \cdots, x_l, \myvec{it_l})$ (where $\myvec{it_1}$, $\cdots$, $\myvec{it_l}$ are vectors of integer terms)
+% $y = f(x_1, \cdots, x_l, it_1,\cdots, it_k)$ (where $it_1$, $\cdots$, $it_k$ are integer terms)
+one by one by computing the pre-images and adding the resulting CEFA membership constraints for $x_1, \cdots, x_l$. In the end,  the original string constraint is transformed into a conjunction of CEFA membership constraints and LIA formulas, whose satisfiability checking %can be solved in 
 is known to be PSPACE-complete~\cite{atva2020}.
 }
  

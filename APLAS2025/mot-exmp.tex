@@ -14,7 +14,7 @@ To verify the functional correctness of  \texttt{prepareVersionNo}, we specify t
 \end{itemize}
  
 \lstinputlisting[float=t,caption={JavaScript code snippet: The motivating example}, label = {lst:js_example}]
-{mot-exmp-js-code.tex}  
+{APLAS2025/mot-exmp-js-code.tex}  
 
 
 
@@ -58,18 +58,19 @@ Then we transform the formula in Listing~\ref{lst:js_example_constraints} into t
 %\vadjust{\penalty\predisplaypenalty\vskip-\jot\relax}
 \begin{gather}
 % \label{forml:motivate} 
-    {\tt sversion} \in {\tt spreReg}\wedge {\tt snumbers} = \mysplitstr_{\tt ssplitReg}({\tt sversion})\wedge \nonumber\\ 
-    1<\myseqlen({\tt snumbers})-1 \wedge  {\tt stemp} = \elem({\tt snumbers}, 0)\cdot \text{'}.\text{'} \wedge  \nonumber\\
+    {\tt version} \in {\tt preReg}\wedge {\tt snumbers} = \mysplitstr_{\tt splitReg}({\tt version})\wedge \nonumber\\ 
+    1<\myseqlen({\tt snumbers})-1 \wedge  {\tt temp} = \elem({\tt snumbers}, 0)\cdot \text{'}.\text{'} \wedge  \nonumber\\
     %
     {\tt snumbers1} = \subseq[{\tt snumbers}, 2, \myseqlen({\tt snumbers}) - 2]\ \wedge \label{forml:motivate} \\ 
-    {\tt sresult} = {\tt stemp} \cdot \myjoin_{\epsilon}({\tt snumbers1})\wedge {\tt sresult} \not\in {\tt sposReg} \nonumber
+    {\tt result} = {\tt temp} \cdot \myjoin_{\epsilon}({\tt snumbers1})\wedge {\tt result} \not\in {\tt posReg}. \nonumber
 \end{gather}
-where 
-${\tt sversion}, {\tt snumbers}, \cdots$  %string variables %encoding the variables 
-correspond to $\tt version, numbers, \cdots$  in  Listing~\ref{lst:js_example_constraints}. (As one will see in Section~\ref{subsect:seq2string}, technically a string will be encoded as well, e.g., it may be enclosed by $\dagger$. Hence  %Since the encoding of a string is slightly different from the original string, fresh 
-new string variables are used.) %for encoding string variables in Listing~\ref{lst:js_example_constraints}, instead of using the original string variables directly.) 
+where ${\tt snumbers}, {\tt snumbers1}$  are string variables that encode the string sequences ${\tt numbers}, {\tt numbers1}$ in Listing~\ref{lst:js_example_constraints}.
+%string variables %encoding the variables 
+%${\tt sversion}, {\tt snumbers}, \cdots$  %string variables %encoding the variables 
+%correspond to $\tt version, numbers, \cdots$  in  Listing~\ref{lst:js_example_constraints}. (As one will see in Section~\ref{subsect:seq2string}, technically a string will be encoded as well, e.g., it may be enclosed by $\dagger$. Hence  %Since the encoding of a string is slightly different from the original string, fresh 
+%new string variables are used.) %for encoding string variables in Listing~\ref{lst:js_example_constraints}, instead of using the original string variables directly.) 
 %
-Moreover, the regular expressions $\tt preReg, splitReg,\cdots$ in Listing~\ref{lst:js_example_constraints} are adapted to $\tt spreReg, ssplitReg,\cdots$. Note that the resulting string constraint contains new string operations $\tt splitstr, seqlen, elem, \cdots$ introduced in this paper (cf.\ Section~\ref{subsect:seq2string}).}
+Note that the resulting string constraint contains new string operations $\tt splitstr, seqlen, elem, \cdots$ introduced in this paper (cf.\ Section~\ref{subsect:seq2string}).}
 %
 Subsequently, we employ the decision procedure outlined in \cite{atva2020}, which %principally revolves around 
 \emph{back propagates} the CEFA membership constraints by computing the pre-images under string functions (see Section~\ref{subsect:preimage}).
@@ -77,15 +78,15 @@ Subsequently, we employ the decision procedure outlined in \cite{atva2020}, whic
 In the sequel, we show how to solve the formula in (\ref{forml:motivate}). 
 \polished{
 \begin{enumerate}[topsep=0pt,partopsep=0pt]
-    \item We back propagate the regular membership constraint ${\tt sresult} \in \overline{{\tt sposReg}}$ (where $\overline{\tt sposReg}$ denotes the complement of ${\tt sposReg}$) by computing the pre-images under the concatenation $\cdot$ and $\myjoin_\epsilon$, and adding the CEFA constraints for $\tt stemp$ and $\tt snumbers1$, say, ${\tt stemp} \in \Lang_1(\aut_1) \wedge {\tt snumbers1} \in \Lang_1(\aut_2)$. Note that nondeterministic choices may be made here since the pre-images of $\Lang(\overline{{\tt sposReg}})$ under $\cdot$ 
-     may be a union of products of CEFAs. After the propagation, the string equality ${\tt sresult} = {\tt stemp} \cdot \myjoin_{\epsilon}({\tt snumbers1})$ is removed. 
+    \item We back propagate the regular membership constraint ${\tt result} \in \overline{{\tt posReg}}$ (where $\overline{\tt posReg}$ denotes the complement of ${\tt posReg}$) by computing the pre-images under the concatenation $\cdot$ and $\myjoin_\epsilon$, and adding the CEFA constraints for $\tt temp$ and $\tt snumbers1$, say, ${\tt temp} \in \aut_1 \wedge {\tt snumbers1} \in \aut_2$ (where ${\tt temp} \in \aut_1$ means that the value of ${\tt temp}$ belongs to $\Lang_1(\aut_1)$, similarly for ${\tt snumbers1} \in \aut_2$). Note that nondeterministic choices may be made here since the pre-images of $\Lang(\overline{{\tt posReg}})$ under $\cdot$ 
+     may be a union of products of CEFAs. After the propagation, the string equality ${\tt result} = {\tt temp} \cdot \myjoin_{\epsilon}({\tt snumbers1})$ is removed. 
     %
 %    strings $t$ and $n_1$ via the pre-image computation of $\cdot$ and $\myjoin_\epsilon(n_1)$, given the constraint $r=t\cdot \myjoin_\epsilon(n_1)$. This results in a (finite) union of products of CEFA languages $\bigcup_{i=1}^j \Lang(\aut_{i,t}) \times \Lang(\aut_{i,n_1})$. Selecting a single product from CEFA languages results in two additional CEFA memberships $t\in \aut_t$ and $n_1\in \aut_{n_1}$.
     %
-    \item Then we back propagate the CEFA membership constraint ${\tt stemp} \in \Lang_1(\aut_1)$ for the equality ${\tt stemp} = \elem({\tt snumbers}, 0) \cdot \text{'}.\text{'}$ by computing the pre-image of $\Lang(\aut_1)$ under $\cdot$ as well as $\elem$ and adding some CEFA membership constraint for $\tt snumbers$, say, ${\tt snumbers} \in \Lang_1(\aut_3)$. Similarly, we back propagate the CEFA membership constraint ${\tt snumbers1} \in \Lang(\aut_2)$ for the equality ${\tt snumbers1} =\subseq[{\tt snumbers}, 2,\myseqlen({\tt snumbers})-1]$ by computing the pre-image of $\Lang(\aut_2)$ under $\subseq$ and adding some CEFA membership constraint for $\tt snumbers$, say, ${\tt snumbers} \in \Lang_1(\aut_4)$. After these propagations, the two string equalities are removed. 
+    \item Then we back propagate the CEFA membership constraint ${\tt temp} \in \aut_1$ for the equality ${\tt temp} = \elem({\tt snumbers}, 0) \cdot \text{'}.\text{'}$ by computing the pre-image of $\Lang(\aut_1)$ under $\cdot$ as well as $\elem$ and adding some CEFA membership constraint for $\tt snumbers$, say, ${\tt snumbers} \in \aut_3$. Similarly, we back propagate the CEFA membership constraint ${\tt snumbers1} \in \Lang(\aut_2)$ for the equality ${\tt snumbers1} =\subseq[{\tt snumbers}, 2,\myseqlen({\tt snumbers})-1]$ by computing the pre-image of $\Lang(\aut_2)$ under $\subseq$ and adding some CEFA membership constraint for $\tt snumbers$, say, ${\tt snumbers} \in \aut_4$. After these back-propagation operations, the two string equalities are removed. 
 %
-    \item Finally, we back propagate the CEFA membership  constraint ${\tt snumbers} \in \Lang_1(\aut_3 \cap \aut_4)$ for ${\tt snumbers} = \mysplitstr_{\tt ssplitReg}({\tt sversion})$
- by computing the pre-image of $\Lang(\aut_3 \cap \aut_4$) under the function $\mysplitstr_{\tt ssplitReg}$ and adding a CEFA membership constraint ${\tt sversion} \in \Lang_1(\aut_5)$. Moreover, the equality ${\tt snumbers} = \mysplitstr_{\tt ssplitReg}({\tt sversion})$ is removed. 
+    \item Finally, we back propagate the CEFA membership  constraint ${\tt snumbers} \in \aut_3 \cap \aut_4$ for ${\tt snumbers} = \mysplitstr_{\tt splitReg}({\tt version})$
+ by computing the pre-image of $\Lang(\aut_3 \cap \aut_4$) under the function $\mysplitstr_{\tt splitReg}$ and adding a CEFA membership constraint ${\tt version} \in \aut_5$. Moreover, the equality ${\tt snumbers} = \mysplitstr_{\tt splitReg}({\tt version})$ is removed. 
  
 % and derive a final CEFA membership $v\in \aut_v$.
     

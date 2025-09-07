@@ -67,7 +67,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\input{macros.tex}
+\input{APLAS2025/macros}
 
 %\theoremstyle{remark}
 %\newtheorem{definition}{Definition}[section]
@@ -76,7 +76,7 @@
 \newcommand{\denghang}[1]{\color{red} {DH: #1 :HD} \color{black} }
 \newcommand{\tl}[1]{\color{magenta} {TL: #1 :LT} \color{black} }
 \newcommand{\fu}[1]{\color{purple} {FU: #1 :UF} \color{black} }
-\DeclareRobustCommand{\polished}[1]{{\color{red}{#1}}}
+\DeclareRobustCommand{\polished}[1]{{\color{black}{#1}}}
 
 %\newcommand{\denghang}[1]{{\color{teal}\textbf{DH:} #1 \textbf{:HD}\color{black}}}
 %\newcommand{\comment}[1]{{\color{blue}\textbf{MARK:} #1 \textbf{:KRAM}\color{black}}}
@@ -86,7 +86,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{Decision Procedure for \\ A Theory of String Sequences\thanks{This work was partially supported by TBD.}}
+\title{Decision Procedure for \\ A Theory of String Sequences%\thanks{This work was partially supported by TBD.}
+}
 
 % \title{Contribution Title}
 % %
@@ -158,42 +159,42 @@ We implement the new decision procedure as a tool $\ostrichseq$, and carry out e
 %\vspace{-6mm}
 \section{Introduction} \label{sect:intro}
 
-\input{intro.tex}
+\input{APLAS2025/intro}
 
 
 %\vspace{-2mm}
 \section{Preliminaries}\label{sec:prelim}
 
-\input{prelim}
+\input{APLAS2025/prelim}
 
 %\vspace{-2mm}
 \section{Motivating Example} \label{sect:example}
 
-\input{mot-exmp}
+\input{APLAS2025/mot-exmp}
 
 %\vspace{-2mm}
 \section{A Theory of String Sequences ($\arraylogic$)}\label{sec:logic}
 
-\input{theory.tex}
+\input{APLAS2025/theory}
 
 %\vspace{-2mm}
 \section{The Decision Procedure} \label{sect:procedure}
 
-\input{algo.tex}
+\input{APLAS2025/algo}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %\vspace{-2mm}
 \section{Implementation and Experiments} \label{sect:exp}
 
-\input{experiments.tex}
+\input{APLAS2025/experiments}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %\vspace{-2mm}
 \section{Related work}\label{sect:related}
 
-\input{related.tex}
+\input{APLAS2025/related}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -209,6 +210,6 @@ In this paper, we have proposed $\arraylogic$, a logic of string sequences, whic
 \newpage
 
 \bibliographystyle{abbrv}
-\bibliography{ref}
+\bibliography{APLAS2025/ref}
 
 \end{document}
